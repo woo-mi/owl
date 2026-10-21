@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="description" content="Owl prototyping overview.">
+    <title>Owl</title>
+    <style>
+      * { box-sizing: border-box; }
+      html { background: #fff; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        padding: 40px 24px;
+        color: #1c1c1c;
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      main {
+        width: min(100%, 600px);
+        text-align: center;
+      }
+      h1 {
+        margin: 0 0 28px;
+        font-size: 52px;
+        line-height: 1.2;
+        font-weight: 600;
+        letter-spacing: -0.4px;
+      }
+      .owl-mark {
+        width: 0.96em;
+        height: 0.96em;
+        margin-right: calc(-0.06em + 1px);
+        vertical-align: -0.096em;
+        transform: translateY(1px);
+      }
+      .owl-letters { font-size: 0.92em; }
+      h2 {
+        margin: 0;
+        color: #686868;
+        font-size: 16px;
+        line-height: 1.4;
+        font-weight: 500;
+      }
+      h2 + h2 { margin-top: 14px; }
+      a { color: inherit; text-decoration: none; }
+      a:hover { text-decoration: underline; text-underline-offset: 4px; }
+      a:focus-visible { outline: 2px solid #333444; outline-offset: 4px; border-radius: 2px; }
+      @media (max-width: 600px) {
+        body { padding: 32px 24px; }
+        h1 { font-size: 48px; }
+        h2 { font-size: 14px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 aria-label="Owl"><img class="owl-mark" src="owl-mark.svg?v=2" alt="" width="24" height="24"><span class="owl-letters">wl</span></h1>
+      <h2><a href="https://woo-mi.github.io/agent-home-versions/owl/v0-the-latest/">MVP</a></h2>
+      <h2><a href="https://woo-mi.github.io/agent-home-versions/chief-of-staff/">Prototyping 1</a></h2>
+      <h2><a href="https://woo-mi.github.io/agent-home-versions/chat-revisit/">Prototyping 2</a></h2>
+    </main>
+  </body>
+</html>
