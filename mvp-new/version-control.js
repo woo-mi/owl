@@ -2,9 +2,9 @@
   'use strict';
   const views = Object.freeze([
     Object.freeze({ view: 'text-only', label: 'Text only' }),
-    Object.freeze({ view: 'furling-v1', label: 'Furling v1' }),
-    Object.freeze({ view: 'furling-v2', label: 'Furling v2' }),
-    Object.freeze({ view: 'text-furling', label: 'Text + Furling' })
+    Object.freeze({ view: 'furling-v1', label: 'Unfurling v1' }),
+    Object.freeze({ view: 'furling-v2', label: 'Unfurling v2' }),
+    Object.freeze({ view: 'text-furling', label: 'Text + Unfurling' })
   ]);
   const findView = value => views.find(item => item.view === value);
   const readView = () => findView(new URL(location.href).searchParams.get('view')) || views[0];

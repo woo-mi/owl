@@ -57,7 +57,7 @@
       url.searchParams.delete('thread');
       url.hash = '';
       history.replaceState(null, '', url);
-      renderView('text-furling', 'Text + Furling');
+      renderView('text-furling', 'Text + Unfurling');
     }
     closeRepliesButton.addEventListener('click', () => closeReplies());
     ui.messages.addEventListener('click', event => {
@@ -66,7 +66,7 @@
       event.preventDefault();
       replyOpener = link;
       history.pushState({ mvpRepliesEntry: replyEntryToken }, '', replyURL());
-      renderView('text-furling', 'Text + Furling');
+      renderView('text-furling', 'Text + Unfurling');
     });
 
     function announce(message) {
