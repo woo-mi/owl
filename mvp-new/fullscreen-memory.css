@@ -55,6 +55,7 @@
 .fsm-editor h3,.fsm-import h3{font-size:16px;line-height:23px;font-weight:600}
 .fsm-editor label{font-size:12px;line-height:15px;color:#777}
 .fsm-editor textarea{resize:vertical;width:100%;min-height:64px;margin:0;padding:10px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#171717;line-height:20px}
+.fsm .fsm-editor textarea:focus,.fsm .fsm-editor textarea:focus-visible{outline:none;box-shadow:none;border-color:#bbb}
 .fsm-field-hint{color:#777;font-size:12px;line-height:16px}
 .fsm-form-actions{display:flex;justify-content:flex-end;gap:8px}
 .fsm-import-prompt{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:16px;border:1px solid #eee;border-radius:8px;background:#fcfcfc;color:#666663}
