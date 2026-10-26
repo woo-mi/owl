@@ -128,7 +128,7 @@
       host.querySelector(`[data-fsm-action="learn"][data-id="${id}"]`)?.focus();
     } else if (action === 'open' || action === 'edit') {
       activeId = id;
-      setView(action === 'edit' ? 'edit' : 'profile', action === 'edit' ? '#fsm-edit-summary' : '#fsm-profile-heading');
+      setView('profile', '#fsm-profile-heading');
     } else if (action === 'delete') deleteEntry(id);
     else if (action === 'undo' && deleted) {
       const restoredId = deleted.entry.id;
