@@ -9,17 +9,18 @@
     Object.freeze({ view: 'full-screen-workspace', label: 'Full Screen Workspace' })
   ]);
   const bubbleFormats = Object.freeze([
-    Object.freeze({ id: 'original', label: 'Original', bullets: true, split: false }),
     Object.freeze({ id: 'no-bullet', label: 'no bullet', bullets: false, split: false }),
     Object.freeze({ id: 'no-bullet-break-replies', label: 'no bullet · break replies', bullets: false, split: true }),
+    Object.freeze({ id: 'bullet', label: 'bullet', bullets: true, split: false }),
     Object.freeze({ id: 'bullet-break-replies', label: 'bullet · break replies', bullets: true, split: true })
   ]);
   const findView = value => views.find(item => item.view === value);
-  const findFormat = value => bubbleFormats.find(item => item.id === value);
+  const findFormat = value => bubbleFormats.find(item => item.id === (value === 'original' ? 'bullet' : value));
+  const defaultBubbleFormat = findFormat('bullet');
   const readView = () => findView(new URL(location.href).searchParams.get('view')) || views[0];
-  const readFormat = () => findFormat(new URL(location.href).searchParams.get('bubbles')) || bubbleFormats[0];
+  const readFormat = () => findFormat(new URL(location.href).searchParams.get('bubbles')) || defaultBubbleFormat;
   let current = readView();
-  let currentFormat = current.view === 'multiple-bubbles' ? readFormat() : bubbleFormats[0];
+  let currentFormat = current.view === 'multiple-bubbles' ? readFormat() : defaultBubbleFormat;
   const chevron = '<svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>';
   const control = document.createElement('nav');
   control.className = 'prototype-versions';
@@ -76,7 +77,7 @@
   document.body.classList.add('has-mvp-versions');
 
   function applyFormatToURL(url, view) {
-    if (view === 'multiple-bubbles' && currentFormat.id !== 'original') url.searchParams.set('bubbles', currentFormat.id);
+    if (view === 'multiple-bubbles' && currentFormat.id !== defaultBubbleFormat.id) url.searchParams.set('bubbles', currentFormat.id);
     else url.searchParams.delete('bubbles');
   }
 
