@@ -9,14 +9,15 @@
     Object.freeze({ view: 'full-screen-workspace', label: 'Full Screen Workspace' })
   ]);
   const bubbleFormats = Object.freeze([
+    Object.freeze({ id: 'original', label: 'Original', bullets: true, split: false }),
     Object.freeze({ id: 'no-bullet', label: 'no bullet', bullets: false, split: false }),
     Object.freeze({ id: 'no-bullet-break-replies', label: 'no bullet · break replies', bullets: false, split: true }),
     Object.freeze({ id: 'bullet', label: 'bullet', bullets: true, split: false }),
     Object.freeze({ id: 'bullet-break-replies', label: 'bullet · break replies', bullets: true, split: true })
   ]);
   const findView = value => views.find(item => item.view === value);
-  const findFormat = value => bubbleFormats.find(item => item.id === (value === 'original' ? 'bullet' : value));
-  const defaultBubbleFormat = findFormat('bullet');
+  const findFormat = value => bubbleFormats.find(item => item.id === value);
+  const defaultBubbleFormat = findFormat('original');
   const readView = () => findView(new URL(location.href).searchParams.get('view')) || views[0];
   const readFormat = () => findFormat(new URL(location.href).searchParams.get('bubbles')) || defaultBubbleFormat;
   let current = readView();
