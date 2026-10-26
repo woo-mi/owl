@@ -17,7 +17,7 @@ no live AI, account, analytics, file upload, or microphone service is connected.
 Files remain local. Existing prototypes are unchanged.
 
 The bottom-right version menu switches between Text only, Unfurling v1, Unfurling v2,
-Text + Unfurling, and Multiple bubbles. Each view has a shareable URL using the view query parameter.
+Text + Unfurling, Multiple bubbles, and Full Screen Workspace. Each view has a shareable URL using the view query parameter.
 Additional source frames: Furling 1 (j5h7z), Furling 2 (tffsf), and
 Text + Furling (TTZhU). Per-view drafts and scroll positions are preserved.
 Native thumbnail artwork and reactions are exported from the corresponding Pen frames.
@@ -25,3 +25,7 @@ Native thumbnail artwork and reactions are exported from the corresponding Pen f
 Multiple bubbles is an independent copy of Text + Unfurling, with its own
 conversation and reply drafts, attachments, and scroll position. Open it at
 https://woo-mi.github.io/owl/mvp-new/?view=multiple-bubbles.
+
+Full Screen Workspace is a separate copy of Multiple bubbles with the same
+initial layout and interactions, and independent conversation and reply state.
+Open it at https://woo-mi.github.io/owl/mvp-new/?view=full-screen-workspace.

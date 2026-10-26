@@ -85,8 +85,15 @@
   body.has-mvp-versions .conversation { padding-bottom: 180px; }
 }
 
+/* The longer label needs the footer lane slightly earlier. */
+@media (max-width: 1480px) {
+  body.has-mvp-versions[data-prototype-view="full-screen-workspace"] .composer-dock { bottom: calc(68px + env(safe-area-inset-bottom)); }
+  body.has-mvp-versions[data-prototype-view="full-screen-workspace"] .conversation { padding-bottom: 180px; }
+}
+
 @media (max-width: 760px) {
-  body.has-mvp-versions .conversation { padding-bottom: 220px; }
+  body.has-mvp-versions .conversation,
+  body.has-mvp-versions[data-prototype-view="full-screen-workspace"] .conversation { padding-bottom: 220px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

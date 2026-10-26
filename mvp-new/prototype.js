@@ -24,7 +24,8 @@
     const viewStates = new Map();
     const replyViews = Object.freeze({
       'text-furling': 'clicked-replies',
-      'multiple-bubbles': 'multiple-bubbles-replies'
+      'multiple-bubbles': 'multiple-bubbles-replies',
+      'full-screen-workspace': 'full-screen-workspace-replies'
     });
     const replyBase = (view = currentView) => Object.keys(replyViews).find(base => base === view || replyViews[base] === view);
     const isReplyView = (view = currentView) => Object.values(replyViews).includes(view);
