@@ -1,0 +1,39 @@
+/* Presentation choices are scoped to Multiple bubbles and leave the source DOM intact. */
+body[data-prototype-view="multiple-bubbles"][data-bubble-bullets="hidden"] #messages .unfurl-list > li {
+  padding-left: 0;
+}
+body[data-prototype-view="multiple-bubbles"][data-bubble-bullets="hidden"] #messages .unfurl-list > li::before {
+  display: none;
+  content: none;
+}
+body[data-prototype-view="multiple-bubbles"][data-bubble-bullets="hidden"] #messages .unfurl-show-more {
+  margin-left: 0;
+}
+
+/* Sections retain their headings and nested lists; direct list items become separate replies. */
+body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble {
+  background: transparent;
+  padding: 0;
+  gap: 16px;
+}
+body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .unfurl-section,
+body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .message-source,
+body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .unfurl-list > li {
+  background: #f1f1f1;
+  padding: 9px 13px;
+  border-radius: 16px;
+  min-width: 0;
+}
+body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .unfurl-list {
+  gap: 16px;
+}
+body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .unfurl-list > li {
+  padding-left: 34px;
+}
+body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .unfurl-list > li::before {
+  top: 9px;
+  left: 14px;
+}
+body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"][data-bubble-bullets="hidden"] #messages .unfurl-bubble > .unfurl-list > li {
+  padding-left: 13px;
+}

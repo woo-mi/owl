@@ -8,22 +8,43 @@
     Object.freeze({ view: 'multiple-bubbles', label: 'Multiple bubbles' }),
     Object.freeze({ view: 'full-screen-workspace', label: 'Full Screen Workspace' })
   ]);
+  const bubbleFormats = Object.freeze([
+    Object.freeze({ id: 'original', label: 'Original', bullets: true, split: false }),
+    Object.freeze({ id: 'no-bullet', label: 'no bullet', bullets: false, split: false }),
+    Object.freeze({ id: 'no-bullet-break-replies', label: 'no bullet · break replies', bullets: false, split: true }),
+    Object.freeze({ id: 'bullet-break-replies', label: 'bullet · break replies', bullets: true, split: true })
+  ]);
   const findView = value => views.find(item => item.view === value);
+  const findFormat = value => bubbleFormats.find(item => item.id === value);
   const readView = () => findView(new URL(location.href).searchParams.get('view')) || views[0];
+  const readFormat = () => findFormat(new URL(location.href).searchParams.get('bubbles')) || bubbleFormats[0];
   let current = readView();
-
+  let currentFormat = current.view === 'multiple-bubbles' ? readFormat() : bubbleFormats[0];
+  const chevron = '<svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>';
   const control = document.createElement('nav');
   control.className = 'prototype-versions';
-  control.setAttribute('aria-label', 'Prototype versions');
+  control.setAttribute('aria-label', 'Prototype controls');
   control.innerHTML = `
-    <button class="prototype-version-trigger" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="prototype-version-menu">
-      <span class="prototype-version-label"></span>
-      <svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
-    </button>
-    <ul id="prototype-version-menu" class="prototype-version-menu" role="menu" aria-label="Prototype versions" hidden></ul>`;
-  const trigger = control.querySelector('button');
-  const label = control.querySelector('.prototype-version-label');
-  const menu = control.querySelector('[role="menu"]');
+    <div class="prototype-control prototype-format-control" hidden>
+      <button class="prototype-version-trigger prototype-format-trigger" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="prototype-format-menu">
+        <span class="prototype-format-label"></span>${chevron}
+      </button>
+      <ul id="prototype-format-menu" class="prototype-version-menu prototype-format-menu" role="menu" aria-label="Multiple bubbles format" hidden></ul>
+    </div>
+    <div class="prototype-control prototype-view-control">
+      <button class="prototype-version-trigger" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="prototype-version-menu">
+        <span class="prototype-version-label"></span>${chevron}
+      </button>
+      <ul id="prototype-version-menu" class="prototype-version-menu" role="menu" aria-label="Prototype versions" hidden></ul>
+    </div>`;
+  const viewControl = control.querySelector('.prototype-view-control');
+  const formatControl = control.querySelector('.prototype-format-control');
+  const trigger = viewControl.querySelector('button');
+  const label = viewControl.querySelector('.prototype-version-label');
+  const menu = viewControl.querySelector('[role="menu"]');
+  const formatTrigger = formatControl.querySelector('button');
+  const formatLabel = formatControl.querySelector('.prototype-format-label');
+  const formatMenu = formatControl.querySelector('[role="menu"]');
   const options = views.map(view => {
     const item = document.createElement('li');
     item.setAttribute('role', 'none');
@@ -37,17 +58,53 @@
     menu.append(item);
     return link;
   });
+  const formatOptions = bubbleFormats.map(format => {
+    const item = document.createElement('li');
+    item.setAttribute('role', 'none');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'prototype-format-option';
+    button.setAttribute('role', 'menuitemradio');
+    button.tabIndex = -1;
+    button.dataset.bubbleFormat = format.id;
+    button.textContent = format.label;
+    item.append(button);
+    formatMenu.append(item);
+    return button;
+  });
   document.body.append(control);
   document.body.classList.add('has-mvp-versions');
+
+  function applyFormatToURL(url, view) {
+    if (view === 'multiple-bubbles' && currentFormat.id !== 'original') url.searchParams.set('bubbles', currentFormat.id);
+    else url.searchParams.delete('bubbles');
+  }
 
   function updateControl() {
     label.textContent = current.label;
     trigger.setAttribute('aria-label', `Switch prototype version, ${current.label}`);
     document.body.dataset.prototypeView = current.view;
+    const hasFormat = current.view === 'multiple-bubbles';
+    formatControl.hidden = !hasFormat;
+    formatLabel.textContent = currentFormat.label;
+    formatTrigger.setAttribute('aria-label', `Multiple bubbles format, ${currentFormat.label}`);
+    if (hasFormat) {
+      document.body.dataset.bubbleFormat = currentFormat.id;
+      document.body.dataset.bubbleBullets = currentFormat.bullets ? 'visible' : 'hidden';
+      document.body.dataset.bubbleSplit = String(currentFormat.split);
+    } else {
+      delete document.body.dataset.bubbleFormat;
+      delete document.body.dataset.bubbleBullets;
+      delete document.body.dataset.bubbleSplit;
+      setMenuOpen(formatGroup, false);
+    }
+    formatOptions.forEach(option => option.setAttribute('aria-checked', String(option.dataset.bubbleFormat === currentFormat.id)));
+    window.dispatchEvent(new Event('mvp-bubble-format-change'));
     options.forEach(option => {
       const url = new URL(location.href);
       url.searchParams.set('view', option.dataset.view);
       url.searchParams.delete('thread');
+      applyFormatToURL(url, option.dataset.view);
       url.hash = '';
       option.href = `${url.pathname}${url.search}${url.hash}`;
       if (option.dataset.view === current.view) option.setAttribute('aria-current', 'page');
@@ -55,11 +112,15 @@
     });
   }
 
-  function setOpen(open, restoreFocus = false) {
-    menu.hidden = !open;
-    trigger.setAttribute('aria-expanded', String(open));
-    if (open) options.find(option => option.dataset.view === current.view).focus({ preventScroll: true });
-    else if (restoreFocus) trigger.focus({ preventScroll: true });
+  const viewGroup = { wrapper: viewControl, trigger, menu, options, selected: () => options.find(option => option.dataset.view === current.view) };
+  const formatGroup = { wrapper: formatControl, trigger: formatTrigger, menu: formatMenu, options: formatOptions, selected: () => formatOptions.find(option => option.dataset.bubbleFormat === currentFormat.id) };
+  const groups = [viewGroup, formatGroup];
+  function setMenuOpen(group, open, restoreFocus = false) {
+    if (open) groups.filter(other => other !== group).forEach(other => setMenuOpen(other, false));
+    group.menu.hidden = !open;
+    group.trigger.setAttribute('aria-expanded', String(open));
+    if (open) group.selected()?.focus({ preventScroll: true });
+    else if (restoreFocus) group.trigger.focus({ preventScroll: true });
   }
 
   function notify() {
@@ -77,74 +138,101 @@
     url.searchParams.set('view', current.view);
     const leavingReplies = url.searchParams.has('thread');
     url.searchParams.delete('thread');
+    applyFormatToURL(url, current.view);
     url.hash = '';
     const path = `${url.pathname}${url.search}${url.hash}`;
-    if (path !== `${location.pathname}${location.search}${location.hash}`) {
-      history[replace ? 'replaceState' : 'pushState'](null, '', path);
-    }
+    if (path !== `${location.pathname}${location.search}${location.hash}`) history[replace ? 'replaceState' : 'pushState'](null, '', path);
     updateControl();
-    setOpen(false);
+    groups.forEach(group => setMenuOpen(group, false));
     if (dispatch && (changed || leavingReplies)) notify();
     return true;
   }
 
-  trigger.addEventListener('click', () => setOpen(menu.hidden));
-  trigger.addEventListener('keydown', event => {
-    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
-    event.preventDefault();
-    setOpen(true);
-    options[event.key === 'ArrowDown' ? 0 : options.length - 1].focus({ preventScroll: true });
-  });
-  menu.addEventListener('keydown', event => {
-    const index = options.indexOf(document.activeElement);
-    if (event.key === ' ' && index >= 0) {
+  function setBubbleFormat(value) {
+    const next = findFormat(value);
+    if (!next || current.view !== 'multiple-bubbles') return false;
+    const chat = document.getElementById('chat-scroll');
+    const top = chat.getBoundingClientRect().top + 128;
+    const anchor = [...document.querySelectorAll('#messages .message-source')].find(node => node.getBoundingClientRect().bottom > top);
+    const anchorTop = anchor?.getBoundingClientRect().top;
+    currentFormat = next;
+    const url = new URL(location.href);
+    applyFormatToURL(url, current.view);
+    // Formatting does not add a reply-history entry or replace conversation nodes.
+    history.replaceState(history.state, '', `${url.pathname}${url.search}${url.hash}`);
+    updateControl();
+    if (anchor) chat.scrollTop += anchor.getBoundingClientRect().top - anchorTop;
+    setMenuOpen(formatGroup, false, true);
+    return true;
+  }
+
+  groups.forEach(group => {
+    group.trigger.addEventListener('click', () => setMenuOpen(group, group.menu.hidden));
+    group.trigger.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
       event.preventDefault();
-      options[index].click();
-      return;
-    }
-    let next;
-    if (event.key === 'ArrowDown') next = (index + 1) % options.length;
-    if (event.key === 'ArrowUp') next = (index - 1 + options.length) % options.length;
-    if (event.key === 'Home') next = 0;
-    if (event.key === 'End') next = options.length - 1;
-    if (next !== undefined) {
-      event.preventDefault();
-      options[next].focus({ preventScroll: true });
-    }
-    if (event.key === 'Tab') setOpen(false, true);
+      setMenuOpen(group, true);
+      group.options[event.key === 'ArrowDown' ? 0 : group.options.length - 1].focus({ preventScroll: true });
+    });
+    group.menu.addEventListener('keydown', event => {
+      const index = group.options.indexOf(document.activeElement);
+      if (event.key === ' ' && index >= 0) {
+        event.preventDefault();
+        group.options[index].click();
+        return;
+      }
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % group.options.length;
+      if (event.key === 'ArrowUp') next = (index - 1 + group.options.length) % group.options.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = group.options.length - 1;
+      if (next !== undefined) {
+        event.preventDefault();
+        group.options[next].focus({ preventScroll: true });
+      }
+      if (event.key === 'Tab') setMenuOpen(group, false, true);
+    });
   });
   options.forEach(option => option.addEventListener('click', event => {
-    // Keep standard new-tab and modifier-click behavior for the shareable query links.
+    // Keep standard new-tab and modifier-click behavior for shareable view links.
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     setView(option.dataset.view);
     trigger.focus({ preventScroll: true });
   }));
-  document.addEventListener('pointerdown', event => {
-    if (!control.contains(event.target)) setOpen(false);
-  });
-  document.addEventListener('focusin', event => {
-    if (!control.contains(event.target)) setOpen(false);
-  });
+  formatOptions.forEach(option => option.addEventListener('click', () => setBubbleFormat(option.dataset.bubbleFormat)));
+  document.addEventListener('pointerdown', event => groups.forEach(group => {
+    if (!group.wrapper.contains(event.target)) setMenuOpen(group, false);
+  }));
+  document.addEventListener('focusin', event => groups.forEach(group => {
+    if (!group.wrapper.contains(event.target)) setMenuOpen(group, false);
+  }));
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && !menu.hidden) {
+    const openGroup = groups.find(group => !group.menu.hidden);
+    if (event.key === 'Escape' && openGroup) {
       event.preventDefault();
-      setOpen(false, true);
+      event.stopImmediatePropagation();
+      setMenuOpen(openGroup, false, true);
     }
   });
+  window.addEventListener('mvp-workspace-open', () => groups.forEach(group => setMenuOpen(group, false)));
   window.addEventListener('popstate', () => {
     const next = readView();
     const changed = next.view !== current.view;
     current = next;
+    if (current.view === 'multiple-bubbles') currentFormat = readFormat();
     updateControl();
-    setOpen(false);
+    groups.forEach(group => setMenuOpen(group, false));
     if (changed) notify();
   });
 
   window.MVPVersions = Object.freeze({
     views,
     getCurrent: () => ({ view: current.view, label: current.label }),
-    setView
+    setView,
+    bubbleFormats,
+    getBubbleFormat: () => ({ ...currentFormat }),
+    setBubbleFormat
   });
   updateControl();
   requestAnimationFrame(notify);

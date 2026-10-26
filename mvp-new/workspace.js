@@ -229,7 +229,7 @@
     document.addEventListener('keydown',event=>{
       if(stage!==PANEL.open)return;
       if(event.key==='Escape'){
-        if(document.querySelector('.prototype-version-trigger')?.getAttribute('aria-expanded')==='true')return;
+        if(document.querySelector('.prototype-versions [aria-haspopup="menu"][aria-expanded="true"]'))return;
         event.preventDefault();event.stopImmediatePropagation();
         const thinkingMenu = document.getElementById('thinking-menu');
         if (!overlay.matches && thinkingMenu && !thinkingMenu.hidden) {

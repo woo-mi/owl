@@ -503,7 +503,7 @@
     document.addEventListener('keydown', (event) => {
       if (window.MVPWorkspace?.isOpen()) return;
       if (event.key === 'Escape') {
-        if (document.querySelector('.prototype-version-trigger')?.getAttribute('aria-expanded') === 'true') return;
+        if (document.querySelector('.prototype-versions [aria-haspopup="menu"][aria-expanded="true"]')) return;
         if (ui['thinking-menu'] && !ui['thinking-menu'].hidden) {
           closeMenu();
           ui['thinking-button']?.focus();
@@ -531,6 +531,7 @@
     updateSendButtons();
     syncSidebar();
     window.addEventListener('mvp-view-change', event => renderView(event.detail.view, event.detail.label));
+    window.addEventListener('mvp-bubble-format-change', syncReplyLinks);
     window.addEventListener('popstate', () => {
       const requested = new URL(location.href).searchParams.get('view');
       const options = window.MVPVersions?.views || [];

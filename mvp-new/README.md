@@ -29,3 +29,10 @@ https://woo-mi.github.io/owl/mvp-new/?view=multiple-bubbles.
 Full Screen Workspace is a separate copy of Multiple bubbles with the same
 initial layout and interactions, and independent conversation and reply state.
 Open it at https://woo-mi.github.io/owl/mvp-new/?view=full-screen-workspace.
+
+Multiple bubbles has a second format control with Original, no bullet,
+no bullet · break replies, and bullet · break replies. Break modes separate the
+existing assistant sections and top-level list items into bubbles. Formatting
+keeps the conversation nodes and drafts intact, applies to its reply view, and
+is shareable through the `bubbles` query parameter. Other prototype views keep
+their original presentation.
