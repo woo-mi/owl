@@ -8,7 +8,6 @@
     { id: 'bullet-break-replies', frame: 'Q354X', morning: ['oIlly', 'gTcjT', 'GwVTn', 'uQBf4', 'OsQOO', 'YVKUr'], revenue: ['j7oUI', 'Dbs56', 'NB5ur', 'FzEt5'], delivery: ['WjyTX', 'cAxJd', 'vLXjH', 'oP9J2'], drivers: ['rmBWq', 'a4OJu', 'H1t27', 'IJMhe'], request: 'f5fsF', bullets: true, split: true }
   ];
   const stamp = '<div class="replies-date-stamp">Today, Mon, Oct 13 7:02 AM</div>';
-  const start = '<div class="pen-frame-start"><div class="new-divider"><span></span><span>NEW</span><span></span></div><p class="date-stamp">Today, Mon, Oct 13 7:02 AM</p></div>';
   const variants = {};
   function group(section) {
     const node = document.createElement('div');
@@ -87,7 +86,7 @@
     replyScreen.className = 'pen-frame-transcript pen-frame-replies';
     replyScreen.dataset.penFrame = frame.frame;
     replyScreen.innerHTML = stamp + userTurn.outerHTML + replyRevenue.outerHTML + preview.outerHTML + stamp + replies.outerHTML;
-    variants[frame.id] = Object.freeze({ html: window.MVPBubbleHistoryHTML + start + latest.outerHTML, replyHtml: replyScreen.outerHTML, initialScrollTarget: '.pen-frame-start' });
+    variants[frame.id] = Object.freeze({ html: latest.outerHTML, replyHtml: replyScreen.outerHTML });
   }
   window.MVPBubbleViews = Object.freeze(variants);
 })();

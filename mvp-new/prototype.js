@@ -22,7 +22,6 @@
     let sidebarOpen = false;
     let currentView = 'text-only';
     let currentStateKey = 'text-only';
-    let renderSequence = 0;
     const viewStates = new Map();
     const replyViews = Object.freeze({
       'text-furling': 'clicked-replies',
@@ -41,8 +40,7 @@
       const template = templates[format];
       return {
         key: `${view}::${format}`,
-        html: template?.[isReplyView(view) ? 'replyHtml' : 'html'] ?? definition?.html,
-        initialScrollTarget: isReplyView(view) ? undefined : template?.initialScrollTarget
+        html: template?.[isReplyView(view) ? 'replyHtml' : 'html'] ?? definition?.html
       };
     }
     const closeRepliesButton = document.createElement('button');
@@ -133,23 +131,6 @@
           behavior: reducedMotion.matches ? 'auto' : 'smooth'
         });
       });
-    }
-
-    function positionInitialFrame(selector, stateKey, sequence) {
-      const target = ui.messages.querySelector(selector);
-      if (!target) return;
-      const chat = ui['chat-scroll'];
-      const align = () => {
-        chat.scrollTop += target.getBoundingClientRect().top - chat.getBoundingClientRect().top - 114;
-      };
-      align();
-      const initialScrollTop = chat.scrollTop;
-      // Font metrics can shift earlier history. Do not disturb a later view or a user's scroll.
-      document.fonts?.ready.then(() => requestAnimationFrame(() => {
-        if (currentStateKey !== stateKey || renderSequence !== sequence || !target.isConnected) return;
-        if (Math.abs(chat.scrollTop - initialScrollTop) > 1) return;
-        align();
-      }));
     }
 
     function sourceText(node) {
@@ -338,7 +319,6 @@
       else ui.messages.innerHTML = presentation.html;
       currentView = nextView;
       currentStateKey = presentation.key;
-      renderSequence += 1;
       ui.messages.dataset.view = nextView;
       const repliesOpen = isReplyView(nextView);
       document.body.classList.toggle('replies-open', repliesOpen);
@@ -353,9 +333,6 @@
       autosize(ui['message-input']);
       updateSendButtons();
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
-      if (!previous && presentation.initialScrollTarget) {
-        positionInitialFrame(presentation.initialScrollTarget, currentStateKey, renderSequence);
-      }
       document.title = `MVP NEW · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
       else if (leavingReplies && replyViews[view]) {

@@ -35,23 +35,6 @@
 .pen-frame-transcript[data-pen-frame="Q354X"] .unfurl-measurement { max-width: none; }
 .pen-frame-replies { gap: 24px; }
 .pen-frame-replies > .replies-date-stamp { align-self: stretch; }
-.pen-frame-start { width: 100%; }
-/* Three source frames leave space before NEW where hidden design rows were placed. */
-body[data-bubble-format="no-bullet"] .pen-history,
-body[data-bubble-format="bullet"] .pen-history,
-body[data-bubble-format="bullet-break-replies"] .pen-history { margin-bottom: 138px; }
-body[data-bubble-format="no-bullet-break-replies"] .pen-history [data-pen-history-node="qRYA4"] { border-color: transparent !important; }
-body[data-bubble-format="no-bullet-break-replies"] .pen-history [data-pen-history-node="W2Htko"] { background-color: transparent !important; }
-.pen-history [data-pen-history-node="Omvcy"] {
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-  flex-shrink: 1 !important;
-  min-width: 0;
-  max-width: 100%;
-}
-body[data-prototype-view="multiple-bubbles"][data-bubble-format]:not([data-bubble-format="original"]) .conversation > .new-divider,
-body[data-prototype-view="multiple-bubbles"][data-bubble-format]:not([data-bubble-format="original"]) .conversation > .date-stamp { display: none; }
-body[data-prototype-view="multiple-bubbles"][data-bubble-format]:not([data-bubble-format="original"]) .messages { margin-top: 0; }
 body[data-prototype-view="multiple-bubbles"][data-bubble-format]:not([data-bubble-format="original"]) .date-stamp,
 .pen-frame-transcript .replies-date-stamp {
   font-size: 11px;
