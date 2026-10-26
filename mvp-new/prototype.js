@@ -558,7 +558,7 @@
       } else syncReplyLinks();
     });
     window.addEventListener('popstate', () => {
-      const requested = new URL(location.href).searchParams.get('view');
+      const requested = new URL(location.href).searchParams.get('view')?.trim().replace(/,+$/, '');
       const options = window.MVPVersions?.views || [];
       const view = options.find(option => option.view === requested) || options[0];
       if (view) renderView(view.view, view.label);

@@ -15,12 +15,19 @@
     Object.freeze({ id: 'bullet', label: 'bullet', bullets: true, split: false }),
     Object.freeze({ id: 'bullet-break-replies', label: 'bullet · break replies', bullets: true, split: true })
   ]);
-  const findView = value => views.find(item => item.view === value);
+  const normalizeView = value => typeof value === 'string' ? value.trim().replace(/,+$/, '') : value;
+  const findView = value => views.find(item => item.view === normalizeView(value));
   const findFormat = value => bubbleFormats.find(item => item.id === value);
   const defaultBubbleFormat = findFormat('original');
   const readView = () => findView(new URL(location.href).searchParams.get('view')) || views[0];
   const readFormat = () => findFormat(new URL(location.href).searchParams.get('bubbles')) || defaultBubbleFormat;
   let current = readView();
+  const initialURL = new URL(location.href);
+  const initialValue = initialURL.searchParams.get('view');
+  if (findView(initialValue) && initialValue !== current.view) {
+    initialURL.searchParams.set('view', current.view);
+    history.replaceState(history.state, '', initialURL.pathname + initialURL.search + initialURL.hash);
+  }
   let currentFormat = current.view === 'multiple-bubbles' ? readFormat() : defaultBubbleFormat;
   const chevron = '<svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>';
   const control = document.createElement('nav');

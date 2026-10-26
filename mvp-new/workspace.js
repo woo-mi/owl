@@ -178,7 +178,10 @@
       if (!task) return;
       showDetail(task.title, `<p class="ws-detail-label">Status</p><p class="ws-detail-value">${esc(taskStates.get(id))}</p><button type="button" class="ws-detail-primary" data-ws-action="ask" data-prompt="${esc(`Show me the latest update for ${task.title}.`)}">Ask about this task</button>`, opener);
     }
-    trigger.addEventListener('click',()=>setOpen(stage!==PANEL.open));
+    trigger.addEventListener('click',()=>{
+      if(window.MVPFullscreenWorkspace?.isActive()) window.MVPFullscreenWorkspace.toggle();
+      else setOpen(stage!==PANEL.open);
+    });
     closeButton.addEventListener('click',()=>setOpen(false));
     backdrop.addEventListener('click',()=>setOpen(false));
     tabs.forEach(tab=>tab.addEventListener('click',()=>setTab(tab.dataset.tab)));
@@ -252,7 +255,12 @@
     window.addEventListener('resize',()=>requestAnimationFrame(()=>{syncModal();}));
     window.addEventListener('mvp-view-change',()=>setOpen(false,{restoreFocus:false}));
     window.addEventListener('popstate',()=>setOpen(false,{restoreFocus:false}));
-    window.MVPWorkspace=Object.freeze({open:()=>setOpen(true),close:()=>setOpen(false),isOpen:()=>stage===PANEL.open,setTab});
+    window.MVPWorkspace=Object.freeze({
+      open:()=>window.MVPFullscreenWorkspace?.isActive()?window.MVPFullscreenWorkspace.open():setOpen(true),
+      close:()=>{window.MVPFullscreenWorkspace?.close();setOpen(false);},
+      isOpen:()=>stage===PANEL.open||!!window.MVPFullscreenWorkspace?.isOpen(),
+      setTab:id=>window.MVPFullscreenWorkspace?.isActive()?window.MVPFullscreenWorkspace.setTab(id):setTab(id)
+    });
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
