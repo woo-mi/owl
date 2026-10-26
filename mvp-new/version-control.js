@@ -4,7 +4,8 @@
     Object.freeze({ view: 'text-only', label: 'Text only' }),
     Object.freeze({ view: 'furling-v1', label: 'Unfurling v1' }),
     Object.freeze({ view: 'furling-v2', label: 'Unfurling v2' }),
-    Object.freeze({ view: 'text-furling', label: 'Text + Unfurling' })
+    Object.freeze({ view: 'text-furling', label: 'Text + Unfurling' }),
+    Object.freeze({ view: 'multiple-bubbles', label: 'Multiple bubbles' })
   ]);
   const findView = value => views.find(item => item.view === value);
   const readView = () => findView(new URL(location.href).searchParams.get('view')) || views[0];

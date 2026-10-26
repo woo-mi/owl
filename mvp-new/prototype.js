@@ -22,6 +22,12 @@
     let sidebarOpen = false;
     let currentView = 'text-only';
     const viewStates = new Map();
+    const replyViews = Object.freeze({
+      'text-furling': 'clicked-replies',
+      'multiple-bubbles': 'multiple-bubbles-replies'
+    });
+    const replyBase = (view = currentView) => Object.keys(replyViews).find(base => base === view || replyViews[base] === view);
+    const isReplyView = (view = currentView) => Object.values(replyViews).includes(view);
     const closeRepliesButton = document.createElement('button');
     closeRepliesButton.type = 'button';
     closeRepliesButton.className = 'replies-close';
@@ -29,12 +35,12 @@
     closeRepliesButton.setAttribute('aria-label', 'Close replies and return to conversation');
     closeRepliesButton.innerHTML = '<svg viewBox="0 0 29.767 29.767" fill="none" aria-hidden="true"><path d="M23.876 23.876 5.891 5.891m0 17.985L23.876 5.891" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     document.querySelector('.main').append(closeRepliesButton);
-    let replyOpener;
+    const replyOpeners = new Map();
     const replyEntryToken = `replies-${Date.now()}-${Math.random()}`;
 
     function replyURL() {
       const url = new URL(location.href);
-      url.searchParams.set('view', 'text-furling');
+      url.searchParams.set('view', replyBase() || 'text-furling');
       url.searchParams.set('thread', 'revenue');
       url.hash = '';
       return url;
@@ -48,7 +54,7 @@
     }
 
     function closeReplies({ replace = false } = {}) {
-      if (currentView !== 'clicked-replies') return;
+      if (!isReplyView()) return;
       if (!replace && history.state?.mvpRepliesEntry === replyEntryToken) {
         history.back();
         return;
@@ -57,16 +63,18 @@
       url.searchParams.delete('thread');
       url.hash = '';
       history.replaceState(null, '', url);
-      renderView('text-furling', 'Text + Unfurling');
+      const baseView = replyBase();
+      renderView(baseView, window.MVPViews[baseView].label);
     }
     closeRepliesButton.addEventListener('click', () => closeReplies());
     ui.messages.addEventListener('click', event => {
       const link = event.target.closest('.unfurl-reply-count, .unfurl-quoted-question');
-      if (!link || currentView !== 'text-furling' || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (!link || !replyViews[currentView] || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
-      replyOpener = link;
+      replyOpeners.set(currentView, link);
       history.pushState({ mvpRepliesEntry: replyEntryToken }, '', replyURL());
-      renderView('text-furling', 'Text + Unfurling');
+      const baseView = replyBase();
+      renderView(baseView, window.MVPViews[baseView].label);
     });
 
     function announce(message) {
@@ -274,10 +282,10 @@
     }
 
     function renderView(view, label) {
-      const nextView = view === 'text-furling' && new URL(location.href).searchParams.get('thread') === 'revenue'
-        ? 'clicked-replies' : view;
+      const nextView = replyViews[view] && new URL(location.href).searchParams.get('thread') === 'revenue'
+        ? replyViews[view] : view;
       if (nextView === currentView) return;
-      const leavingReplies = currentView === 'clicked-replies';
+      const leavingReplies = isReplyView();
       const definition = window.MVPViews?.[nextView];
       if (view !== 'text-only' && !definition) return;
       closeMenu();
@@ -292,7 +300,7 @@
       else ui.messages.innerHTML = definition.html;
       currentView = nextView;
       ui.messages.dataset.view = nextView;
-      const repliesOpen = nextView === 'clicked-replies';
+      const repliesOpen = isReplyView(nextView);
       document.body.classList.toggle('replies-open', repliesOpen);
       closeRepliesButton.hidden = !repliesOpen;
       ui['message-input'].setAttribute('aria-label', repliesOpen ? 'Message in revenue replies' : 'Message');
@@ -307,7 +315,8 @@
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
       document.title = `MVP NEW · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
-      else if (leavingReplies && view === 'text-furling') {
+      else if (leavingReplies && replyViews[view]) {
+        const replyOpener = replyOpeners.get(view);
         (replyOpener?.isConnected ? replyOpener : ui.messages.querySelector('.unfurl-reply-count'))?.focus({ preventScroll: true });
       }
     }
@@ -498,7 +507,7 @@
           closeMenu();
           ui['thinking-button']?.focus();
         } else if (sidebarOpen) setSidebarOpen(false, true);
-        else if (currentView === 'clicked-replies') closeReplies();
+        else if (isReplyView()) closeReplies();
       }
       if (event.key === 'Tab' && mobile.matches && sidebarOpen && ui.sidebar) {
         const focusable = [...ui.sidebar.querySelectorAll('button:not([disabled]), a[href], input, [tabindex="0"]')].filter((node) => node.getClientRects().length);
