@@ -21,6 +21,8 @@
     let listening = false;
     let sidebarOpen = false;
     let currentView = 'text-only';
+    let currentStateKey = 'text-only';
+    let renderSequence = 0;
     const viewStates = new Map();
     const replyViews = Object.freeze({
       'text-furling': 'clicked-replies',
@@ -29,6 +31,20 @@
     });
     const replyBase = (view = currentView) => Object.keys(replyViews).find(base => base === view || replyViews[base] === view);
     const isReplyView = (view = currentView) => Object.values(replyViews).includes(view);
+    function viewPresentation(view) {
+      const definition = window.MVPViews?.[view];
+      if (replyBase(view) !== 'multiple-bubbles') return { key: view, html: definition?.html };
+      // Read the URL directly: popstate reaches this controller before the version menu.
+      const requested = new URL(location.href).searchParams.get('bubbles');
+      const templates = window.MVPBubbleViews || {};
+      const format = Object.prototype.hasOwnProperty.call(templates, requested) ? requested : 'original';
+      const template = templates[format];
+      return {
+        key: `${view}::${format}`,
+        html: template?.[isReplyView(view) ? 'replyHtml' : 'html'] ?? definition?.html,
+        initialScrollTarget: isReplyView(view) ? undefined : template?.initialScrollTarget
+      };
+    }
     const closeRepliesButton = document.createElement('button');
     closeRepliesButton.type = 'button';
     closeRepliesButton.className = 'replies-close';
@@ -72,7 +88,7 @@
       const link = event.target.closest('.unfurl-reply-count, .unfurl-quoted-question');
       if (!link || !replyViews[currentView] || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
-      replyOpeners.set(currentView, link);
+      replyOpeners.set(currentStateKey, link);
       history.pushState({ mvpRepliesEntry: replyEntryToken }, '', replyURL());
       const baseView = replyBase();
       renderView(baseView, window.MVPViews[baseView].label);
@@ -109,14 +125,31 @@
 
     function scrollToBottom(container) {
       if (!container) return;
-      const requestedFromView = currentView;
+      const requestedFromState = currentStateKey;
       requestAnimationFrame(() => {
-        if (currentView !== requestedFromView) return;
+        if (currentStateKey !== requestedFromState) return;
         container.scrollTo({
           top: container.scrollHeight,
           behavior: reducedMotion.matches ? 'auto' : 'smooth'
         });
       });
+    }
+
+    function positionInitialFrame(selector, stateKey, sequence) {
+      const target = ui.messages.querySelector(selector);
+      if (!target) return;
+      const chat = ui['chat-scroll'];
+      const align = () => {
+        chat.scrollTop += target.getBoundingClientRect().top - chat.getBoundingClientRect().top - 114;
+      };
+      align();
+      const initialScrollTop = chat.scrollTop;
+      // Font metrics can shift earlier history. Do not disturb a later view or a user's scroll.
+      document.fonts?.ready.then(() => requestAnimationFrame(() => {
+        if (currentStateKey !== stateKey || renderSequence !== sequence || !target.isConnected) return;
+        if (Math.abs(chat.scrollTop - initialScrollTop) > 1) return;
+        align();
+      }));
     }
 
     function sourceText(node) {
@@ -214,20 +247,20 @@
       scrollToBottom(ui['chat-scroll']);
       ui['message-input'].focus();
       const response = value ? responseFor(value) : 'The filenames are attached to this conversation. This local preview does not read or upload file contents.';
-      const sentFromView = currentView;
+      const sentFromState = currentStateKey;
       const timer = window.setTimeout(() => {
         timers.delete(timer);
         const message = makeMessage('assistant', response);
         message.classList.add('message-source');
-        if (currentView === sentFromView) {
+        if (currentStateKey === sentFromState) {
           ui.messages.append(message);
           registerSource(message);
           scrollToBottom(ui['chat-scroll']);
         } else {
-          viewStates.get(sentFromView)?.nodes.push(message);
+          viewStates.get(sentFromState)?.nodes.push(message);
         }
       }, reducedMotion.matches ? 0 : 320);
-      timers.set(timer, sentFromView);
+      timers.set(timer, sentFromState);
     }
 
     function closeMenu() {
@@ -285,21 +318,27 @@
     function renderView(view, label) {
       const nextView = replyViews[view] && new URL(location.href).searchParams.get('thread') === 'revenue'
         ? replyViews[view] : view;
-      if (nextView === currentView) return;
+      const presentation = viewPresentation(nextView);
+      if (presentation.key === currentStateKey) {
+        syncReplyLinks();
+        return;
+      }
       const leavingReplies = isReplyView();
       const definition = window.MVPViews?.[nextView];
       if (view !== 'text-only' && !definition) return;
       closeMenu();
-      viewStates.set(currentView, {
+      viewStates.set(currentStateKey, {
         nodes: [...ui.messages.childNodes],
         scrollTop: ui['chat-scroll'].scrollTop,
         draft: ui['message-input'].value,
         attachments: [...attachmentNames]
       });
-      const previous = viewStates.get(nextView);
+      const previous = viewStates.get(presentation.key);
       if (previous) ui.messages.replaceChildren(...previous.nodes);
-      else ui.messages.innerHTML = definition.html;
+      else ui.messages.innerHTML = presentation.html;
       currentView = nextView;
+      currentStateKey = presentation.key;
+      renderSequence += 1;
       ui.messages.dataset.view = nextView;
       const repliesOpen = isReplyView(nextView);
       document.body.classList.toggle('replies-open', repliesOpen);
@@ -314,17 +353,20 @@
       autosize(ui['message-input']);
       updateSendButtons();
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
+      if (!previous && presentation.initialScrollTarget) {
+        positionInitialFrame(presentation.initialScrollTarget, currentStateKey, renderSequence);
+      }
       document.title = `MVP NEW · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
       else if (leavingReplies && replyViews[view]) {
-        const replyOpener = replyOpeners.get(view);
+        const replyOpener = replyOpeners.get(currentStateKey);
         (replyOpener?.isConnected ? replyOpener : ui.messages.querySelector('.unfurl-reply-count'))?.focus({ preventScroll: true });
       }
     }
 
     function resetConversation() {
       timers.forEach((origin, timer) => {
-        if (origin !== currentView) return;
+        if (origin !== currentStateKey) return;
         clearTimeout(timer);
         timers.delete(timer);
       });
@@ -531,7 +573,13 @@
     updateSendButtons();
     syncSidebar();
     window.addEventListener('mvp-view-change', event => renderView(event.detail.view, event.detail.label));
-    window.addEventListener('mvp-bubble-format-change', syncReplyLinks);
+    window.addEventListener('mvp-bubble-format-change', () => {
+      const requestedView = new URL(location.href).searchParams.get('view');
+      // Main-version navigation has its own event; format changes keep the current screen.
+      if (replyBase() === 'multiple-bubbles' && requestedView === 'multiple-bubbles') {
+        renderView('multiple-bubbles', window.MVPViews['multiple-bubbles'].label);
+      } else syncReplyLinks();
+    });
     window.addEventListener('popstate', () => {
       const requested = new URL(location.href).searchParams.get('view');
       const options = window.MVPVersions?.views || [];

@@ -92,12 +92,8 @@
     formatTrigger.setAttribute('aria-label', `Multiple bubbles format, ${currentFormat.label}`);
     if (hasFormat) {
       document.body.dataset.bubbleFormat = currentFormat.id;
-      document.body.dataset.bubbleBullets = currentFormat.bullets ? 'visible' : 'hidden';
-      document.body.dataset.bubbleSplit = String(currentFormat.split);
     } else {
       delete document.body.dataset.bubbleFormat;
-      delete document.body.dataset.bubbleBullets;
-      delete document.body.dataset.bubbleSplit;
       setMenuOpen(formatGroup, false);
     }
     formatOptions.forEach(option => option.setAttribute('aria-checked', String(option.dataset.bubbleFormat === currentFormat.id)));
@@ -153,17 +149,12 @@
   function setBubbleFormat(value) {
     const next = findFormat(value);
     if (!next || current.view !== 'multiple-bubbles') return false;
-    const chat = document.getElementById('chat-scroll');
-    const top = chat.getBoundingClientRect().top + 128;
-    const anchor = [...document.querySelectorAll('#messages .message-source')].find(node => node.getBoundingClientRect().bottom > top);
-    const anchorTop = anchor?.getBoundingClientRect().top;
     currentFormat = next;
     const url = new URL(location.href);
     applyFormatToURL(url, current.view);
-    // Formatting does not add a reply-history entry or replace conversation nodes.
+    // Preserve the reply-history entry; the renderer restores this format's own state.
     history.replaceState(history.state, '', `${url.pathname}${url.search}${url.hash}`);
     updateControl();
-    if (anchor) chat.scrollTop += anchor.getBoundingClientRect().top - anchorTop;
     setMenuOpen(formatGroup, false, true);
     return true;
   }

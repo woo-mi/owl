@@ -1,39 +1,60 @@
-/* Presentation choices are scoped to Multiple bubbles and leave the source DOM intact. */
-body[data-prototype-view="multiple-bubbles"][data-bubble-bullets="hidden"] #messages .unfurl-list > li {
-  padding-left: 0;
-}
-body[data-prototype-view="multiple-bubbles"][data-bubble-bullets="hidden"] #messages .unfurl-list > li::before {
-  display: none;
-  content: none;
-}
-body[data-prototype-view="multiple-bubbles"][data-bubble-bullets="hidden"] #messages .unfurl-show-more {
-  margin-left: 0;
-}
-
-/* Sections retain their headings and nested lists; direct list items become separate replies. */
-body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble {
-  background: transparent;
-  padding: 0;
+/* Measurements from the named Pen frames; Original uses the shared styles. */
+.pen-frame-transcript,
+.pen-bubble-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 16px;
-}
-body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .unfurl-section,
-body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .message-source,
-body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .unfurl-list > li {
-  background: #f1f1f1;
-  padding: 9px 13px;
-  border-radius: 16px;
+  width: 100%;
   min-width: 0;
 }
-body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .unfurl-list {
-  gap: 16px;
+.pen-frame-transcript .pen-bubble {
+  color: #0d0d0d;
+  background: #f1f1f1;
+  border-radius: 16px;
+  padding: 9px 13px;
+  width: min(605px, 100%);
+  min-width: 0;
+  font: 400 14px/20px Inter, system-ui, sans-serif;
 }
-body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .unfurl-list > li {
-  padding-left: 34px;
+.pen-frame-transcript .pen-morning-label { width: min(126px, 100%); }
+.pen-frame-transcript .pen-morning-plain { width: min(584px, 100%); }
+.pen-frame-transcript .unfurl-list > li::before {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 10px;
+  top: 5px;
+  left: 0;
 }
-body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"] #messages .unfurl-bubble > .unfurl-list > li::before {
-  top: 9px;
-  left: 14px;
+.pen-frame-transcript [data-pen-section="morning"] .unfurl-list > li::before,
+.pen-frame-transcript [data-pen-section="delivery"] .unfurl-list > li::before { top: 4px; }
+.pen-frame-transcript .pen-list-plain > li { padding-left: 0; }
+.pen-frame-transcript .pen-list-plain > li::before { display: none; }
+.pen-frame-transcript .unfurl-show-more { color: #0085ff; margin-top: -6px; }
+.pen-frame-transcript .pen-request > .unfurl-section { gap: 0; }
+.pen-frame-transcript[data-pen-frame="Q354X"] .unfurl-measurement { max-width: none; }
+.pen-frame-replies { gap: 24px; }
+.pen-frame-replies > .replies-date-stamp { align-self: stretch; }
+.pen-frame-start { width: 100%; }
+/* Three source frames leave space before NEW where hidden design rows were placed. */
+body[data-bubble-format="no-bullet"] .pen-history,
+body[data-bubble-format="bullet"] .pen-history,
+body[data-bubble-format="bullet-break-replies"] .pen-history { margin-bottom: 138px; }
+body[data-bubble-format="no-bullet-break-replies"] .pen-history [data-pen-history-node="qRYA4"] { border-color: transparent !important; }
+body[data-bubble-format="no-bullet-break-replies"] .pen-history [data-pen-history-node="W2Htko"] { background-color: transparent !important; }
+.pen-history [data-pen-history-node="Omvcy"] {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  flex-shrink: 1 !important;
+  min-width: 0;
+  max-width: 100%;
 }
-body[data-prototype-view="multiple-bubbles"][data-bubble-split="true"][data-bubble-bullets="hidden"] #messages .unfurl-bubble > .unfurl-list > li {
-  padding-left: 13px;
+body[data-prototype-view="multiple-bubbles"][data-bubble-format]:not([data-bubble-format="original"]) .conversation > .new-divider,
+body[data-prototype-view="multiple-bubbles"][data-bubble-format]:not([data-bubble-format="original"]) .conversation > .date-stamp { display: none; }
+body[data-prototype-view="multiple-bubbles"][data-bubble-format]:not([data-bubble-format="original"]) .messages { margin-top: 0; }
+body[data-prototype-view="multiple-bubbles"][data-bubble-format]:not([data-bubble-format="original"]) .date-stamp,
+.pen-frame-transcript .replies-date-stamp {
+  font-size: 11px;
+  line-height: 15px;
+  height: 29px;
 }
