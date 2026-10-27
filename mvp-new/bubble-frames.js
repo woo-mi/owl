@@ -7,7 +7,8 @@
     { id: 'bullet', frame: 'A543a8', morning: ['wXmhv', 'c483y', 'OmpdY', 'FT2Sz', 'EG9cL', 'R5GG9'], revenue: ['Km7gM'], delivery: ['gZfPo'], drivers: ['FjoX1'], request: 'K4zewu', bullets: true, split: false },
     { id: 'bullet-break-replies', frame: 'Q354X', morning: ['oIlly', 'gTcjT', 'GwVTn', 'uQBf4', 'OsQOO', 'YVKUr'], revenue: ['j7oUI', 'Dbs56', 'NB5ur', 'FzEt5'], delivery: ['WjyTX', 'cAxJd', 'vLXjH', 'oP9J2'], drivers: ['rmBWq', 'a4OJu', 'H1t27', 'IJMhe'], request: 'f5fsF', bullets: true, split: true },
     { id: 'bullet-break-replies-character', frame: 'fXYGm', morning: ['SepJX', 'tiHOJ', 'V7zNP', 'dQBke', 'TUtrk', 'H1tMr'], revenue: ['p0frx', 'bpQum', 'WnJ8m', 'G9E19r'], delivery: ['ltjFP', 'YgiSv', 'oX5fP', 'hjFhI'], drivers: ['d8je5', 'ABrm4', 'GZq9f', 'Z0BTyS'], request: 'xUWcu', bullets: true, split: true, trends: { down: '↓', up: '↑' } },
-    { id: 'bullet-break-replies-character-tilt', frame: 'BUoAI', morning: ['MJ4VT', 'RTceP', 'xtV0S', 'L2Gsqh', 'j7Uea', 'mf1A8'], revenue: ['mEWHM', 'l2MWZU', 'dW6jz', 'PadWH'], delivery: ['PUOCa', 'ruS6W', 'u0Y0ma', 'WAs4D'], drivers: ['Kxiob', 'lF9WM', 'I7a2e', 'aIQpx'], request: 'I0TPL2', bullets: true, split: true, trends: { down: '↘', up: '↗' } }
+    { id: 'bullet-break-replies-character-tilt', frame: 'BUoAI', morning: ['MJ4VT', 'RTceP', 'xtV0S', 'L2Gsqh', 'j7Uea', 'mf1A8'], revenue: ['mEWHM', 'l2MWZU', 'dW6jz', 'PadWH'], delivery: ['PUOCa', 'ruS6W', 'u0Y0ma', 'WAs4D'], drivers: ['Kxiob', 'lF9WM', 'I7a2e', 'aIQpx'], request: 'I0TPL2', bullets: true, split: true, trends: { down: '↘', up: '↗' } },
+    { id: 'bullet-break-replies-more-characters', frame: 'f2O6C', morning: ['gJI9r', 'yhJfx', 'jqxHV', 'lHayT', 'XrAGC', 'Jy0JZ'], revenue: ['qbHDr', 'Rd4wj', 'LwnDt', 'B9HLh'], delivery: ['XnI0J', 'a5TTL3', 'ukamR', 'rIdMK'], drivers: ['VJyy2', 'c4ERz', 'bIHKx', 'KDDAv'], request: 'tXkdu', bullets: true, split: true, trends: { down: '↘', up: '↗' }, insightGlyphs: true }
   ];
   const stamp = '<div class="replies-date-stamp">Today, Mon, Oct 13 7:02 AM</div>';
   const variants = {};
@@ -53,11 +54,26 @@
       content.querySelector(`[data-source-id="${source}"]`).dataset.trendArrow = frame.trends[direction];
     }
   }
+  function applyInsightGlyphs(content, frame) {
+    if (!frame.insightGlyphs) return;
+    content.querySelectorAll('.unfurl-list > li').forEach(item => {
+      item.dataset.insightGlyph = item.dataset.trendArrow || '•';
+    });
+    const glyphs = { 'tf-exceptions': '→', 'tf-product': '○', 'tf-measurement': '•' };
+    for (const [source, glyph] of Object.entries(glyphs)) {
+      content.querySelector(`[data-source-id="${source}"]`).dataset.insightGlyph = glyph;
+    }
+    // The Pen frame leads with positive change, followed by the declines.
+    const offsets = content.querySelector('[data-source-id="tf-offsets"]');
+    const largestDeals = content.querySelector('[data-source-id="tf-largest-deals"]');
+    largestDeals.before(offsets);
+  }
   for (const frame of frames) {
     const template = document.createElement('template');
     template.innerHTML = window.MVPViews['multiple-bubbles'].html;
     const content = template.content;
     applyTrendCharacters(content, frame);
+    applyInsightGlyphs(content, frame);
     const [morning, revenue, delivery, drivers, request] = content.querySelectorAll('article.assistant-message');
     const morningGroup = group('morning');
     morningGroup.append(bubble(morning.querySelector('[data-source-id="tf-morning"]').cloneNode(true), frame.morning[0], 'pen-morning-label'));

@@ -43,7 +43,23 @@
 .pen-frame-transcript .pen-request > .unfurl-section { gap: 0; }
 .pen-frame-transcript[data-pen-frame="Q354X"] .unfurl-measurement,
 .pen-frame-transcript[data-pen-frame="fXYGm"] .unfurl-measurement,
-.pen-frame-transcript[data-pen-frame="BUoAI"] .unfurl-measurement { max-width: none; }
+.pen-frame-transcript[data-pen-frame="BUoAI"] .unfurl-measurement,
+.pen-frame-transcript[data-pen-frame="f2O6C"] .unfurl-measurement { max-width: none; }
+.pen-frame-transcript[data-pen-frame="f2O6C"] .unfurl-measurement {
+  position: relative;
+  padding-left: 21px;
+}
+.pen-frame-transcript[data-pen-frame="f2O6C"] .message-source[data-insight-glyph]::before {
+  content: attr(data-insight-glyph);
+  position: absolute;
+  color: currentColor;
+  font: 400 14px/20px Inter, system-ui, sans-serif;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 20px;
+  text-align: center;
+}
 .pen-frame-replies { gap: 24px; }
 .pen-frame-replies > .replies-date-stamp { align-self: stretch; }
 body[data-prototype-view="multiple-bubbles"][data-bubble-format]:not([data-bubble-format="original"]) .date-stamp,
