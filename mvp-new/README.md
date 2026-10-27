@@ -37,7 +37,7 @@ conversation/reply drafts, attachments, and scroll positions. Its presentation
 stays Aligned, so it does not show the bubble-format picker.
 Open it at https://woo-mi.github.io/owl/mvp-new/?view=latest-oct-27.
 
-Its workspace starts on Tasks and omits Connections. Tasks uses the Pen frame's
+Its workspace starts on Tasks and omits Connections and History. Tasks uses the Pen frame's
 Upcoming, In progress, and Done sections, with independent task editing state.
 Artifacts has Apps, Reports, and Chats tabs with the corresponding Pen previews
 in one column. Reports follows the visible tab label in the frame named

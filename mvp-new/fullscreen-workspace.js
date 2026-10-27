@@ -16,7 +16,7 @@
     const history = window.FullscreenHistory;
     const isLatest = () => document.body.dataset.prototypeView === 'latest-oct-27';
     const initialSection = isLatest() ? 'schedules' : 'connections';
-    const sectionEnabled = id => !(isLatest() && id === 'connections');
+    const sectionEnabled = id => !(isLatest() && ['connections', 'history'].includes(id));
     const sectionLabel = id => isLatest() && id === 'schedules' ? 'Tasks' : LABELS[id];
     const taskController = () => isLatest() ? window.LatestTasks : schedules;
     const trigger = document.getElementById('chief-profile');
@@ -111,7 +111,7 @@
     }
     function syncPresentation() {
       const next = isLatest() ? 'latest' : 'legacy';
-      dialog.querySelector('#fsw-nav-connections').hidden = !sectionEnabled('connections');
+      for (const id of ['connections', 'history']) dialog.querySelector(`#fsw-nav-${id}`).hidden = !sectionEnabled(id);
       dialog.querySelector('#fsw-nav-schedules span').textContent = sectionLabel('schedules');
       if (next !== presentation) {
         rememberedSections.set(presentation, section);
