@@ -2,8 +2,7 @@
 /* Keep text on the section edge while the hover surface extends into the gutter. */
 .fsw-dialog[data-section=schedules] .fsw-scroll{margin-inline:calc(-1 * var(--fsw-hover-gutter));padding-inline:var(--fsw-hover-gutter)}
 .fsw-schedule-list{list-style:none;padding:0;margin:0 calc(-1 * var(--fsw-hover-gutter));min-width:0}
-.fsw-schedule-screen>.fsw-content-see-all{appearance:none;align-self:flex-start;padding:0;border:0;background:transparent;color:#0085ff;font:var(--fsw-type-body);text-align:left;cursor:pointer}
-.fsw-schedule-screen>.fsw-content-see-all:hover{text-decoration:underline}
+.fsw-schedule-screen>.fsw-content-see-all{align-self:flex-start;padding:0;color:#0085ff;font:var(--fsw-type-body);text-align:left;cursor:default}
 .fsw-schedule-row{position:relative;display:flex;align-items:center;gap:16px;width:100%;min-height:var(--fsw-row-min-height);padding:var(--fsw-row-padding) var(--fsw-hover-gutter);border:0;background:transparent;color:var(--fsw-text-primary);font:var(--fsw-type-body);text-align:left;cursor:pointer}
 .fsw-schedule-row::after{content:"";position:absolute;bottom:0;left:var(--fsw-hover-gutter);right:var(--fsw-hover-gutter);height:1px;background:#eee;pointer-events:none}
 .fsw-schedule-row:hover{background:#f8f8f8;border-radius:8px}

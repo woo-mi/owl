@@ -42,7 +42,7 @@
     return `<li><button type="button" class="fsw-schedule-row" data-fsw-schedule="edit" data-task-id="${task.id}" aria-label="Edit ${esc(task.title)}"><span class="fsw-schedule-copy"><span class="fsw-schedule-title">${esc(task.title)}</span><span class="fsw-schedule-meta"><span>${esc(scheduleLabel(task))}</span><span>${esc(task.destination === 'Slack' ? `Slack · ${task.channel}` : 'Owl · Current chat')}</span></span></span><span class="fsw-schedule-status">${esc(task.paused ? 'Paused' : task.status)}</span><span class="fsw-schedule-more">${more}</span></button></li>`;
   }
   function render(options = {}) {
-    return `<section class="fsw-schedule-screen" aria-label="Scheduled tasks">${options.directory ? '' : '<h3 class="fsw-content-label">Tasks</h3>'}<ul class="fsw-schedule-list">${tasks.map(row).join('')}</ul>${options.directory ? '' : '<button type="button" class="fsw-content-see-all" data-fsw-schedule="all">See all</button>'}</section>`;
+    return `<section class="fsw-schedule-screen" aria-label="Scheduled tasks">${options.directory ? '' : '<h3 class="fsw-content-label">Tasks</h3>'}<ul class="fsw-schedule-list">${tasks.map(row).join('')}</ul>${options.directory ? '' : '<span class="fsw-content-see-all">See all</span>'}</section>`;
   }
   function control(field, label, extra = '') {
     return `<button type="button" class="fsw-edit-select" data-edit-select="${field}" aria-haspopup="listbox" aria-expanded="false" aria-controls="fsw-edit-menu" aria-label="${esc(label)}" ${extra}><span data-edit-value="${field}"></span>${chevron}</button>`;
@@ -246,10 +246,6 @@
   function handleClick(event, nextApi = {}) {
     const target = event.target.closest('[data-fsw-schedule]');
     if (!target) return false;
-    if (target.dataset.fswSchedule === 'all') {
-      nextApi.showDetail?.('All tasks', render({directory:true}), target);
-      return true;
-    }
     const task = tasks.find(item => item.id === target.dataset.taskId);
     if (task) openEditor(task, target, nextApi);
     return !!task;
