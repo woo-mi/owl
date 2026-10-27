@@ -45,7 +45,7 @@
 .pen-frame-transcript[data-pen-frame="fXYGm"] .unfurl-measurement,
 .pen-frame-transcript[data-pen-frame="BUoAI"] .unfurl-measurement,
 .pen-frame-transcript[data-pen-frame="f2O6C"] .unfurl-measurement { max-width: none; }
-.pen-frame-transcript[data-pen-frame="f2O6C"] .unfurl-measurement {
+.pen-frame-transcript[data-pen-frame="f2O6C"] .unfurl-measurement [data-insight-glyph] {
   position: relative;
   padding-left: 21px;
 }
