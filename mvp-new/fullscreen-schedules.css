@@ -32,10 +32,11 @@
 .fsw-edit-setting{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;min-height:40.3335px;padding:0 2.5px;color:#252525}
 .fsw-edit-settings>.fsw-edit-setting:not([hidden])~.fsw-edit-setting:not([hidden]){border-top:.833px solid #e6e6e6}
 .fsw-edit-setting>span:first-child{min-width:0}
-.fsw-edit-select{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0;max-width:65%;min-height:28px;margin:0 -2px 0 0;padding:4px 2px;border:0;border-radius:4px;background:transparent;color:#767676;text-align:right}
+.fsw-edit-select{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0;max-width:65%;min-height:28px;margin:0 -7px 0 0;padding:4px 7px;border:0;border-radius:8px;background:transparent;color:#767676;text-align:right}
 .fsw-edit-select>span{overflow-wrap:anywhere}
-.fsw-edit-select>svg{display:block;width:10px;height:10px;flex:none;color:#777}
-.fsw-edit-select:hover:not(:disabled){background:#f5f5f5}
+.fsw-edit-select>svg{display:block;width:10px;height:10px;flex:none;color:currentColor}
+.fsw-edit-select:hover:not(:disabled){background:transparent;color:#1c1f22}
+.fsw-edit-select[aria-expanded=true]:not(:disabled),.fsw-edit-select:active:not(:disabled),.fsw-edit-select:focus-visible:not(:disabled){background:transparent;color:#767676;outline:2px solid #777;outline-offset:0}
 .fsw-edit-select:disabled{color:#aaa}
 .fsw-edit-switch{position:relative;flex:none;width:26.667px;height:16.667px;padding:1.667px;border:0;border-radius:8.333px;background:#aaa;transition:background-color 140ms ease}
 .fsw-edit-switch>span{position:absolute;left:1.667px;top:1.667px;width:13.333px;height:13.333px;border-radius:50%;background:#fff;transition:transform 140ms ease}
