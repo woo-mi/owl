@@ -1,4 +1,16 @@
-.fsw-dialog{position:fixed;inset:0;margin:auto;padding:0;border:0;border-radius:12px;width:min(1280px,calc(100vw - 160px));max-width:none;height:min(830px,calc(100dvh - 128px));max-height:none;overflow:hidden;background:#fff;color:#191919;box-shadow:0 1px 5px #0000001a;font-family:Inter,system-ui,sans-serif;font-size:14px;line-height:1.43}
+/* Shared workspace typography, including dialogs rendered outside the workspace. */
+:root{
+  --fsw-font-family:Inter,system-ui,sans-serif;
+  --fsw-type-heading:600 18px/26px var(--fsw-font-family);
+  --fsw-type-subheading:500 16px/23px var(--fsw-font-family);
+  --fsw-type-identity:600 14px/20px var(--fsw-font-family);
+  --fsw-type-body:400 14px/20px var(--fsw-font-family);
+  --fsw-type-label:400 13px/19px var(--fsw-font-family);
+  --fsw-type-meta:400 12px/17px var(--fsw-font-family);
+  --fsw-text-primary:#191919;
+  --fsw-text-secondary:#777;
+}
+.fsw-dialog{position:fixed;inset:0;margin:auto;padding:0;border:0;border-radius:12px;width:min(1280px,calc(100vw - 160px));max-width:none;height:min(830px,calc(100dvh - 128px));max-height:none;overflow:hidden;background:#fff;color:var(--fsw-text-primary);box-shadow:0 1px 5px #0000001a;font:var(--fsw-type-body);letter-spacing:normal}
 .fsw-dialog[open]{display:grid;grid-template-columns:220px minmax(0,1fr);animation:fsw-enter 220ms cubic-bezier(.22,1,.36,1)}
 .fsw-dialog::backdrop{background:#00000047;animation:fsw-backdrop-in 220ms ease-out}
 .fsw-dialog.is-closing{animation:fsw-leave 180ms ease-in forwards}
@@ -8,8 +20,8 @@
 .fsw-dialog button:focus-visible,.fsw-dialog a:focus-visible,.fsw-dialog textarea:focus-visible,.fsw-dialog input:focus-visible{outline:2px solid #0085ff;outline-offset:3px}
 .fsw-sidebar{padding:24px 12px;display:flex;flex-direction:column;gap:28px;background:#fcfcfc;border-right:1px solid #e7e7e7;min-width:0;overflow:auto}
 .fsw-identity{padding:0 8px;display:flex;gap:10px;align-items:center}
-.fsw-identity strong{font-size:14px;line-height:20px;font-weight:600;display:block;white-space:nowrap}
-.fsw-identity span{display:block;font-size:12px;line-height:17px;color:#777;margin-top:2px}
+.fsw-identity strong{font:var(--fsw-type-identity);display:block;white-space:nowrap}
+.fsw-identity span{display:block;font:var(--fsw-type-meta);color:var(--fsw-text-secondary);margin-top:2px}
 .fsw-avatar{flex:none;width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center;overflow:hidden}
 .fsw-avatar>div{width:24px!important;height:24px!important;flex:none}
 .fsw-avatar>img{width:24px;height:24px}
@@ -21,7 +33,7 @@
 .fsw-nav[aria-selected=true]:hover{background:#e7e7e7}
 .fsw-main{display:flex;flex-direction:column;gap:24px;min-width:0;min-height:0;padding:24px 32px;position:relative}
 .fsw-header{display:flex;align-items:center;gap:8px;min-height:36px;flex:none}
-.fsw-header h2{font-size:18px;line-height:26px;font-weight:600;margin:0;flex:1}
+.fsw-header h2{font:var(--fsw-type-heading);margin:0;flex:1}
 .fsw-close,.fsw-back{display:grid;place-items:center;width:32px;height:32px;padding:8px;border:0;border-radius:8px;flex:none;color:#303030;background:transparent}
 .fsw-close svg,.fsw-back svg{width:16px;height:16px}
 .fsw-close:hover,.fsw-back:hover{background:#f4f4f4}
@@ -33,17 +45,17 @@
 .fsw-composer button{border:0;display:grid;place-items:center;width:26px;height:26px;padding:5px;flex:none;border-radius:50%;background:#14181f;color:#fff}
 .fsw-composer button:disabled{cursor:default;background:#eceef4;color:var(--composer-send-muted)}
 .fsw-composer svg{width:16px;height:16px}
-.fsw-notice{position:absolute;bottom:84px;left:32px;right:32px;font-size:13px;color:#53534f;pointer-events:none;background:#fff}
+.fsw-notice{position:absolute;bottom:84px;left:32px;right:32px;font:var(--fsw-type-meta);color:var(--fsw-text-secondary);pointer-events:none;background:#fff}
 .fsw-notice:empty{display:none}
 .fsw-dialog:not([data-section=memory]):not([data-section=history]) .fsw-notice{bottom:24px}
-.fsw-detail{outline:none;font-size:14px;color:#484648}
-.fsw-detail h3{font-size:16px;font-weight:600;color:#191919;margin:0 0 20px}
+.fsw-detail{outline:none;font:var(--fsw-type-body);color:var(--fsw-text-primary)}
+.fsw-detail h3{font:var(--fsw-type-subheading);color:var(--fsw-text-primary);margin:0 0 20px}
 .fullscreen-workspace-open .prototype-versions{visibility:hidden}
 @keyframes fsw-enter{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
 @keyframes fsw-leave{to{opacity:0;transform:translateY(8px) scale(.99)}}
 @keyframes fsw-backdrop-in{from{background:#00000000}to{background:#00000047}}
 @keyframes fsw-backdrop-out{to{background:#00000000}}
 @media(max-width:1100px){.fsw-dialog{width:calc(100vw - 48px);height:calc(100dvh - 48px)}.fsw-dialog[open]{grid-template-columns:190px minmax(0,1fr)}.fsw-main{padding:24px}}
-@media(max-width:700px){.fsw-dialog{width:calc(100vw - 24px);height:calc(100dvh - 24px)}.fsw-dialog[open]{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}.fsw-sidebar{padding:14px 16px 12px;gap:12px;border-right:0;border-bottom:1px solid #e7e7e7;overflow:visible}.fsw-identity{padding:0}.fsw-navigation{flex-direction:row;gap:4px;overflow:auto}.fsw-nav{padding:0 8px;width:auto;flex:1;justify-content:center;gap:5px;font-size:12px!important}.fsw-nav svg{width:14px;height:14px}.fsw-main{padding:16px;gap:16px}.fsw-notice{left:16px;right:16px}.fsw-composer{gap:8px}.fsw-header h2{font-size:18px}}
+@media(max-width:700px){.fsw-dialog{width:calc(100vw - 24px);height:calc(100dvh - 24px)}.fsw-dialog[open]{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}.fsw-sidebar{padding:14px 16px 12px;gap:12px;border-right:0;border-bottom:1px solid #e7e7e7;overflow:visible}.fsw-identity{padding:0}.fsw-navigation{flex-direction:row;gap:4px;overflow:auto}.fsw-nav{padding:0 8px;width:auto;flex:1;justify-content:center;gap:5px}.fsw-nav svg{width:14px;height:14px}.fsw-main{padding:16px;gap:16px}.fsw-notice{left:16px;right:16px}.fsw-composer{gap:8px}}
 @media(max-width:480px){.fsw-navigation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible}.fsw-nav{height:32px;justify-content:flex-start}}
 @media(prefers-reduced-motion:reduce){.fsw-dialog,.fsw-dialog::backdrop,.fsw-dialog.is-closing,.fsw-dialog.is-closing::backdrop{animation:none!important}.fsw-dialog *{scroll-behavior:auto!important;transition:none!important}}

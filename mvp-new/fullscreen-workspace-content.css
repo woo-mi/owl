@@ -1,9 +1,9 @@
-.fsw-section-content{width:100%;min-width:0;font:400 14px/20px Inter,system-ui,sans-serif;color:#191919}
+.fsw-section-content{width:100%;min-width:0;font:var(--fsw-type-body);color:var(--fsw-text-primary)}
 .fsw-section-content p,.fsw-content-detail p{margin:0}
-.fsw-content-label{font:400 13px/19px Inter,system-ui,sans-serif;color:#777;margin:0}
+.fsw-content-label{font:var(--fsw-type-label);color:var(--fsw-text-secondary);margin:0}
 .fsw-content-list{list-style:none;margin:0;padding:0;min-width:0}
-.fsw-content-title{font-size:14px;font-weight:400;line-height:20px;color:#191919}
-.fsw-content-muted{font-size:14px;line-height:20px;color:#777}
+.fsw-content-title{font:var(--fsw-type-body);color:var(--fsw-text-primary)}
+.fsw-content-muted{font:var(--fsw-type-body);color:var(--fsw-text-secondary)}
 .fsw-connections{display:flex;flex-direction:column;gap:16px}
 .fsw-connection-row{display:flex;align-items:center;gap:24px;min-width:0;border-bottom:1px solid #eee;box-sizing:border-box}
 .fsw-connection-row{min-height:76px;padding:12px 0}
@@ -15,12 +15,12 @@
 .fsw-artifacts{container-type:inline-size}
 .fsw-artifact-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14.5px;align-items:start;min-width:0}
 .fsw-artifact-column{display:flex;flex-direction:column;gap:14.5px;min-width:0}
-.fsw-artifact-card{appearance:none;display:flex;flex-direction:column;align-items:flex-start;gap:14px;box-sizing:border-box;width:100%;min-width:0;text-align:left;padding:13px 17px;border:0;border-radius:13px;background:#fff;box-shadow:inset 0 0 0 1px #f1f2f3,0 4px 18px #00000008;font-family:Lato,system-ui,sans-serif;cursor:pointer}
+.fsw-artifact-card{appearance:none;display:flex;flex-direction:column;align-items:flex-start;gap:14px;box-sizing:border-box;width:100%;min-width:0;text-align:left;padding:13px 17px;border:0;border-radius:13px;background:#fff;box-shadow:inset 0 0 0 1px #f1f2f3,0 4px 18px #00000008;font:var(--fsw-type-body);cursor:pointer}
 .fsw-artifact-card:hover{box-shadow:inset 0 0 0 1px #dedfe2,0 4px 18px #0000000c}
 .fsw-artifact-copy{display:flex;flex-direction:column;gap:4px;width:100%;min-width:0}
-.fsw-artifact-title{font:700 14px/1.25 Lato,system-ui,sans-serif;color:#1d1c1d}
-.fsw-artifact-description{font:400 12px/1.25 Lato,system-ui,sans-serif;color:#484648}
-.fsw-artifact-source{display:flex;align-items:center;gap:5px;box-sizing:border-box;min-width:0;max-width:100%;padding:3px 5px;background:transparent;font:400 12px/1.25 Lato,system-ui,sans-serif;color:#0067b5}
+.fsw-artifact-title{font:var(--fsw-type-body);color:var(--fsw-text-primary);overflow-wrap:anywhere}
+.fsw-artifact-description{font:var(--fsw-type-body);color:var(--fsw-text-secondary)}
+.fsw-artifact-source{display:flex;align-items:center;gap:5px;box-sizing:border-box;min-width:0;max-width:100%;padding:3px 5px;background:transparent;font:var(--fsw-type-body);color:#0067b5}
 .fsw-artifact-source>svg{display:block;width:12px;height:12px;flex:none}
 .fsw-artifact-source>span{min-width:0;overflow-wrap:anywhere}
 .fsw-artifact-card:hover .fsw-artifact-source>span{text-decoration:underline}
@@ -30,8 +30,8 @@
 @container(max-width:719px){.fsw-artifact-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @container(max-width:529px){.fsw-artifact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @container(max-width:359px){.fsw-artifact-grid{grid-template-columns:minmax(0,1fr)}}
-.fsw-content-detail{display:flex;flex-direction:column;gap:16px;font:400 14px/20px Inter,system-ui,sans-serif;color:#191919;min-width:0}
-.fsw-content-primary{appearance:none;align-self:flex-start;border:0;border-radius:8px;background:#191919;color:#fff;padding:9px 14px;font:500 14px/20px Inter,system-ui,sans-serif;cursor:pointer}
+.fsw-content-detail{display:flex;flex-direction:column;gap:16px;font:var(--fsw-type-body);color:var(--fsw-text-primary);min-width:0}
+.fsw-content-primary{appearance:none;align-self:flex-start;border:0;border-radius:8px;background:#191919;color:#fff;padding:9px 14px;font:var(--fsw-type-body);cursor:pointer}
 .fsw-content-switch:focus-visible,.fsw-artifact-card:focus-visible,.fsw-content-primary:focus-visible{outline:2px solid #0085ff;outline-offset:3px}
 @media(max-width:600px){.fsw-connection-row{gap:16px}.fsw-artifact-title,.fsw-artifact-description{overflow-wrap:anywhere}}
 @media(prefers-reduced-motion:reduce){.fsw-content-switch,.fsw-content-switch>span{transition:none}}
