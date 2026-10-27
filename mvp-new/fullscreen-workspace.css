@@ -35,6 +35,7 @@
 .fsw-composer svg{width:16px;height:16px}
 .fsw-notice{position:absolute;bottom:84px;left:32px;right:32px;font-size:13px;color:#53534f;pointer-events:none;background:#fff}
 .fsw-notice:empty{display:none}
+.fsw-dialog:not([data-section=memory]) .fsw-notice{bottom:24px}
 .fsw-detail{outline:none;font-size:14px;color:#484648}
 .fsw-detail h3{font-size:16px;font-weight:600;color:#191919;margin:0 0 20px}
 .fullscreen-workspace-open .prototype-versions{visibility:hidden}

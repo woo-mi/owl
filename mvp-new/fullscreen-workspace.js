@@ -11,6 +11,7 @@
 
   function start() {
     const content = window.FullscreenWorkspaceContent;
+    const schedules = window.FullscreenSchedules;
     const memory = window.FullscreenMemory;
     const trigger = document.getElementById('chief-profile');
     const dialog = document.createElement('dialog');
@@ -33,12 +34,14 @@
     const title = dialog.querySelector('#fsw-title');
     const back = dialog.querySelector('.fsw-back');
     const input = dialog.querySelector('.fsw-composer textarea');
+    const composer = dialog.querySelector('.fsw-composer');
+    composer.hidden = true;
+    dialog.dataset.section = 'connections';
     const send = dialog.querySelector('.fsw-composer button');
     const closeButton = dialog.querySelector('.fsw-close');
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const sectionScroll = new Map();
     let section = 'connections';
-    let artifactTab = 'apps';
     let closing = false;
     let closeTimer;
     let noticeTimer;
@@ -60,12 +63,14 @@
     }
     function setHeader(isDetail = false) {
       title.textContent = LABELS[section];
+      dialog.dataset.section = section;
+      composer.hidden = section !== 'memory';
       back.hidden = !isDetail;
       back.setAttribute('aria-label', `Back to ${LABELS[section]}`);
     }
     function render(id) {
       if (id === 'memory') return;
-      host(id).innerHTML = content.render(id, { artifactTab });
+      host(id).innerHTML = id === 'schedules' ? schedules.render() : content.render(id);
     }
     SECTIONS.filter(id => id !== 'memory').forEach(render);
     memory.mount(host('memory'), {
@@ -90,16 +95,6 @@
       scroll.scrollTop = sectionScroll.get(id) || 0;
       if (!reduced.matches && changed) host(id).animate([{ opacity: .2, transform: 'translateY(4px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 130, easing: 'ease-out' });
       if (focus) dialog.querySelector(`#fsw-nav-${id}`).focus({preventScroll:true});
-    }
-    function setArtifactTab(id) {
-      if (!['apps','agents','chats'].includes(id)) return;
-      artifactTab = id;
-      detail.hidden = true;
-      host('artifacts').hidden = false;
-      render('artifacts');
-      setHeader(false);
-      scroll.scrollTop = 0;
-      host('artifacts').querySelector('[role="tab"][aria-selected="true"]')?.focus({ preventScroll: true });
     }
     function showDetail(detailTitle, html, opener) {
       detailOpener = opener || document.activeElement;
@@ -134,6 +129,7 @@
     }
     function close({restoreFocus = true, immediate = false} = {}) {
       if (!dialog.open) return;
+      schedules.closeEditor({restoreFocus:false});
       clearTimeout(closeTimer);
       closing = true;
       dialog.classList.add('is-closing');
@@ -155,7 +151,13 @@
       chatInput.dispatchEvent(new Event('input',{bubbles:true}));
       chatInput.focus({preventScroll:true});
     }
-    const api = { setArtifactTab, showDetail, ask, announce };
+    function refreshSchedules() {
+      render('schedules');
+      if (section === 'schedules' && !detail.hidden) {
+        detail.innerHTML = `<h3>All tasks</h3>${schedules.render({directory:true})}`;
+      }
+    }
+    const api = { showDetail, ask, announce, refreshSchedules };
     dialog.addEventListener('click', event => {
       const nav = event.target.closest('[data-fsw-section]');
       if (nav) return setSection(nav.dataset.fswSection);
@@ -165,7 +167,8 @@
         const rect = dialog.getBoundingClientRect();
         if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close();
       }
-      if (section !== 'memory') content.handleClick(event, api);
+      if (section === 'schedules') schedules.handleClick(event, api);
+      else if (section !== 'memory') content.handleClick(event, api);
     });
     dialog.addEventListener('cancel', event => {
       event.preventDefault();
