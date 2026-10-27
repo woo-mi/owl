@@ -30,9 +30,20 @@
 .pen-frame-transcript [data-pen-section="delivery"] .unfurl-list > li::before { top: 4px; }
 .pen-frame-transcript .pen-list-plain > li { padding-left: 0; }
 .pen-frame-transcript .pen-list-plain > li::before { display: none; }
+.pen-frame-transcript .unfurl-list > li[data-trend-arrow]::before {
+  content: attr(data-trend-arrow);
+  font: 400 14px/20px Inter, system-ui, sans-serif;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 20px;
+  text-align: center;
+}
 .pen-frame-transcript .unfurl-show-more { color: #0085ff; margin-top: -6px; }
 .pen-frame-transcript .pen-request > .unfurl-section { gap: 0; }
-.pen-frame-transcript[data-pen-frame="Q354X"] .unfurl-measurement { max-width: none; }
+.pen-frame-transcript[data-pen-frame="Q354X"] .unfurl-measurement,
+.pen-frame-transcript[data-pen-frame="fXYGm"] .unfurl-measurement,
+.pen-frame-transcript[data-pen-frame="BUoAI"] .unfurl-measurement { max-width: none; }
 .pen-frame-replies { gap: 24px; }
 .pen-frame-replies > .replies-date-stamp { align-self: stretch; }
 body[data-prototype-view="multiple-bubbles"][data-bubble-format]:not([data-bubble-format="original"]) .date-stamp,

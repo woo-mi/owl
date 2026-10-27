@@ -8,9 +8,10 @@
   display: flex;
   align-items: flex-end;
   gap: 8px;
+  max-width: calc(100vw - 32px);
 }
 
-.prototype-control { position: relative; }
+.prototype-control { position: relative; max-width: 100%; }
 .prototype-control[hidden] { display: none; }
 
 .prototype-version-trigger {
@@ -57,7 +58,14 @@
 }
 
 .prototype-version-menu[hidden] { display: none; }
-.prototype-format-menu { width: 240px; }
+.prototype-format-menu { width: 360px; }
+.prototype-format-trigger {
+  max-width: 100%;
+  min-height: 36px;
+  height: auto;
+  padding-block: 7px;
+}
+.prototype-format-label { white-space: normal; text-align: left; }
 
 .prototype-version-option,
 .prototype-format-option {
@@ -83,6 +91,7 @@
   font-weight: 400;
   text-align: left;
   cursor: pointer;
+  white-space: normal;
 }
 
 .prototype-version-option:hover,

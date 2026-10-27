@@ -13,7 +13,9 @@
     Object.freeze({ id: 'no-bullet', label: 'no bullet', bullets: false, split: false }),
     Object.freeze({ id: 'no-bullet-break-replies', label: 'no bullet · break replies', bullets: false, split: true }),
     Object.freeze({ id: 'bullet', label: 'bullet', bullets: true, split: false }),
-    Object.freeze({ id: 'bullet-break-replies', label: 'bullet · break replies', bullets: true, split: true })
+    Object.freeze({ id: 'bullet-break-replies', label: 'bullet · break replies', bullets: true, split: true }),
+    Object.freeze({ id: 'bullet-break-replies-character', label: 'bullet · break replies · character', bullets: true, split: true }),
+    Object.freeze({ id: 'bullet-break-replies-character-tilt', label: 'bullet · break replies · character tilt', bullets: true, split: true })
   ]);
   const normalizeView = value => typeof value === 'string' ? value.trim().replace(/,+$/, '') : value;
   const findView = value => views.find(item => item.view === normalizeView(value));
