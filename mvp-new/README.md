@@ -37,6 +37,13 @@ conversation/reply drafts, attachments, and scroll positions. Its presentation
 stays Aligned, so it does not show the bubble-format picker.
 Open it at https://woo-mi.github.io/owl/mvp-new/?view=latest-oct-27.
 
+Its workspace starts on Tasks and omits Connections. Tasks uses the Pen frame's
+Upcoming, In progress, and Done sections, with independent task editing state.
+Artifacts has Apps, Reports, and Chats tabs with the corresponding Pen previews
+in one column. Reports follows the visible tab label in the frame named
+"full screen workspace - Artifacts - Agents". Other prototype versions retain
+their existing workspace presentation.
+
 Multiple bubbles has a second format control ordered as Original, no bullet,
 no bullet · break replies, bullet, and bullet · break replies. Original is the
 default and restores the initial layout. Break modes separate the
