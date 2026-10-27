@@ -1,8 +1,8 @@
 /* The workspace prototype and More characters format share the full-screen dialog. */
 (() => {
   'use strict';
-  const SECTIONS = ['connections', 'schedules', 'artifacts', 'memory'];
-  const LABELS = { connections: 'Connections', schedules: 'Schedules', artifacts: 'Artifacts', memory: 'Memory' };
+  const SECTIONS = ['connections', 'schedules', 'artifacts', 'memory', 'history'];
+  const LABELS = { connections: 'Connections', schedules: 'Schedules', artifacts: 'Artifacts', memory: 'Memory', history: 'History' };
   const icon = paths => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
   const closeIcon = icon('<path d="m6 6 12 12M6 18 18 6"/>');
   const backIcon = icon('<path d="m14 6-6 6 6 6"/>');
@@ -13,12 +13,13 @@
     const content = window.FullscreenWorkspaceContent;
     const schedules = window.FullscreenSchedules;
     const memory = window.FullscreenMemory;
+    const history = window.FullscreenHistory;
     const trigger = document.getElementById('chief-profile');
     const dialog = document.createElement('dialog');
     dialog.id = 'fullscreen-workspace';
     dialog.className = 'fsw-dialog';
     dialog.setAttribute('aria-labelledby', 'fsw-title');
-    dialog.innerHTML = `<aside class="fsw-sidebar"><div class="fsw-identity"><div class="fsw-avatar" aria-hidden="true"></div><div><strong>Chief of staff</strong><span>Active now</span></div></div><div class="fsw-navigation" role="tablist" aria-label="Workspace sections" aria-orientation="vertical">${SECTIONS.map(id => `<button type="button" id="fsw-nav-${id}" class="fsw-nav" role="tab" aria-controls="fsw-section-${id}" aria-selected="${id === 'connections'}" tabindex="${id === 'connections' ? 0 : -1}" data-fsw-section="${id}">${content.icons[id] || ''}<span>${LABELS[id]}</span></button>`).join('')}</div></aside><div class="fsw-main"><header class="fsw-header"><button type="button" class="fsw-back" aria-label="Back to Memory" hidden>${backIcon}</button><h2 id="fsw-title">Connections</h2><button type="button" class="fsw-close" aria-label="Close workspace">${closeIcon}</button></header><div class="fsw-scroll">${SECTIONS.map(id => `<section id="fsw-section-${id}" class="fsw-panel-content" role="tabpanel" aria-labelledby="fsw-nav-${id}" tabindex="0" ${id === 'connections' ? '' : 'hidden'}></section>`).join('')}<section class="fsw-detail" tabindex="-1" hidden></section></div><form class="fsw-composer"><textarea rows="1" aria-label="Message Chief of staff in workspace" placeholder="Get quick answers and dig in with follow-ups"></textarea><button type="submit" aria-label="Send workspace message" disabled>${arrowIcon}</button></form><div class="fsw-notice" role="status" aria-live="polite"></div></div>`;
+    dialog.innerHTML = `<aside class="fsw-sidebar"><div class="fsw-identity"><div class="fsw-avatar" aria-hidden="true"></div><div><strong>Chief of staff</strong><span>Active now</span></div></div><div class="fsw-navigation" role="tablist" aria-label="Workspace sections" aria-orientation="vertical">${SECTIONS.map(id => `<button type="button" id="fsw-nav-${id}" class="fsw-nav" role="tab" aria-controls="fsw-section-${id}" aria-selected="${id === 'connections'}" tabindex="${id === 'connections' ? 0 : -1}" data-fsw-section="${id}">${id === 'history' ? history.icon : content.icons[id] || ''}<span>${LABELS[id]}</span></button>`).join('')}</div></aside><div class="fsw-main"><header class="fsw-header"><button type="button" class="fsw-back" aria-label="Back to Memory" hidden>${backIcon}</button><h2 id="fsw-title">Connections</h2><button type="button" class="fsw-close" aria-label="Close workspace">${closeIcon}</button></header><div class="fsw-scroll">${SECTIONS.map(id => `<section id="fsw-section-${id}" class="fsw-panel-content" role="tabpanel" aria-labelledby="fsw-nav-${id}" tabindex="0" ${id === 'connections' ? '' : 'hidden'}></section>`).join('')}<section class="fsw-detail" tabindex="-1" hidden></section></div><form class="fsw-composer"><textarea rows="1" aria-label="Message Chief of staff in workspace" placeholder="Get quick answers and dig in with follow-ups"></textarea><button type="submit" aria-label="Send workspace message" disabled>${arrowIcon}</button></form><div class="fsw-notice" role="status" aria-live="polite"></div></div>`;
     document.body.append(dialog);
     const avatar = trigger.querySelector('[data-pencil-name="ii"]') || trigger.querySelector('.agent-avatar > *');
     if (avatar) {
@@ -66,13 +67,13 @@
     function setHeader(isDetail = false) {
       title.textContent = LABELS[section];
       dialog.dataset.section = section;
-      composer.hidden = section !== 'memory';
+      composer.hidden = !['memory', 'history'].includes(section);
       back.hidden = !isDetail;
       back.setAttribute('aria-label', `Back to ${LABELS[section]}`);
     }
     function render(id) {
       if (id === 'memory') return;
-      host(id).innerHTML = id === 'schedules' ? schedules.render() : content.render(id);
+      host(id).innerHTML = id === 'schedules' ? schedules.render() : id === 'history' ? history.render() : content.render(id);
     }
     SECTIONS.filter(id => id !== 'memory').forEach(render);
     memory.mount(host('memory'), {
@@ -170,6 +171,7 @@
         if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close();
       }
       if (section === 'schedules') schedules.handleClick(event, api);
+      else if (section === 'history') history.handleClick(event, api);
       else if (section !== 'memory') content.handleClick(event, api);
     });
     dialog.addEventListener('cancel', event => {
@@ -178,6 +180,12 @@
       else close();
     });
     dialog.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && (!detail.hidden || (section === 'memory' && memory.isDetail()))) {
+        event.preventDefault();
+        event.stopPropagation();
+        goBack();
+        return;
+      }
       const tab = event.target.closest('[role="tab"]');
       if (!tab) return;
       const list = tab.closest('[role="tablist"]');
