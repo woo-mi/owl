@@ -10,6 +10,7 @@
 .fsw-history-summary{color:#767676}
 .fsw-history-replies{flex:none;white-space:nowrap;font:400 12px/17px Inter,system-ui,sans-serif;color:#767676}
 .fsw-history-row>svg{width:16px;height:16px;flex:none;color:#8b8b85}
+.fsw-dialog[data-section=history] .fsw-detail>h3{font-weight:500}
 .fsw-history-detail{display:flex;flex-direction:column;gap:16px;min-width:0;max-width:780px;font:400 14px/20px Inter,system-ui,sans-serif;color:#191919}
 .fsw-history-detail p{margin:0}
 .fsw-history-detail .fsw-history-detail-label{font-size:12px;line-height:17px;color:#767676}
