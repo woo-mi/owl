@@ -27,7 +27,8 @@
 .fsw-avatar>img{width:24px;height:24px}
 .fsw-navigation{display:flex;flex-direction:column;gap:4px}
 .fsw-nav{display:flex;align-items:center;gap:12px;width:100%;height:36px;padding:0 10px;border:0;border-radius:8px;background:transparent;text-align:left;color:#53534f;white-space:nowrap}
-.fsw-nav svg{width:16px;height:16px;flex:none}
+.fsw-nav svg{width:16px;height:16px;flex:none;stroke-width:1.5px;stroke-linecap:round;stroke-linejoin:round}
+.fsw-nav svg *{vector-effect:non-scaling-stroke}
 .fsw-nav[aria-selected=true]{background:#e7e7e7;color:#151515;font-weight:500}
 .fsw-nav:hover{background:#f0f0f0}
 .fsw-nav[aria-selected=true]:hover{background:#e7e7e7}
