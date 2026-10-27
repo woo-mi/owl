@@ -20,7 +20,8 @@ body[data-prototype-view="latest-oct-27"] .latest-task-group-label {
 body[data-prototype-view="latest-oct-27"] .latest-task-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  /* Extend the hover area into the scroll gutter without moving the copy. */
+  margin: 0 calc(-1 * var(--fsw-hover-gutter));
   min-width: 0;
 }
 body[data-prototype-view="latest-oct-27"] .latest-task-row {
@@ -32,7 +33,7 @@ body[data-prototype-view="latest-oct-27"] .latest-task-row {
   box-sizing: border-box;
   width: 100%;
   min-height: 88px;
-  padding: 12px 0;
+  padding: 12px var(--fsw-hover-gutter);
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -49,8 +50,8 @@ body[data-prototype-view="latest-oct-27"] .latest-task-row::after {
   content: "";
   position: absolute;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: var(--fsw-hover-gutter);
+  right: var(--fsw-hover-gutter);
   height: 1px;
   background: #eee;
   pointer-events: none;
