@@ -1,4 +1,4 @@
-/* The workspace prototype and More characters format share the full-screen dialog. */
+/* The workspace prototype, More characters, and Aligned share the full-screen dialog. */
 (() => {
   'use strict';
   const SECTIONS = ['connections', 'schedules', 'artifacts', 'memory', 'history'];
@@ -51,7 +51,7 @@
 
     const isActive = () => document.body.dataset.prototypeView === 'full-screen-workspace' ||
       (document.body.dataset.prototypeView === 'multiple-bubbles' &&
-       document.body.dataset.bubbleFormat === 'bullet-break-replies-more-characters');
+       ['bullet-break-replies-more-characters', 'aligned'].includes(document.body.dataset.bubbleFormat));
     const host = id => dialog.querySelector(`#fsw-section-${id}`);
     function announce(message) {
       clearTimeout(noticeTimer);

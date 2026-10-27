@@ -120,5 +120,7 @@
     replyScreen.innerHTML = stamp + userTurn.outerHTML + replyRevenue.outerHTML + preview.outerHTML + stamp + replies.outerHTML;
     variants[frame.id] = Object.freeze({ html: latest.outerHTML, replyHtml: replyScreen.outerHTML });
   }
+  // Aligned starts with the same conversation and replies, with its own saved view state.
+  variants.aligned = Object.freeze({ ...variants['bullet-break-replies-more-characters'] });
   window.MVPBubbleViews = Object.freeze(variants);
 })();
