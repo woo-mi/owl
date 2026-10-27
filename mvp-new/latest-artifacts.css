@@ -1,8 +1,8 @@
 /* Exact Artifacts preview hierarchy from the Oct 27 Pen workspace frames. */
 body[data-prototype-view="latest-oct-27"] .latest-artifacts{display:flex;flex-direction:column;gap:24px;min-width:0}
-body[data-prototype-view="latest-oct-27"] .latest-artifact-tabs{display:flex;align-items:center;gap:6px;min-height:36px;flex:none}
-body[data-prototype-view="latest-oct-27"] .latest-artifact-tab{appearance:none;display:flex;align-items:center;justify-content:center;flex:none;height:36px;padding:0 16px;border:0;border-radius:18px;background:#fff;color:#777;font:400 14px/20px Inter,system-ui,sans-serif;cursor:pointer}
-body[data-prototype-view="latest-oct-27"] .latest-artifact-tab[aria-selected="true"]{background:#e7e7e7;color:#191919;font-weight:600}
+body[data-prototype-view="latest-oct-27"] .latest-artifact-tabs{display:flex;align-items:center;gap:2px;min-height:36px;flex:none}
+body[data-prototype-view="latest-oct-27"] .latest-artifact-tab{appearance:none;display:flex;align-items:center;justify-content:center;flex:none;height:36px;padding:0 16px;border:0;border-radius:18px;background:#fff;color:#777;font:400 13px/19px Inter,system-ui,sans-serif;cursor:pointer}
+body[data-prototype-view="latest-oct-27"] .latest-artifact-tab[aria-selected="true"]{height:31px;padding:6px 10px;border-radius:100px;background:#e7e7e7;color:#191919;font-weight:500}
 body[data-prototype-view="latest-oct-27"] .latest-artifact-tab:hover{background:#f1f1f1}
 body[data-prototype-view="latest-oct-27"] .latest-artifact-tab[aria-selected="true"]:hover{background:#e7e7e7}
 body[data-prototype-view="latest-oct-27"] .latest-artifact-section{display:flex;flex-direction:column;gap:16px;width:min(605px,100%);min-width:0}
