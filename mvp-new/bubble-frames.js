@@ -59,7 +59,7 @@
     content.querySelectorAll('.unfurl-list > li').forEach(item => {
       item.dataset.insightGlyph = item.dataset.trendArrow || '•';
     });
-    const glyphs = { 'tf-exceptions': '→', 'tf-product': '○', 'tf-measurement': '•' };
+    const glyphs = { 'tf-exceptions': '→', 'tf-product': '↘', 'tf-measurement': '•' };
     for (const [source, glyph] of Object.entries(glyphs)) {
       content.querySelector(`[data-source-id="${source}"]`).dataset.insightGlyph = glyph;
     }
