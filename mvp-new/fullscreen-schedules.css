@@ -1,15 +1,18 @@
 .fsw-schedule-screen{display:flex;flex-direction:column;gap:8px;min-width:0;font-family:var(--fsw-font-family)}
-.fsw-schedule-list{list-style:none;padding:0;margin:0;min-width:0}
+/* Keep text on the section edge while the hover surface extends into the gutter. */
+.fsw-dialog[data-section=schedules] .fsw-scroll{margin-inline:-16px;padding-inline:16px}
+.fsw-schedule-list{list-style:none;padding:0;margin:0 -16px;min-width:0}
 .fsw-schedule-screen>.fsw-content-see-all{appearance:none;align-self:flex-start;padding:0;border:0;background:transparent;color:#0085ff;font:var(--fsw-type-body);text-align:left;cursor:pointer}
 .fsw-schedule-screen>.fsw-content-see-all:hover{text-decoration:underline}
-.fsw-schedule-row{display:flex;align-items:center;gap:16px;width:100%;min-height:95px;padding:12px 16px;border:0;border-bottom:1px solid #eee;background:transparent;color:var(--fsw-text-primary);font:var(--fsw-type-body);text-align:left;cursor:pointer}
+.fsw-schedule-row{position:relative;display:flex;align-items:center;gap:16px;width:100%;min-height:95px;padding:12px 16px;border:0;background:transparent;color:var(--fsw-text-primary);font:var(--fsw-type-body);text-align:left;cursor:pointer}
+.fsw-schedule-row::after{content:"";position:absolute;bottom:0;left:16px;right:16px;height:1px;background:#eee;pointer-events:none}
 .fsw-schedule-row:hover{background:#f8f8f8;border-radius:8px}
 .fsw-schedule-copy{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
 .fsw-schedule-title{overflow-wrap:anywhere}
 .fsw-schedule-meta{display:flex;flex-direction:column;gap:3px;color:var(--fsw-text-secondary);font:var(--fsw-type-body)}
 .fsw-schedule-status{flex:none;width:102px;font:var(--fsw-type-body);color:var(--fsw-text-secondary)}
 .fsw-schedule-more,.fsw-schedule-more svg{width:16px;height:16px;display:block;flex:none;color:#53534f}
-.fsw-schedule-row:focus-visible{outline:2px solid #777;outline-offset:-2px;border-radius:4px}
+.fsw-dialog .fsw-schedule-row:focus-visible{outline:2px solid #777;outline-offset:-2px;border-radius:4px}
 .fsw-edit-dialog{box-sizing:border-box;position:fixed;inset:0;width:min(640px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);height:fit-content;margin:auto;padding:24px;border:1px solid #e5e5e5;border-radius:24px;background:#fff;color:var(--fsw-text-primary);box-shadow:0 10px 20px #00000026;font:var(--fsw-type-body);letter-spacing:normal;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
 .fsw-edit-dialog[open]{animation:fsw-task-enter 160ms ease-out}
 .fsw-edit-dialog::backdrop{background:#00000024}
