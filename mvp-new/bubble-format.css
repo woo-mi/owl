@@ -66,7 +66,7 @@ body[data-bubble-format="aligned"] .pen-frame-transcript .unfurl-block {
   align-self: flex-start;
 }
 .pen-frame-replies > .replies-date-stamp { align-self: stretch; }
-body[data-prototype-view="multiple-bubbles"][data-bubble-format]:not([data-bubble-format="original"]) .date-stamp,
+body[data-bubble-format]:not([data-bubble-format="original"]) .date-stamp,
 .pen-frame-transcript .replies-date-stamp {
   font-size: 11px;
   line-height: 15px;

@@ -17,7 +17,7 @@ no live AI, account, analytics, file upload, or microphone service is connected.
 Files remain local. Existing prototypes are unchanged.
 
 The bottom-right version menu switches between Text only, Unfurling v1, Unfurling v2,
-Text + Unfurling, Multiple bubbles, and Full Screen Workspace. Each view has a shareable URL using the view query parameter.
+Text + Unfurling, Multiple bubbles, Full Screen Workspace, and the latest Oct 27. Each view has a shareable URL using the view query parameter.
 Additional source frames: Furling 1 (j5h7z), Furling 2 (tffsf), and
 Text + Furling (TTZhU). Per-view drafts and scroll positions are preserved.
 Native thumbnail artwork and reactions are exported from the corresponding Pen frames.
@@ -29,6 +29,13 @@ https://woo-mi.github.io/owl/mvp-new/?view=multiple-bubbles.
 Full Screen Workspace is a separate copy of Multiple bubbles with the same
 initial layout and interactions, and independent conversation and reply state.
 Open it at https://woo-mi.github.io/owl/mvp-new/?view=full-screen-workspace.
+
+The latest Oct 27 is an independent copy of Multiple bubbles → Aligned, placed
+directly below Full Screen Workspace in the version menu. It keeps the Aligned
+conversation, replies, card alignment, and full-screen workspace, with its own
+conversation/reply drafts, attachments, and scroll positions. Its presentation
+stays Aligned, so it does not show the bubble-format picker.
+Open it at https://woo-mi.github.io/owl/mvp-new/?view=latest-oct-27.
 
 Multiple bubbles has a second format control ordered as Original, no bullet,
 no bullet · break replies, bullet, and bullet · break replies. Original is the

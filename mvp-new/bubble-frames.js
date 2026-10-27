@@ -123,4 +123,13 @@
   // Aligned starts with the same conversation and replies, with its own saved view state.
   variants.aligned = Object.freeze({ ...variants['bullet-break-replies-more-characters'] });
   window.MVPBubbleViews = Object.freeze(variants);
+  // The dated prototype starts from Aligned and has independent conversation/reply state.
+  window.MVPViews['latest-oct-27'] = {
+    label: 'the latest Oct 27',
+    html: variants.aligned.html
+  };
+  window.MVPViews['latest-oct-27-replies'] = {
+    label: 'Clicked replies',
+    html: variants.aligned.replyHtml
+  };
 })();

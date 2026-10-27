@@ -6,7 +6,8 @@
     Object.freeze({ view: 'furling-v2', label: 'Unfurling v2' }),
     Object.freeze({ view: 'text-furling', label: 'Text + Unfurling' }),
     Object.freeze({ view: 'multiple-bubbles', label: 'Multiple bubbles' }),
-    Object.freeze({ view: 'full-screen-workspace', label: 'Full Screen Workspace' })
+    Object.freeze({ view: 'full-screen-workspace', label: 'Full Screen Workspace' }),
+    Object.freeze({ view: 'latest-oct-27', label: 'the latest Oct 27', bubbleFormat: 'aligned' })
   ]);
   const bubbleFormats = Object.freeze([
     Object.freeze({ id: 'original', label: 'Original', bullets: true, split: false }),
@@ -19,20 +20,31 @@
     Object.freeze({ id: 'bullet-break-replies-more-characters', label: 'bullet · break replies · more characters', bullets: true, split: true }),
     Object.freeze({ id: 'aligned', label: 'Aligned', bullets: true, split: true })
   ]);
-  const normalizeView = value => typeof value === 'string' ? value.trim().replace(/,+$/, '') : value;
+  const normalizeView = value => typeof value === 'string' ? value.trim().replace(/[\s,]+$/, '') : value;
   const findView = value => views.find(item => item.view === normalizeView(value));
-  const findFormat = value => bubbleFormats.find(item => item.id === value);
+  const findFormat = value => bubbleFormats.find(item => item.id === normalizeView(value));
   const defaultBubbleFormat = findFormat('original');
   const readView = () => findView(new URL(location.href).searchParams.get('view')) || views[0];
   const readFormat = () => findFormat(new URL(location.href).searchParams.get('bubbles')) || defaultBubbleFormat;
   let current = readView();
   const initialURL = new URL(location.href);
   const initialValue = initialURL.searchParams.get('view');
+  let canonicalizeInitialURL = false;
   if (findView(initialValue) && initialValue !== current.view) {
     initialURL.searchParams.set('view', current.view);
+    canonicalizeInitialURL = true;
+  }
+  const initialFormatValue = initialURL.searchParams.get('bubbles');
+  const initialFormat = findFormat(initialFormatValue);
+  if (initialFormat && initialFormatValue !== initialFormat.id) {
+    initialURL.searchParams.set('bubbles', initialFormat.id);
+    canonicalizeInitialURL = true;
+  }
+  if (canonicalizeInitialURL) {
     history.replaceState(history.state, '', initialURL.pathname + initialURL.search + initialURL.hash);
   }
   let currentFormat = current.view === 'multiple-bubbles' ? readFormat() : defaultBubbleFormat;
+  const activeBubbleFormat = () => findFormat(current.bubbleFormat) || currentFormat;
   const chevron = '<svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>';
   const control = document.createElement('nav');
   control.className = 'prototype-versions';
@@ -98,16 +110,18 @@
     trigger.setAttribute('aria-label', `Switch prototype version, ${current.label}`);
     document.body.dataset.prototypeView = current.view;
     const hasFormat = current.view === 'multiple-bubbles';
+    const fixedFormat = findFormat(current.bubbleFormat);
+    const activeFormat = activeBubbleFormat();
     formatControl.hidden = !hasFormat;
-    formatLabel.textContent = currentFormat.label;
-    formatTrigger.setAttribute('aria-label', `Multiple bubbles format, ${currentFormat.label}`);
-    if (hasFormat) {
-      document.body.dataset.bubbleFormat = currentFormat.id;
+    formatLabel.textContent = activeFormat.label;
+    formatTrigger.setAttribute('aria-label', `Multiple bubbles format, ${activeFormat.label}`);
+    if (hasFormat || fixedFormat) {
+      document.body.dataset.bubbleFormat = activeFormat.id;
     } else {
       delete document.body.dataset.bubbleFormat;
-      setMenuOpen(formatGroup, false);
     }
-    formatOptions.forEach(option => option.setAttribute('aria-checked', String(option.dataset.bubbleFormat === currentFormat.id)));
+    if (!hasFormat) setMenuOpen(formatGroup, false);
+    formatOptions.forEach(option => option.setAttribute('aria-checked', String(option.dataset.bubbleFormat === activeFormat.id)));
     window.dispatchEvent(new Event('mvp-bubble-format-change'));
     options.forEach(option => {
       const url = new URL(location.href);
@@ -235,7 +249,7 @@
     getCurrent: () => ({ view: current.view, label: current.label }),
     setView,
     bubbleFormats,
-    getBubbleFormat: () => ({ ...currentFormat }),
+    getBubbleFormat: () => ({ ...activeBubbleFormat() }),
     setBubbleFormat
   });
   updateControl();

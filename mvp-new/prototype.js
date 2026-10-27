@@ -26,7 +26,8 @@
     const replyViews = Object.freeze({
       'text-furling': 'clicked-replies',
       'multiple-bubbles': 'multiple-bubbles-replies',
-      'full-screen-workspace': 'full-screen-workspace-replies'
+      'full-screen-workspace': 'full-screen-workspace-replies',
+      'latest-oct-27': 'latest-oct-27-replies'
     });
     const replyBase = (view = currentView) => Object.keys(replyViews).find(base => base === view || replyViews[base] === view);
     const isReplyView = (view = currentView) => Object.values(replyViews).includes(view);
@@ -34,7 +35,7 @@
       const definition = window.MVPViews?.[view];
       if (replyBase(view) !== 'multiple-bubbles') return { key: view, html: definition?.html };
       // Read the URL directly: popstate reaches this controller before the version menu.
-      const requested = new URL(location.href).searchParams.get('bubbles');
+      const requested = new URL(location.href).searchParams.get('bubbles')?.trim().replace(/[\s,]+$/, '');
       const templates = window.MVPBubbleViews || {};
       const format = Object.prototype.hasOwnProperty.call(templates, requested) ? requested : 'original';
       const template = templates[format];
@@ -558,7 +559,7 @@
       } else syncReplyLinks();
     });
     window.addEventListener('popstate', () => {
-      const requested = new URL(location.href).searchParams.get('view')?.trim().replace(/,+$/, '');
+      const requested = new URL(location.href).searchParams.get('view')?.trim().replace(/[\s,]+$/, '');
       const options = window.MVPVersions?.views || [];
       const view = options.find(option => option.view === requested) || options[0];
       if (view) renderView(view.view, view.label);

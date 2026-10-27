@@ -1,4 +1,4 @@
-/* The workspace prototype, More characters, and Aligned share the full-screen dialog. */
+/* The workspace prototype, More characters, Aligned, and its dated copy share the full-screen dialog. */
 (() => {
   'use strict';
   const SECTIONS = ['connections', 'schedules', 'artifacts', 'memory', 'history'];
@@ -49,7 +49,7 @@
     let detailOpener;
     let detailScroll = 0;
 
-    const isActive = () => document.body.dataset.prototypeView === 'full-screen-workspace' ||
+    const isActive = () => ['full-screen-workspace', 'latest-oct-27'].includes(document.body.dataset.prototypeView) ||
       (document.body.dataset.prototypeView === 'multiple-bubbles' &&
        ['bullet-break-replies-more-characters', 'aligned'].includes(document.body.dataset.bubbleFormat));
     const host = id => dialog.querySelector(`#fsw-section-${id}`);
