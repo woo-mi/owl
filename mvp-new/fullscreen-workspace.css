@@ -47,7 +47,7 @@
 .fsw-composer svg{width:16px;height:16px}
 .fsw-notice{position:absolute;bottom:84px;left:32px;right:32px;font:var(--fsw-type-meta);color:var(--fsw-text-secondary);pointer-events:none;background:#fff}
 .fsw-notice:empty{display:none}
-.fsw-dialog:not([data-section=memory]):not([data-section=history]) .fsw-notice{bottom:24px}
+.fsw-dialog:not([data-section=memory]) .fsw-notice{bottom:24px}
 .fsw-detail{outline:none;font:var(--fsw-type-body);color:var(--fsw-text-primary)}
 .fsw-detail h3{font:var(--fsw-type-subheading);color:var(--fsw-text-primary);margin:0 0 20px}
 .fullscreen-workspace-open .prototype-versions{visibility:hidden}

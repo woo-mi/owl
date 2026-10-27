@@ -67,7 +67,7 @@
     function setHeader(isDetail = false) {
       title.textContent = LABELS[section];
       dialog.dataset.section = section;
-      composer.hidden = !['memory', 'history'].includes(section);
+      composer.hidden = section !== 'memory';
       back.hidden = !isDetail;
       back.setAttribute('aria-label', `Back to ${LABELS[section]}`);
     }
