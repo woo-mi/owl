@@ -1,4 +1,4 @@
-/* Full Screen Workspace uses the Pen dialog; the other versions retain their side panel. */
+/* The workspace prototype and More characters format share the full-screen dialog. */
 (() => {
   'use strict';
   const SECTIONS = ['connections', 'schedules', 'artifacts', 'memory'];
@@ -48,7 +48,9 @@
     let detailOpener;
     let detailScroll = 0;
 
-    const isActive = () => document.body.dataset.prototypeView === 'full-screen-workspace';
+    const isActive = () => document.body.dataset.prototypeView === 'full-screen-workspace' ||
+      (document.body.dataset.prototypeView === 'multiple-bubbles' &&
+       document.body.dataset.bubbleFormat === 'bullet-break-replies-more-characters');
     const host = id => dialog.querySelector(`#fsw-section-${id}`);
     function announce(message) {
       clearTimeout(noticeTimer);
@@ -202,7 +204,7 @@
       ask(prompt);
     });
     closeButton.addEventListener('pointerdown', () => { closeButton.focus({preventScroll:true}); });
-    for (const name of ['mvp-view-change','popstate']) window.addEventListener(name, () => {
+    for (const name of ['mvp-view-change','mvp-bubble-format-change','popstate']) window.addEventListener(name, () => {
       close({restoreFocus:false,immediate:true});
       syncTrigger();
     });

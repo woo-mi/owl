@@ -254,6 +254,9 @@
     },true);
     window.addEventListener('resize',()=>requestAnimationFrame(()=>{syncModal();}));
     window.addEventListener('mvp-view-change',()=>setOpen(false,{restoreFocus:false}));
+    window.addEventListener('mvp-bubble-format-change',()=>{
+      if(window.MVPFullscreenWorkspace?.isActive()) setOpen(false,{restoreFocus:false});
+    });
     window.addEventListener('popstate',()=>setOpen(false,{restoreFocus:false}));
     window.MVPWorkspace=Object.freeze({
       open:()=>window.MVPFullscreenWorkspace?.isActive()?window.MVPFullscreenWorkspace.open():setOpen(true),
