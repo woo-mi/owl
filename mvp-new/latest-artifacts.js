@@ -33,12 +33,24 @@
     ...previews.apps,
     ...['oct-28', 'sep-30'].map(date => ({ ...previews.apps[2], id: `control-room-${date}` }))
   ];
-  const appActivity = {
-    'deal-risk-app': '· Edited 1 hr ago',
-    'coverage-model': '· Created 1 day ago',
-    'control-room': '· Created 1 week ago',
-    'control-room-oct-28': '· Created Oct 28',
-    'control-room-sep-30': '· Created Sep 30'
+  const artifactActivity = {
+    apps: {
+      'deal-risk-app': '· Edited 1 hr ago',
+      'coverage-model': '· Created 1 day ago',
+      'control-room': '· Created 1 week ago',
+      'control-room-oct-28': '· Created Oct 28',
+      'control-room-sep-30': '· Created Sep 30'
+    },
+    reports: {
+      'churn-watch': '· Edited 1 hr ago',
+      'weekly-forecast': '· Created 1 day ago',
+      'daily-pipeline-brief': '· Created 1 week ago'
+    },
+    chats: {
+      'q4-slip-analysis': '· Edited 1 hr ago',
+      'apac-hiring': '· Created 1 day ago',
+      'september-revenue-drivers': '· Created 1 week ago'
+    }
   };
 
   function itemsFor(categoryId, all = false) {
@@ -77,7 +89,7 @@
   }
 
   function sourceRow(item, categoryId) {
-    const activity = isOct28() && categoryId === 'apps' ? appActivity[item.id] : '';
+    const activity = isOct28() ? artifactActivity[categoryId]?.[item.id] : '';
     if (activity) {
       return `<span class="latest-artifact-domain latest-artifact-domain-with-activity"><img src="assets/wisdom-card-logo.svg" width="12.8576" height="14" alt=""><span class="latest-artifact-source-details"><span>ayush.gowisdom.ai</span><span class="latest-artifact-activity">${escape(activity)}</span></span></span>`;
     }
