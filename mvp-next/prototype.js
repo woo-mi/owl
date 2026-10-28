@@ -14,6 +14,7 @@
     const timers = new Map();
     const mobile = window.matchMedia('(max-width: 900px)');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const bubblePlayback = window.MVPBubblePlayback?.create({ messages: ui.messages, scroll: ui['chat-scroll'], reducedMotion });
     let attachmentNames = [];
     let sourceSequence = 0;
     let toastTimer;
@@ -231,7 +232,11 @@
       event?.preventDefault();
       const value = ui['message-input']?.value.trim() || '';
       if ((!value && !attachmentNames.length) || !ui.messages) return;
-      ui.messages.append(makeMessage('user', value, attachmentNames));
+      bubblePlayback?.finish();
+      const userMessage = makeMessage('user', value, attachmentNames);
+      ui.messages.append(userMessage);
+      const animateMessages = replyBase() === 'latest-oct-27';
+      if (animateMessages) bubblePlayback?.enter(userMessage);
       attachmentNames = [];
       renderAttachments();
       ui['message-input'].value = '';
@@ -241,18 +246,22 @@
       ui['message-input'].focus();
       const response = value ? responseFor(value) : 'The filenames are attached to this conversation. This local preview does not read or upload file contents.';
       const sentFromState = currentStateKey;
+      if (animateMessages && !reducedMotion.matches) bubblePlayback?.showTyping();
       const timer = window.setTimeout(() => {
         timers.delete(timer);
         const message = makeMessage('assistant', response);
         message.classList.add('message-source');
         if (currentStateKey === sentFromState) {
+          bubblePlayback?.hideTyping();
           ui.messages.append(message);
+          if (animateMessages) bubblePlayback?.enter(message);
           registerSource(message);
+          if (animateMessages && !reducedMotion.matches && [...timers.values()].includes(currentStateKey)) bubblePlayback?.showTyping();
           scrollToBottom(ui['chat-scroll']);
         } else {
           viewStates.get(sentFromState)?.nodes.push(message);
         }
-      }, reducedMotion.matches ? 0 : 320);
+      }, reducedMotion.matches ? 0 : animateMessages ? bubblePlayback?.replyDelay || 320 : 320);
       timers.set(timer, sentFromState);
     }
 
@@ -320,6 +329,7 @@
       const leavingReplies = isReplyView();
       const definition = window.MVPViews?.[nextView];
       if (view !== 'text-only' && !definition) return;
+      bubblePlayback?.finish();
       closeMenu();
       viewStates.set(currentStateKey, {
         nodes: [...ui.messages.childNodes],
@@ -348,6 +358,7 @@
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
       syncAgentHeader();
       document.title = `MVP NEXT · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
+      if (!previous && nextView === 'latest-oct-27' && !location.hash) bubblePlayback?.play();
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
       else if (leavingReplies && replyViews[view]) {
         const replyOpener = replyOpeners.get(currentStateKey);
@@ -356,6 +367,7 @@
     }
 
     function resetConversation() {
+      bubblePlayback?.finish();
       timers.forEach((origin, timer) => {
         if (origin !== currentStateKey) return;
         clearTimeout(timer);
