@@ -129,7 +129,7 @@
     variantMenu.append(item);
     return link;
   });
-  document.body.append(control);
+  // Keep the For dev controls detached while retaining the copied view state and layout.
   document.body.classList.add('has-mvp-versions');
 
   function applyFormatToURL(url, view) {
