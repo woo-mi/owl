@@ -247,8 +247,7 @@
 }
 
 .owl-studio-name-input:focus {
-  outline: 2px solid #167bd6;
-  outline-offset: 2px;
+  outline: none;
 }
 
 .owl-studio-name-input[aria-invalid="true"] { border-color: #c0392b; }
