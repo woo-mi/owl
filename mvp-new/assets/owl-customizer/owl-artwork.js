@@ -13,13 +13,33 @@
     if (color === '#FA70AB') return '#FFADD0';
     return '#' + [1, 3, 5].map(i => Math.round(parseInt(color.slice(i, i + 2), 16) * 0.56 + 255 * 0.44).toString(16).padStart(2, '0')).join('').toUpperCase();
   }
+  function outlineBody(body) {
+    // Preserve the exported geometry, outlining the body and face only.
+    // Three SVG units become a 1.5px line in the 34px option tiles.
+    return body.replace(/<[^>]+\/>/g, (shape, offset) => {
+      if (shape.includes('fill="__PRIMARY__"')) {
+        return shape.replace('rx="34" ry="34"', 'rx="32.5" ry="32.5"')
+          .replace('fill="__PRIMARY__"', 'fill="none" stroke="#000000" stroke-width="3" stroke-linejoin="round"');
+      }
+      if (shape.includes('fill="__SECONDARY__"')) {
+        // The first secondary layer is the face; later ones fill square eyes.
+        const isFace = body.indexOf('fill="__SECONDARY__"') < offset + shape.length &&
+          body.indexOf('fill="__SECONDARY__"') >= offset;
+        return shape.replace('fill="__SECONDARY__"', isFace
+          ? 'fill="none" stroke="#000000" stroke-width="3" stroke-linejoin="round"'
+          : 'fill="#FFFFFF"');
+      }
+      return shape.replaceAll('#191C1F', '#000000');
+    });
+  }
   window.OwlArtwork = Object.freeze({
     variants: Object.freeze(artwork.map(({id, label}) => Object.freeze({id, label}))),
     render(id, color) {
       const item = artwork.find(item => item.id === id) || artwork[0];
       const primary = hex(typeof color === 'object' && color ? color.primary : color, '#FA70AB');
       const secondary = hex(typeof color === 'object' && color ? color.secondary : null, lightColor(primary));
-      const body = item.body.replaceAll('__PRIMARY__', primary).replaceAll('__SECONDARY__', secondary);
+      const body = primary === '#000000' ? outlineBody(item.body)
+        : item.body.replaceAll('__PRIMARY__', primary).replaceAll('__SECONDARY__', secondary);
       return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 68" fill="none" aria-hidden="true" focusable="false" style="display:block;overflow:hidden">' + body + '</svg>';
     }
   });
