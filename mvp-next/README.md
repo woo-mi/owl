@@ -1,4 +1,4 @@
-# MVP NEXT
+# MVP with animation
 
 Live prototype: https://woo-mi.github.io/owl/mvp-next/
 
