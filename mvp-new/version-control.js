@@ -94,7 +94,8 @@
   const formatTrigger = formatControl.querySelector('button');
   const formatLabel = formatControl.querySelector('.prototype-format-label');
   const formatMenu = formatControl.querySelector('[role="menu"]');
-  const options = views.map(view => {
+  const menuViews = [...views, { view: 'for-dev', label: 'For dev', href: '../for-dev/' }];
+  const options = menuViews.map(view => {
     const item = document.createElement('li');
     item.setAttribute('role', 'none');
     const link = document.createElement('a');
@@ -102,6 +103,7 @@
     link.setAttribute('role', 'menuitem');
     link.tabIndex = -1;
     link.dataset.view = view.view;
+    if (view.href) link.dataset.prototypeHref = view.href;
     link.textContent = view.label;
     item.append(link);
     menu.append(item);
@@ -180,6 +182,10 @@
     formatOptions.forEach(option => option.setAttribute('aria-checked', String(option.dataset.bubbleFormat === activeFormat.id)));
     if (notifyFormat) window.dispatchEvent(new Event('mvp-bubble-format-change'));
     options.forEach(option => {
+      if (option.dataset.prototypeHref) {
+        option.href = new URL(option.dataset.prototypeHref, location.href).href;
+        return;
+      }
       const url = new URL(location.href);
       url.searchParams.set('view', option.dataset.view);
       url.searchParams.delete('thread');
@@ -293,6 +299,7 @@
     });
   });
   options.forEach(option => option.addEventListener('click', event => {
+    if (option.dataset.prototypeHref) return;
     // Keep standard new-tab and modifier-click behavior for shareable view links.
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
