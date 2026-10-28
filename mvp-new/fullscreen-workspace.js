@@ -17,7 +17,7 @@
     const profile = window.WorkspaceProfile;
     const isOct28 = () => document.body.dataset.prototypeView === 'latest-oct-28';
     const isLatest = () => ['latest-oct-27', 'latest-oct-28'].includes(document.body.dataset.prototypeView);
-    const presentationKey = () => isLatest() ? document.body.dataset.prototypeView : 'legacy';
+    const presentationKey = () => isOct28() ? `latest-oct-28:${window.MVPVersions.getVariant()}` : isLatest() ? document.body.dataset.prototypeView : 'legacy';
     const defaultSection = () => isOct28() ? 'profile' : isLatest() ? 'schedules' : 'connections';
     const initialSection = defaultSection();
     const sectionEnabled = id => id === 'profile' ? isOct28() : !(isLatest() && ['connections', 'history'].includes(id));
@@ -123,6 +123,7 @@
         sectionScroll.set(scrollKey(section), scroll.scrollTop);
         presentation = next;
         memory.setPrototype(document.body.dataset.prototypeView);
+        render('profile');
         render('schedules');
         render('artifacts');
         setSection(rememberedSections.get(next) || defaultSection(), false, false);
@@ -164,6 +165,7 @@
       schedules.closeEditor({restoreFocus:false});
       window.LatestTasks?.closeEditor({restoreFocus:false});
       window.OwlCustomizer?.close({restoreFocus:false});
+      window.OwlStudio?.close({restoreFocus:false});
       clearTimeout(closeTimer);
       closing = true;
       dialog.classList.add('is-closing');
@@ -245,7 +247,7 @@
       ask(prompt);
     });
     closeButton.addEventListener('pointerdown', () => { closeButton.focus({preventScroll:true}); });
-    for (const name of ['mvp-view-change','mvp-bubble-format-change','popstate']) window.addEventListener(name, () => {
+    for (const name of ['mvp-view-change','mvp-variant-change','mvp-bubble-format-change','popstate']) window.addEventListener(name, () => {
       close({restoreFocus:false,immediate:true});
       syncPresentation();
       syncTrigger();

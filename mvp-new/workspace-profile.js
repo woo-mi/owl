@@ -18,23 +18,29 @@
     {id:'imessage',label:'iMessage',connected:true}, {id:'whatsapp',label:'WhatsApp',connected:false},
     {id:'phone',label:'Phone',connected:false}
   ];
-  const state = {
+  const initialState = {
     name:'Chief of Staff',
     memory:'Requested a revenue analysis app, report, and slide deck for leadership.',
     personality:'Proactive, thoughtful, and direct. Clear updates and practical next steps.',
     activity:'daily',
     variant:null,
-    color:null
+    color:null,
+    studio:null
   };
+  const states = {v1:{...initialState},v2:{...initialState}};
+  const activeVariant = () => window.MVPVersions.getVariant();
+  let state = states[activeVariant()];
+  const artwork = () => state.studio ? window.OwlStudioArtwork.render(state.studio,state.color) : window.OwlArtwork.render(state.variant,state.color);
   const headerName = document.querySelector('#chief-profile .agent-profile-name');
   const headerMark = document.querySelector('#chief-profile .agent-profile-mark');
   const originalName = headerName?.textContent;
   const originalMark = headerMark?.innerHTML;
   function syncIdentity() {
-    if (!headerName || !headerMark || !state.variant) return;
-    const active = document.body.dataset.prototypeView === 'latest-oct-28';
+    state = states[activeVariant()];
+    if (!headerName || !headerMark) return;
+    const active = document.body.dataset.prototypeView === 'latest-oct-28' && (state.variant || state.studio);
     headerName.textContent = active ? state.name : originalName;
-    headerMark.innerHTML = active ? window.OwlArtwork.render(state.variant, state.color) : originalMark;
+    headerMark.innerHTML = active ? artwork() : originalMark;
     if (active) {
       const artwork = headerMark.querySelector('svg');
       artwork.style.width = '100%';
@@ -42,7 +48,10 @@
       artwork.style.display = 'block';
     }
   }
-  for (const event of ['mvp-view-change', 'popstate']) window.addEventListener(event, () => queueMicrotask(syncIdentity));
+  for (const event of ['mvp-view-change','mvp-variant-change','popstate']) window.addEventListener(event, () => {
+    state = states[activeVariant()];
+    queueMicrotask(syncIdentity);
+  });
   function activity() {
     if (state.activity === 'daily') {
       return `<div class="profile-calendar" role="img" aria-label="Daily Owl activity, November through October">${cells.map(row => `<div class="profile-calendar-row">${row.map(level => `<span style="background:${palette[level]}" title="${level === 5 ? 'Upcoming day' : `Activity level ${level}`}" aria-hidden="true"></span>`).join('')}</div>`).join('')}</div>`;
@@ -62,13 +71,15 @@
   }
   const channelBadge = connected => `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true"><path d="${connected ? 'm3.5 8 3 3 6-6' : 'M8 3.5v9M3.5 8h9'}"/></svg>`;
   function render() {
-    return `<div class="workspace-profile"><section class="profile-identity" aria-label="Owl identity"><button type="button" class="profile-owl" data-profile-customize="avatar" aria-label="Customize your owl">${state.variant ? window.OwlArtwork.render(state.variant, state.color) : '<img src="assets/profile-oct28-owl.png" width="40" height="40" alt="">'}<span class="profile-owl-hover-badge" aria-hidden="true"><img src="assets/central-icons/pencil-1.5.svg" width="16" height="16" alt=""></span></button><div class="profile-name"><h3>${esc(state.name)}</h3><button type="button" class="profile-name-edit" data-profile-customize="edit" aria-label="Edit owl"><img src="assets/central-icons/pencil-1.5.svg" width="16" height="16" alt=""></button></div><p class="profile-handle">@woo-mi</p></section><section class="profile-showcase" aria-label="Owl stats and files"><div class="profile-metrics"><div><h4>Owl age</h4><strong>47 days</strong><span>Hatched Sep 5</span></div><div class="profile-metric-divider" aria-hidden="true"></div><div><h4>Tasks done</h4><strong>312</strong><span>18 this week</span></div></div><div class="profile-files">${fileRow('memory')}${fileRow('personality')}</div></section><section class="profile-activity"><div class="profile-section-heading"><h4>Owl activity</h4><div class="profile-activity-tabs" role="tablist" aria-label="Owl activity period">${['daily','weekly','cumulative'].map(mode=>`<button type="button" id="profile-activity-${mode}" role="tab" aria-selected="${state.activity===mode}" aria-controls="profile-activity-chart" tabindex="${state.activity===mode?0:-1}" data-profile-period="${mode}">${mode[0].toUpperCase()+mode.slice(1)}</button>`).join('')}</div></div><div id="profile-activity-chart" role="tabpanel" aria-labelledby="profile-activity-${state.activity}">${activity()}<div class="profile-months" aria-hidden="true">${months.map(month=>`<span>${month}</span>`).join('')}</div></div></section><section class="profile-delegation"><h4>Delegate from</h4><div class="profile-channels">${channels.map(channel=>`<div class="profile-channel" data-profile-channel="${channel.id}" role="img" aria-label="${channel.label}, ${channel.connected?'connected':'not connected'}"><span class="profile-channel-tile${channel.connected?' is-connected':''}"><img src="assets/profile-oct28-${channel.id}.png" alt=""><span class="profile-channel-badge" aria-hidden="true">${channelBadge(channel.connected)}</span></span><span>${channel.label}</span></div>`).join('')}</div></section></div>`;
+    state = states[activeVariant()];
+    return `<div class="workspace-profile"><section class="profile-identity" aria-label="Owl identity"><button type="button" class="profile-owl" data-profile-customize="avatar" aria-label="Customize your owl">${(state.variant || state.studio) ? artwork() : '<img src="assets/profile-oct28-owl.png" width="40" height="40" alt="">'}<span class="profile-owl-hover-badge" aria-hidden="true"><img src="assets/central-icons/pencil-1.5.svg" width="16" height="16" alt=""></span></button><div class="profile-name"><h3>${esc(state.name)}</h3><button type="button" class="profile-name-edit" data-profile-customize="edit" aria-label="Edit owl"><img src="assets/central-icons/pencil-1.5.svg" width="16" height="16" alt=""></button></div><p class="profile-handle">@woo-mi</p></section><section class="profile-showcase" aria-label="Owl stats and files"><div class="profile-metrics"><div><h4>Owl age</h4><strong>47 days</strong><span>Hatched Sep 5</span></div><div class="profile-metric-divider" aria-hidden="true"></div><div><h4>Tasks done</h4><strong>312</strong><span>18 this week</span></div></div><div class="profile-files">${fileRow('memory')}${fileRow('personality')}</div></section><section class="profile-activity"><div class="profile-section-heading"><h4>Owl activity</h4><div class="profile-activity-tabs" role="tablist" aria-label="Owl activity period">${['daily','weekly','cumulative'].map(mode=>`<button type="button" id="profile-activity-${mode}" role="tab" aria-selected="${state.activity===mode}" aria-controls="profile-activity-chart" tabindex="${state.activity===mode?0:-1}" data-profile-period="${mode}">${mode[0].toUpperCase()+mode.slice(1)}</button>`).join('')}</div></div><div id="profile-activity-chart" role="tabpanel" aria-labelledby="profile-activity-${state.activity}">${activity()}<div class="profile-months" aria-hidden="true">${months.map(month=>`<span>${month}</span>`).join('')}</div></div></section><section class="profile-delegation"><h4>Delegate from</h4><div class="profile-channels">${channels.map(channel=>`<div class="profile-channel" data-profile-channel="${channel.id}" role="img" aria-label="${channel.label}, ${channel.connected?'connected':'not connected'}"><span class="profile-channel-tile${channel.connected?' is-connected':''}"><img src="assets/profile-oct28-${channel.id}.png" alt=""><span class="profile-channel-badge" aria-hidden="true">${channelBadge(channel.connected)}</span></span><span>${channel.label}</span></div>`).join('')}</div></section></div>`;
   }
   function handleClick(event, api) {
     const customize=event.target.closest('[data-profile-customize]');
     if(customize) {
-      window.OwlCustomizer.open({
-        name:state.name, variant:state.variant, color:state.color, trigger:customize,
+      const customizer = activeVariant()==='v2' ? window.OwlStudio : window.OwlCustomizer;
+      customizer.open({
+        name:state.name, variant:state.variant, studio:state.studio, color:state.color, trigger:customize,
         save:identity=>{
           Object.assign(state,identity);
           syncIdentity();
