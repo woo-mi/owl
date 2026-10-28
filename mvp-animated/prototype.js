@@ -1,4 +1,4 @@
-/* Local-only interactions for the MVP with animation prototype. */
+/* Local-only interactions for the mvp-animated prototype. */
 (() => {
   'use strict';
 
@@ -358,7 +358,7 @@
       updateSendButtons();
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
       syncAgentHeader();
-      document.title = `MVP with animation · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
+      document.title = `mvp-animated · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
       if (!previous && nextView === 'latest-oct-28' && !location.hash) bubblePlayback?.play();
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
       else if (leavingReplies && replyViews[view]) {

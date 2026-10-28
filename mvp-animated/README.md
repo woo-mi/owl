@@ -1,6 +1,6 @@
-# MVP with animation
+# mvp-animated
 
-Live prototype: https://woo-mi.github.io/owl/mvp-next/
+Live prototype: https://woo-mi.github.io/owl/mvp-animated/
 
 Independent animated copy of https://woo-mi.github.io/owl/for-dev/, updated
 October 28, 2026 from commit `57512e328b3acf8d538d0fe50411e297c7656206`.
