@@ -28,17 +28,23 @@
   };
   const categoriesByView = new Map();
   const isOct28 = () => document.body.dataset.prototypeView === 'latest-oct-28';
-  // Activity text from the updated Apps artifact frame, f2BDqP.
+  // The updated Apps frame f2BDqP includes two additional dated deck cards.
+  const oct28Apps = [
+    ...previews.apps,
+    ...['oct-28', 'sep-30'].map(date => ({ ...previews.apps[2], id: `control-room-${date}` }))
+  ];
   const appActivity = {
-    'deal-risk-app': '· Created by Owl on Oct 27',
-    'coverage-model': '· Created Oct 1',
-    'control-room': '· Edited by Owl on Oct 27'
+    'deal-risk-app': '· Edited 1 hr ago',
+    'coverage-model': '· Created 1 day ago',
+    'control-room': '· Created 1 week ago',
+    'control-room-oct-28': '· Created Oct 28',
+    'control-room-sep-30': '· Created Sep 30'
   };
 
   function itemsFor(categoryId, all = false) {
     const category = categories.find(item => item.id === categoryId);
     const source = window.FullscreenWorkspaceContent?.data?.artifactGroups?.[category.source || category.id] || [];
-    const shown = previews[categoryId];
+    const shown = isOct28() && categoryId === 'apps' ? oct28Apps : previews[categoryId];
     return all ? [...shown, ...source.filter(item => !shown.some(preview => preview.id === item.id))] : shown;
   }
 
