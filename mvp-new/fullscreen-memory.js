@@ -3,6 +3,7 @@
 
   const escape = value => String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
   const pencil = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 3 5 5M4 15 15.5 3.5a3.54 3.54 0 0 1 5 5L9 20l-6 1 1-6Z"/></svg>';
+  const centralPencil = '<img class="fsm-central-pencil" src="assets/central-icons/pencil-1.5.svg" width="16" height="16" alt="" aria-hidden="true">';
   const trash = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M5 6l1 14a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1l1-14M10 10v7M14 10v7"/></svg>';
   const profile = {
     id: 'profile', title: 'Profile', updated: 'Oct 23, 2026', shortDate: 'Oct 23',
@@ -79,7 +80,7 @@
       <button class="fsm-row-open" type="button" data-fsm-action="open" data-id="${entry.id}" aria-label="Open ${escape(entry.title)} memory">
         <span class="fsm-row-name">${escape(entry.title)}</span><span class="fsm-row-summary">${escape(summary)}</span><span class="fsm-row-date">Updated ${escape(entry.shortDate)}</span>
       </button>
-      <div class="fsm-row-actions"><button class="fsm-icon-button" type="button" data-fsm-action="edit" data-id="${entry.id}" aria-label="Edit ${escape(entry.title)} memory">${pencil}</button><button class="fsm-icon-button" type="button" data-fsm-action="delete" data-id="${entry.id}" aria-label="Delete ${escape(entry.title)} memory">${trash}</button></div>
+      <div class="fsm-row-actions"><button class="fsm-icon-button" type="button" data-fsm-action="edit" data-id="${entry.id}" aria-label="Edit ${escape(entry.title)} memory">${activePrototype === 'latest-oct-28' ? centralPencil : pencil}</button><button class="fsm-icon-button" type="button" data-fsm-action="delete" data-id="${entry.id}" aria-label="Delete ${escape(entry.title)} memory">${trash}</button></div>
     </div>`;
   }
 

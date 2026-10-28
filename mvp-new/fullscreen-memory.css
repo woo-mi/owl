@@ -96,3 +96,6 @@ body[data-prototype-view="latest-oct-28"] .fsm-detail-fields li{font:400 14px/18
   body[data-prototype-view="latest-oct-28"] .fsm-row{gap:8px;padding-block:12px}
   body[data-prototype-view="latest-oct-28"] .fsm-row-open{grid-template-columns:minmax(0,1fr);min-height:0;gap:4px}
 }
+
+/* Native Central Icon System pencil; the SVG preserves a 1.5px stroke when scaled. */
+body[data-prototype-view="latest-oct-28"] .fsm-central-pencil{display:block;width:16px;height:16px;flex:none;opacity:.847}
