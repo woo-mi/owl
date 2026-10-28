@@ -163,6 +163,7 @@
       if (!dialog.open) return;
       schedules.closeEditor({restoreFocus:false});
       window.LatestTasks?.closeEditor({restoreFocus:false});
+      window.OwlCustomizer?.close({restoreFocus:false});
       clearTimeout(closeTimer);
       closing = true;
       dialog.classList.add('is-closing');
