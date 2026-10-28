@@ -6,6 +6,8 @@
  *          normal bubbles arrive about two seconds apart
  * +850ms   after a reacted-to message, its emoji pops in separately
  * +650ms   emoji bounces and tilts into place, then stays for another 1500ms
+ * +650ms   curved connector draws toward the reply, then holds for 400ms
+ *          only then does the next reply begin typing and arrive
  *          follow new messages until the reader scrolls back
  */
 (() => {
@@ -22,6 +24,8 @@
     reactionDelay: 850,    // Let the message arrive before its reaction.
     reactionEntrance: 650, // A separate tapback-style bounce and tilt.
     reactionHold: 1500,    // Keep the settled emoji in view before continuing.
+    connectorEntrance: 650, // Draw the curved thread line after its emoji.
+    connectorHold: 400,    // Give the completed connector its own moment.
     reply: 2000           // Typing pause for a locally generated reply.
   });
   const BUBBLE = Object.freeze({ offsetY: 14, initialScale: .96, settleY: -1, settleScale: 1.005 });
@@ -35,7 +39,7 @@
     let pendingDelay = 0;
     let follow = true;
     let lastScrollTop = 0;
-    const reactionAnimations = new Set();
+    const accentAnimations = new Set();
     const typing = document.createElement('div');
     typing.className = 'bubble-typing';
     typing.setAttribute('role', 'status');
@@ -78,12 +82,13 @@
       clearTimeout(timer);
       pendingStep = null;
       hideTyping();
-      reactionAnimations.forEach(animation => animation.cancel());
-      reactionAnimations.clear();
+      accentAnimations.forEach(animation => animation.cancel());
+      accentAnimations.clear();
       if (!sequence) return;
       sequence.units.forEach(node => { node.hidden = false; });
       sequence.wrappers.forEach(node => { node.hidden = false; });
       sequence.reactions.forEach(node => { node.hidden = false; });
+      sequence.connectors.forEach(node => node.removeAttribute('hidden'));
       sequence = null;
       delete messages.dataset.playback;
       scroll.classList.remove('is-bubble-playback');
@@ -94,7 +99,26 @@
       schedule(sequence.stage < sequence.units.length ? prepareNext : finish, delay);
     }
 
-    function revealReactions(reactions) {
+    function revealConnectors(connectors) {
+      if (!sequence) return;
+      connectors.forEach(node => {
+        node.removeAttribute('hidden');
+        if (reducedMotion.matches) return;
+        node.querySelectorAll('path').forEach(path => {
+          const length = path.getTotalLength();
+          const dash = `${length} ${length}`;
+          const animation = path.animate([
+            { strokeDasharray: dash, strokeDashoffset: length, opacity: 0 },
+            { strokeDasharray: dash, strokeDashoffset: 0, opacity: 1 }
+          ], { duration: TIMING.connectorEntrance, easing: 'cubic-bezier(.22, .7, .35, 1)' });
+          accentAnimations.add(animation);
+          animation.onfinish = () => accentAnimations.delete(animation);
+        });
+      });
+      continueSequence(TIMING.connectorEntrance + TIMING.connectorHold);
+    }
+
+    function revealReactions(reactions, connectors) {
       if (!sequence) return;
       reactions.forEach(node => {
         node.hidden = false;
@@ -105,10 +129,12 @@
           { opacity: 1, transform: `translateY(0) scale(${REACTION.settleScale}) rotate(${REACTION.settleTilt}deg)`, offset: .72 },
           { opacity: 1, transform: 'translateY(0) scale(1) rotate(0deg)' }
         ], { duration: TIMING.reactionEntrance, easing: 'cubic-bezier(.22, .7, .35, 1)' });
-        reactionAnimations.add(animation);
-        animation.onfinish = () => reactionAnimations.delete(animation);
+        accentAnimations.add(animation);
+        animation.onfinish = () => accentAnimations.delete(animation);
       });
-      continueSequence(TIMING.reactionEntrance + TIMING.reactionHold);
+      const delay = TIMING.reactionEntrance + TIMING.reactionHold;
+      if (connectors.length) schedule(() => revealConnectors(connectors), delay);
+      else continueSequence(delay);
     }
 
     function reveal() {
@@ -120,7 +146,9 @@
       sequence.stage += 1;
       followLatest();
       const reactions = [...node.querySelectorAll('.unfurl-reaction')];
-      if (reactions.length) schedule(() => revealReactions(reactions), TIMING.reactionDelay);
+      const connectors = [...node.querySelectorAll('.unfurl-thread-connector')];
+      if (reactions.length) schedule(() => revealReactions(reactions, connectors), TIMING.reactionDelay);
+      else if (connectors.length) schedule(() => revealConnectors(connectors), TIMING.afterArrival);
       else continueSequence(TIMING.afterArrival);
     }
 
@@ -149,10 +177,12 @@
       if (!units.length) return;
       const wrappers = [...transcript.querySelectorAll('.pen-bubble-group, .unfurl-thread-detail')].filter(node => !node.hidden);
       const reactions = units.flatMap(node => [...node.querySelectorAll('.unfurl-reaction')]).filter(node => !node.hidden);
-      sequence = { units, wrappers, reactions, stage: 0 };
+      const connectors = units.flatMap(node => [...node.querySelectorAll('.unfurl-thread-connector')]).filter(node => !node.hasAttribute('hidden'));
+      sequence = { units, wrappers, reactions, connectors, stage: 0 };
       units.forEach(node => { node.hidden = true; });
       wrappers.forEach(node => { node.hidden = true; });
       reactions.forEach(node => { node.hidden = true; });
+      connectors.forEach(node => node.setAttribute('hidden', ''));
       messages.dataset.playback = 'playing';
       scroll.classList.add('is-bubble-playback');
       follow = true;
@@ -182,9 +212,9 @@
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         clearTimeout(timer);
-        reactionAnimations.forEach(animation => animation.pause());
+        accentAnimations.forEach(animation => animation.pause());
       } else {
-        reactionAnimations.forEach(animation => animation.play());
+        accentAnimations.forEach(animation => animation.play());
         if (pendingStep) schedule(pendingStep, pendingDelay);
       }
     });
