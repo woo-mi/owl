@@ -27,7 +27,8 @@
       'text-furling': 'clicked-replies',
       'multiple-bubbles': 'multiple-bubbles-replies',
       'full-screen-workspace': 'full-screen-workspace-replies',
-      'latest-oct-27': 'latest-oct-27-replies'
+      'latest-oct-27': 'latest-oct-27-replies',
+      'latest-oct-28': 'latest-oct-28-replies'
     });
     const replyBase = (view = currentView) => Object.keys(replyViews).find(base => base === view || replyViews[base] === view);
     const isReplyView = (view = currentView) => Object.values(replyViews).includes(view);

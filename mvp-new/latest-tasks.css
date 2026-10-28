@@ -1,30 +1,30 @@
 /* Tasks frame sAAB9: 24px sections, 8px section rhythm, 88px task rows. */
-body[data-prototype-view="latest-oct-27"] .latest-tasks {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-tasks {
   display: flex;
   flex-direction: column;
   gap: 24px;
   min-width: 0;
   font-family: var(--fsw-font-family);
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-group {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
   min-width: 0;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-group-label {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-group-label {
   margin: 0;
   color: #777;
   font: 400 13px/19px var(--fsw-font-family);
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-list {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-list {
   list-style: none;
   padding: 0;
   /* Extend the hover area into the scroll gutter without moving the copy. */
   margin: 0 calc(-1 * var(--fsw-hover-gutter));
   min-width: 0;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-row {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-row {
   position: relative;
   display: flex;
   align-items: center;
@@ -42,11 +42,11 @@ body[data-prototype-view="latest-oct-27"] .latest-task-row {
   text-align: left;
   cursor: pointer;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-list > li:last-child .latest-task-row {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-list > li:last-child .latest-task-row {
   padding-bottom: 14px;
   min-height: 90px;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-row::after {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-row::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -56,26 +56,26 @@ body[data-prototype-view="latest-oct-27"] .latest-task-row::after {
   background: #eee;
   pointer-events: none;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-row:hover {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-row:hover {
   background: #f8f8f8;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-row:focus-visible {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-row:focus-visible {
   outline: 2px solid #777;
   outline-offset: -2px;
   border-radius: 4px;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-copy {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-copy {
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 4px;
   min-width: 0;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-title {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-title {
   font: 400 14px/20px var(--fsw-font-family);
   overflow-wrap: anywhere;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-meta {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-meta {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -83,7 +83,7 @@ body[data-prototype-view="latest-oct-27"] .latest-task-meta {
   font: 400 13px/19px var(--fsw-font-family);
   overflow-wrap: anywhere;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-actions {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-actions {
   display: flex;
   flex: 0 0 134px;
   align-items: center;
@@ -91,19 +91,19 @@ body[data-prototype-view="latest-oct-27"] .latest-task-actions {
   gap: 21px;
   color: #777;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-status {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-status {
   font: 400 14px/20px var(--fsw-font-family);
   white-space: nowrap;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-more,
-body[data-prototype-view="latest-oct-27"] .latest-task-more svg {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-more,
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-more svg {
   display: block;
   width: 16px;
   height: 16px;
   flex: none;
   color: #53534f;
 }
-body[data-prototype-view="latest-oct-27"] .latest-task-see-all {
+body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-see-all {
   align-self: flex-end;
   margin-right: 4px;
   color: #0085ff;
@@ -111,6 +111,6 @@ body[data-prototype-view="latest-oct-27"] .latest-task-see-all {
   cursor: default;
 }
 @media (max-width: 600px) {
-  body[data-prototype-view="latest-oct-27"] .latest-task-row { gap: 12px; }
-  body[data-prototype-view="latest-oct-27"] .latest-task-actions { flex-basis: 124px; gap: 11px; }
+  body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-row { gap: 12px; }
+  body:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .latest-task-actions { flex-basis: 124px; gap: 11px; }
 }

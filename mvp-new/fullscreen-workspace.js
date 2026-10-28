@@ -14,7 +14,8 @@
     const schedules = window.FullscreenSchedules;
     const memory = window.FullscreenMemory;
     const history = window.FullscreenHistory;
-    const isLatest = () => document.body.dataset.prototypeView === 'latest-oct-27';
+    const isLatest = () => ['latest-oct-27', 'latest-oct-28'].includes(document.body.dataset.prototypeView);
+    const presentationKey = () => isLatest() ? document.body.dataset.prototypeView : 'legacy';
     const initialSection = isLatest() ? 'schedules' : 'connections';
     const sectionEnabled = id => !(isLatest() && ['connections', 'history'].includes(id));
     const sectionLabel = id => isLatest() && id === 'schedules' ? 'Tasks' : LABELS[id];
@@ -48,7 +49,7 @@
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const sectionScroll = new Map();
     let section = initialSection;
-    let presentation = isLatest() ? 'latest' : 'legacy';
+    let presentation = presentationKey();
     const rememberedSections = new Map();
     const scrollKey = id => `${presentation}:${id}`;
     let closing = false;
@@ -57,7 +58,7 @@
     let detailOpener;
     let detailScroll = 0;
 
-    const isActive = () => ['full-screen-workspace', 'latest-oct-27'].includes(document.body.dataset.prototypeView) ||
+    const isActive = () => ['full-screen-workspace', 'latest-oct-27', 'latest-oct-28'].includes(document.body.dataset.prototypeView) ||
       (document.body.dataset.prototypeView === 'multiple-bubbles' &&
        ['bullet-break-replies-more-characters', 'aligned'].includes(document.body.dataset.bubbleFormat));
     const host = id => dialog.querySelector(`#fsw-section-${id}`);
@@ -110,13 +111,14 @@
       if (focus) dialog.querySelector(`#fsw-nav-${id}`).focus({preventScroll:true});
     }
     function syncPresentation() {
-      const next = isLatest() ? 'latest' : 'legacy';
+      const next = presentationKey();
       for (const id of ['connections', 'history']) dialog.querySelector(`#fsw-nav-${id}`).hidden = !sectionEnabled(id);
       dialog.querySelector('#fsw-nav-schedules span').textContent = sectionLabel('schedules');
       if (next !== presentation) {
         rememberedSections.set(presentation, section);
         sectionScroll.set(scrollKey(section), scroll.scrollTop);
         presentation = next;
+        memory.setPrototype(document.body.dataset.prototypeView);
         render('schedules');
         render('artifacts');
         setSection(rememberedSections.get(next) || (isLatest() ? 'schedules' : 'connections'), false, false);
@@ -243,6 +245,7 @@
       syncTrigger();
     });
     window.MVPFullscreenWorkspace = Object.freeze({open,close,toggle:()=>dialog.open?close():open(),isOpen:()=>dialog.open,isActive,setTab:setSection});
+    memory.setPrototype(document.body.dataset.prototypeView);
     syncPresentation();
     setSection(initialSection, false, false);
     syncTrigger();

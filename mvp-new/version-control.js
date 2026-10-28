@@ -7,7 +7,8 @@
     Object.freeze({ view: 'text-furling', label: 'Text + Unfurling' }),
     Object.freeze({ view: 'multiple-bubbles', label: 'Multiple bubbles' }),
     Object.freeze({ view: 'full-screen-workspace', label: 'Full Screen Workspace' }),
-    Object.freeze({ view: 'latest-oct-27', label: 'the latest Oct 27', bubbleFormat: 'aligned' })
+    Object.freeze({ view: 'latest-oct-27', label: 'Oct 27', bubbleFormat: 'aligned' }),
+    Object.freeze({ view: 'latest-oct-28', label: 'Oct 28 (the latest)', bubbleFormat: 'aligned' })
   ]);
   const bubbleFormats = Object.freeze([
     Object.freeze({ id: 'original', label: 'Original', bullets: true, split: false }),

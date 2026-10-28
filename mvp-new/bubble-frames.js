@@ -125,11 +125,19 @@
   window.MVPBubbleViews = Object.freeze(variants);
   // The dated prototype starts from Aligned and has independent conversation/reply state.
   window.MVPViews['latest-oct-27'] = {
-    label: 'the latest Oct 27',
+    label: 'Oct 27',
     html: variants.aligned.html
   };
   window.MVPViews['latest-oct-27-replies'] = {
     label: 'Clicked replies',
     html: variants.aligned.replyHtml
+  };
+  // Keep a distinct view identity so the new copy owns its conversation and replies.
+  window.MVPViews['latest-oct-28'] = {
+    ...window.MVPViews['latest-oct-27'],
+    label: 'Oct 28 (the latest)'
+  };
+  window.MVPViews['latest-oct-28-replies'] = {
+    ...window.MVPViews['latest-oct-27-replies']
   };
 })();

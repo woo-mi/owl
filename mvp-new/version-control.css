@@ -112,11 +112,11 @@
 
 /* Preserve the Aligned composer position in its dated copy. */
 body.has-mvp-versions[data-prototype-view="multiple-bubbles"] .composer-dock,
-body.has-mvp-versions[data-prototype-view="latest-oct-27"] .composer-dock {
+body.has-mvp-versions:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .composer-dock {
   bottom: calc(68px + env(safe-area-inset-bottom));
 }
 body.has-mvp-versions[data-prototype-view="multiple-bubbles"] .conversation,
-body.has-mvp-versions[data-prototype-view="latest-oct-27"] .conversation {
+body.has-mvp-versions:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .conversation {
   padding-bottom: 180px;
 }
 
@@ -135,7 +135,7 @@ body.has-mvp-versions[data-prototype-view="latest-oct-27"] .conversation {
 @media (max-width: 760px) {
   body.has-mvp-versions .conversation,
   body.has-mvp-versions[data-prototype-view="multiple-bubbles"] .conversation,
-  body.has-mvp-versions[data-prototype-view="latest-oct-27"] .conversation,
+  body.has-mvp-versions:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .conversation,
   body.has-mvp-versions[data-prototype-view="full-screen-workspace"] .conversation { padding-bottom: 220px; }
 }
 

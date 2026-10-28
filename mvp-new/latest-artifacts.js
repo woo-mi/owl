@@ -26,7 +26,7 @@
       { id: 'september-revenue-drivers', title: 'September Revenue Drivers', description: 'Explore monthly revenue, customer changes and product bundle drivers.', thumbnail: 'chat', heading: 'Revenue drivers' }
     ]
   };
-  let selectedCategory = 'apps';
+  const categoriesByView = new Map();
 
   function itemsFor(categoryId, all = false) {
     const category = categories.find(item => item.id === categoryId);
@@ -72,6 +72,7 @@
   }
 
   function render() {
+    const selectedCategory = categoriesByView.get(document.body.dataset.prototypeView) || 'apps';
     return `<div class="latest-artifacts"><div class="latest-artifact-tabs" role="tablist" aria-label="Artifact categories">${categories.map(category => `<button type="button" id="latest-artifact-tab-${category.id}" class="latest-artifact-tab" role="tab" aria-controls="latest-artifact-panel" aria-selected="${category.id === selectedCategory}" tabindex="${category.id === selectedCategory ? 0 : -1}" data-latest-artifact-category-tab="${category.id}">${category.label}</button>`).join('')}</div><section class="latest-artifact-section" id="latest-artifact-panel" role="tabpanel" aria-labelledby="latest-artifact-tab-${selectedCategory}">${cards(selectedCategory)}<div class="latest-artifact-footer"><button type="button" class="latest-artifact-see-all" data-latest-artifact-action="all" data-latest-artifact-category="${selectedCategory}" aria-label="See all ${selectedCategory}">See all</button></div></section></div>`;
   }
 
@@ -80,7 +81,7 @@
     if (tab) {
       const next = tab.dataset.latestArtifactCategoryTab;
       if (!categories.some(category => category.id === next)) return false;
-      selectedCategory = next;
+      categoriesByView.set(document.body.dataset.prototypeView, next);
       api.rerender?.('artifacts');
       document.getElementById(`latest-artifact-tab-${next}`)?.focus({ preventScroll: true });
       return true;

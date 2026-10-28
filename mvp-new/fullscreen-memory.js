@@ -12,7 +12,7 @@
       "Working on UI card for the product's daily brief feature. FINAL WRITE"
     ]
   };
-  const settings = [
+  let settings = [
     { id: 'search', title: 'Search and reference chats', description: 'Allow Owl to search for relevant details in past chats.', enabled: false, help: 'When enabled, Owl can use relevant details from past chats to answer your questions.' },
     { id: 'generate', title: 'Generate memory from chats', description: 'Allow Owl to generate memory from your chats.', enabled: true, help: 'When enabled, Owl can save useful context from your chats. Review or delete saved memories below.' }
   ];
@@ -25,6 +25,27 @@
   let deleted = null;
   let help = null;
   let importedCount = 0;
+  const initialEntries = entries.map(entry => ({...entry, details:[...entry.details]}));
+  const initialSettings = settings.map(setting => ({...setting}));
+  const prototypeStates = new Map();
+  let activePrototype = 'shared';
+
+  function setPrototype(viewId) {
+    // Older views retain their shared memory; the October 28 copy starts fresh.
+    const next = viewId === 'latest-oct-28' ? viewId : 'shared';
+    if (next === activePrototype) return;
+    prototypeStates.set(activePrototype, {entries, settings, activeId, deleted, importedCount});
+    const state = prototypeStates.get(next) || {
+      entries: initialEntries.map(entry => ({...entry, details:[...entry.details]})),
+      settings: initialSettings.map(setting => ({...setting})),
+      activeId: 'profile', deleted: null, importedCount: 0
+    };
+    ({entries, settings, activeId, deleted, importedCount} = state);
+    activePrototype = next;
+    view = 'overview';
+    help = null;
+    render();
+  }
 
   function announce(message) {
     if (api.announce) api.announce(message);
@@ -185,6 +206,7 @@
   }
 
   window.FullscreenMemory = {
+    setPrototype,
     mount(container, callbacks = {}) {
       if (host) {
         host.removeEventListener('click', handleClick);
