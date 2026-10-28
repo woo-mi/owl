@@ -8,6 +8,8 @@ step is required.
 - `index.html` and `owl-mark.svg` provide the overview page.
 - `mvp-new/` contains the current **MVP NEW** prototype, published at
   https://woo-mi.github.io/owl/mvp-new/.
+- `mvp-next/` is an independent copy of the October 27 prototype, published at
+  https://woo-mi.github.io/owl/mvp-next/. It defaults to the latest Oct 27 view.
 - The MVP, Prototyping 1, and Prototyping 2 links retain their existing destinations
   in `woo-mi/agent-home-versions`.
 

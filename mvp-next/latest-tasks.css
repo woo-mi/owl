@@ -1,0 +1,116 @@
+/* Tasks frame sAAB9: 24px sections, 8px section rhythm, 88px task rows. */
+body[data-prototype-view="latest-oct-27"] .latest-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+  font-family: var(--fsw-font-family);
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-group-label {
+  margin: 0;
+  color: #777;
+  font: 400 13px/19px var(--fsw-font-family);
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-list {
+  list-style: none;
+  padding: 0;
+  /* Extend the hover area into the scroll gutter without moving the copy. */
+  margin: 0 calc(-1 * var(--fsw-hover-gutter));
+  min-width: 0;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 88px;
+  padding: 12px var(--fsw-hover-gutter);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #191919;
+  font: 400 14px/20px var(--fsw-font-family);
+  text-align: left;
+  cursor: pointer;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-list > li:last-child .latest-task-row {
+  padding-bottom: 14px;
+  min-height: 90px;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-row::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: var(--fsw-hover-gutter);
+  right: var(--fsw-hover-gutter);
+  height: 1px;
+  background: #eee;
+  pointer-events: none;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-row:hover {
+  background: #f8f8f8;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-row:focus-visible {
+  outline: 2px solid #777;
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-title {
+  font: 400 14px/20px var(--fsw-font-family);
+  overflow-wrap: anywhere;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: #777;
+  font: 400 13px/19px var(--fsw-font-family);
+  overflow-wrap: anywhere;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-actions {
+  display: flex;
+  flex: 0 0 134px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 21px;
+  color: #777;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-status {
+  font: 400 14px/20px var(--fsw-font-family);
+  white-space: nowrap;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-more,
+body[data-prototype-view="latest-oct-27"] .latest-task-more svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: #53534f;
+}
+body[data-prototype-view="latest-oct-27"] .latest-task-see-all {
+  align-self: flex-end;
+  margin-right: 4px;
+  color: #0085ff;
+  font: 400 14px/20px var(--fsw-font-family);
+  cursor: default;
+}
+@media (max-width: 600px) {
+  body[data-prototype-view="latest-oct-27"] .latest-task-row { gap: 12px; }
+  body[data-prototype-view="latest-oct-27"] .latest-task-actions { flex-basis: 124px; gap: 11px; }
+}
