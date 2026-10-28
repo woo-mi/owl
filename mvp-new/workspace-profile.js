@@ -39,23 +39,13 @@
     return `<svg class="profile-cumulative" viewBox="0 0 613 82" preserveAspectRatio="none" role="img" aria-label="Cumulative Owl activity, November through October"><path d="M0 80H613" stroke="#f3f3f3"/><polyline points="${points}" fill="none" stroke="#3A83F7" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
   }
   function fileRow(key) {
-    return `<div class="profile-file"><div class="profile-file-copy"><strong>${key}.md</strong><span title="${esc(state[key])}">${esc(state[key])}</span></div><button type="button" data-profile-edit="${key}" aria-label="Edit ${key}.md">Edit</button></div>`;
+    return `<div class="profile-file"><div class="profile-file-copy"><strong>${key}.md</strong><span title="${esc(state[key])}">${esc(state[key])}</span></div><span class="profile-file-edit-label">Edit</span></div>`;
   }
   const channelBadge = connected => `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true"><path d="${connected ? 'm3.5 8 3 3 6-6' : 'M8 3.5v9M3.5 8h9'}"/></svg>`;
   function render() {
     return `<div class="workspace-profile"><section class="profile-identity" aria-label="Owl identity"><div class="profile-owl"><img src="assets/profile-oct28-owl.png" width="40" height="40" alt=""></div><div class="profile-name"><h3>${esc(state.name)}</h3></div><p class="profile-handle">@woo-mi</p></section><section class="profile-showcase" aria-label="Owl stats and files"><div class="profile-metrics"><div><h4>Owl age</h4><strong>47 days</strong><span>Hatched Sep 5</span></div><div class="profile-metric-divider" aria-hidden="true"></div><div><h4>Tasks done</h4><strong>312</strong><span>18 this week</span></div></div><div class="profile-files">${fileRow('memory')}${fileRow('personality')}</div></section><section class="profile-activity"><div class="profile-section-heading"><h4>Owl activity</h4><div class="profile-activity-tabs" role="tablist" aria-label="Owl activity period">${['daily','weekly','cumulative'].map(mode=>`<button type="button" id="profile-activity-${mode}" role="tab" aria-selected="${state.activity===mode}" aria-controls="profile-activity-chart" tabindex="${state.activity===mode?0:-1}" data-profile-period="${mode}">${mode[0].toUpperCase()+mode.slice(1)}</button>`).join('')}</div></div><div id="profile-activity-chart" role="tabpanel" aria-labelledby="profile-activity-${state.activity}">${activity()}<div class="profile-months" aria-hidden="true">${months.map(month=>`<span>${month}</span>`).join('')}</div></div></section><section class="profile-delegation"><h4>Delegate from</h4><div class="profile-channels">${channels.map(channel=>`<div class="profile-channel" data-profile-channel="${channel.id}" role="img" aria-label="${channel.label}, ${channel.connected?'connected':'not connected'}"><span class="profile-channel-tile${channel.connected?' is-connected':''}"><img src="assets/profile-oct28-${channel.id}.png" alt=""><span class="profile-channel-badge" aria-hidden="true">${channelBadge(channel.connected)}</span></span><span>${channel.label}</span></div>`).join('')}</div></section></div>`;
   }
   function handleClick(event, api) {
-    const edit = event.target.closest('[data-profile-edit]');
-    if(edit) {
-      const key=edit.dataset.profileEdit;
-      if(!['memory','personality'].includes(key))return;
-      const label=`${key}.md`;
-      api.showDetail(`Edit ${label}`, `<form class="profile-editor" data-profile-form="${key}"><label for="profile-edit-value">${label}</label><textarea id="profile-edit-value" name="value" required rows="7">${esc(state[key])}</textarea><div><button type="button" class="profile-editor-cancel" data-profile-cancel>Cancel</button><button type="submit" class="profile-editor-save">Save</button></div></form>`,edit);
-      document.getElementById('profile-edit-value').focus();
-      return;
-    }
-    if(event.target.closest('[data-profile-cancel]'))return api.back();
     const period=event.target.closest('[data-profile-period]');
     if(period) {
       state.activity=period.dataset.profilePeriod;
@@ -63,17 +53,6 @@
       document.getElementById(`profile-activity-${state.activity}`).focus({preventScroll:true});
       return;
     }
-
   }
-  function handleSubmit(event, api) {
-    const form=event.target.closest('[data-profile-form]');
-    if(!form)return;
-    event.preventDefault();
-    const key=form.dataset.profileForm;
-    const value=form.elements.value.value.trim();
-    if(!value || !['memory','personality'].includes(key))return;
-    state[key]=value;
-    api.rerender('profile');api.back();
-  }
-  window.WorkspaceProfile=Object.freeze({render,handleClick,handleSubmit});
+  window.WorkspaceProfile=Object.freeze({render,handleClick});
 })();

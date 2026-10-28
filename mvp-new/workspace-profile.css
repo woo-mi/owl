@@ -24,8 +24,7 @@ body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=memory][data-
 .profile-file-copy{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
 .profile-file-copy strong{font-weight:500;color:#313536;white-space:nowrap;flex:none}
 .profile-file-copy>span{color:#777;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.profile-file>button{display:grid;place-items:center;width:40px;height:28px;border:0;border-radius:6px;background:transparent;color:#0085ff;font:500 12px/17px Inter,system-ui,sans-serif;flex:none}
-.profile-file>button:hover{background:#f4f8ff}
+.profile-file-edit-label{display:grid;place-items:center;width:40px;height:28px;border:0;border-radius:6px;background:transparent;color:#0085ff;font:500 12px/17px Inter,system-ui,sans-serif;flex:none}
 .profile-activity,.profile-delegation{margin-top:35px}
 .profile-section-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
 .workspace-profile h4{font:500 12px/17px Inter,system-ui,sans-serif}
@@ -52,10 +51,4 @@ body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=memory][data-
 .profile-channel-badge{position:absolute;right:-3px;bottom:-3px;display:grid;place-items:center;width:18px;height:18px;box-sizing:border-box;border:2px solid #fff;border-radius:50%;background:#f0f0f0;color:#777}
 .profile-channel-badge svg{display:block;width:12px;height:12px;flex:none}
 .is-connected .profile-channel-badge{background:#ecf7ee;color:#398354}
-.profile-editor{display:flex;flex-direction:column;gap:12px;max-width:720px}
-.profile-editor input,.profile-editor textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;color:#191919;background:#fff;font:400 14px/20px Inter,system-ui,sans-serif}
-.profile-editor textarea{resize:vertical}
-.profile-editor>div{display:flex;justify-content:flex-end;gap:8px}
-.profile-editor button{padding:8px 16px;border:1px solid #e7e7e7;border-radius:8px;background:#fff}
-.profile-editor .profile-editor-save{background:#191919;color:#fff;border-color:#191919}
 @media(max-width:700px){.workspace-profile{padding:10px 0 24px}.profile-file{padding-inline:10px}.profile-channels{gap:8px;flex-wrap:wrap}.profile-channel{width:60px}.profile-calendar-row,.profile-weekly{gap:1.5px}.profile-months{font-size:8px}.profile-section-heading{flex-wrap:wrap}}

@@ -206,9 +206,6 @@
       else if (section === 'history') history.handleClick(event, api);
       else if (section !== 'memory') content.handleClick(event, api);
     });
-    dialog.addEventListener('submit', event => {
-      if (section === 'profile') profile.handleSubmit(event, api);
-    });
     dialog.addEventListener('cancel', event => {
       event.preventDefault();
       if (!detail.hidden || (section === 'memory' && memory.isDetail())) goBack();
