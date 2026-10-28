@@ -33,12 +33,15 @@
   const artwork = () => state.studio ? window.OwlStudioArtwork.render(state.studio,state.color) : window.OwlArtwork.render(state.variant,state.color);
   const headerName = document.querySelector('#chief-profile .agent-profile-name');
   const headerMark = document.querySelector('#chief-profile .agent-profile-mark');
+  const sidebarMark = document.querySelector('#sidebar [data-nav="Owls"] .nav-icon');
   const originalName = headerName?.textContent;
   const originalMark = headerMark?.innerHTML;
+  const originalSidebarMark = sidebarMark?.innerHTML;
   function syncIdentity() {
     state = states[activeVariant()];
-    if (!headerName || !headerMark) return;
     const active = document.body.dataset.prototypeView === 'latest-oct-28' && (state.variant || state.studio);
+    if (sidebarMark) sidebarMark.innerHTML = active ? artwork() : originalSidebarMark;
+    if (!headerName || !headerMark) return;
     const showV2Name = document.body.dataset.prototypeView === 'latest-oct-28' && activeVariant() === 'v2';
     headerName.textContent = active || showV2Name ? state.name : originalName;
     headerMark.innerHTML = active ? artwork() : originalMark;
