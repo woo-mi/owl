@@ -41,16 +41,17 @@ body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=memory][data-
 .profile-weekly span{border-radius:2.5px}
 .profile-cumulative{display:block;width:100%;height:80.36px}
 .profile-delegation h4{margin-bottom:14px}
-.profile-channels{display:flex;align-items:flex-start;gap:14px}
-.profile-channel{display:flex;flex-direction:column;align-items:center;gap:7px;width:60px;flex:none;padding:0;border:0;background:transparent;color:#777;font:400 11px/16px Inter,system-ui,sans-serif}
+.profile-channels{display:flex;align-items:flex-start;gap:16px}
+.profile-channel{display:flex;flex-direction:column;align-items:center;gap:9px;width:72px;flex:none;padding:0;border:0;background:transparent;color:#777;font:400 12px/17px Inter,system-ui,sans-serif}
 .profile-channel:has(.is-connected){color:#53534f}
-.profile-channel-tile{position:relative;display:grid;place-items:center;width:46px;height:46px;border:1px solid #eaeaea;border-radius:13px;background:#fafafa}
+.profile-channel-tile{position:relative;display:grid;place-items:center;width:56px;height:56px;border:1px solid #eaeaea;border-radius:16px;background:#fafafa}
 .profile-channel-tile.is-connected{background:#fff}
-.profile-channel-tile img{width:32px;height:32px;object-fit:contain}
-.profile-channel[data-profile-channel=slack] img{width:22.4px;height:22.4px}
-.profile-channel[data-profile-channel=phone] img{width:24px;height:24px}
-.profile-channel-badge{position:absolute;left:34px;top:34px;display:grid;place-items:center;width:14px;height:14px;border:1.5px solid #fff;border-radius:50%;background:#f0f0f0;color:#777;font-size:11px;line-height:11px}
-.is-connected .profile-channel-badge{background:#ecf7ee;color:#398354;font-size:9px}
+.profile-channel-tile img{width:36px;height:36px;object-fit:contain}
+.profile-channel[data-profile-channel=slack] img{width:28px;height:28px}
+.profile-channel[data-profile-channel=phone] img{width:28px;height:28px}
+.profile-channel-badge{position:absolute;right:-3px;bottom:-3px;display:grid;place-items:center;width:18px;height:18px;box-sizing:border-box;border:2px solid #fff;border-radius:50%;background:#f0f0f0;color:#777}
+.profile-channel-badge svg{display:block;width:12px;height:12px;flex:none}
+.is-connected .profile-channel-badge{background:#ecf7ee;color:#398354}
 .profile-channel:hover .profile-channel-tile{border-color:#c6d7eb}
 .profile-editor{display:flex;flex-direction:column;gap:12px;max-width:720px}
 .profile-editor input,.profile-editor textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;color:#191919;background:#fff;font:400 14px/20px Inter,system-ui,sans-serif}
@@ -59,4 +60,4 @@ body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=memory][data-
 .profile-editor button,.profile-channel-detail button{padding:8px 16px;border:1px solid #e7e7e7;border-radius:8px;background:#fff}
 .profile-editor .profile-editor-save,.profile-channel-detail button{background:#191919;color:#fff;border-color:#191919}
 .profile-channel-detail{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
-@media(max-width:700px){.workspace-profile{padding:10px 0 24px}.profile-file{padding-inline:10px}.profile-channels{gap:8px;flex-wrap:wrap}.profile-channel{width:52px}.profile-calendar-row,.profile-weekly{gap:1.5px}.profile-months{font-size:8px}.profile-section-heading{flex-wrap:wrap}}
+@media(max-width:700px){.workspace-profile{padding:10px 0 24px}.profile-file{padding-inline:10px}.profile-channels{gap:8px;flex-wrap:wrap}.profile-channel{width:60px}.profile-calendar-row,.profile-weekly{gap:1.5px}.profile-months{font-size:8px}.profile-section-heading{flex-wrap:wrap}}
