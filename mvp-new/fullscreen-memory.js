@@ -84,7 +84,8 @@
   }
 
   function overview() {
-    return `<div class="fsm-overview"><section class="fsm-settings" aria-label="Memory settings">${settings.map(settingRow).join('')}
+    const visibleSettings = activePrototype === 'latest-oct-28' ? settings.filter(setting => setting.id !== 'generate') : settings;
+    return `<div class="fsm-overview"><section class="fsm-settings" aria-label="Memory settings">${visibleSettings.map(settingRow).join('')}
       <div class="fsm-setting fsm-import-setting"><div class="fsm-setting-copy"><p class="fsm-setting-title">Import memory from other AI providers</p><p class="fsm-setting-description">Bring relevant context and data from another AI provider to Owl. We’ll provide a prompt you can use to fetch the memory from your other account.</p><button type="button" class="fsm-learn" data-fsm-action="learn" data-id="import" aria-expanded="${help === 'import'}" aria-controls="fsm-import-help">Learn more</button><p class="fsm-help" id="fsm-import-help"${help === 'import' ? '' : ' hidden'}>Use the provided prompt in your other AI account, then review and paste its response here to add it to this prototype’s memory.</p></div><button type="button" class="fsm-button" data-fsm-action="start-import">Start import</button></div>
       </section><section class="fsm-you" aria-labelledby="fsm-you-heading"><h3 id="fsm-you-heading">You</h3>${entries.length ? entries.map(memoryRow).join('') : '<p class="fsm-empty">No saved memories.</p>'}</section>${undoMessage()}</div>`;
   }
@@ -149,7 +150,8 @@
       host.querySelector(`[data-fsm-action="learn"][data-id="${id}"]`)?.focus();
     } else if (action === 'open' || action === 'edit') {
       activeId = id;
-      setView('profile', '#fsm-profile-heading');
+      const editing = action === 'edit' && activePrototype === 'latest-oct-28';
+      setView(editing ? 'edit' : 'profile', editing ? '#fsm-edit-summary' : '#fsm-profile-heading');
     } else if (action === 'delete') deleteEntry(id);
     else if (action === 'undo' && deleted) {
       const restoredId = deleted.entry.id;

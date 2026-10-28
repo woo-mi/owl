@@ -1,0 +1,64 @@
+/* October 28 workspace shell and Profile frame xJiXZ. */
+body[data-prototype-view="latest-oct-28"] .fsw-identity{display:none}
+body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=profile] .fsw-main{gap:0}
+body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=memory][data-detail=true] .fsw-header h2{font:400 14px/20px var(--fsw-font-family)}
+body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=memory][data-detail=true] .fsw-back{width:14px;height:20px;padding:0;border-radius:2px}
+body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=memory][data-detail=true] .fsw-back svg{width:14px;height:14px}
+.workspace-profile{width:min(613px,100%);margin:0 auto;color:#202425;font:400 12px/17px Inter,system-ui,sans-serif}
+.workspace-profile h3,.workspace-profile h4,.workspace-profile p{margin:0}
+.profile-identity{min-height:158px;display:flex;flex-direction:column;align-items:center}
+.profile-owl{width:94px;height:94px;flex:none;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 3.357px 13.429px #14181f1f,0 -.839px 6.714px #14181f0a;outline:5.036px solid #fff;outline-offset:-2.518px}
+.profile-owl img{width:40.286px;height:40.286px}
+.profile-name{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:9px;max-width:100%}
+.profile-name h3{font:600 20px/28px Inter,system-ui,sans-serif;overflow-wrap:anywhere;text-align:center}
+.profile-name button{position:absolute;left:calc(100% + 8px);display:grid;place-items:center;flex:none;width:16px;height:16px;padding:0;border:0;background:transparent;color:#27272752}
+.profile-name button svg{width:16px;height:16px}
+.profile-handle{margin-top:11px!important;color:#999;font:400 11px/16px Inter,system-ui,sans-serif}
+.profile-showcase{margin-top:33px;display:flex;flex-direction:column;gap:12px}
+.profile-metrics{display:flex;align-items:center;box-shadow:inset 0 0 0 1px #eaeaea;border-radius:13px}
+.profile-metrics>div:not(.profile-metric-divider){flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 16px}
+.profile-metrics h4{font:600 12px/17px Inter,system-ui,sans-serif;color:#777}
+.profile-metrics strong{font:500 16px/23px Inter,system-ui,sans-serif;color:#313536}
+.profile-metrics span{font:400 12px/17px Inter,system-ui,sans-serif;color:#777}
+.profile-metric-divider{height:30px;width:1px;background:#ebebeb}
+.profile-files{display:flex;flex-direction:column;gap:8px}
+.profile-file{display:flex;align-items:center;justify-content:space-between;gap:12px;height:36px;padding:0 14px;border:1px solid #eaeaea;border-radius:13px;min-width:0}
+.profile-file-copy{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.profile-file-copy strong{font-weight:500;color:#313536;white-space:nowrap;flex:none}
+.profile-file-copy>span{color:#777;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.profile-file>button{display:grid;place-items:center;width:40px;height:28px;border:0;border-radius:6px;background:transparent;color:#0085ff;font:500 12px/17px Inter,system-ui,sans-serif;flex:none}
+.profile-file>button:hover{background:#f4f8ff}
+.profile-activity,.profile-delegation{margin-top:35px}
+.profile-section-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
+.workspace-profile h4{font:500 12px/17px Inter,system-ui,sans-serif}
+.profile-metrics h4{font-weight:600}
+.profile-activity-tabs{display:flex;gap:11px;align-items:center}
+.profile-activity-tabs button{padding:0;border:0;background:transparent;color:#777;font:400 11px/16px Inter,system-ui,sans-serif}
+.profile-activity-tabs [aria-selected=true]{color:#313536}
+.profile-calendar{display:flex;flex-direction:column;gap:2.66px}
+.profile-calendar-row{display:grid;grid-template-columns:repeat(52,minmax(0,1fr));gap:2.65px;height:9.2px}
+.profile-calendar-row span{border-radius:2.5px}
+.profile-months{display:flex;justify-content:space-between;gap:2px;margin-top:8px;color:#999;font:400 10px/15px Inter,system-ui,sans-serif}
+.profile-weekly{display:grid;grid-template-columns:repeat(52,minmax(0,1fr));align-items:end;gap:2.65px;height:80.36px}
+.profile-weekly span{border-radius:2.5px}
+.profile-cumulative{display:block;width:100%;height:80.36px}
+.profile-delegation h4{margin-bottom:14px}
+.profile-channels{display:flex;align-items:flex-start;gap:14px}
+.profile-channel{display:flex;flex-direction:column;align-items:center;gap:7px;width:60px;flex:none;padding:0;border:0;background:transparent;color:#777;font:400 11px/16px Inter,system-ui,sans-serif}
+.profile-channel:has(.is-connected){color:#53534f}
+.profile-channel-tile{position:relative;display:grid;place-items:center;width:46px;height:46px;border:1px solid #eaeaea;border-radius:13px;background:#fafafa}
+.profile-channel-tile.is-connected{background:#fff}
+.profile-channel-tile img{width:32px;height:32px;object-fit:contain}
+.profile-channel[data-profile-channel=slack] img{width:22.4px;height:22.4px}
+.profile-channel[data-profile-channel=phone] img{width:24px;height:24px}
+.profile-channel-badge{position:absolute;left:34px;top:34px;display:grid;place-items:center;width:14px;height:14px;border:1.5px solid #fff;border-radius:50%;background:#f0f0f0;color:#777;font-size:11px;line-height:11px}
+.is-connected .profile-channel-badge{background:#ecf7ee;color:#398354;font-size:9px}
+.profile-channel:hover .profile-channel-tile{border-color:#c6d7eb}
+.profile-editor{display:flex;flex-direction:column;gap:12px;max-width:720px}
+.profile-editor input,.profile-editor textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;color:#191919;background:#fff;font:400 14px/20px Inter,system-ui,sans-serif}
+.profile-editor textarea{resize:vertical}
+.profile-editor>div{display:flex;justify-content:flex-end;gap:8px}
+.profile-editor button,.profile-channel-detail button{padding:8px 16px;border:1px solid #e7e7e7;border-radius:8px;background:#fff}
+.profile-editor .profile-editor-save,.profile-channel-detail button{background:#191919;color:#fff;border-color:#191919}
+.profile-channel-detail{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+@media(max-width:700px){.workspace-profile{padding:10px 0 24px}.profile-name{max-width:calc(100% - 48px)}.profile-file{padding-inline:10px}.profile-channels{gap:8px;flex-wrap:wrap}.profile-channel{width:52px}.profile-calendar-row,.profile-weekly{gap:1.5px}.profile-months{font-size:8px}.profile-section-heading{flex-wrap:wrap}}

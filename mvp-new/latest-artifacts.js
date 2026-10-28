@@ -27,6 +27,13 @@
     ]
   };
   const categoriesByView = new Map();
+  const isOct28 = () => document.body.dataset.prototypeView === 'latest-oct-28';
+  // Activity text from the updated Apps artifact frame, f2BDqP.
+  const appActivity = {
+    'deal-risk-app': '· Created by Owl on Oct 27',
+    'coverage-model': '· Created Oct 1',
+    'control-room': '· Edited by Owl on Oct 27'
+  };
 
   function itemsFor(categoryId, all = false) {
     const category = categories.find(item => item.id === categoryId);
@@ -63,8 +70,16 @@
     return `<svg class="latest-artifact-thumbnail-image" width="80" height="78" viewBox="0 0 80 78" aria-hidden="true"><rect width="80" height="78" fill="#FCFCFD"/><text x="6.341463" y="12.682927" fill="#606674" font-family="Inter, sans-serif" font-size="5.073171" font-weight="500">${escape(item.heading)}</text>${shapes}</svg>`;
   }
 
+  function sourceRow(item, categoryId) {
+    const activity = isOct28() && categoryId === 'apps' ? appActivity[item.id] : '';
+    if (activity) {
+      return `<span class="latest-artifact-domain latest-artifact-domain-with-activity"><img src="assets/wisdom-card-logo.svg" width="12.8576" height="14" alt=""><span class="latest-artifact-source-details"><span>ayush.gowisdom.ai</span><span class="latest-artifact-activity">${escape(activity)}</span></span></span>`;
+    }
+    return '<span class="latest-artifact-domain"><img src="assets/wisdom-card-logo.svg" width="16" height="17.422" alt=""><span>ayush.gowisdom.ai</span></span>';
+  }
+
   function card(item, categoryId) {
-    return `<button type="button" class="latest-artifact-card" data-latest-artifact-action="detail" data-latest-artifact-id="${escape(item.id)}" data-latest-artifact-category="${categoryId}" aria-label="Open ${escape(item.title)}"><span class="latest-artifact-copy"><span class="latest-artifact-title-description"><span class="latest-artifact-title">${escape(item.title)}</span><span class="latest-artifact-description">${escape(item.description)}</span></span><span class="latest-artifact-domain"><img src="assets/wisdom-card-logo.svg" width="16" height="17.422" alt=""><span>ayush.gowisdom.ai</span></span></span><span class="latest-artifact-thumbnail">${thumbnail(item)}</span></button>`;
+    return `<button type="button" class="latest-artifact-card" data-latest-artifact-action="detail" data-latest-artifact-id="${escape(item.id)}" data-latest-artifact-category="${categoryId}" aria-label="Open ${escape(item.title)}"><span class="latest-artifact-copy"><span class="latest-artifact-title-description"><span class="latest-artifact-title">${escape(item.title)}</span><span class="latest-artifact-description">${escape(item.description)}</span></span>${sourceRow(item, categoryId)}</span><span class="latest-artifact-thumbnail">${thumbnail(item)}</span></button>`;
   }
 
   function cards(categoryId, all = false) {

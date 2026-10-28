@@ -59,3 +59,11 @@ existing assistant sections and top-level list items into bubbles. Formatting
 keeps the conversation nodes and drafts intact, applies to its reply view, and
 is shareable through the `bubbles` query parameter. Other prototype views keep
 their original presentation.
+
+The October 28 workspace opens on Profile, followed by Tasks, Artifacts, and
+Memory. It follows Pen frames `xJiXZ`, `sAAB9`, `HrpAn`, `f2BDqP`, `pLLSI`,
+`gjPiJ`, and `EITos`. Profile includes local name/file editors, activity views,
+and delegation-channel previews. Tasks uses compact rows and the revised edit
+dialog; Apps includes artifact activity dates. Memory has Search and reference
+chats and Import memory, with the Generate memory setting removed in this view.
+October 27 retains its previous workspace presentation.

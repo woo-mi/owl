@@ -1,8 +1,8 @@
 /* The workspace prototype, More characters, Aligned, and its dated copy share the full-screen dialog. */
 (() => {
   'use strict';
-  const SECTIONS = ['connections', 'schedules', 'artifacts', 'memory', 'history'];
-  const LABELS = { connections: 'Connections', schedules: 'Schedules', artifacts: 'Artifacts', memory: 'Memory', history: 'History' };
+  const SECTIONS = ['profile', 'connections', 'schedules', 'artifacts', 'memory', 'history'];
+  const LABELS = { profile: 'Profile', connections: 'Connections', schedules: 'Schedules', artifacts: 'Artifacts', memory: 'Memory', history: 'History' };
   const icon = paths => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
   const closeIcon = icon('<path d="m6 6 12 12M6 18 18 6"/>');
   const backIcon = icon('<path d="m14 6-6 6 6 6"/>');
@@ -14,10 +14,13 @@
     const schedules = window.FullscreenSchedules;
     const memory = window.FullscreenMemory;
     const history = window.FullscreenHistory;
+    const profile = window.WorkspaceProfile;
+    const isOct28 = () => document.body.dataset.prototypeView === 'latest-oct-28';
     const isLatest = () => ['latest-oct-27', 'latest-oct-28'].includes(document.body.dataset.prototypeView);
     const presentationKey = () => isLatest() ? document.body.dataset.prototypeView : 'legacy';
-    const initialSection = isLatest() ? 'schedules' : 'connections';
-    const sectionEnabled = id => !(isLatest() && ['connections', 'history'].includes(id));
+    const defaultSection = () => isOct28() ? 'profile' : isLatest() ? 'schedules' : 'connections';
+    const initialSection = defaultSection();
+    const sectionEnabled = id => id === 'profile' ? isOct28() : !(isLatest() && ['connections', 'history'].includes(id));
     const sectionLabel = id => isLatest() && id === 'schedules' ? 'Tasks' : LABELS[id];
     const taskController = () => isLatest() ? window.LatestTasks : schedules;
     const trigger = document.getElementById('chief-profile');
@@ -25,7 +28,7 @@
     dialog.id = 'fullscreen-workspace';
     dialog.className = 'fsw-dialog';
     dialog.setAttribute('aria-labelledby', 'fsw-title');
-    dialog.innerHTML = `<aside class="fsw-sidebar"><div class="fsw-identity"><div class="fsw-avatar" aria-hidden="true"></div><div><strong>Chief of staff</strong><span>Active now</span></div></div><div class="fsw-navigation" role="tablist" aria-label="Workspace sections" aria-orientation="vertical">${SECTIONS.map(id => `<button type="button" id="fsw-nav-${id}" class="fsw-nav" role="tab" aria-controls="fsw-section-${id}" aria-selected="${id === 'connections'}" tabindex="${id === 'connections' ? 0 : -1}" data-fsw-section="${id}">${id === 'history' ? history.icon : content.icons[id] || ''}<span>${LABELS[id]}</span></button>`).join('')}</div></aside><div class="fsw-main"><header class="fsw-header"><button type="button" class="fsw-back" aria-label="Back to Memory" hidden>${backIcon}</button><h2 id="fsw-title">Connections</h2><button type="button" class="fsw-close" aria-label="Close workspace">${closeIcon}</button></header><div class="fsw-scroll">${SECTIONS.map(id => `<section id="fsw-section-${id}" class="fsw-panel-content" role="tabpanel" aria-labelledby="fsw-nav-${id}" tabindex="0" ${id === 'connections' ? '' : 'hidden'}></section>`).join('')}<section class="fsw-detail" tabindex="-1" hidden></section></div><form class="fsw-composer"><textarea rows="1" aria-label="Message Chief of staff in workspace" placeholder="Get quick answers and dig in with follow-ups"></textarea><button type="submit" aria-label="Send workspace message" disabled>${arrowIcon}</button></form><div class="fsw-notice" role="status" aria-live="polite"></div></div>`;
+    dialog.innerHTML = `<aside class="fsw-sidebar"><div class="fsw-identity"><div class="fsw-avatar" aria-hidden="true"></div><div><strong>Chief of staff</strong><span>Active now</span></div></div><div class="fsw-navigation" role="tablist" aria-label="Workspace sections" aria-orientation="vertical">${SECTIONS.map(id => `<button type="button" id="fsw-nav-${id}" class="fsw-nav" role="tab" aria-controls="fsw-section-${id}" aria-selected="${id === 'connections'}" tabindex="${id === 'connections' ? 0 : -1}" data-fsw-section="${id}">${id === 'history' ? history.icon : content.icons[id === 'profile' ? 'schedules' : id] || ''}<span>${LABELS[id]}</span></button>`).join('')}</div></aside><div class="fsw-main"><header class="fsw-header"><button type="button" class="fsw-back" aria-label="Back to Memory" hidden>${backIcon}</button><h2 id="fsw-title">Connections</h2><button type="button" class="fsw-close" aria-label="Close workspace">${closeIcon}</button></header><div class="fsw-scroll">${SECTIONS.map(id => `<section id="fsw-section-${id}" class="fsw-panel-content" role="tabpanel" aria-labelledby="fsw-nav-${id}" tabindex="0" ${id === 'connections' ? '' : 'hidden'}></section>`).join('')}<section class="fsw-detail" tabindex="-1" hidden></section></div><form class="fsw-composer"><textarea rows="1" aria-label="Message Chief of staff in workspace" placeholder="Get quick answers and dig in with follow-ups"></textarea><button type="submit" aria-label="Send workspace message" disabled>${arrowIcon}</button></form><div class="fsw-notice" role="status" aria-live="polite"></div></div>`;
     document.body.append(dialog);
     const avatar = trigger.querySelector('[data-pencil-name="ii"]') || trigger.querySelector('.agent-avatar > *');
     if (avatar) {
@@ -76,13 +79,14 @@
     function setHeader(isDetail = false) {
       title.textContent = sectionLabel(section);
       dialog.dataset.section = section;
+      dialog.dataset.detail = String(isDetail);
       composer.hidden = section !== 'memory';
       back.hidden = !isDetail;
       back.setAttribute('aria-label', `Back to ${sectionLabel(section)}`);
     }
     function render(id) {
       if (id === 'memory') return;
-      host(id).innerHTML = id === 'schedules' ? taskController().render()
+      host(id).innerHTML = id === 'profile' ? profile.render() : id === 'schedules' ? taskController().render()
         : id === 'artifacts' && isLatest() ? window.LatestArtifacts.render()
         : id === 'history' ? history.render() : content.render(id);
     }
@@ -112,7 +116,7 @@
     }
     function syncPresentation() {
       const next = presentationKey();
-      for (const id of ['connections', 'history']) dialog.querySelector(`#fsw-nav-${id}`).hidden = !sectionEnabled(id);
+      for (const id of SECTIONS) dialog.querySelector(`#fsw-nav-${id}`).hidden = !sectionEnabled(id);
       dialog.querySelector('#fsw-nav-schedules span').textContent = sectionLabel('schedules');
       if (next !== presentation) {
         rememberedSections.set(presentation, section);
@@ -121,7 +125,7 @@
         memory.setPrototype(document.body.dataset.prototypeView);
         render('schedules');
         render('artifacts');
-        setSection(rememberedSections.get(next) || (isLatest() ? 'schedules' : 'connections'), false, false);
+        setSection(rememberedSections.get(next) || defaultSection(), false, false);
       }
     }
     function showDetail(detailTitle, html, opener) {
@@ -186,7 +190,7 @@
         detail.innerHTML = `<h3>All tasks</h3>${taskController().render({directory:true})}`;
       }
     }
-    const api = { showDetail, ask, announce, refreshSchedules, rerender: render };
+    const api = { showDetail, ask, announce, refreshSchedules, rerender: render, back: goBack };
     dialog.addEventListener('click', event => {
       const nav = event.target.closest('[data-fsw-section]');
       if (nav) return setSection(nav.dataset.fswSection);
@@ -196,10 +200,14 @@
         const rect = dialog.getBoundingClientRect();
         if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close();
       }
-      if (section === 'schedules') taskController().handleClick(event, api);
+      if (section === 'profile') profile.handleClick(event, api);
+      else if (section === 'schedules') taskController().handleClick(event, api);
       else if (section === 'artifacts' && isLatest()) window.LatestArtifacts.handleClick(event, api);
       else if (section === 'history') history.handleClick(event, api);
       else if (section !== 'memory') content.handleClick(event, api);
+    });
+    dialog.addEventListener('submit', event => {
+      if (section === 'profile') profile.handleSubmit(event, api);
     });
     dialog.addEventListener('cancel', event => {
       event.preventDefault();
