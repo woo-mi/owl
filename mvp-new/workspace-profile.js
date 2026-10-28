@@ -27,7 +27,7 @@
     color:null,
     studio:null
   };
-  const states = {v1:{...initialState},v2:{...initialState}};
+  const states = {v1:{...initialState},v2:{...initialState,name:"Woomi's Owl"}};
   const activeVariant = () => window.MVPVersions.getVariant();
   let state = states[activeVariant()];
   const artwork = () => state.studio ? window.OwlStudioArtwork.render(state.studio,state.color) : window.OwlArtwork.render(state.variant,state.color);
@@ -39,7 +39,8 @@
     state = states[activeVariant()];
     if (!headerName || !headerMark) return;
     const active = document.body.dataset.prototypeView === 'latest-oct-28' && (state.variant || state.studio);
-    headerName.textContent = active ? state.name : originalName;
+    const showV2Name = document.body.dataset.prototypeView === 'latest-oct-28' && activeVariant() === 'v2';
+    headerName.textContent = active || showV2Name ? state.name : originalName;
     headerMark.innerHTML = active ? artwork() : originalMark;
     const trigger = document.getElementById('chief-profile');
     trigger.setAttribute('aria-label', `${trigger.getAttribute('aria-expanded') === 'true' ? 'Close' : 'Open'} ${headerName.textContent} workspace`);
@@ -101,4 +102,6 @@
     }
   }
   window.WorkspaceProfile=Object.freeze({render,handleClick});
+  syncIdentity();
+  document.addEventListener('DOMContentLoaded',syncIdentity,{once:true});
 })();
