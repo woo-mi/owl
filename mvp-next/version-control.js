@@ -97,8 +97,7 @@
     formatMenu.append(item);
     return button;
   });
-  document.body.append(control);
-  document.body.classList.add('has-mvp-versions');
+  // Keep view state and deep links without mounting the prototype controls.
 
   function applyFormatToURL(url, view) {
     if (view === 'multiple-bubbles' && currentFormat.id !== defaultBubbleFormat.id) url.searchParams.set('bubbles', currentFormat.id);
