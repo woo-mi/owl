@@ -10,7 +10,8 @@
   const colors = [
     ['Pink','#FA70AB'], ['Orchid','#DD6ADC'], ['Purple','#A25BFF'],
     ['Blue','#4678FF'], ['Sky','#02B1FF'], ['Teal','#03BB9F'],
-    ['Lime','#B6D80D'], ['Yellow','#FFCC39'], ['Coral','#FF8066']
+    ['Lime','#B6D80D'], ['Yellow','#FFCC39'], ['Coral','#FF8066'],
+    ['Black','#000000']
   ];
   let dialog, draft, currentTab, opener, openerKey, onSave;
   function restoreFocus() {

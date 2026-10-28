@@ -164,9 +164,11 @@
 }
 
 .owl-studio button.owl-studio-color {
-  flex: 0 0 40px;
+  flex: 0 1 40px;
+  min-width: 0;
   width: 40px;
-  height: 40px;
+  height: auto;
+  aspect-ratio: 1;
   border: 1px solid transparent;
   border-radius: 50%;
 }
@@ -175,8 +177,9 @@
 
 .owl-studio-color > span {
   display: block;
-  width: 32px;
-  height: 32px;
+  width: 80%;
+  height: auto;
+  aspect-ratio: 1;
   border-radius: 50%;
 }
 

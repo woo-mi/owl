@@ -15,13 +15,13 @@
       goggles:options.goggles.some(x=>x.id===config.goggles)?config.goggles:defaults.goggles,
       horns:options.horns.some(x=>x.id===config.horns)?config.horns:defaults.horns};
   }
-  function paint(body, color) {
+  function paint(body, color, cheekyScale = 4.25) {
     const primary = typeof color==='string' && /^#[0-9a-f]{6}$/i.test(color) ? color.toUpperCase() : '#FA70AB';
     const secondary = primary==='#FA70AB' ? '#FFADD0' : '#' + [1,3,5].map(i=>Math.round(parseInt(primary.slice(i,i+2),16)*.56+255*.44).toString(16).padStart(2,'0')).join('').toUpperCase();
     if (primary==='#000000') {
       body=body.replace(/<(?:ellipse|rect|path)\b[^>]*>/g, shape=>{
         if (!/fill="__(?:PRIMARY|SECONDARY)__"/.test(shape)) return shape;
-        const scale = shape.includes('M12 8.8426') ? 4.25 : 1;
+        const scale = shape.includes('M12 8.8426') ? cheekyScale : 1;
         if (shape.includes('stroke=')) return shape.replace(/fill="__(?:PRIMARY|SECONDARY)__"/, 'fill="#FFFFFF"');
         return shape.replace('rx="34" ry="34"','rx="32.5" ry="32.5"').replace(/fill="__(?:PRIMARY|SECONDARY)__"/,'fill="none" stroke="#000000" stroke-width="'+(3/scale)+'" stroke-linejoin="round"');
       });
@@ -34,14 +34,17 @@
   }
   function render(config, color) {
     const state=normalize(config);
-    const body=artwork.heads[state.head]+artwork.faces[state.head][state.goggles]+artwork.beak+artwork.eyes[state.eyes]+(state.horns==='feathered'?artwork.horns:'');
+    // Square eyes have separate fill and contour paths; keep their interiors clear in black.
+    const eyes = typeof color==='string' && color.toUpperCase()==='#000000'
+      ? artwork.eyes[state.eyes].replaceAll('__SECONDARY__','#FFFFFF') : artwork.eyes[state.eyes];
+    const body=artwork.heads[state.head]+artwork.faces[state.head][state.goggles]+artwork.beak+eyes+(state.horns==='feathered'?artwork.horns:'');
     return wrap(paint(body,color));
   }
   function renderOption(group, id, color) {
     const items=options[group] || options.heads;
     const key=Object.hasOwn(artwork.optionBodies,group)?group:'heads';
     const item=items.find(item=>item.id===id)||items[0];
-    return wrap(paint(artwork.optionBodies[key][item.id],color));
+    return wrap(paint(artwork.optionBodies[key][item.id],color,4.5));
   }
   window.OwlStudioArtwork=Object.freeze({options,defaults,normalize,render,renderOption});
 })();
