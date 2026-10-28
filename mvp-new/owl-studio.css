@@ -194,14 +194,71 @@
   background: #f6f6f6;
 }
 
-.owl-studio-name {
+.owl-studio-name-field {
   width: 100%;
+  min-width: 0;
+}
+
+.owl-studio-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 34px;
+}
+
+.owl-studio-name {
+  min-width: 0;
   margin: 0;
   font-size: 28px;
   font-weight: 600;
   line-height: 33.5px;
   text-align: center;
   overflow-wrap: anywhere;
+}
+
+.owl-studio button.owl-studio-name-edit {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 28px;
+  border-radius: 4px;
+}
+
+.owl-studio-name-edit img {
+  display: block;
+  width: 16px;
+  height: 16px;
+  opacity: .32;
+}
+
+.owl-studio-name-edit:hover img { opacity: .6; }
+
+.owl-studio-name-input {
+  width: 100%;
+  min-width: 0;
+  height: 38px;
+  padding: 2px 6px;
+  border: 1px solid #b6b8ba;
+  border-radius: 6px;
+  background: #fff;
+  color: #191c1f;
+  font: 600 28px/33.5px Inter, system-ui, sans-serif;
+  text-align: center;
+}
+
+.owl-studio-name-input:focus {
+  outline: 2px solid #167bd6;
+  outline-offset: 2px;
+}
+
+.owl-studio-name-input[aria-invalid="true"] { border-color: #c0392b; }
+
+.owl-studio-name-error {
+  margin: 6px 0 0;
+  color: #b42318;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
 }
 
 .owl-studio-preview {
@@ -279,7 +336,7 @@
     padding: 24px 32px;
   }
 
-  .owl-studio-name { font-size: 24px; line-height: 29px; }
+  .owl-studio-name, .owl-studio-name-input { font-size: 24px; line-height: 29px; }
   .owl-studio-preview { margin-top: 16px; }
   .owl-studio button.owl-studio-save { max-width: 320px; margin-top: 18px; }
   .owl-studio button.owl-studio-close { top: 19px; right: 13px; }

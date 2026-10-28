@@ -74,7 +74,7 @@
       const expanded = isActive() ? dialog.open && !closing : document.getElementById('workspace-panel')?.classList.contains('is-open');
       trigger.setAttribute('aria-controls', isActive() ? dialog.id : 'workspace-panel');
       trigger.setAttribute('aria-expanded', String(!!expanded));
-      trigger.setAttribute('aria-label', `${expanded ? 'Close' : 'Open'} Chief of staff workspace`);
+      trigger.setAttribute('aria-label', `${expanded ? 'Close' : 'Open'} ${trigger.querySelector('.agent-profile-name').textContent} workspace`);
     }
     function setHeader(isDetail = false) {
       title.textContent = sectionLabel(section);

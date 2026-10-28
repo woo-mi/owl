@@ -13,7 +13,46 @@
     ['Lime','#B6D80D'], ['Yellow','#FFCC39'], ['Coral','#FF8066'],
     ['Black','#000000']
   ];
-  let dialog, draft, currentTab, opener, openerKey, onSave;
+  let dialog, draft, currentTab, opener, openerKey, onSave, editingName = false;
+  function renderName() {
+    const heading = dialog.querySelector('.owl-studio-name');
+    heading.textContent = draft.name;
+    heading.hidden = editingName;
+    dialog.querySelector('.owl-studio-name-input').hidden = !editingName;
+    dialog.querySelector('.owl-studio-name-edit').hidden = editingName;
+  }
+  function clearNameError() {
+    dialog.querySelector('.owl-studio-name-input').removeAttribute('aria-invalid');
+    dialog.querySelector('.owl-studio-name-input').removeAttribute('aria-describedby');
+    dialog.querySelector('.owl-studio-name-error').hidden = true;
+  }
+  function editName() {
+    const input = dialog.querySelector('.owl-studio-name-input');
+    input.value = draft.name;
+    editingName = true;
+    clearNameError();
+    renderName();
+    input.focus({preventScroll:true});
+    input.select();
+  }
+  function finishName({cancel = false, focus = false} = {}) {
+    if (!editingName) return true;
+    const input = dialog.querySelector('.owl-studio-name-input');
+    const name = input.value.trim();
+    if (!cancel && !name) {
+      input.setAttribute('aria-invalid','true');
+      input.setAttribute('aria-describedby','owl-studio-name-error');
+      dialog.querySelector('.owl-studio-name-error').hidden = false;
+      if (focus) input.focus({preventScroll:true});
+      return false;
+    }
+    if (!cancel) draft.name = name;
+    editingName = false;
+    clearNameError();
+    renderName();
+    if (focus) dialog.querySelector('.owl-studio-name-edit').focus({preventScroll:true});
+    return true;
+  }
   function restoreFocus() {
     const target = opener?.isConnected ? opener : document.querySelector(`[data-profile-customize="${openerKey}"]`);
     if (document.getElementById('fullscreen-workspace')?.open) target?.focus({preventScroll:true});
@@ -40,7 +79,7 @@
     dialog.querySelector('.owl-studio-palette').hidden = currentTab !== 'heads';
     dialog.querySelectorAll('[data-studio-color]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.studioColor === draft.color)));
     dialog.querySelector('.owl-studio-preview').innerHTML = art.render(draft.studio,draft.color);
-    dialog.querySelector('.owl-studio-name').textContent = draft.name;
+    renderName();
   }
   function build() {
     dialog = document.createElement('dialog');
@@ -53,11 +92,12 @@
       <div class="owl-studio-options" id="owl-studio-options" role="tabpanel" aria-describedby="owl-studio-guidance"></div>
       <div class="owl-studio-palette" role="group" aria-label="Owl color">${colors.map(([label,color])=>`<button type="button" class="owl-studio-color" data-studio-color="${color}" aria-label="${label}" aria-pressed="false" title="${label}"><span style="background:${color}"></span></button>`).join('')}</div>
     </div>
-    <aside class="owl-studio-preview-panel" aria-label="Owl preview"><h3 class="owl-studio-name"></h3><div class="owl-studio-preview" aria-hidden="true"></div><button type="button" class="owl-studio-save">Save</button></aside>
+    <aside class="owl-studio-preview-panel" aria-label="Owl preview"><div class="owl-studio-name-field"><div class="owl-studio-name-row"><h3 class="owl-studio-name"></h3><input class="owl-studio-name-input" aria-label="Owl name" aria-describedby="owl-studio-name-error" maxlength="60" autocomplete="off" hidden><button type="button" class="owl-studio-name-edit" aria-label="Edit owl name" title="Edit name"><img src="assets/central-icons/pencil-1.5.svg" width="16" height="16" alt=""></button></div><p class="owl-studio-name-error" id="owl-studio-name-error" role="alert" hidden>Enter an owl name.</p></div><div class="owl-studio-preview" aria-hidden="true"></div><button type="button" class="owl-studio-save">Save</button></aside>
     <button type="button" class="owl-studio-close" aria-label="Close customization"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>`;
     document.body.appendChild(dialog);
     dialog.addEventListener('click',event=>{
       if (event.target.closest('.owl-studio-close')) { close(); return; }
+      if (event.target.closest('.owl-studio-name-edit')) { editName(); return; }
       const tab = event.target.closest('button[data-studio-tab]');
       if (tab) { currentTab=tab.dataset.studioTab; render(); return; }
       const option = event.target.closest('[data-studio-option]');
@@ -71,6 +111,7 @@
       const color = event.target.closest('[data-studio-color]');
       if (color) { draft.color=color.dataset.studioColor; render(); return; }
       if (event.target.closest('.owl-studio-save')) {
+        if (!finishName({focus:true})) return;
         const save=onSave;
         dialog.close();
         onSave=null;
@@ -85,6 +126,11 @@
     });
     dialog.addEventListener('keydown',event=>{
       if (event.key==='Escape') event.stopPropagation();
+      if (event.target.matches('.owl-studio-name-input') && !event.isComposing && ['Enter','Escape'].includes(event.key)) {
+        event.preventDefault();
+        finishName({cancel:event.key==='Escape',focus:true});
+        return;
+      }
       const tab=event.target.closest('button[data-studio-tab]');
       if (!tab || !['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
       event.preventDefault();
@@ -95,6 +141,9 @@
       dialog.querySelector(`[data-studio-tab="${currentTab}"]`).focus({preventScroll:true});
     });
     dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
+    const nameInput = dialog.querySelector('.owl-studio-name-input');
+    nameInput.addEventListener('input',clearNameError);
+    nameInput.addEventListener('blur',()=>finishName());
   }
   function open({name,studio,color,trigger,save}) {
     if (document.body.dataset.prototypeView!=='latest-oct-28' || window.MVPVersions.getVariant()!=='v2') return;
@@ -104,6 +153,8 @@
     openerKey=opener?.dataset.profileCustomize||'avatar';
     onSave=save;
     draft={name,color:color||'#FA70AB',studio:{...window.OwlStudioArtwork.defaults,...studio}};
+    editingName=false;
+    clearNameError();
     currentTab='heads';
     render();
     dialog.showModal();

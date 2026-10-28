@@ -41,6 +41,9 @@
     const active = document.body.dataset.prototypeView === 'latest-oct-28' && (state.variant || state.studio);
     headerName.textContent = active ? state.name : originalName;
     headerMark.innerHTML = active ? artwork() : originalMark;
+    const trigger = document.getElementById('chief-profile');
+    trigger.setAttribute('aria-label', `${trigger.getAttribute('aria-expanded') === 'true' ? 'Close' : 'Open'} ${headerName.textContent} workspace`);
+    document.querySelector('.fsw-composer textarea')?.setAttribute('aria-label', `Message ${headerName.textContent} in workspace`);
     if (active) {
       const artwork = headerMark.querySelector('svg');
       artwork.style.width = '100%';
