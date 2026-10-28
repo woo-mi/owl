@@ -1,14 +1,18 @@
 /* October 28 workspace shell and Profile frame xJiXZ. */
 body[data-prototype-view="latest-oct-28"] .fsw-identity{display:none}
 body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=profile] .fsw-main{gap:0}
+body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=profile] .fsw-scroll{margin-top:-2px;padding-top:2px}
 body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=memory][data-detail=true] .fsw-header h2{font:400 14px/20px var(--fsw-font-family)}
 body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=memory][data-detail=true] .fsw-back{width:14px;height:20px;padding:0;border-radius:2px}
 body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=memory][data-detail=true] .fsw-back svg{width:14px;height:14px}
 .workspace-profile{width:min(613px,100%);margin:0 auto;color:#202425;font:400 12px/17px Inter,system-ui,sans-serif}
 .workspace-profile h3,.workspace-profile h4,.workspace-profile p{margin:0}
 .profile-identity{min-height:158px;display:flex;flex-direction:column;align-items:center}
-.profile-owl{width:94px;height:94px;flex:none;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 3.357px 13.429px #14181f1f,0 -.839px 6.714px #14181f0a;outline:5.036px solid #fff;outline-offset:-2.518px}
-.profile-owl img{width:40.286px;height:40.286px}
+.profile-owl{position:relative;width:94px;height:94px;flex:none;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 3.357px 13.429px #14181f1f,0 -.839px 6.714px #14181f0a;outline:5.036px solid #fff;outline-offset:-2.518px}
+.profile-owl>img{width:40.286px;height:40.286px}
+.profile-owl-hover-badge{position:absolute;left:70px;top:-2px;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1.2px #2727271f;visibility:hidden;pointer-events:none}
+.profile-owl-hover-badge img{display:block;width:16px;height:16px;opacity:.32;filter:brightness(0) invert(.153)}
+.profile-owl:hover .profile-owl-hover-badge{visibility:visible}
 .profile-name{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:9px;max-width:100%}
 .profile-name h3{font:600 20px/28px Inter,system-ui,sans-serif;overflow-wrap:anywhere;text-align:center}
 .profile-handle{margin-top:11px!important;color:#999;font:400 11px/16px Inter,system-ui,sans-serif}
