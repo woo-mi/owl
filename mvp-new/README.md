@@ -62,7 +62,7 @@ their original presentation.
 
 The October 28 workspace opens on Profile, followed by Tasks, Artifacts, and
 Memory. It follows Pen frames `xJiXZ`, `sAAB9`, `HrpAn`, `f2BDqP`, `pLLSI`,
-`gjPiJ`, and `EITos`. Profile includes local name/file editors, activity views,
+`gjPiJ`, and `EITos`. Profile includes local file editors, activity views,
 and delegation-channel previews. Tasks uses compact rows and the revised edit
 dialog; Apps includes artifact activity dates. Memory has Search and reference
 chats and Import memory, with the Generate memory setting removed in this view.

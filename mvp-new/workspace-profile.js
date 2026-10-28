@@ -2,7 +2,6 @@
 (() => {
   'use strict';
   const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const pencil = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 3 5 5M4 15 15.5 3.5a3.54 3.54 0 0 1 5 5L9 20l-6 1 1-6Z"/></svg>';
   const cells = [
     '0000000000000000000000000000000000000000000000001111',
     '0000000000000000000000000000000000000000000100112112',
@@ -43,15 +42,15 @@
     return `<div class="profile-file"><div class="profile-file-copy"><strong>${key}.md</strong><span title="${esc(state[key])}">${esc(state[key])}</span></div><button type="button" data-profile-edit="${key}" aria-label="Edit ${key}.md">Edit</button></div>`;
   }
   function render() {
-    return `<div class="workspace-profile"><section class="profile-identity" aria-label="Owl identity"><div class="profile-owl"><img src="assets/profile-oct28-owl.png" width="40" height="40" alt=""></div><div class="profile-name"><h3>${esc(state.name)}</h3><button type="button" data-profile-edit="name" aria-label="Edit owl name">${pencil}</button></div><p class="profile-handle">@woo-mi</p></section><section class="profile-showcase" aria-label="Owl stats and files"><div class="profile-metrics"><div><h4>Owl age</h4><strong>47 days</strong><span>Hatched Sep 5</span></div><div class="profile-metric-divider" aria-hidden="true"></div><div><h4>Tasks done</h4><strong>312</strong><span>18 this week</span></div></div><div class="profile-files">${fileRow('memory')}${fileRow('personality')}</div></section><section class="profile-activity"><div class="profile-section-heading"><h4>Owl activity</h4><div class="profile-activity-tabs" role="tablist" aria-label="Owl activity period">${['daily','weekly','cumulative'].map(mode=>`<button type="button" id="profile-activity-${mode}" role="tab" aria-selected="${state.activity===mode}" aria-controls="profile-activity-chart" tabindex="${state.activity===mode?0:-1}" data-profile-period="${mode}">${mode[0].toUpperCase()+mode.slice(1)}</button>`).join('')}</div></div><div id="profile-activity-chart" role="tabpanel" aria-labelledby="profile-activity-${state.activity}">${activity()}<div class="profile-months" aria-hidden="true">${months.map(month=>`<span>${month}</span>`).join('')}</div></div></section><section class="profile-delegation"><h4>Delegate from</h4><div class="profile-channels">${channels.map(channel=>`<button type="button" class="profile-channel" data-profile-channel="${channel.id}" aria-label="${channel.label}, ${channel.connected?'connected':'connect'}"><span class="profile-channel-tile${channel.connected?' is-connected':''}"><img src="assets/profile-oct28-${channel.id}.png" alt=""><span class="profile-channel-badge" aria-hidden="true">${channel.connected?'✓':'+'}</span></span><span>${channel.label}</span></button>`).join('')}</div></section></div>`;
+    return `<div class="workspace-profile"><section class="profile-identity" aria-label="Owl identity"><div class="profile-owl"><img src="assets/profile-oct28-owl.png" width="40" height="40" alt=""></div><div class="profile-name"><h3>${esc(state.name)}</h3></div><p class="profile-handle">@woo-mi</p></section><section class="profile-showcase" aria-label="Owl stats and files"><div class="profile-metrics"><div><h4>Owl age</h4><strong>47 days</strong><span>Hatched Sep 5</span></div><div class="profile-metric-divider" aria-hidden="true"></div><div><h4>Tasks done</h4><strong>312</strong><span>18 this week</span></div></div><div class="profile-files">${fileRow('memory')}${fileRow('personality')}</div></section><section class="profile-activity"><div class="profile-section-heading"><h4>Owl activity</h4><div class="profile-activity-tabs" role="tablist" aria-label="Owl activity period">${['daily','weekly','cumulative'].map(mode=>`<button type="button" id="profile-activity-${mode}" role="tab" aria-selected="${state.activity===mode}" aria-controls="profile-activity-chart" tabindex="${state.activity===mode?0:-1}" data-profile-period="${mode}">${mode[0].toUpperCase()+mode.slice(1)}</button>`).join('')}</div></div><div id="profile-activity-chart" role="tabpanel" aria-labelledby="profile-activity-${state.activity}">${activity()}<div class="profile-months" aria-hidden="true">${months.map(month=>`<span>${month}</span>`).join('')}</div></div></section><section class="profile-delegation"><h4>Delegate from</h4><div class="profile-channels">${channels.map(channel=>`<button type="button" class="profile-channel" data-profile-channel="${channel.id}" aria-label="${channel.label}, ${channel.connected?'connected':'connect'}"><span class="profile-channel-tile${channel.connected?' is-connected':''}"><img src="assets/profile-oct28-${channel.id}.png" alt=""><span class="profile-channel-badge" aria-hidden="true">${channel.connected?'✓':'+'}</span></span><span>${channel.label}</span></button>`).join('')}</div></section></div>`;
   }
   function handleClick(event, api) {
     const edit = event.target.closest('[data-profile-edit]');
     if(edit) {
       const key=edit.dataset.profileEdit;
-      if(!['name','memory','personality'].includes(key))return;
-      const label=key==='name'?'Owl name':`${key}.md`;
-      api.showDetail(`Edit ${label}`, `<form class="profile-editor" data-profile-form="${key}"><label for="profile-edit-value">${label}</label>${key==='name'?`<input id="profile-edit-value" name="value" required maxlength="80" value="${esc(state[key])}">`:`<textarea id="profile-edit-value" name="value" required rows="7">${esc(state[key])}</textarea>`}<div><button type="button" class="profile-editor-cancel" data-profile-cancel>Cancel</button><button type="submit" class="profile-editor-save">Save</button></div></form>`,edit);
+      if(!['memory','personality'].includes(key))return;
+      const label=`${key}.md`;
+      api.showDetail(`Edit ${label}`, `<form class="profile-editor" data-profile-form="${key}"><label for="profile-edit-value">${label}</label><textarea id="profile-edit-value" name="value" required rows="7">${esc(state[key])}</textarea><div><button type="button" class="profile-editor-cancel" data-profile-cancel>Cancel</button><button type="submit" class="profile-editor-save">Save</button></div></form>`,edit);
       document.getElementById('profile-edit-value').focus();
       return;
     }
@@ -84,7 +83,7 @@
     event.preventDefault();
     const key=form.dataset.profileForm;
     const value=form.elements.value.value.trim();
-    if(!value || !['name','memory','personality'].includes(key))return;
+    if(!value || !['memory','personality'].includes(key))return;
     state[key]=value;
     api.rerender('profile');api.back();
   }
