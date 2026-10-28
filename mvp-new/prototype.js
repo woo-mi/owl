@@ -32,6 +32,17 @@
     });
     const replyBase = (view = currentView) => Object.keys(replyViews).find(base => base === view || replyViews[base] === view);
     const isReplyView = (view = currentView) => Object.values(replyViews).includes(view);
+    const agentProfile = byId('chief-profile');
+    const agentHeader = agentProfile?.closest('.agent-header');
+    function syncAgentHeader() {
+      if (!agentProfile) return;
+      // Separate thresholds prevent flicker near the top of the conversation.
+      const threshold = agentProfile.classList.contains('is-compact') ? 8 : 48;
+      const compact = replyBase() === 'latest-oct-28' && ui['chat-scroll'].scrollTop > threshold;
+      agentProfile.classList.toggle('is-compact', compact);
+      agentHeader?.classList.toggle('is-compact', compact);
+    }
+    ui['chat-scroll'].addEventListener('scroll', syncAgentHeader, { passive: true });
     function viewPresentation(view) {
       const definition = window.MVPViews?.[view];
       if (replyBase(view) !== 'multiple-bubbles') return { key: view, html: definition?.html };
@@ -304,6 +315,7 @@
       const presentation = viewPresentation(nextView);
       if (presentation.key === currentStateKey) {
         syncReplyLinks();
+        syncAgentHeader();
         return;
       }
       const leavingReplies = isReplyView();
@@ -335,6 +347,7 @@
       autosize(ui['message-input']);
       updateSendButtons();
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
+      syncAgentHeader();
       document.title = `MVP NEW · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
       else if (leavingReplies && replyViews[view]) {

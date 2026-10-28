@@ -41,6 +41,9 @@ Oct 28 (the latest) duplicates Oct 27 and appears directly below it in the versi
 menu. It starts with the same Aligned conversation and workspace, with separate
 conversation/reply drafts, attachments, task edits, and workspace state.
 Open it at https://woo-mi.github.io/owl/mvp-new/?view=latest-oct-28.
+Its profile header changes to the compact “when scroll up” Pen frame once the
+conversation scrolls, and expands again at the top. This also applies to replies;
+other prototype versions retain their existing header.
 
 Its workspace starts on Tasks and omits Connections and History. Tasks uses the Pen frame's
 Upcoming, In progress, and Done sections, with independent task editing state.
