@@ -52,12 +52,10 @@ body[data-prototype-view="latest-oct-28"] .fsw-dialog[data-section=memory][data-
 .profile-channel-badge{position:absolute;right:-3px;bottom:-3px;display:grid;place-items:center;width:18px;height:18px;box-sizing:border-box;border:2px solid #fff;border-radius:50%;background:#f0f0f0;color:#777}
 .profile-channel-badge svg{display:block;width:12px;height:12px;flex:none}
 .is-connected .profile-channel-badge{background:#ecf7ee;color:#398354}
-.profile-channel:hover .profile-channel-tile{border-color:#c6d7eb}
 .profile-editor{display:flex;flex-direction:column;gap:12px;max-width:720px}
 .profile-editor input,.profile-editor textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;color:#191919;background:#fff;font:400 14px/20px Inter,system-ui,sans-serif}
 .profile-editor textarea{resize:vertical}
 .profile-editor>div{display:flex;justify-content:flex-end;gap:8px}
-.profile-editor button,.profile-channel-detail button{padding:8px 16px;border:1px solid #e7e7e7;border-radius:8px;background:#fff}
-.profile-editor .profile-editor-save,.profile-channel-detail button{background:#191919;color:#fff;border-color:#191919}
-.profile-channel-detail{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+.profile-editor button{padding:8px 16px;border:1px solid #e7e7e7;border-radius:8px;background:#fff}
+.profile-editor .profile-editor-save{background:#191919;color:#fff;border-color:#191919}
 @media(max-width:700px){.workspace-profile{padding:10px 0 24px}.profile-file{padding-inline:10px}.profile-channels{gap:8px;flex-wrap:wrap}.profile-channel{width:60px}.profile-calendar-row,.profile-weekly{gap:1.5px}.profile-months{font-size:8px}.profile-section-heading{flex-wrap:wrap}}
