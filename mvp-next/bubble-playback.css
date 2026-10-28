@@ -1,5 +1,8 @@
 .chat-scroll.is-bubble-playback { overflow-anchor: none; }
 
+/* The reaction grows from its small thought-bubble tail. */
+.unfurl-reaction { transform-origin: 20% 90%; }
+
 .bubble-typing {
   display: flex;
   align-items: center;

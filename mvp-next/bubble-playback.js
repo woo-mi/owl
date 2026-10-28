@@ -1,25 +1,31 @@
 /*
  * ANIMATION STORYBOARD — automatic, once per fresh conversation
  *    0ms   hide upcoming bubbles; show the three-dot typing indicator
- *  650ms   first bubble rises 14px and settles from scale .96 → 1
- * +420ms   pause after each arrival, then type before the next assistant bubble
- * +900ms   next assistant bubble arrives (up to 1400ms for longer messages)
+ *  900ms   first bubble rises 14px and settles from scale .96 → 1
+ * +700ms   pause after each arrival, then type for 1300–1700ms
+ *          normal bubbles arrive about two seconds apart
+ * +850ms   after a reacted-to message, its emoji pops in separately
+ * +650ms   emoji bounces and tilts into place, then stays for another 1500ms
  *          follow new messages until the reader scrolls back
  */
 (() => {
   'use strict';
   const TIMING = Object.freeze({
-    firstArrival: 650,     // Initial typing pause.
-    afterArrival: 420,     // Let a delivered bubble settle before the next turn.
-    typingMinimum: 900,    // Short assistant messages.
-    typingMaximum: 1400,   // Cap the pause for longer report bubbles.
-    characterDelay: 2,     // Extra milliseconds per character.
-    userArrival: 650,      // Pause before a blue outgoing bubble.
-    previewArrival: 450,   // Links and cards follow their message.
+    firstArrival: 900,     // Initial typing pause.
+    afterArrival: 700,     // Combined with typing, approximately two seconds per bubble.
+    typingMinimum: 1300,   // Short assistant messages.
+    typingMaximum: 1700,   // Slightly more reading time for longer report bubbles.
+    characterDelay: 1.2,   // Extra milliseconds per character.
+    userArrival: 1300,     // Blue outgoing bubbles follow the same two-second pace.
+    previewArrival: 1000,  // Links and cards follow their message.
     entrance: 360,         // Soft iMessage-style rise and settle.
-    reply: 1100           // Typing pause for a locally generated reply.
+    reactionDelay: 850,    // Let the message arrive before its reaction.
+    reactionEntrance: 650, // A separate tapback-style bounce and tilt.
+    reactionHold: 1500,    // Keep the settled emoji in view before continuing.
+    reply: 2000           // Typing pause for a locally generated reply.
   });
   const BUBBLE = Object.freeze({ offsetY: 14, initialScale: .96, settleY: -1, settleScale: 1.005 });
+  const REACTION = Object.freeze({ initialScale: .22, offsetY: 8, initialTilt: -14, overshoot: 1.22, overshootTilt: 8, settleScale: .94, settleTilt: -4 });
   const UNITS = '.pen-bubble, .unfurl-user-turn, .unfurl-block, .unfurl-thread-cue';
 
   function create({ messages, scroll, reducedMotion }) {
@@ -29,6 +35,7 @@
     let pendingDelay = 0;
     let follow = true;
     let lastScrollTop = 0;
+    const reactionAnimations = new Set();
     const typing = document.createElement('div');
     typing.className = 'bubble-typing';
     typing.setAttribute('role', 'status');
@@ -71,12 +78,37 @@
       clearTimeout(timer);
       pendingStep = null;
       hideTyping();
+      reactionAnimations.forEach(animation => animation.cancel());
+      reactionAnimations.clear();
       if (!sequence) return;
       sequence.units.forEach(node => { node.hidden = false; });
       sequence.wrappers.forEach(node => { node.hidden = false; });
+      sequence.reactions.forEach(node => { node.hidden = false; });
       sequence = null;
       delete messages.dataset.playback;
       scroll.classList.remove('is-bubble-playback');
+    }
+
+    function continueSequence(delay) {
+      if (!sequence) return;
+      schedule(sequence.stage < sequence.units.length ? prepareNext : finish, delay);
+    }
+
+    function revealReactions(reactions) {
+      if (!sequence) return;
+      reactions.forEach(node => {
+        node.hidden = false;
+        if (reducedMotion.matches) return;
+        const animation = node.animate([
+          { opacity: 0, transform: `translateY(${REACTION.offsetY}px) scale(${REACTION.initialScale}) rotate(${REACTION.initialTilt}deg)` },
+          { opacity: 1, transform: `translateY(-2px) scale(${REACTION.overshoot}) rotate(${REACTION.overshootTilt}deg)`, offset: .46 },
+          { opacity: 1, transform: `translateY(0) scale(${REACTION.settleScale}) rotate(${REACTION.settleTilt}deg)`, offset: .72 },
+          { opacity: 1, transform: 'translateY(0) scale(1) rotate(0deg)' }
+        ], { duration: TIMING.reactionEntrance, easing: 'cubic-bezier(.22, .7, .35, 1)' });
+        reactionAnimations.add(animation);
+        animation.onfinish = () => reactionAnimations.delete(animation);
+      });
+      continueSequence(TIMING.reactionEntrance + TIMING.reactionHold);
     }
 
     function reveal() {
@@ -87,8 +119,9 @@
       enter(node);
       sequence.stage += 1;
       followLatest();
-      if (sequence.stage < sequence.units.length) schedule(prepareNext, TIMING.afterArrival);
-      else finish();
+      const reactions = [...node.querySelectorAll('.unfurl-reaction')];
+      if (reactions.length) schedule(() => revealReactions(reactions), TIMING.reactionDelay);
+      else continueSequence(TIMING.afterArrival);
     }
 
     function prepareNext() {
@@ -115,9 +148,11 @@
         !node.closest('[hidden]') && !node.parentElement.closest(UNITS));
       if (!units.length) return;
       const wrappers = [...transcript.querySelectorAll('.pen-bubble-group, .unfurl-thread-detail')].filter(node => !node.hidden);
-      sequence = { units, wrappers, stage: 0 };
+      const reactions = units.flatMap(node => [...node.querySelectorAll('.unfurl-reaction')]).filter(node => !node.hidden);
+      sequence = { units, wrappers, reactions, stage: 0 };
       units.forEach(node => { node.hidden = true; });
       wrappers.forEach(node => { node.hidden = true; });
+      reactions.forEach(node => { node.hidden = true; });
       messages.dataset.playback = 'playing';
       scroll.classList.add('is-bubble-playback');
       follow = true;
@@ -145,8 +180,13 @@
     window.addEventListener('mvp-workspace-open', finish);
     reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) finish(); });
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) clearTimeout(timer);
-      else if (pendingStep) schedule(pendingStep, pendingDelay);
+      if (document.hidden) {
+        clearTimeout(timer);
+        reactionAnimations.forEach(animation => animation.pause());
+      } else {
+        reactionAnimations.forEach(animation => animation.play());
+        if (pendingStep) schedule(pendingStep, pendingDelay);
+      }
     });
 
     return Object.freeze({ play, finish, enter, showTyping, hideTyping, replyDelay: TIMING.reply });
