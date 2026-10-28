@@ -28,7 +28,8 @@
       'text-furling': 'clicked-replies',
       'multiple-bubbles': 'multiple-bubbles-replies',
       'full-screen-workspace': 'full-screen-workspace-replies',
-      'latest-oct-27': 'latest-oct-27-replies'
+      'latest-oct-27': 'latest-oct-27-replies',
+      'latest-oct-28': 'latest-oct-28-replies'
     });
     const replyBase = (view = currentView) => Object.keys(replyViews).find(base => base === view || replyViews[base] === view);
     const isReplyView = (view = currentView) => Object.values(replyViews).includes(view);
@@ -36,9 +37,9 @@
     const agentHeader = agentProfile?.closest('.agent-header');
     function syncAgentHeader() {
       if (!agentProfile) return;
-      // Different enter/exit thresholds prevent flicker near the top of the chat.
+      // Separate thresholds prevent flicker near the top of the conversation.
       const threshold = agentProfile.classList.contains('is-compact') ? 8 : 48;
-      const compact = replyBase() === 'latest-oct-27' && ui['chat-scroll'].scrollTop > threshold;
+      const compact = replyBase() === 'latest-oct-28' && ui['chat-scroll'].scrollTop > threshold;
       agentProfile.classList.toggle('is-compact', compact);
       agentHeader?.classList.toggle('is-compact', compact);
     }
@@ -235,7 +236,7 @@
       bubblePlayback?.finish();
       const userMessage = makeMessage('user', value, attachmentNames);
       ui.messages.append(userMessage);
-      const animateMessages = replyBase() === 'latest-oct-27';
+      const animateMessages = replyBase() === 'latest-oct-28';
       if (animateMessages) bubblePlayback?.enter(userMessage);
       attachmentNames = [];
       renderAttachments();
@@ -358,7 +359,7 @@
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
       syncAgentHeader();
       document.title = `MVP with animation · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
-      if (!previous && nextView === 'latest-oct-27' && !location.hash) bubblePlayback?.play();
+      if (!previous && nextView === 'latest-oct-28' && !location.hash) bubblePlayback?.play();
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
       else if (leavingReplies && replyViews[view]) {
         const replyOpener = replyOpeners.get(currentStateKey);
@@ -586,7 +587,7 @@
     window.addEventListener('popstate', () => {
       const requested = new URL(location.href).searchParams.get('view')?.trim().replace(/[\s,]+$/, '');
       const options = window.MVPVersions?.views || [];
-      const view = options.find(option => option.view === requested) || options.find(option => option.view === 'latest-oct-27');
+      const view = options.find(option => option.view === requested) || options[0];
       if (view) renderView(view.view, view.label);
     });
     const initialView = window.MVPVersions?.getCurrent();

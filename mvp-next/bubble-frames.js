@@ -125,11 +125,35 @@
   window.MVPBubbleViews = Object.freeze(variants);
   // The dated prototype starts from Aligned and has independent conversation/reply state.
   window.MVPViews['latest-oct-27'] = {
-    label: 'the latest Oct 27',
+    label: 'Oct 27',
     html: variants.aligned.html
   };
   window.MVPViews['latest-oct-27-replies'] = {
     label: 'Clicked replies',
     html: variants.aligned.replyHtml
+  };
+  // R8OP6 uses upright Inter arrows, with the existing 14×20 marker and 7px gap.
+  // Update both attributes: insight glyphs take precedence over trend arrows.
+  function updatedArrowMarkers(html) {
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    const arrows = { '↘': '↓', '↗': '↑' };
+    for (const marker of template.content.querySelectorAll('[data-trend-arrow], [data-insight-glyph]')) {
+      for (const attribute of ['data-trend-arrow', 'data-insight-glyph']) {
+        const arrow = arrows[marker.getAttribute(attribute)];
+        if (arrow) marker.setAttribute(attribute, arrow);
+      }
+    }
+    return template.innerHTML;
+  }
+  // Keep a distinct view identity so the new copy owns its conversation and replies.
+  window.MVPViews['latest-oct-28'] = {
+    ...window.MVPViews['latest-oct-27'],
+    label: 'Oct 28 V2',
+    html: updatedArrowMarkers(variants.aligned.html)
+  };
+  window.MVPViews['latest-oct-28-replies'] = {
+    ...window.MVPViews['latest-oct-27-replies'],
+    html: updatedArrowMarkers(variants.aligned.replyHtml)
   };
 })();

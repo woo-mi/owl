@@ -2,58 +2,20 @@
 
 Live prototype: https://woo-mi.github.io/owl/mvp-next/
 
-Independent copy of `mvp-new/?view=latest-oct-27`, created October 27, 2026
-from commit `2bbe007910523901dc806208179f08a87dfcb018`. The default view is
-**the latest Oct 27**, so the base link opens the duplicated experience directly.
-All assets and interactions are copied locally; future changes can be made here
-independently of `mvp-new/`.
+Independent animated copy of https://woo-mi.github.io/owl/for-dev/, updated
+October 28, 2026 from commit `57512e328b3acf8d538d0fe50411e297c7656206`.
+The base link opens Oct 28 V2 with the current Profile, Tasks, Artifacts,
+Memory, owl customization, saved sidebar icon, timestamps, and conversation design.
+The version and variant controls are omitted, matching For dev.
 
-Source: Pen frame **Gliphs + bold - text only** (B6Lij3) in Owl - MVP.
-https://app.pen.dev/s/NkUDjTTIECnwknVNo18zLMn1g4yJO243rHjoDroOPkM
+The existing automatic conversation playback is preserved: messages arrive about
+two seconds apart, emoji reactions animate separately, and thread connectors
+appear after their reactions. Sending a message uses the existing typing and
+reply animation. Opening the workspace or replies finishes initial playback;
+returning to the conversation preserves its state rather than replaying it.
+Reduced-motion preferences show the full conversation without entrance animation.
 
-Static HTML/CSS/JavaScript; no build step. Serve this directory over HTTP.
-
-The screen preserves the source report, Inter typography, tabular numeral glyphs,
-selected bold metrics, sidebar, avatar, and composer. Includes local composer,
-attachment selection, mode selection, and responsive navigation.
-Message hover reply controls and the floating reply panel are removed.
-
-This is an interaction prototype. Responses use the supplied sample report;
-no live AI, account, analytics, file upload, or microphone service is connected.
-Files remain local. Existing prototypes are unchanged.
-
-The bottom-right version menu switches between Text only, Unfurling v1, Unfurling v2,
-Text + Unfurling, Multiple bubbles, Full Screen Workspace, and the latest Oct 27. Each view has a shareable URL using the view query parameter.
-Additional source frames: Furling 1 (j5h7z), Furling 2 (tffsf), and
-Text + Furling (TTZhU). Per-view drafts and scroll positions are preserved.
-Native thumbnail artwork and reactions are exported from the corresponding Pen frames.
-
-Multiple bubbles is an independent copy of Text + Unfurling, with its own
-conversation and reply drafts, attachments, and scroll position. Open it at
-https://woo-mi.github.io/owl/mvp-next/?view=multiple-bubbles.
-
-Full Screen Workspace is a separate copy of Multiple bubbles with the same
-initial layout and interactions, and independent conversation and reply state.
-Open it at https://woo-mi.github.io/owl/mvp-next/?view=full-screen-workspace.
-
-The latest Oct 27 is an independent copy of Multiple bubbles → Aligned, placed
-directly below Full Screen Workspace in the version menu. It keeps the Aligned
-conversation, replies, card alignment, and full-screen workspace, with its own
-conversation/reply drafts, attachments, and scroll positions. Its presentation
-stays Aligned, so it does not show the bubble-format picker.
-Open it at https://woo-mi.github.io/owl/mvp-next/?view=latest-oct-27.
-
-Its workspace starts on Tasks and omits Connections and History. Tasks uses the Pen frame's
-Upcoming, In progress, and Done sections, with independent task editing state.
-Artifacts has Apps, Reports, and Chats tabs with the corresponding Pen previews
-in one column. Reports follows the visible tab label in the frame named
-"full screen workspace - Artifacts - Agents". Other prototype versions retain
-their existing workspace presentation.
-
-Multiple bubbles has a second format control ordered as Original, no bullet,
-no bullet · break replies, bullet, and bullet · break replies. Original is the
-default and restores the initial layout. Break modes separate the
-existing assistant sections and top-level list items into bubbles. Formatting
-keeps the conversation nodes and drafts intact, applies to its reply view, and
-is shareable through the `bubbles` query parameter. Other prototype views keep
-their original presentation.
+All assets and interactions are local copies, so changes here do not modify
+For dev. Static HTML/CSS/JavaScript; no build step. Serve this directory over HTTP.
+This is an interaction prototype using sample content, without live AI, accounts,
+analytics, file upload, or microphone services.

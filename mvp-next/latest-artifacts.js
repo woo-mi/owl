@@ -26,12 +26,37 @@
       { id: 'september-revenue-drivers', title: 'September Revenue Drivers', description: 'Explore monthly revenue, customer changes and product bundle drivers.', thumbnail: 'chat', heading: 'Revenue drivers' }
     ]
   };
-  let selectedCategory = 'apps';
+  const categoriesByView = new Map();
+  const isOct28 = () => document.body.dataset.prototypeView === 'latest-oct-28';
+  // The updated Apps frame f2BDqP includes two additional dated deck cards.
+  const oct28Apps = [
+    ...previews.apps,
+    ...['oct-28', 'sep-30'].map(date => ({ ...previews.apps[2], id: `control-room-${date}` }))
+  ];
+  const artifactActivity = {
+    apps: {
+      'deal-risk-app': '· Edited 1 hr ago',
+      'coverage-model': '· Created 1 day ago',
+      'control-room': '· Created 1 week ago',
+      'control-room-oct-28': '· Created Oct 28',
+      'control-room-sep-30': '· Created Sep 30'
+    },
+    reports: {
+      'churn-watch': '· Edited 1 hr ago',
+      'weekly-forecast': '· Created 1 day ago',
+      'daily-pipeline-brief': '· Created 1 week ago'
+    },
+    chats: {
+      'q4-slip-analysis': '· Edited 1 hr ago',
+      'apac-hiring': '· Created 1 day ago',
+      'september-revenue-drivers': '· Created 1 week ago'
+    }
+  };
 
   function itemsFor(categoryId, all = false) {
     const category = categories.find(item => item.id === categoryId);
     const source = window.FullscreenWorkspaceContent?.data?.artifactGroups?.[category.source || category.id] || [];
-    const shown = previews[categoryId];
+    const shown = isOct28() && categoryId === 'apps' ? oct28Apps : previews[categoryId];
     return all ? [...shown, ...source.filter(item => !shown.some(preview => preview.id === item.id))] : shown;
   }
 
@@ -63,8 +88,16 @@
     return `<svg class="latest-artifact-thumbnail-image" width="80" height="78" viewBox="0 0 80 78" aria-hidden="true"><rect width="80" height="78" fill="#FCFCFD"/><text x="6.341463" y="12.682927" fill="#606674" font-family="Inter, sans-serif" font-size="5.073171" font-weight="500">${escape(item.heading)}</text>${shapes}</svg>`;
   }
 
+  function sourceRow(item, categoryId) {
+    const activity = isOct28() ? artifactActivity[categoryId]?.[item.id] : '';
+    if (activity) {
+      return `<span class="latest-artifact-domain latest-artifact-domain-with-activity"><img src="assets/wisdom-card-logo.svg" width="12.8576" height="14" alt=""><span class="latest-artifact-source-details"><span>ayush.gowisdom.ai</span><span class="latest-artifact-activity">${escape(activity)}</span></span></span>`;
+    }
+    return '<span class="latest-artifact-domain"><img src="assets/wisdom-card-logo.svg" width="16" height="17.422" alt=""><span>ayush.gowisdom.ai</span></span>';
+  }
+
   function card(item, categoryId) {
-    return `<button type="button" class="latest-artifact-card" data-latest-artifact-action="detail" data-latest-artifact-id="${escape(item.id)}" data-latest-artifact-category="${categoryId}" aria-label="Open ${escape(item.title)}"><span class="latest-artifact-copy"><span class="latest-artifact-title-description"><span class="latest-artifact-title">${escape(item.title)}</span><span class="latest-artifact-description">${escape(item.description)}</span></span><span class="latest-artifact-domain"><img src="assets/wisdom-card-logo.svg" width="16" height="17.422" alt=""><span>ayush.gowisdom.ai</span></span></span><span class="latest-artifact-thumbnail">${thumbnail(item)}</span></button>`;
+    return `<button type="button" class="latest-artifact-card" data-latest-artifact-action="detail" data-latest-artifact-id="${escape(item.id)}" data-latest-artifact-category="${categoryId}" aria-label="Open ${escape(item.title)}"><span class="latest-artifact-copy"><span class="latest-artifact-title-description"><span class="latest-artifact-title">${escape(item.title)}</span><span class="latest-artifact-description">${escape(item.description)}</span></span>${sourceRow(item, categoryId)}</span><span class="latest-artifact-thumbnail">${thumbnail(item)}</span></button>`;
   }
 
   function cards(categoryId, all = false) {
@@ -72,6 +105,7 @@
   }
 
   function render() {
+    const selectedCategory = categoriesByView.get(document.body.dataset.prototypeView) || 'apps';
     return `<div class="latest-artifacts"><div class="latest-artifact-tabs" role="tablist" aria-label="Artifact categories">${categories.map(category => `<button type="button" id="latest-artifact-tab-${category.id}" class="latest-artifact-tab" role="tab" aria-controls="latest-artifact-panel" aria-selected="${category.id === selectedCategory}" tabindex="${category.id === selectedCategory ? 0 : -1}" data-latest-artifact-category-tab="${category.id}">${category.label}</button>`).join('')}</div><section class="latest-artifact-section" id="latest-artifact-panel" role="tabpanel" aria-labelledby="latest-artifact-tab-${selectedCategory}">${cards(selectedCategory)}<div class="latest-artifact-footer"><button type="button" class="latest-artifact-see-all" data-latest-artifact-action="all" data-latest-artifact-category="${selectedCategory}" aria-label="See all ${selectedCategory}">See all</button></div></section></div>`;
   }
 
@@ -80,7 +114,7 @@
     if (tab) {
       const next = tab.dataset.latestArtifactCategoryTab;
       if (!categories.some(category => category.id === next)) return false;
-      selectedCategory = next;
+      categoriesByView.set(document.body.dataset.prototypeView, next);
       api.rerender?.('artifacts');
       document.getElementById(`latest-artifact-tab-${next}`)?.focus({ preventScroll: true });
       return true;

@@ -59,6 +59,7 @@
 
 .prototype-version-menu[hidden] { display: none; }
 .prototype-format-menu { width: 360px; }
+.prototype-variant-menu { width: 92px; }
 .prototype-format-trigger {
   max-width: 100%;
   min-height: 36px;
@@ -99,7 +100,8 @@
 .prototype-format-option:hover,
 .prototype-format-option:focus-visible { background: #eeeef0; outline: none; }
 .prototype-version-option[aria-current="page"]::after,
-.prototype-format-option[aria-checked="true"]::after {
+.prototype-format-option[aria-checked="true"]::after,
+.prototype-variant-option[aria-checked="true"]::after {
   content: "";
   flex-shrink: 0;
   width: 6px;
@@ -112,11 +114,11 @@
 
 /* Preserve the Aligned composer position in its dated copy. */
 body.has-mvp-versions[data-prototype-view="multiple-bubbles"] .composer-dock,
-body.has-mvp-versions[data-prototype-view="latest-oct-27"] .composer-dock {
+body.has-mvp-versions:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .composer-dock {
   bottom: calc(68px + env(safe-area-inset-bottom));
 }
 body.has-mvp-versions[data-prototype-view="multiple-bubbles"] .conversation,
-body.has-mvp-versions[data-prototype-view="latest-oct-27"] .conversation {
+body.has-mvp-versions:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .conversation {
   padding-bottom: 180px;
 }
 
@@ -135,12 +137,17 @@ body.has-mvp-versions[data-prototype-view="latest-oct-27"] .conversation {
 @media (max-width: 760px) {
   body.has-mvp-versions .conversation,
   body.has-mvp-versions[data-prototype-view="multiple-bubbles"] .conversation,
-  body.has-mvp-versions[data-prototype-view="latest-oct-27"] .conversation,
+  body.has-mvp-versions:is([data-prototype-view="latest-oct-27"], [data-prototype-view="latest-oct-28"]) .conversation,
   body.has-mvp-versions[data-prototype-view="full-screen-workspace"] .conversation { padding-bottom: 220px; }
 }
 
 @media (max-width: 600px) {
   .prototype-versions { flex-direction: column; }
+  body[data-prototype-view="latest-oct-28"] .prototype-versions { flex-direction: row; }
+  body[data-prototype-view="latest-oct-28"] .prototype-view-control { min-width: 0; }
+  body[data-prototype-view="latest-oct-28"] .prototype-view-control .prototype-version-trigger { max-width: 100%; }
+  body[data-prototype-view="latest-oct-28"] .prototype-version-label { overflow: hidden; text-overflow: ellipsis; }
+  .prototype-variant-control { flex-shrink: 0; }
   .prototype-format-menu {
     max-height: calc(100dvh - 124px - env(safe-area-inset-bottom));
   }

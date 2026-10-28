@@ -20,7 +20,22 @@
     {id:'forecast-brief', title:'Forecast brief', status:'Done', time:'16:00', channel:'#data-platform', instructions:'Prepare a concise sales forecast brief covering pipeline coverage, expected closes, and changes since the previous update. Highlight slipped close dates, significant deal movements, and the owners and next actions behind the largest risks. Include links to supporting records.'},
     {id:'discount-review', title:'Discount review', status:'Done', time:'16:00', channel:'#data-platform', instructions:'Review pending deal discounts and their impact on expected revenue. Summarize each request, its business rationale, deal owner, and any approval needed. Flag unusual discounts or missing information and include links to the relevant deal records.'}
   ].map(task => ({...task, repeatEnabled:true, repeat:'Weekly', day:'Friday', monthDay:1, interval:1, customDays:['Friday'], end:'Never', endDate:'', destination:'Slack', timezone:'Pacific Time', model:'Select model', paused:false}));
-  const tasks = groups.flatMap(group => sourceTasks.slice(0,3).map(task => ({...task, id:`${group.id}-${task.id}`, group:group.id, status:group.status, customDays:[...task.customDays]})));
+  const isUpdated = () => document.body.dataset.prototypeView === 'latest-oct-28';
+  const groupsForView = () => isUpdated() ? [groups[1], groups[0], groups[2]] : groups;
+  const tasksByView = new Map();
+  function tasksForView() {
+    const key = document.body.dataset.prototypeView;
+    if (!tasksByView.has(key)) {
+      tasksByView.set(key, groups.flatMap(group => sourceTasks.slice(0,3).map((task, index) => ({
+        ...task, id:`${group.id}-${task.id}`, group:group.id, status:group.status, customDays:[...task.customDays],
+        ...(isUpdated() ? {
+          summary: group.id === 'upcoming' ? ['In 2 hrs', 'In 5 hr', 'Tomorrow'][index] : `${task.day}s at ${timeLabel(task.time)} PT`,
+          ...(index === 0 ? {repeat:'Daily', time:'08:00'} : {})
+        } : {})
+      }))));
+    }
+    return tasksByView.get(key);
+  }
   const timezoneSuffix = {'Pacific Time':'PT','Eastern Time':'ET','UTC':'UTC'};
   let editor;
   let activeTask;
@@ -45,10 +60,14 @@
     return `${task.repeat} at ${at}`;
   }
   function row(task) {
-    return `<li><button type="button" class="latest-task-row" data-latest-task="edit" data-task-id="${task.id}" aria-label="Edit ${esc(task.title)} (${esc(groups.find(group => group.id === task.group).label)})"><span class="latest-task-copy"><span class="latest-task-title">${esc(task.title)}</span><span class="latest-task-meta"><span>${esc(scheduleLabel(task))}</span><span>${esc(task.destination === 'Slack' ? `Slack · ${task.channel}` : 'Owl · Current chat')}</span></span></span><span class="latest-task-actions"><span class="latest-task-status">${esc(task.paused ? 'Paused' : task.status)}</span><span class="latest-task-more">${more}</span></span></button></li>`;
+    const updated = isUpdated();
+    const running = updated && !task.paused && task.group === 'in-progress';
+    const meta = updated ? task.summary || scheduleLabel(task) : scheduleLabel(task);
+    return `<li><button type="button" class="latest-task-row" data-latest-task="edit" data-task-id="${task.id}" aria-label="Edit ${esc(task.title)} (${esc(groups.find(group => group.id === task.group).label)})"><span class="latest-task-copy"><span class="latest-task-title">${esc(task.title)}</span><span class="latest-task-meta"><span>${esc(meta)}</span>${updated ? '' : `<span>${esc(task.destination === 'Slack' ? `Slack · ${task.channel}` : 'Owl · Current chat')}</span>`}</span></span><span class="latest-task-actions${running ? ' is-running' : ''}"><span class="latest-task-status">${running ? '<span class="latest-task-running-dot" aria-hidden="true"></span>' : ''}${esc(task.paused ? 'Paused' : task.status)}</span><span class="latest-task-more">${more}</span></span></button></li>`;
   }
   function render() {
-    return `<div class="latest-tasks" aria-label="Tasks">${groups.map(group => `<section class="latest-task-group" aria-labelledby="latest-tasks-${group.id}"><h3 id="latest-tasks-${group.id}" class="latest-task-group-label">${group.label}</h3><ul class="latest-task-list">${tasks.filter(task => task.group === group.id).map(row).join('')}</ul><span class="latest-task-see-all">See all</span></section>`).join('')}</div>`;
+    const footerLabels = isUpdated() ? {'in-progress':'3 more', upcoming:'2 more', done:'See all'} : {};
+    return `<div class="latest-tasks" aria-label="Tasks">${groupsForView().map(group => `<section class="latest-task-group" aria-labelledby="latest-tasks-${group.id}"><h3 id="latest-tasks-${group.id}" class="latest-task-group-label">${group.label}</h3><ul class="latest-task-list">${tasksForView().filter(task => task.group === group.id).map(row).join('')}</ul><span class="latest-task-see-all">${footerLabels[group.id] || 'See all'}</span></section>`).join('')}</div>`;
   }
   function control(field, label, extra = '') {
     return `<button type="button" class="fsw-edit-select" data-edit-select="${field}" aria-haspopup="listbox" aria-expanded="false" aria-controls="latest-task-menu" aria-label="${esc(label)}" ${extra}><span data-edit-value="${field}"></span>${chevron}</button>`;
@@ -98,7 +117,10 @@
       event.preventDefault();
       readInputs();
       if (!isValid()) return;
+      const scheduleFields = ['repeatEnabled','repeat','day','monthDay','interval','customDays','time','timezone'];
+      const scheduleChanged = scheduleFields.some(field => JSON.stringify(activeTask[field]) !== JSON.stringify(draft[field]));
       Object.assign(activeTask, draft, {title:draft.title.trim(), instructions:draft.instructions.trim(), customDays:[...draft.customDays]});
+      if (isUpdated() && scheduleChanged) delete activeTask.summary;
       api.refreshSchedules?.();
       api.announce?.(`${activeTask.title} updated.`);
       closeEditor();
@@ -252,7 +274,7 @@
   function handleClick(event, nextApi = {}) {
     const target = event.target.closest('[data-latest-task]');
     if (!target) return false;
-    const task = tasks.find(item => item.id === target.dataset.taskId);
+    const task = tasksForView().find(item => item.id === target.dataset.taskId);
     if (task) openEditor(task, target, nextApi);
     return !!task;
   }

@@ -1,10 +1,10 @@
 /* Pen frame HiwUu, “when scroll up”: 138 × 32, 18px owl, 8px gap. */
-.agent-header.is-compact {
+body[data-prototype-view="latest-oct-28"] .agent-header.is-compact {
   height: 64px;
   background: linear-gradient(to bottom, #fffffff5 0, #ffffffad 32px, #ffffff00 64px);
 }
 
-.agent-profile.is-compact {
+body[data-prototype-view="latest-oct-28"] .agent-profile.is-compact {
   flex-direction: row;
   align-items: center;
   gap: 8px;
@@ -16,7 +16,7 @@
 }
 
 /* Override the exported inline styles only in the compact presentation. */
-.agent-profile.is-compact .agent-profile-avatar {
+body[data-prototype-view="latest-oct-28"] .agent-profile.is-compact .agent-profile-avatar {
   width: 18px !important;
   height: 18px !important;
   border-radius: 0 !important;
@@ -25,11 +25,11 @@
   transform: translateY(1px);
 }
 
-.agent-profile.is-compact .agent-profile-mark {
+body[data-prototype-view="latest-oct-28"] .agent-profile.is-compact .agent-profile-mark {
   transform: scale(.75);
 }
 
-.agent-profile.is-compact .agent-profile-label {
+body[data-prototype-view="latest-oct-28"] .agent-profile.is-compact .agent-profile-label {
   padding: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
@@ -37,12 +37,12 @@
   transform: translateY(1px);
 }
 
-.agent-profile.is-compact .agent-profile-name {
+body[data-prototype-view="latest-oct-28"] .agent-profile.is-compact .agent-profile-name {
   font-weight: 500 !important;
   line-height: 20px !important;
 }
 
-.agent-profile.is-compact .agent-profile-chevron,
-.agent-profile.is-compact .agent-profile-status {
+body[data-prototype-view="latest-oct-28"] .agent-profile.is-compact .agent-profile-chevron,
+body[data-prototype-view="latest-oct-28"] .agent-profile.is-compact .agent-profile-status {
   display: none !important;
 }
