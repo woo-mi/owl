@@ -1,5 +1,5 @@
 /* Pen frame HiwUu, “when scroll up”: 138 × 32, 18px owl, 8px gap. */
-body[data-prototype-view="latest-oct-28"] .agent-header.is-compact {
+body[data-prototype-view="latest-oct-28"]:not(.replies-open) .agent-header.is-compact {
   height: 64px;
   background: linear-gradient(to bottom, #fffffff5 0, #ffffffad 32px, #ffffff00 64px);
 }
