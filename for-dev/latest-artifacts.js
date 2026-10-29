@@ -28,6 +28,18 @@
   };
   const categoriesByView = new Map();
   const isOct28 = () => document.body.dataset.prototypeView === 'latest-oct-28';
+  const isGallery = categoryId => isOct28() && ['apps', 'reports'].includes(categoryId);
+  // Preview artwork exported from the updated Apps and Reports Pen frames.
+  const galleryPreviews = {
+    'deal-risk-app': 'bar-chart',
+    'coverage-model': 'line-chart',
+    'control-room': 'matrix',
+    'control-room-oct-28': 'bar-chart',
+    'control-room-sep-30': 'bar-chart',
+    'churn-watch': 'bar-chart',
+    'weekly-forecast': 'matrix',
+    'daily-pipeline-brief': 'line-chart'
+  };
   // The updated Apps frame f2BDqP includes two additional dated deck cards.
   const oct28Apps = [
     ...previews.apps,
@@ -97,16 +109,26 @@
   }
 
   function card(item, categoryId) {
+    if (isGallery(categoryId)) {
+      return `<button type="button" class="latest-artifact-card" data-latest-artifact-action="detail" data-latest-artifact-id="${escape(item.id)}" data-latest-artifact-category="${categoryId}" aria-label="Open ${escape(item.title)}"><span class="latest-artifact-gallery-preview">${galleryThumbnail(item)}</span><span class="latest-artifact-copy"><span class="latest-artifact-title-description"><span class="latest-artifact-title">${escape(item.title)}</span><span class="latest-artifact-description">${escape(item.description)}</span></span><span class="latest-artifact-gallery-time">Edited 2 days ago</span></span></button>`;
+    }
     return `<button type="button" class="latest-artifact-card" data-latest-artifact-action="detail" data-latest-artifact-id="${escape(item.id)}" data-latest-artifact-category="${categoryId}" aria-label="Open ${escape(item.title)}"><span class="latest-artifact-copy"><span class="latest-artifact-title-description"><span class="latest-artifact-title">${escape(item.title)}</span><span class="latest-artifact-description">${escape(item.description)}</span></span>${sourceRow(item, categoryId)}</span><span class="latest-artifact-thumbnail">${thumbnail(item)}</span></button>`;
   }
 
+  function galleryThumbnail(item) {
+    const preview = galleryPreviews[item.id];
+    return preview
+      ? `<img class="latest-artifact-gallery-image" src="assets/artifact-gallery/${preview}.png" width="588" height="291" alt="">`
+      : thumbnail(item);
+  }
+
   function cards(categoryId, all = false) {
-    return `<div class="latest-artifact-cards">${itemsFor(categoryId, all).map(item => card(item, categoryId)).join('')}</div>`;
+    return `<div class="latest-artifact-cards${isGallery(categoryId) ? ' latest-artifact-gallery-grid' : ''}">${itemsFor(categoryId, all).map(item => card(item, categoryId)).join('')}</div>`;
   }
 
   function render() {
     const selectedCategory = categoriesByView.get(document.body.dataset.prototypeView) || 'apps';
-    return `<div class="latest-artifacts"><div class="latest-artifact-tabs" role="tablist" aria-label="Artifact categories">${categories.map(category => `<button type="button" id="latest-artifact-tab-${category.id}" class="latest-artifact-tab" role="tab" aria-controls="latest-artifact-panel" aria-selected="${category.id === selectedCategory}" tabindex="${category.id === selectedCategory ? 0 : -1}" data-latest-artifact-category-tab="${category.id}">${category.label}</button>`).join('')}</div><section class="latest-artifact-section" id="latest-artifact-panel" role="tabpanel" aria-labelledby="latest-artifact-tab-${selectedCategory}">${cards(selectedCategory)}<div class="latest-artifact-footer"><button type="button" class="latest-artifact-see-all" data-latest-artifact-action="all" data-latest-artifact-category="${selectedCategory}" aria-label="See all ${selectedCategory}">See all</button></div></section></div>`;
+    return `<div class="latest-artifacts${isGallery(selectedCategory) ? ' latest-artifact-gallery' : ''}"><div class="latest-artifact-tabs" role="tablist" aria-label="Artifact categories">${categories.map(category => `<button type="button" id="latest-artifact-tab-${category.id}" class="latest-artifact-tab" role="tab" aria-controls="latest-artifact-panel" aria-selected="${category.id === selectedCategory}" tabindex="${category.id === selectedCategory ? 0 : -1}" data-latest-artifact-category-tab="${category.id}">${category.label}</button>`).join('')}</div><section class="latest-artifact-section" id="latest-artifact-panel" role="tabpanel" aria-labelledby="latest-artifact-tab-${selectedCategory}">${cards(selectedCategory)}${isGallery(selectedCategory) ? '' : `<div class="latest-artifact-footer"><button type="button" class="latest-artifact-see-all" data-latest-artifact-action="all" data-latest-artifact-category="${selectedCategory}" aria-label="See all ${selectedCategory}">See all</button></div>`}</section></div>`;
   }
 
   function handleClick(event, api = {}) {
@@ -136,7 +158,7 @@
       const item = itemsFor(category.id, true).find(artifact => artifact.id === target.dataset.latestArtifactId);
       if (!item) return false;
       const prompt = `Open ${item.title} and show me the latest details.`;
-      api.showDetail?.(item.title, `<div class="latest-artifact-detail"><p class="latest-artifact-detail-category">${category.label}</p><p class="latest-artifact-detail-description">${escape(item.description)}</p><div class="latest-artifact-detail-thumbnail">${thumbnail(item)}</div><button type="button" class="latest-artifact-ask" data-latest-artifact-action="ask" data-latest-artifact-prompt="${escape(prompt)}">Ask about this ${category.noun}</button></div>`, target);
+      api.showDetail?.(item.title, `<div class="latest-artifact-detail"><p class="latest-artifact-detail-category">${category.label}</p><p class="latest-artifact-detail-description">${escape(item.description)}</p><div class="latest-artifact-detail-thumbnail${isGallery(category.id) ? ' latest-artifact-gallery-detail-preview' : ''}">${isGallery(category.id) ? galleryThumbnail(item) : thumbnail(item)}</div><button type="button" class="latest-artifact-ask" data-latest-artifact-action="ask" data-latest-artifact-prompt="${escape(prompt)}">Ask about this ${category.noun}</button></div>`, target);
       return true;
     }
     return false;
