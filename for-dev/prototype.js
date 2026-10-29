@@ -38,7 +38,7 @@
       if (!agentProfile) return;
       // Separate thresholds prevent flicker near the top of the conversation.
       const threshold = agentProfile.classList.contains('is-compact') ? 8 : 48;
-      const compact = replyBase() === 'latest-oct-28' && ui['chat-scroll'].scrollTop > threshold;
+      const compact = !isReplyView() && replyBase() === 'latest-oct-28' && ui['chat-scroll'].scrollTop > threshold;
       agentProfile.classList.toggle('is-compact', compact);
       agentHeader?.classList.toggle('is-compact', compact);
     }
