@@ -52,3 +52,11 @@ body[data-prototype-view="latest-oct-28"] .latest-artifact-gallery-time{display:
 body[data-prototype-view="latest-oct-28"] .latest-artifact-gallery-detail-preview{width:294px;max-width:100%;height:auto;aspect-ratio:294/145.484375;background:#fdfdfe}
 @container(max-width:839px){body[data-prototype-view="latest-oct-28"] .latest-artifact-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @container(max-width:539px){body[data-prototype-view="latest-oct-28"] .latest-artifact-gallery-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Compact two-column Chats cards from Artifacts - Chats -nn. */
+body[data-prototype-view="latest-oct-28"] .latest-artifact-chats .latest-artifact-section{width:100%;container-type:inline-size}
+body[data-prototype-view="latest-oct-28"] .latest-artifact-chat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+body[data-prototype-view="latest-oct-28"] .latest-artifact-chat-grid .latest-artifact-card{max-width:488px}
+body[data-prototype-view="latest-oct-28"] .latest-artifact-chat-grid .latest-artifact-copy{padding:10px 7px 8px 14px}
+body[data-prototype-view="latest-oct-28"] .latest-artifact-chat-grid :is(.latest-artifact-title,.latest-artifact-description){white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}
+@container(max-width:799px){body[data-prototype-view="latest-oct-28"] .latest-artifact-chat-grid{grid-template-columns:minmax(0,1fr)}body[data-prototype-view="latest-oct-28"] .latest-artifact-chat-grid .latest-artifact-card{max-width:none}}

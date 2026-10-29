@@ -29,6 +29,7 @@
   const categoriesByView = new Map();
   const isOct28 = () => document.body.dataset.prototypeView === 'latest-oct-28';
   const isGallery = categoryId => isOct28() && ['apps', 'reports'].includes(categoryId);
+  const isChatGrid = categoryId => isOct28() && categoryId === 'chats';
   // Preview artwork exported from the updated Apps and Reports Pen frames.
   const galleryPreviews = {
     'deal-risk-app': 'bar-chart',
@@ -101,7 +102,7 @@
   }
 
   function sourceRow(item, categoryId) {
-    const activity = isOct28() ? artifactActivity[categoryId]?.[item.id] : '';
+    const activity = isOct28() && !isChatGrid(categoryId) ? artifactActivity[categoryId]?.[item.id] : '';
     if (activity) {
       return `<span class="latest-artifact-domain latest-artifact-domain-with-activity"><img src="assets/wisdom-card-logo.svg" width="12.8576" height="14" alt=""><span class="latest-artifact-source-details"><span>ayush.gowisdom.ai</span><span class="latest-artifact-activity">${escape(activity)}</span></span></span>`;
     }
@@ -112,7 +113,10 @@
     if (isGallery(categoryId)) {
       return `<button type="button" class="latest-artifact-card" data-latest-artifact-action="detail" data-latest-artifact-id="${escape(item.id)}" data-latest-artifact-category="${categoryId}" aria-label="Open ${escape(item.title)}"><span class="latest-artifact-gallery-preview">${galleryThumbnail(item)}</span><span class="latest-artifact-copy"><span class="latest-artifact-title-description"><span class="latest-artifact-title">${escape(item.title)}</span><span class="latest-artifact-description">${escape(item.description)}</span></span><span class="latest-artifact-gallery-time">Edited 2 days ago</span></span></button>`;
     }
-    return `<button type="button" class="latest-artifact-card" data-latest-artifact-action="detail" data-latest-artifact-id="${escape(item.id)}" data-latest-artifact-category="${categoryId}" aria-label="Open ${escape(item.title)}"><span class="latest-artifact-copy"><span class="latest-artifact-title-description"><span class="latest-artifact-title">${escape(item.title)}</span><span class="latest-artifact-description">${escape(item.description)}</span></span>${sourceRow(item, categoryId)}</span><span class="latest-artifact-thumbnail">${thumbnail(item)}</span></button>`;
+    const description = isChatGrid(categoryId) && item.id === 'september-revenue-drivers'
+      ? 'Explore monthly revenue, customer changes and product...'
+      : item.description;
+    return `<button type="button" class="latest-artifact-card" data-latest-artifact-action="detail" data-latest-artifact-id="${escape(item.id)}" data-latest-artifact-category="${categoryId}" aria-label="Open ${escape(item.title)}"><span class="latest-artifact-copy"><span class="latest-artifact-title-description"><span class="latest-artifact-title">${escape(item.title)}</span><span class="latest-artifact-description">${escape(description)}</span></span>${sourceRow(item, categoryId)}</span><span class="latest-artifact-thumbnail">${thumbnail(item)}</span></button>`;
   }
 
   function galleryThumbnail(item) {
@@ -123,12 +127,12 @@
   }
 
   function cards(categoryId, all = false) {
-    return `<div class="latest-artifact-cards${isGallery(categoryId) ? ' latest-artifact-gallery-grid' : ''}">${itemsFor(categoryId, all).map(item => card(item, categoryId)).join('')}</div>`;
+    return `<div class="latest-artifact-cards${isGallery(categoryId) ? ' latest-artifact-gallery-grid' : isChatGrid(categoryId) ? ' latest-artifact-chat-grid' : ''}">${itemsFor(categoryId, all).map(item => card(item, categoryId)).join('')}</div>`;
   }
 
   function render() {
     const selectedCategory = categoriesByView.get(document.body.dataset.prototypeView) || 'apps';
-    return `<div class="latest-artifacts${isGallery(selectedCategory) ? ' latest-artifact-gallery' : ''}"><div class="latest-artifact-tabs" role="tablist" aria-label="Artifact categories">${categories.map(category => `<button type="button" id="latest-artifact-tab-${category.id}" class="latest-artifact-tab" role="tab" aria-controls="latest-artifact-panel" aria-selected="${category.id === selectedCategory}" tabindex="${category.id === selectedCategory ? 0 : -1}" data-latest-artifact-category-tab="${category.id}">${category.label}</button>`).join('')}</div><section class="latest-artifact-section" id="latest-artifact-panel" role="tabpanel" aria-labelledby="latest-artifact-tab-${selectedCategory}">${cards(selectedCategory)}${isGallery(selectedCategory) ? '' : `<div class="latest-artifact-footer"><button type="button" class="latest-artifact-see-all" data-latest-artifact-action="all" data-latest-artifact-category="${selectedCategory}" aria-label="See all ${selectedCategory}">See all</button></div>`}</section></div>`;
+    return `<div class="latest-artifacts${isGallery(selectedCategory) ? ' latest-artifact-gallery' : isChatGrid(selectedCategory) ? ' latest-artifact-chats' : ''}"><div class="latest-artifact-tabs" role="tablist" aria-label="Artifact categories">${categories.map(category => `<button type="button" id="latest-artifact-tab-${category.id}" class="latest-artifact-tab" role="tab" aria-controls="latest-artifact-panel" aria-selected="${category.id === selectedCategory}" tabindex="${category.id === selectedCategory ? 0 : -1}" data-latest-artifact-category-tab="${category.id}">${category.label}</button>`).join('')}</div><section class="latest-artifact-section" id="latest-artifact-panel" role="tabpanel" aria-labelledby="latest-artifact-tab-${selectedCategory}">${cards(selectedCategory)}${isOct28() ? '' : `<div class="latest-artifact-footer"><button type="button" class="latest-artifact-see-all" data-latest-artifact-action="all" data-latest-artifact-category="${selectedCategory}" aria-label="See all ${selectedCategory}">See all</button></div>`}</section></div>`;
   }
 
   function handleClick(event, api = {}) {
