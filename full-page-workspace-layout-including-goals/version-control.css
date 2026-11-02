@@ -60,6 +60,27 @@
 .prototype-version-menu[hidden] { display: none; }
 .prototype-format-menu { width: 360px; }
 .prototype-variant-menu { width: 92px; }
+.prototype-layout-menu { width: 92px; }
+.prototype-layout-option {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+}
+.prototype-layout-option[aria-checked="true"]::after {
+  content: "";
+  flex-shrink: 0;
+  width: 6px;
+  height: 11px;
+  margin-left: auto;
+  border: solid currentColor;
+  border-width: 0 1.5px 1.5px 0;
+  transform: translateY(-2px) rotate(45deg);
+}
+
 .prototype-format-trigger {
   max-width: 100%;
   min-height: 36px;

@@ -1,10 +1,9 @@
-/* The workspace prototype, More characters, Aligned, and its dated copy share the full-screen dialog. */
+/* Workspace Page (Pen PGWL8): a full-page workspace beside the compact app rail. */
 (() => {
   'use strict';
   const SECTIONS = ['profile', 'goals', 'connections', 'schedules', 'artifacts', 'memory', 'history'];
   const LABELS = { profile: 'Profile', goals: 'Goals', connections: 'Connections', schedules: 'Schedules', artifacts: 'Artifacts', memory: 'Memory', history: 'History' };
   const icon = paths => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
-  const closeIcon = icon('<path d="m6 6 12 12M6 18 18 6"/>');
   const backIcon = icon('<path d="m14 6-6 6 6 6"/>');
   const arrowIcon = icon('<path d="m5 12 7-7 7 7M12 5v15"/>');
   // Original Central Icon System target artwork from the Goals Pen frame.
@@ -20,7 +19,7 @@
     const isOct28 = () => document.body.dataset.prototypeView === 'latest-oct-28';
     const isLatest = () => ['latest-oct-27', 'latest-oct-28'].includes(document.body.dataset.prototypeView);
     const presentationKey = () => isOct28() ? `latest-oct-28:${window.MVPVersions.getVariant()}` : isLatest() ? document.body.dataset.prototypeView : 'legacy';
-    const defaultSection = () => isOct28() ? 'profile' : isLatest() ? 'schedules' : 'connections';
+    const defaultSection = () => isOct28() ? 'goals' : isLatest() ? 'schedules' : 'connections';
     const initialSection = defaultSection();
     const sectionEnabled = id => ['profile', 'goals'].includes(id) ? isOct28() : !(isLatest() && ['connections', 'history'].includes(id));
     const sectionLabel = id => isLatest() && id === 'schedules' ? 'Tasks' : LABELS[id];
@@ -28,9 +27,10 @@
     const trigger = document.getElementById('chief-profile');
     const dialog = document.createElement('dialog');
     dialog.id = 'fullscreen-workspace';
-    dialog.className = 'fsw-dialog';
+    dialog.className = 'fsw-dialog workspace-page';
+    dialog.setAttribute('role', 'region');
     dialog.setAttribute('aria-labelledby', 'fsw-title');
-    dialog.innerHTML = `<aside class="fsw-sidebar"><div class="fsw-identity"><div class="fsw-avatar" aria-hidden="true"></div><div><strong>Chief of staff</strong><span>Active now</span></div></div><div class="fsw-navigation" role="tablist" aria-label="Workspace sections" aria-orientation="vertical">${SECTIONS.map(id => `<button type="button" id="fsw-nav-${id}" class="fsw-nav" role="tab" aria-controls="fsw-section-${id}" aria-selected="${id === 'connections'}" tabindex="${id === 'connections' ? 0 : -1}" data-fsw-section="${id}">${id === 'goals' ? goalsIcon : id === 'history' ? history.icon : content.icons[id === 'profile' ? 'schedules' : id] || ''}<span>${LABELS[id]}</span></button>`).join('')}</div></aside><div class="fsw-main"><header class="fsw-header"><button type="button" class="fsw-back" aria-label="Back to Memory" hidden>${backIcon}</button><h2 id="fsw-title">Connections</h2><button type="button" class="fsw-new-goal" hidden>New goal</button></header><div class="fsw-scroll">${SECTIONS.map(id => `<section id="fsw-section-${id}" class="fsw-panel-content" role="tabpanel" aria-labelledby="fsw-nav-${id}" tabindex="0" ${id === 'connections' ? '' : 'hidden'}></section>`).join('')}<section class="fsw-detail" tabindex="-1" hidden></section></div><form class="fsw-composer"><textarea rows="1" aria-label="Message Chief of staff in workspace" placeholder="Get quick answers and dig in with follow-ups"></textarea><button type="submit" aria-label="Send workspace message" disabled>${arrowIcon}</button></form><div class="fsw-notice" role="status" aria-live="polite"></div></div><button type="button" class="fsw-close" aria-label="Close workspace">${closeIcon}</button>`;
+    dialog.innerHTML = `<aside class="fsw-sidebar"><button type="button" class="fsw-close workspace-chat-back" aria-label="Back to Owl Chat">${icon('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>Owl Chat</span></button><div class="fsw-identity"><div class="fsw-avatar" aria-hidden="true"></div><div><strong>Chief of staff</strong><span>Active now</span></div></div><div class="fsw-navigation" role="tablist" aria-label="Workspace sections" aria-orientation="vertical">${SECTIONS.map(id => `<button type="button" id="fsw-nav-${id}" class="fsw-nav" role="tab" aria-controls="fsw-section-${id}" aria-selected="${id === 'connections'}" tabindex="${id === 'connections' ? 0 : -1}" data-fsw-section="${id}">${id === 'goals' ? goalsIcon : id === 'history' ? history.icon : content.icons[id === 'profile' ? 'schedules' : id] || ''}<span>${LABELS[id]}</span></button>`).join('')}</div></aside><div class="fsw-main"><header class="fsw-header"><button type="button" class="fsw-back" aria-label="Back to Memory" hidden>${backIcon}</button><h2 id="fsw-title">Connections</h2><button type="button" class="fsw-new-goal" hidden>New goal</button></header><div class="fsw-scroll">${SECTIONS.map(id => `<section id="fsw-section-${id}" class="fsw-panel-content" role="tabpanel" aria-labelledby="fsw-nav-${id}" tabindex="0" ${id === 'connections' ? '' : 'hidden'}></section>`).join('')}<section class="fsw-detail" tabindex="-1" hidden></section></div><form class="fsw-composer"><textarea rows="1" aria-label="Message Chief of staff in workspace" placeholder="Get quick answers and dig in with follow-ups"></textarea><button type="submit" aria-label="Send workspace message" disabled>${arrowIcon}</button></form><div class="fsw-notice" role="status" aria-live="polite"></div></div>`;
     document.body.append(dialog);
     const avatar = trigger.querySelector('[data-pencil-name="ii"]') || trigger.querySelector('.agent-avatar > *');
     if (avatar) {
@@ -158,10 +158,12 @@
       clearTimeout(closeTimer);
       closing = false;
       if (dialog.open) { dialog.classList.remove('is-closing'); return; }
+      setSection(defaultSection());
       window.dispatchEvent(new Event('mvp-workspace-open'));
       dialog.classList.remove('is-closing');
-      dialog.showModal();
-      document.body.classList.add('fullscreen-workspace-open');
+      document.body.classList.add('fullscreen-workspace-open', 'workspace-page-open');
+      document.getElementById('main').inert = true;
+      dialog.show();
       syncTrigger();
       closeButton.focus({preventScroll:true});
     }
@@ -179,11 +181,12 @@
         dialog.close();
         closing = false;
         dialog.classList.remove('is-closing');
-        document.body.classList.remove('fullscreen-workspace-open');
+        document.body.classList.remove('fullscreen-workspace-open', 'workspace-page-open');
+        document.getElementById('main').inert = false;
         syncTrigger();
         if (restoreFocus) trigger.focus({preventScroll:true});
       };
-      if (immediate || reduced.matches) finish();
+      if (immediate || reduced.matches || dialog.classList.contains('workspace-page')) finish();
       else closeTimer = setTimeout(finish, 180);
     }
     function ask(prompt) {
@@ -232,6 +235,11 @@
         goBack();
         return;
       }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+        return;
+      }
       const tab = event.target.closest('[role="tab"]');
       if (!tab) return;
       const list = tab.closest('[role="tablist"]');
@@ -257,6 +265,10 @@
       input.value = ''; send.disabled = true;
       ask(prompt);
     });
+    document.getElementById('sidebar').addEventListener('click', event => {
+      const nav = event.target.closest('[data-nav]');
+      if (nav && /^(new|owls?|chat)$/i.test(nav.dataset.nav)) close({restoreFocus:false,immediate:true});
+    }, true);
     closeButton.addEventListener('pointerdown', () => { closeButton.focus({preventScroll:true}); });
     for (const name of ['mvp-view-change','mvp-variant-change','mvp-bubble-format-change','popstate']) window.addEventListener(name, () => {
       close({restoreFocus:false,immediate:true});

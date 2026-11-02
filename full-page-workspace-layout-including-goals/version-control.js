@@ -129,8 +129,59 @@
     variantMenu.append(item);
     return link;
   });
-  // Keep the Full-Page Workspace Layout Including Goals controls detached while retaining the copied view state and layout.
+  // Keep the copied experiment controls detached. Layout versions are independent
+  // of the Oct 28 V2 owl-customizer variant retained by this snapshot.
+  const layoutControl = document.createElement('nav');
+  layoutControl.id = 'prototype-layout-versions';
+  layoutControl.className = 'prototype-versions prototype-layout-versions';
+  layoutControl.setAttribute('aria-label', 'Workspace layout controls');
+  layoutControl.innerHTML = `<div class="prototype-control prototype-layout-control">
+    <button class="prototype-version-trigger prototype-layout-trigger" type="button" aria-label="Workspace layout version, V1" aria-haspopup="menu" aria-expanded="false" aria-controls="prototype-layout-menu">
+      <span>V1</span>${chevron}
+    </button>
+    <ul id="prototype-layout-menu" class="prototype-version-menu prototype-layout-menu" role="menu" aria-label="Workspace layout versions" hidden>
+      <li role="none"><button type="button" class="prototype-version-option prototype-layout-option" role="menuitemradio" aria-checked="true" tabindex="-1" data-layout-version="v1">V1</button></li>
+    </ul>
+  </div>`;
+  document.body.append(layoutControl);
   document.body.classList.add('has-mvp-versions');
+  document.body.dataset.workspaceLayoutVersion = 'v1';
+  const layoutTrigger = layoutControl.querySelector('.prototype-layout-trigger');
+  const layoutMenu = layoutControl.querySelector('[role="menu"]');
+  const layoutOption = layoutControl.querySelector('[role="menuitemradio"]');
+  function setLayoutMenuOpen(open, restoreFocus = false) {
+    layoutMenu.hidden = !open;
+    layoutTrigger.setAttribute('aria-expanded', String(open));
+    if (open) layoutOption.focus({preventScroll:true});
+    else if (restoreFocus) layoutTrigger.focus({preventScroll:true});
+  }
+  layoutTrigger.addEventListener('click', () => setLayoutMenuOpen(layoutMenu.hidden));
+  layoutTrigger.addEventListener('keydown', event => {
+    if (!['ArrowDown', 'ArrowUp'].includes(event.key)) return;
+    event.preventDefault();
+    setLayoutMenuOpen(true);
+  });
+  layoutOption.addEventListener('click', () => setLayoutMenuOpen(false, true));
+  layoutMenu.addEventListener('keydown', event => {
+    if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+      event.preventDefault();
+      layoutOption.focus({preventScroll:true});
+    }
+    if (event.key === 'Tab') setLayoutMenuOpen(false, true);
+  });
+  document.addEventListener('pointerdown', event => {
+    if (!layoutControl.contains(event.target)) setLayoutMenuOpen(false);
+  });
+  document.addEventListener('focusin', event => {
+    if (!layoutControl.contains(event.target)) setLayoutMenuOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || layoutMenu.hidden) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    setLayoutMenuOpen(false, true);
+  });
+  window.addEventListener('mvp-workspace-open', () => setLayoutMenuOpen(false));
 
   function applyFormatToURL(url, view) {
     if (view === 'multiple-bubbles' && currentFormat.id !== defaultBubbleFormat.id) url.searchParams.set('bubbles', currentFormat.id);
