@@ -62,25 +62,25 @@
 .wg-layout-v3 { gap:16px; }
 .wg-layout-v3 .wg-measure, .wg-layout-v3 .wg-references { margin-top:8px; }
 .wg-layout-v3 .wg-references { padding-top:0; }
-.wg-reference-table-layout { display:flex; flex-direction:column; gap:10px; }
+.wg-reference-table-layout { display:flex; flex-direction:column; gap:12px; }
 .wg-reference-tools { display:flex; gap:10px; }
-.wg-reference-search, .wg-reference-category { height:30px; min-width:0; padding:5px 10px; border:1px solid #e8e8e8; border-radius:7px; background:#fff; color:#777; font:400 12px/19px var(--fsw-font-family,Inter,system-ui,sans-serif); }
+.wg-reference-search, .wg-reference-category { height:36px; min-width:0; padding:8px 12px; border:1px solid #e8e8e8; border-radius:7px; background:#fff; color:#777; font:400 12px/19px var(--fsw-font-family,Inter,system-ui,sans-serif); }
 .wg-reference-search { flex:1; width:100%; color:#191919; }
 .wg-reference-search::placeholder { color:#999; opacity:1; }
-.wg-reference-category { flex:0 1 180px; width:180px; cursor:pointer; }
+.wg-reference-category { flex:0 1 180px; width:180px; padding-right:34px; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m2 4 4 4 4-4' fill='none' stroke='%23777' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; background-size:12px 12px; cursor:pointer; }
 .wg-reference-table-wrap { border:1px solid #eee; border-radius:8px; overflow:hidden; }
 .wg-reference-table { border-collapse:collapse; table-layout:fixed; width:100%; text-align:left; font-size:12px; line-height:19px; color:#777; }
-.wg-reference-table th { height:26px; background:#fafafa; font-weight:400; }
+.wg-reference-table th { height:36px; background:#fafafa; font-weight:400; }
 .wg-reference-table th:first-child { width:64%; }
-.wg-reference-table th, .wg-reference-table td { padding:1px 12px; overflow-wrap:anywhere; vertical-align:middle; }
-.wg-reference-table td { height:22px; border-top:1px solid #f0f0f0; }
+.wg-reference-table th, .wg-reference-table td { padding:8px 12px; overflow-wrap:anywhere; vertical-align:middle; }
+.wg-reference-table td { height:36px; border-top:1px solid #f0f0f0; }
 .wg-reference-table .wg-reference { display:block; }
 .wg-reference-table .wg-reference-empty { padding:20px 12px; text-align:center; }
 .wg-layout-v4 { gap:13px; }
 .wg-layout-v4 .wg-edit { background:#191c1f; color:#fff; }
 .wg-layout-v4 .wg-edit:hover { background:#30343b; }
 @media(max-width:1300px) { .wg-reference-group { grid-template-columns:130px minmax(0,1fr); gap:16px; } }
-@media(max-width:600px) { .wg-reference-group { grid-template-columns:minmax(0,1fr); gap:8px; } .wg-reference-cards { grid-template-columns:minmax(0,1fr); } .wg-reference-tools { flex-direction:column; } .wg-reference-category { flex-basis:auto; width:100%; } .wg-reference-table th, .wg-reference-table td { padding:4px 8px; } }
+@media(max-width:600px) { .wg-reference-group { grid-template-columns:minmax(0,1fr); gap:8px; } .wg-reference-cards { grid-template-columns:minmax(0,1fr); } .wg-reference-tools { flex-direction:column; } .wg-reference-category { flex-basis:auto; width:100%; } .wg-reference-table th, .wg-reference-table td { padding:8px; } }
 .wg-detail-actions { display:flex; align-items:center; justify-content:space-between; gap:16px; }
 .wg-lifecycle { display:flex; align-items:center; gap:8px; color:#777; font-size:12px; line-height:17px; }
 .wg-switch { position:relative; display:block; width:32px; height:20px; padding:2px; border:0; border-radius:10px; background:#aaa; }

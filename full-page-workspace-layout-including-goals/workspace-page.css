@@ -22,6 +22,9 @@ body.workspace-page-open { overflow:hidden; }
 .workspace-page .fsw-header { min-height:34px; }
 .workspace-page .fsw-new-goal { height:34px; }
 .workspace-page .workspace-goals { grid-template-columns:304px minmax(0,1fr); gap:40px; }
+/* Keep version-control clearance in the scrolling content, without a fixed white footer. */
+.workspace-page[data-section="goals"] .fsw-main { padding-bottom:0; }
+.workspace-page[data-section="goals"] .workspace-goals { padding-bottom:72px; }
 .workspace-page .wg-card { padding:24px; }
 .workspace-page .fsw-notice { bottom:56px!important; left:40px; right:40px; }
 .workspace-page .fsw-composer { margin-bottom:0; }
