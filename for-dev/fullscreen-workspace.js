@@ -30,7 +30,7 @@
     dialog.id = 'fullscreen-workspace';
     dialog.className = 'fsw-dialog';
     dialog.setAttribute('aria-labelledby', 'fsw-title');
-    dialog.innerHTML = `<aside class="fsw-sidebar"><div class="fsw-identity"><div class="fsw-avatar" aria-hidden="true"></div><div><strong>Chief of staff</strong><span>Active now</span></div></div><div class="fsw-navigation" role="tablist" aria-label="Workspace sections" aria-orientation="vertical">${SECTIONS.map(id => `<button type="button" id="fsw-nav-${id}" class="fsw-nav" role="tab" aria-controls="fsw-section-${id}" aria-selected="${id === 'connections'}" tabindex="${id === 'connections' ? 0 : -1}" data-fsw-section="${id}">${id === 'goals' ? goalsIcon : id === 'history' ? history.icon : content.icons[id === 'profile' ? 'schedules' : id] || ''}<span>${LABELS[id]}</span></button>`).join('')}</div></aside><div class="fsw-main"><header class="fsw-header"><button type="button" class="fsw-back" aria-label="Back to Memory" hidden>${backIcon}</button><h2 id="fsw-title">Connections</h2><button type="button" class="fsw-close" aria-label="Close workspace">${closeIcon}</button></header><div class="fsw-scroll">${SECTIONS.map(id => `<section id="fsw-section-${id}" class="fsw-panel-content" role="tabpanel" aria-labelledby="fsw-nav-${id}" tabindex="0" ${id === 'connections' ? '' : 'hidden'}></section>`).join('')}<section class="fsw-detail" tabindex="-1" hidden></section></div><form class="fsw-composer"><textarea rows="1" aria-label="Message Chief of staff in workspace" placeholder="Get quick answers and dig in with follow-ups"></textarea><button type="submit" aria-label="Send workspace message" disabled>${arrowIcon}</button></form><div class="fsw-notice" role="status" aria-live="polite"></div></div>`;
+    dialog.innerHTML = `<aside class="fsw-sidebar"><div class="fsw-identity"><div class="fsw-avatar" aria-hidden="true"></div><div><strong>Chief of staff</strong><span>Active now</span></div></div><div class="fsw-navigation" role="tablist" aria-label="Workspace sections" aria-orientation="vertical">${SECTIONS.map(id => `<button type="button" id="fsw-nav-${id}" class="fsw-nav" role="tab" aria-controls="fsw-section-${id}" aria-selected="${id === 'connections'}" tabindex="${id === 'connections' ? 0 : -1}" data-fsw-section="${id}">${id === 'goals' ? goalsIcon : id === 'history' ? history.icon : content.icons[id === 'profile' ? 'schedules' : id] || ''}<span>${LABELS[id]}</span></button>`).join('')}</div></aside><div class="fsw-main"><header class="fsw-header"><button type="button" class="fsw-back" aria-label="Back to Memory" hidden>${backIcon}</button><h2 id="fsw-title">Connections</h2><button type="button" class="fsw-new-goal" hidden>New goal</button></header><div class="fsw-scroll">${SECTIONS.map(id => `<section id="fsw-section-${id}" class="fsw-panel-content" role="tabpanel" aria-labelledby="fsw-nav-${id}" tabindex="0" ${id === 'connections' ? '' : 'hidden'}></section>`).join('')}<section class="fsw-detail" tabindex="-1" hidden></section></div><form class="fsw-composer"><textarea rows="1" aria-label="Message Chief of staff in workspace" placeholder="Get quick answers and dig in with follow-ups"></textarea><button type="submit" aria-label="Send workspace message" disabled>${arrowIcon}</button></form><div class="fsw-notice" role="status" aria-live="polite"></div></div><button type="button" class="fsw-close" aria-label="Close workspace">${closeIcon}</button>`;
     document.body.append(dialog);
     const avatar = trigger.querySelector('[data-pencil-name="ii"]') || trigger.querySelector('.agent-avatar > *');
     if (avatar) {
@@ -51,6 +51,7 @@
     dialog.dataset.section = initialSection;
     const send = dialog.querySelector('.fsw-composer button');
     const closeButton = dialog.querySelector('.fsw-close');
+    const newGoalButton = dialog.querySelector('.fsw-new-goal');
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const sectionScroll = new Map();
     let section = initialSection;
@@ -83,6 +84,7 @@
       dialog.dataset.section = section;
       dialog.dataset.detail = String(isDetail);
       composer.hidden = section !== 'memory';
+      newGoalButton.hidden = section !== 'goals' || isDetail;
       back.hidden = !isDetail;
       back.setAttribute('aria-label', `Back to ${sectionLabel(section)}`);
     }
@@ -202,6 +204,7 @@
       const nav = event.target.closest('[data-fsw-section]');
       if (nav) return setSection(nav.dataset.fswSection);
       if (event.target.closest('.fsw-close')) return close();
+      if (event.target.closest('.fsw-new-goal')) return window.WorkspaceGoals.openNew(newGoalButton, api);
       if (event.target.closest('.fsw-back')) return goBack();
       if (event.target === dialog) {
         const rect = dialog.getBoundingClientRect();
