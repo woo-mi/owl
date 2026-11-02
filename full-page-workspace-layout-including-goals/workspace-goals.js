@@ -1,4 +1,4 @@
-/* Goals — Architecture 1 · Split view (Pen frame rhx0l). */
+/* Workspace Page and its grouped-row, category-card, and searchable-table reference variants. */
 (() => {
   'use strict';
 
@@ -64,6 +64,8 @@
 
   let filter = 'all';
   let query = '';
+  let referenceQuery = '';
+  let referenceCategory = 'all';
   let selectedId = goals[0].id;
   let editor;
   let editingId;
@@ -102,9 +104,46 @@
     const summary = goal.update || (goal.metric ? goal.metric : 'No measure added.');
     return `<section class="wg-measure" aria-label="${esc(goal.metric || 'Goal measure')}"><div class="wg-copy-group"><h4>Measure</h4><p>${esc(summary)}</p></div>${hasMeasure ? `<div class="wg-measure-scale"><div class="wg-track${measurable ? '' : ' is-unmeasured'}" ${measurable ? `role="progressbar" aria-label="${esc(goal.metric)} progress toward target" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(ratio)}" aria-valuetext="${esc(goal.current)} ${esc(goal.unit)} now; target ${esc(goal.target)} ${esc(goal.unit)}"` : 'aria-hidden="true"'}>${measurable ? `<span class="wg-progress" style="width:${ratio}%"></span><span class="wg-marker" style="left:${ratio}%"></span>` : ''}</div><div class="wg-measure-labels"><span>${baselineLabel}</span><span>${currentLabel}</span><span>${targetLabel}</span></div></div>` : ''}<p class="wg-updated">${goal.updated ? `Progress updated ${esc(goal.updated)}` : 'No progress yet'}</p></section>`;
   }
+  const referenceGroups = [
+    {name:'Pipeline insights', references:['Deal velocity dashboard', 'Enterprise pipeline report', 'Closed-won cohort analysis', 'Root-cause chat', 'Weekly forecast', 'Churn watch']},
+    {name:'Reviews & approvals', references:['Legal review queue', 'Contract redline tracker', 'Security review checklist', 'Approval requirements', 'Pricing exception log']},
+    {name:'Deal coordination', references:['Procurement status', 'Deal stakeholder map', 'Customer decision timelines']},
+    {name:'Planning & follow-up', references:['Mutual action plans', 'Stalled deal review', 'Quarter-end close plan', 'APAC hiring Q&A']}
+  ];
+  const referenceButton = ref => `<button type="button" class="wg-reference" data-wg-action="reference" data-wg-reference="${esc(ref)}">${esc(ref)}</button>`;
+  const inlineReferences = references => references.map((ref, index) => `${index ? '<span class="wg-reference-separator" aria-hidden="true">·</span>' : ''}${referenceButton(ref)}`).join('');
+  function categorizedReferences(goal) {
+    const groups = referenceGroups.map(group => ({name:group.name, references:group.references.filter(ref => goal.references.includes(ref))})).filter(group => group.references.length);
+    const known = new Set(groups.flatMap(group => group.references));
+    const other = goal.references.filter(ref => !known.has(ref));
+    if (other.length) groups.push({name:'Other references', references:other});
+    return groups;
+  }
+  function references(goal, version) {
+    if (!goal.references.length) return '<section class="wg-references"><h4>References</h4><p class="wg-muted">No references added.</p></section>';
+    if (version === 'v1') return `<section class="wg-references"><h4>References</h4><div class="wg-reference-links">${inlineReferences(goal.references)}</div></section>`;
+    const groups = categorizedReferences(goal);
+    let content;
+    if (version === 'v2') {
+      content = `<div class="wg-reference-groups">${groups.map(group => {
+        const lines = [];
+        for (let i = 0; i < group.references.length; i += 3) lines.push(`<div class="wg-reference-links">${inlineReferences(group.references.slice(i, i + 3))}</div>`);
+        return `<section class="wg-reference-group"><h5>${esc(group.name)}</h5><div class="wg-reference-group-lines">${lines.join('')}</div></section>`;
+      }).join('')}</div>`;
+    } else if (version === 'v3') {
+      content = `<div class="wg-reference-cards">${groups.map(group => `<section class="wg-reference-category-card"><header><h5>${esc(group.name)}</h5><span aria-label="${group.references.length} references">${group.references.length}</span></header><div class="wg-reference-card-links">${group.references.map(referenceButton).join('')}</div></section>`).join('')}</div>`;
+    } else {
+      if (!groups.some(group => group.name === referenceCategory)) referenceCategory = 'all';
+      const search = referenceQuery.trim().toLocaleLowerCase();
+      const rows = groups.filter(group => referenceCategory === 'all' || group.name === referenceCategory).flatMap(group => group.references.map(ref => ({ref, category:group.name}))).filter(row => !search || `${row.ref} ${row.category}`.toLocaleLowerCase().includes(search));
+      content = `<div class="wg-reference-table-layout"><div class="wg-reference-tools"><input type="search" class="wg-reference-search" placeholder="Search references" aria-label="Search references" value="${esc(referenceQuery)}" autocomplete="off"><select class="wg-reference-category" aria-label="Reference category"><option value="all"${referenceCategory === 'all' ? ' selected' : ''}>All categories</option>${groups.map(group => `<option value="${esc(group.name)}"${referenceCategory === group.name ? ' selected' : ''}>${esc(group.name)}</option>`).join('')}</select></div><div class="wg-reference-table-wrap"><table class="wg-reference-table" aria-label="Goal references"><thead><tr><th scope="col">Reference</th><th scope="col">Category</th></tr></thead><tbody>${rows.length ? rows.map(row => `<tr><td>${referenceButton(row.ref)}</td><td>${esc(row.category)}</td></tr>`).join('') : '<tr><td colspan="2" class="wg-reference-empty">No matching references.</td></tr>'}</tbody></table></div></div>`;
+    }
+    return `<section class="wg-references wg-references-organized"><h4>References</h4>${content}</section>`;
+  }
   function detail(goal) {
     if (!goal) return `<div class="wg-empty-detail"><h3>${filter === 'closed' && !query ? 'No closed goals' : 'No matching goals'}</h3><p>${filter === 'closed' && !query ? 'Closed goals will appear here.' : 'Try another search or choose a different filter.'}</p></div>`;
-    return `<div class="wg-detail-column"><article class="wg-card" aria-labelledby="wg-goal-title"><h3 id="wg-goal-title">${esc(goal.title)}</h3><section class="wg-copy-group"><h4>Instruction</h4><p>${esc(goal.instruction)}</p></section>${measure(goal)}<section class="wg-references"><h4>References</h4>${goal.references.length ? `<div class="wg-reference-links">${goal.references.map((ref, index) => `${index ? '<span class="wg-reference-separator" aria-hidden="true">·</span>' : ''}<button type="button" class="wg-reference" data-wg-action="reference" data-wg-reference="${esc(ref)}">${esc(ref)}</button>`).join('')}</div>` : '<p class="wg-muted">No references added.</p>'}</section></article><div class="wg-detail-actions"><div class="wg-lifecycle"><button type="button" class="wg-switch" role="switch" aria-checked="${goal.lifecycle === 'active'}" aria-label="${goal.lifecycle === 'active' ? 'Pause' : 'Activate'} ${esc(goal.title)}" data-wg-action="toggle"><span></span></button><span>${goal.lifecycle === 'active' ? 'Active' : 'Paused'}</span></div><button type="button" class="wg-edit" data-wg-action="edit">Edit</button></div></div>`;
+    const version = ['v2','v3','v4'].includes(document.body.dataset.workspaceLayoutVersion) ? document.body.dataset.workspaceLayoutVersion : 'v1';
+    return `<div class="wg-detail-column wg-layout-${version}"><article class="wg-card" aria-labelledby="wg-goal-title"><h3 id="wg-goal-title">${esc(goal.title)}</h3><section class="wg-copy-group"><h4>Instruction</h4><p>${esc(goal.instruction)}</p></section>${measure(goal)}${references(goal, version)}</article><div class="wg-detail-actions"><div class="wg-lifecycle"><button type="button" class="wg-switch" role="switch" aria-checked="${goal.lifecycle === 'active'}" aria-label="${goal.lifecycle === 'active' ? 'Pause' : 'Activate'} ${esc(goal.title)}" data-wg-action="toggle"><span></span></button><span>${goal.lifecycle === 'active' ? 'Active' : 'Paused'}</span></div><button type="button" class="wg-edit" data-wg-action="edit">Edit</button></div></div>`;
   }
   function render() {
     const visible = visibleGoals();
@@ -121,11 +160,14 @@
     }
   }
   function handleInput(event, api) {
-    if (!event.target.matches('.wg-search')) return;
-    const position = event.target.selectionStart;
-    query = event.target.value;
-    refresh(api, '.wg-search');
-    const input = document.querySelector('#fsw-section-goals .wg-search');
+    const selector = ['.wg-search', '.wg-reference-search', '.wg-reference-category'].find(value => event.target.matches(value));
+    if (!selector) return;
+    const position = event.target.selectionStart ?? null;
+    if (selector === '.wg-search') query = event.target.value;
+    else if (selector === '.wg-reference-search') referenceQuery = event.target.value;
+    else referenceCategory = event.target.value;
+    refresh(api, selector);
+    const input = document.querySelector(`#fsw-section-goals ${selector}`);
     if (input && position !== null) {
       try { input.setSelectionRange(position, position); } catch (_) { /* Search inputs differ across browsers. */ }
     }
@@ -140,6 +182,8 @@
       refresh(api, `.wg-filters [data-wg-filter="${filter}"]`);
     } else if (action === 'select') {
       selectedId = control.dataset.wgId;
+      referenceQuery = '';
+      referenceCategory = 'all';
       refresh(api, `[data-wg-id="${selectedId}"]`);
     } else if (action === 'toggle') {
       const goal = goals.find(item => item.id === selectedId);

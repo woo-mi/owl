@@ -11,6 +11,8 @@
   max-width: calc(100vw - 32px);
 }
 
+#prototype-layout-versions[hidden] { display: none; }
+
 .prototype-control { position: relative; max-width: 100%; }
 .prototype-control[hidden] { display: none; }
 

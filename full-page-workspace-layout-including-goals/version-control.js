@@ -131,29 +131,44 @@
   });
   // Keep the copied experiment controls detached. Layout versions are independent
   // of the Oct 28 V2 owl-customizer variant retained by this snapshot.
+  const layoutVersions = ['v1', 'v2', 'v3', 'v4'];
+  let currentLayoutVersion = 'v1';
   const layoutControl = document.createElement('nav');
   layoutControl.id = 'prototype-layout-versions';
   layoutControl.className = 'prototype-versions prototype-layout-versions';
+  layoutControl.hidden = true;
   layoutControl.setAttribute('aria-label', 'Workspace layout controls');
   layoutControl.innerHTML = `<div class="prototype-control prototype-layout-control">
     <button class="prototype-version-trigger prototype-layout-trigger" type="button" aria-label="Workspace layout version, V1" aria-haspopup="menu" aria-expanded="false" aria-controls="prototype-layout-menu">
       <span>V1</span>${chevron}
     </button>
     <ul id="prototype-layout-menu" class="prototype-version-menu prototype-layout-menu" role="menu" aria-label="Workspace layout versions" hidden>
-      <li role="none"><button type="button" class="prototype-version-option prototype-layout-option" role="menuitemradio" aria-checked="true" tabindex="-1" data-layout-version="v1">V1</button></li>
+      ${layoutVersions.map(version => `<li role="none"><button type="button" class="prototype-version-option prototype-layout-option" role="menuitemradio" aria-checked="${version === currentLayoutVersion}" tabindex="-1" data-layout-version="${version}">${version.toUpperCase()}</button></li>`).join('')}
     </ul>
   </div>`;
   document.body.append(layoutControl);
   document.body.classList.add('has-mvp-versions');
-  document.body.dataset.workspaceLayoutVersion = 'v1';
+  document.body.dataset.workspaceLayoutVersion = currentLayoutVersion;
   const layoutTrigger = layoutControl.querySelector('.prototype-layout-trigger');
+  const layoutLabel = layoutTrigger.querySelector('span');
   const layoutMenu = layoutControl.querySelector('[role="menu"]');
-  const layoutOption = layoutControl.querySelector('[role="menuitemradio"]');
+  const layoutOptions = [...layoutControl.querySelectorAll('[role="menuitemradio"]')];
   function setLayoutMenuOpen(open, restoreFocus = false) {
     layoutMenu.hidden = !open;
     layoutTrigger.setAttribute('aria-expanded', String(open));
-    if (open) layoutOption.focus({preventScroll:true});
-    else if (restoreFocus) layoutTrigger.focus({preventScroll:true});
+    if (open) layoutOptions.find(option => option.dataset.layoutVersion === currentLayoutVersion)?.focus({preventScroll:true});
+    else if (restoreFocus && !layoutControl.hidden) layoutTrigger.focus({preventScroll:true});
+  }
+  function selectLayoutVersion(version) {
+    if (!layoutVersions.includes(version)) return;
+    const changed = currentLayoutVersion !== version;
+    currentLayoutVersion = version;
+    document.body.dataset.workspaceLayoutVersion = version;
+    layoutLabel.textContent = version.toUpperCase();
+    layoutTrigger.setAttribute('aria-label', `Workspace layout version, ${version.toUpperCase()}`);
+    layoutOptions.forEach(option => option.setAttribute('aria-checked', String(option.dataset.layoutVersion === version)));
+    setLayoutMenuOpen(false, true);
+    if (changed) window.dispatchEvent(new CustomEvent('workspace-layout-version-change', {detail:{version}}));
   }
   layoutTrigger.addEventListener('click', () => setLayoutMenuOpen(layoutMenu.hidden));
   layoutTrigger.addEventListener('keydown', event => {
@@ -161,13 +176,19 @@
     event.preventDefault();
     setLayoutMenuOpen(true);
   });
-  layoutOption.addEventListener('click', () => setLayoutMenuOpen(false, true));
+  layoutOptions.forEach(option => option.addEventListener('click', () => selectLayoutVersion(option.dataset.layoutVersion)));
   layoutMenu.addEventListener('keydown', event => {
-    if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
-      event.preventDefault();
-      layoutOption.focus({preventScroll:true});
+    let index = layoutOptions.indexOf(document.activeElement);
+    if (event.key === 'ArrowDown') index = (index + 1) % layoutOptions.length;
+    else if (event.key === 'ArrowUp') index = (index + layoutOptions.length - 1) % layoutOptions.length;
+    else if (event.key === 'Home') index = 0;
+    else if (event.key === 'End') index = layoutOptions.length - 1;
+    else {
+      if (event.key === 'Tab') setLayoutMenuOpen(false, true);
+      return;
     }
-    if (event.key === 'Tab') setLayoutMenuOpen(false, true);
+    event.preventDefault();
+    layoutOptions[index].focus({preventScroll:true});
   });
   document.addEventListener('pointerdown', event => {
     if (!layoutControl.contains(event.target)) setLayoutMenuOpen(false);
@@ -182,6 +203,10 @@
     setLayoutMenuOpen(false, true);
   });
   window.addEventListener('mvp-workspace-open', () => setLayoutMenuOpen(false));
+  window.addEventListener('workspace-layout-control-change', event => {
+    layoutControl.hidden = !event.detail.visible;
+    if (layoutControl.hidden) setLayoutMenuOpen(false);
+  });
 
   function applyFormatToURL(url, view) {
     if (view === 'multiple-bubbles' && currentFormat.id !== defaultBubbleFormat.id) url.searchParams.set('bubbles', currentFormat.id);

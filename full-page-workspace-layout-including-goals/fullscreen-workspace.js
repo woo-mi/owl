@@ -79,6 +79,11 @@
       trigger.setAttribute('aria-expanded', String(!!expanded));
       trigger.setAttribute('aria-label', `${expanded ? 'Close' : 'Open'} ${trigger.querySelector('.agent-profile-name').textContent} workspace`);
     }
+    function syncLayoutControl() {
+      window.dispatchEvent(new CustomEvent('workspace-layout-control-change', {
+        detail:{visible:dialog.open && !closing && section === 'goals'}
+      }));
+    }
     function setHeader(isDetail = false) {
       title.textContent = sectionLabel(section);
       dialog.dataset.section = section;
@@ -87,6 +92,7 @@
       newGoalButton.hidden = section !== 'goals' || isDetail;
       back.hidden = !isDetail;
       back.setAttribute('aria-label', `Back to ${sectionLabel(section)}`);
+      syncLayoutControl();
     }
     function render(id) {
       if (id === 'memory') return;
@@ -164,6 +170,7 @@
       document.body.classList.add('fullscreen-workspace-open', 'workspace-page-open');
       document.getElementById('main').inert = true;
       dialog.show();
+      syncLayoutControl();
       syncTrigger();
       closeButton.focus({preventScroll:true});
     }
@@ -176,6 +183,7 @@
       window.OwlStudio?.close({restoreFocus:false});
       clearTimeout(closeTimer);
       closing = true;
+      syncLayoutControl();
       dialog.classList.add('is-closing');
       const finish = () => {
         dialog.close();
@@ -274,6 +282,10 @@
       close({restoreFocus:false,immediate:true});
       syncPresentation();
       syncTrigger();
+    });
+    window.addEventListener('workspace-layout-version-change', () => {
+      render('goals');
+      if (section === 'goals') scroll.scrollTop = 0;
     });
     window.MVPFullscreenWorkspace = Object.freeze({open,close,toggle:()=>dialog.open?close():open(),isOpen:()=>dialog.open,isActive,setTab:setSection});
     memory.setPrototype(document.body.dataset.prototypeView);
