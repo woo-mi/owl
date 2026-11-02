@@ -6,6 +6,9 @@ This repository publishes its `main` branch root through GitHub Pages. No build
 step is required.
 
 - `index.html` and `owl-mark.svg` provide the overview page.
+- `full-page-workspace-layout-including-goals/` is **Full-Page Workspace Layout Including Goals**, an independent copy of
+  `for-dev/` at commit `e3504ba`, including Goals, the New goal flow, and the
+  updated workspace header. Published at https://woo-mi.github.io/owl/full-page-workspace-layout-including-goals/.
 - `mvp-new/` contains the current **MVP NEW** prototype, published at
   https://woo-mi.github.io/owl/mvp-new/.
 - `mvp-animated/` is the animated copy of For dev, published at
