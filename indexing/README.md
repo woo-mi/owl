@@ -13,6 +13,13 @@ index links to those conversation topics and the two shared artifacts. The copie
 full-page workspace and Goals layout versions remain available through the Owl
 identity header. Goal edits are stored separately for this prototype.
 
+The left tick navigator uses the older Owl pagination interaction, with eight
+stops for the six Recent topics and the two shared artifacts. Hover or focus a
+tick to preview it, click to jump, and use the bookmark button to save a stop.
+Arrow keys and Home/End browse the stops; Escape closes the preview. Artifact
+previews also provide the external App or Chat link. Bookmarks are stored only
+for this Indexing prototype.
+
 Tool connections, app creation, scheduling, and replies are local prototype
 interactions. They do not connect accounts, create external apps, or schedule
 real deliveries. Artifact links retain their existing external destinations.

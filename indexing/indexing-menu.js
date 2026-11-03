@@ -65,13 +65,17 @@
     const controls = () => [...panel.querySelectorAll('button, a[href]')];
 
     function setOpen(next, { restoreFocus = false, focusFirst = false } = {}) {
+      const wasOpen = open;
       open = next && isAvailable();
       panel.hidden = !open;
       toggle.setAttribute('aria-expanded', String(open));
       toggle.setAttribute('aria-label', `${open ? 'Close' : 'Open'} conversation index`);
       if (restoreFocus && !toggle.hidden) toggle.focus({ preventScroll: true });
       if (open && focusFirst) controls()[0]?.focus({ preventScroll: true });
+      if (open && !wasOpen) window.dispatchEvent(new Event('indexing-menu-open'));
     }
+
+    window.addEventListener('indexing-navigator-open', () => setOpen(false));
 
     function syncAvailability() {
       const available = isAvailable();
