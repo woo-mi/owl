@@ -84,8 +84,7 @@
     playback.play(nodes, options);
   }
   function playWelcome() {
-    host().querySelector('.ftux-prompts').hidden = false;
-    play(host().querySelectorAll('.ftux-introduction > .ftux-bubble'));
+    play([...host().querySelectorAll('.ftux-introduction > .ftux-bubble'), host().querySelector('.ftux-prompts')]);
   }
   function updateTool(tool) {
     document.querySelectorAll(`.ftux-flow [data-ftux-tool="${tool}"] [data-ftux-tool-control], .ftux-connections-dialog [data-ftux-tool="${tool}"] [data-ftux-tool-control]`).forEach(row => {
