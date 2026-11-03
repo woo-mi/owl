@@ -14,10 +14,7 @@
     'I do the work and bring the results back here, so you don’t have to copy and paste my responses.'
   ];
   const groupTools = {context:['Notion', 'Gmail', 'Calendar', 'Slack', 'Gong'], crm:['HubSpot', 'Salesforce']};
-  const freshConnections = () => new Map([
-    ['Notion', 'connected'], ['Gmail', 'connecting'], ['Calendar', 'available'],
-    ['Slack', 'available'], ['Gong', 'available'], ['HubSpot', 'connected'], ['Salesforce', 'available']
-  ]);
+  const freshConnections = () => new Map(Object.values(groupTools).flat().map(tool => [tool, 'available']));
   const escape = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
   const bubble = (text, extra = '') => `<article class="message assistant-message ftux-bubble ${extra}"><p>${escape(text)}</p></article>`;
   const initialHTML = `<div class="ftux-flow" data-pen-frame="AQxSV"><section class="ftux-introduction" aria-label="Meet your Owl">${introduction.map((copy, i) => bubble(copy, i ? 'ftux-bubble-wide' : '')).join('')}</section><div class="ftux-turns"></div><div class="ftux-prompts" aria-label="Suggested prompts">${prompts.map((copy, i) => `<button class="ftux-prompt" type="button" data-ftux-prompt="${i}">${escape(copy)}</button>`).join('')}</div><div class="ftux-local-status" role="status" aria-live="polite"></div></div>`;
@@ -111,7 +108,9 @@
     if (!active() || stage === 'welcome' || completionShown || !groupDone('context') || !groupDone('crm')) return;
     completionShown = true;
     setStage('ready');
-    const copy = 'You’re all set. Your connected tools are ready, and you can add more context whenever you need it.';
+    const copy = [...connections.values()].includes('connected')
+      ? 'You’re all set. Your connected tools are ready, and you can add more context whenever you need it.'
+      : 'You can connect your tools whenever you’re ready. For now, tell me what you’d like help with.';
     turns().insertAdjacentHTML('beforeend', bubble(copy, 'ftux-bubble-wide ftux-confirmation'));
     announce('Setup complete.');
     play([turns().lastElementChild], {firstDelay:2000, resetFollow:false, scrollOnReducedMotion:true, enqueue:true});
