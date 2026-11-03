@@ -119,6 +119,7 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
   height:36.5px;
   object-fit:contain;
   pointer-events:none;
+  transform-origin:20% 90%;
 }
 .ftux-read { padding:0 10px; color:#8e8e8e; font-size:12px; line-height:17px; }
 
@@ -183,10 +184,32 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
 .ftux-skip:disabled { color:#8b8b90; cursor:default; }
 .ftux-confirmation { max-width:min(613px, 100%); color:#63666d; font:400 13px/20px Inter, system-ui, sans-serif; }
 .ftux-local-status { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
-.ftux-turns > :not([hidden]) { animation:ftux-arrive 200ms ease-out both; }
-.ftux-reaction { animation:ftux-reaction-arrive 240ms 160ms ease-out both; }
-@keyframes ftux-arrive { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
-@keyframes ftux-reaction-arrive { from { opacity:0; transform:scale(.75); } to { opacity:1; transform:scale(1); } }
+.chat-scroll.is-ftux-playback { overflow-anchor:none; }
+.ftux-flow[hidden], .ftux-flow [hidden], .ftux-typing[hidden] { display:none!important; }
+.ftux-typing {
+  display:flex;
+  align-items:center;
+  align-self:flex-start;
+  justify-content:center;
+  gap:4px;
+  width:50px;
+  height:32px;
+  border-radius:18px;
+  background:#f1f1f1;
+}
+.ftux-typing span {
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#7b7d82;
+  animation:ftux-typing-dot 1050ms ease-in-out infinite;
+}
+.ftux-typing span:nth-child(2) { animation-delay:140ms; }
+.ftux-typing span:nth-child(3) { animation-delay:280ms; }
+@keyframes ftux-typing-dot {
+  0%, 60%, 100% { opacity:.45; transform:translateY(0) scale(.85); }
+  30% { opacity:1; transform:translateY(-2px) scale(1); }
+}
 @keyframes ftux-spin { to { transform:rotate(360deg); } }
 
 @media (max-width:760px) {
@@ -204,5 +227,5 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
 }
 @media (prefers-reduced-motion:reduce) {
   .ftux-prompt { transition:none; }
-  .ftux-turns > :not([hidden]), .ftux-reaction, .ftux-spinner { animation:none; }
+  .ftux-typing span, .ftux-spinner { animation:none; }
 }

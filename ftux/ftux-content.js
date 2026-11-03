@@ -35,6 +35,7 @@
   let setupSnapshot;
   let connectionsDialog;
   let connectionsOpener;
+  let playback;
   const host = () => document.querySelector('#messages .ftux-flow');
   const turns = () => host()?.querySelector('.ftux-turns');
   const active = () => Boolean(host()) && !document.body.classList.contains('replies-open');
@@ -55,10 +56,10 @@
   function userTurnHTML(value, files = [], reaction = true) {
     return `<div class="ftux-user-turn"><article class="message user-message ftux-user-bubble">${value ? `<p>${escape(value)}</p>` : ''}${files.length ? `<ul class="message-attachments">${files.map(file => `<li>${escape(file)}</li>`).join('')}</ul>` : ''}${reaction ? '<img class="ftux-reaction" src="assets/y1jENV.png" width="32" height="36.5" alt="Thumbs-up reaction">' : ''}</article><span class="ftux-read">Read 5:12 AM</span></div>`;
   }
-  function scrollToNode(node, {alignTop = false} = {}) {
+  function scrollToNode(node, {alignTop = false, shouldFollow = () => true} = {}) {
     if (!node || !active()) return;
     requestAnimationFrame(() => {
-      if (!node.isConnected || document.body.classList.contains('workspace-page-open')) return;
+      if (!node.isConnected || !shouldFollow() || document.body.classList.contains('workspace-page-open')) return;
       const scroller = document.getElementById('chat-scroll');
       const rect = node.getBoundingClientRect();
       const composerTop = document.querySelector('.composer-dock')?.getBoundingClientRect().top || innerHeight - 90;
@@ -68,6 +69,22 @@
         : scroller.scrollTop + rect.bottom - composerTop + 20;
       scroller.scrollTo({top:Math.max(0, top), behavior:motion.matches ? 'instant' : 'smooth'});
     });
+  }
+  function play(nodes, options) {
+    playback ||= window.FTUXPlayback.create({
+      messages:document.getElementById('messages'), scroll:document.getElementById('chat-scroll'),
+      motion, scrollToNode, onReveal(node) {
+        if (!node.matches('.ftux-tools')) return;
+        node.querySelectorAll('[data-ftux-tool]').forEach(row => {
+          const tool = row.dataset.ftuxTool;
+          if (connections.get(tool) === 'connecting') startConnection(tool);
+        });
+      }
+    });
+    playback.play(nodes, options);
+  }
+  function playWelcome() {
+    play([...host().querySelectorAll('.ftux-introduction > .ftux-bubble'), host().querySelector('.ftux-prompts')]);
   }
   function updateTool(tool) {
     document.querySelectorAll(`.ftux-flow [data-ftux-tool="${tool}"] [data-ftux-tool-control], .ftux-connections-dialog [data-ftux-tool="${tool}"] [data-ftux-tool-control]`).forEach(row => {
@@ -97,11 +114,12 @@
     const copy = 'You’re all set. Your connected tools are ready, and you can add more context whenever you need it.';
     turns().insertAdjacentHTML('beforeend', bubble(copy, 'ftux-bubble-wide ftux-confirmation'));
     announce('Setup complete.');
-    scrollToNode(turns().lastElementChild);
+    play([turns().lastElementChild], {firstDelay:2000, resetFollow:false, scrollOnReducedMotion:true, enqueue:true});
   }
   function renderSetup(value, files = [], {pushHistory = false} = {}) {
     const flow = host();
     if (!flow) return false;
+    playback?.finish();
     selectedPrompt = value;
     selectedFiles = [...files];
     flow.dataset.penFrame = 'KJKJh';
@@ -121,7 +139,7 @@
       url.searchParams.set('step', '2');
       history.pushState({...history.state, ftuxStep:2}, '', url.pathname + url.search + url.hash);
     }
-    for (const [tool, state] of connections) if (state === 'connecting') startConnection(tool);
+    play(turns().children, {immediateFirst:true});
     checkCompletion();
     return true;
   }
@@ -129,15 +147,19 @@
     const messages = document.getElementById('messages');
     if (!messages) return;
     if (preserveSetup && stage !== 'welcome') {
+      playback?.finish();
       setupSnapshot = {node:host(), stage, completionShown, scrollTop:document.getElementById('chat-scroll').scrollTop};
     }
+    playback?.cancel();
     stopTimers();
     messages.innerHTML = initialHTML;
     boundFlow = host();
     setStage('welcome');
     document.getElementById('chat-scroll').scrollTo({top:0, behavior:'instant'});
+    if (!preserveSetup) playWelcome();
   }
   function restoreSetup() {
+    playback?.cancel();
     if (!setupSnapshot?.node) { renderSetup(selectedPrompt || prompts[0], selectedFiles); return; }
     document.getElementById('messages').replaceChildren(setupSnapshot.node);
     boundFlow = host();
@@ -156,12 +178,14 @@
       renderSetup(value, files, {pushHistory:true});
       scrollToNode(turns().firstElementChild);
     } else {
+      playback?.finish();
       turns().insertAdjacentHTML('beforeend', userTurnHTML(value, files, false));
+      const userTurn = turns().lastElementChild;
       const copy = stage === 'setup'
         ? 'Connect the tools you’d like me to use, or choose “Skip for now” to continue with the context you already have.'
         : 'I’m ready to help with your deals, revenue, dashboards, and pipeline updates. Your request is now part of this conversation.';
       turns().insertAdjacentHTML('beforeend', bubble(copy, 'ftux-bubble-wide'));
-      scrollToNode(turns().lastElementChild);
+      play([userTurn, turns().lastElementChild], {immediateFirst:true, reply:true, scrollOnReducedMotion:true});
     }
     return true;
   }
@@ -180,6 +204,7 @@
     return true;
   }
   function openConnections() {
+    playback?.finish();
     if (!connectionsDialog) {
       connectionsDialog = document.createElement('dialog');
       connectionsDialog.className = 'indexing-preview ftux-connections-dialog';
@@ -208,6 +233,7 @@
     if (connect) { startConnection(connect.dataset.ftuxConnect); return; }
     const skip = event.target.closest('[data-ftux-skip]');
     if (!skip) return;
+    playback?.finish();
     const group = skip.dataset.ftuxSkip;
     skipped.add(group);
     skip.textContent = 'Skipped for now';
@@ -225,7 +251,7 @@
     if (!flow || flow === boundFlow) return;
     boundFlow = flow;
     if (new URL(location.href).searchParams.get('step') === '2') renderSetup(selectedPrompt || prompts[0], selectedFiles);
-    else setStage('welcome');
+    else { setStage('welcome'); playWelcome(); }
   }
   window.FTUX = Object.freeze({send, reset, openConnections});
   window.addEventListener('indexing-ready', boot);
