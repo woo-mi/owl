@@ -1,4 +1,4 @@
-/* Topic pagination adapted from the older Owl tick navigator. */
+/* FTUX pagination for topics revealed by the live onboarding conversation. */
 (() => {
   'use strict';
   function start() {
@@ -6,20 +6,12 @@
     const scroller = document.getElementById('chat-scroll');
     const messages = document.getElementById('messages');
     if (!main || !scroller || !messages || document.getElementById('indexing-nav-rail')) return;
-    const definitions = [
-      {id:'review', title:'Weekly sales pipeline review', excerpt:'Review three updates ahead of Monday’s Sales Pipeline Review: a closed-won deal, a slipped deal, and a blocked security review.'},
-      {id:'metrics', title:'Monthly business metrics', excerpt:'Net revenue is $4.82M, orders are 38,410, average order value is $125.50, and the return rate is 2.1%.'},
-      {id:'arr', title:'Sales vs. Finance ARR', excerpt:'Sales shows $3.1M and Finance $2.4M. Create one governed Net New ARR metric using Finance’s definition.'},
-      {id:'pipeline', title:'Pipeline health and app adoption', excerpt:'Pipeline health: $23.36M open across 205 deals. Review sales stages and app adoption.'},
-      {id:'revenue', title:'September revenue drivers', excerpt:'September closed-won revenue was $10.11M, down $9.24M (47.8%) from August. Review the regional, account, and product drivers.'},
-      {id:'artifact-chat', title:'September 2024 Revenue Analysis', kind:'Chat', href:'https://ayush.gowisdom.ai/chat/33ac3dce-6d77-47cd-8e6b-1c049379ee6b', excerpt:'Open the conversation behind the September revenue analysis.'},
-      {id:'artifact-app', title:'September Revenue Drivers', kind:'App', href:'https://ayush.gowisdom.ai/apps/app_af105ef5a93d4b77a5e9922cd6ffa91f/view', excerpt:'Explore the revenue trend, customer changes, and product bundle drivers.'},
-    ];
     const storageKey = 'owl-ftux-bookmarks-v1';
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const rail = document.createElement('nav');
     rail.id = 'indexing-nav-rail';
     rail.className = 'indexing-nav-rail';
+    rail.hidden = true;
     rail.setAttribute('aria-label', 'Conversation pagination');
     const preview = document.createElement('aside');
     preview.id = 'indexing-nav-preview';
@@ -28,7 +20,7 @@
     preview.setAttribute('aria-hidden', 'true');
     preview.dataset.open = 'false';
     preview.inert = true;
-    preview.innerHTML = '<button type="button" class="indexing-nav-jump"><span class="indexing-nav-title"></span><span class="indexing-nav-excerpt"></span></button><button type="button" class="indexing-nav-bookmark" aria-label="Bookmark topic" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button><div class="indexing-nav-artifact-footer" hidden><a class="indexing-nav-external" target="_blank" rel="noopener noreferrer"></a></div>';
+    preview.innerHTML = '<button type="button" class="indexing-nav-jump"><span class="indexing-nav-title"></span><span class="indexing-nav-excerpt"></span></button><button type="button" class="indexing-nav-bookmark" aria-label="Bookmark topic" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>';
     const status = document.createElement('div');
     status.className = 'indexing-nav-status';
     status.setAttribute('role', 'status');
@@ -38,17 +30,15 @@
     const excerpt = preview.querySelector('.indexing-nav-excerpt');
     const jumpButton = preview.querySelector('.indexing-nav-jump');
     const bookmark = preview.querySelector('.indexing-nav-bookmark');
-    const artifactFooter = preview.querySelector('.indexing-nav-artifact-footer');
-    const externalLink = preview.querySelector('.indexing-nav-external');
     let bookmarks = new Set();
     try {
       const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      if (Array.isArray(saved)) bookmarks = new Set(saved.filter(id => definitions.some(item => item.id === id)));
+      if (Array.isArray(saved)) bookmarks = new Set(saved.filter(id => typeof id === 'string'));
     } catch (_) {}
     let entries = [], buttons = [], selected = 0, hovered = -1, previewIndex = -1;
     let openTimer, closeTimer, scrollFrame, refreshFrame, jumpTimer, jumpingUntil = 0;
     let suppressFocus = false, escapeDismissedId = null;
-    const isAvailable = () => !document.body.classList.contains('workspace-page-open') && !document.body.classList.contains('replies-open');
+    const isAvailable = () => window.FTUXIndex?.isAvailable() === true && !document.body.classList.contains('workspace-page-open') && !document.body.classList.contains('replies-open');
     const inNavigator = node => node && (rail.contains(node) || preview.contains(node));
     const cancelOpen = () => { clearTimeout(openTimer); openTimer = undefined; };
     const clearance = () => Math.max(scroller.getBoundingClientRect().top + 16, (main.querySelector('.agent-header')?.getBoundingClientRect().bottom || 114) + 16);
@@ -117,12 +107,6 @@
       jumpButton.setAttribute('aria-label', `Jump to ${item.title} in conversation`);
       bookmark.setAttribute('aria-pressed', String(bookmarks.has(item.id)));
       bookmark.setAttribute('aria-label', `${bookmarks.has(item.id) ? 'Remove bookmark for' : 'Bookmark'} ${item.title}`);
-      artifactFooter.hidden = !item.kind;
-      if (item.kind) {
-        externalLink.textContent = `Open ${item.kind.toLowerCase()} ↗`;
-        externalLink.href = item.href;
-        externalLink.setAttribute('aria-label', `Open ${item.title} ${item.kind.toLowerCase()} in a new tab`);
-      } else externalLink.removeAttribute('href');
       buttons.forEach((button, i) => button.setAttribute('aria-expanded', String(i === index)));
       preview.inert = false;
       preview.setAttribute('aria-hidden', 'false');
@@ -137,11 +121,8 @@
       jumpingUntil = performance.now() + (reducedMotion.matches ? 0 : 800);
       clearTimeout(jumpTimer);
       jumpTimer = setTimeout(syncPosition, reducedMotion.matches ? 0 : 820);
-      const targetOffset = scroller.scrollTop + item.node.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
-      // Account for the header state at the destination, after scrolling has collapsed or expanded it.
-      const top = targetOffset <= 130 ? 0 : targetOffset - 80;
-      scroller.scrollTo({top:Math.max(0, top), behavior:reducedMotion.matches ? 'instant' : 'smooth'});
-      status.textContent = `${item.kind || 'Topic'} ${index + 1} of ${entries.length}: ${item.title}`;
+      window.FTUXIndex.jumpTo(item.id);
+      status.textContent = `Topic ${index + 1} of ${entries.length}: ${item.title}`;
     }
     function syncPosition() {
       if (!entries.length || !isAvailable() || performance.now() < jumpingUntil) return;
@@ -151,19 +132,43 @@
       setSelected(next);
     }
     function queueSync() { cancelAnimationFrame(scrollFrame); scrollFrame = requestAnimationFrame(syncPosition); }
+    function setReady(ready) {
+      rail.hidden = !ready;
+      if (document.body.classList.contains('indexing-nav-ready') !== ready) {
+        document.body.classList.toggle('indexing-nav-ready', ready);
+      }
+    }
+    function updateLabels() {
+      buttons.forEach((button, index) => {
+        button.setAttribute('aria-label', `Topic ${index + 1} of ${entries.length}: ${entries[index].title}`);
+      });
+      const item = entries[previewIndex];
+      if (!item || preview.dataset.open !== 'true') return;
+      title.textContent = item.title;
+      excerpt.textContent = item.excerpt;
+      jumpButton.setAttribute('aria-label', `Jump to ${item.title} in conversation`);
+      bookmark.setAttribute('aria-label', `${bookmarks.has(item.id) ? 'Remove bookmark for' : 'Bookmark'} ${item.title}`);
+    }
     function refresh() {
+      const nextEntries = (window.FTUXIndex?.getTopics() || []).filter(item =>
+        typeof item.id === 'string' && item.node?.isConnected && messages.contains(item.node));
+      const ready = isAvailable() && nextEntries.length > 0;
+      setReady(ready);
+      if (!ready) { hidePreview(); return; }
+      const changed = nextEntries.length !== entries.length || nextEntries.some((item, index) =>
+        item.id !== entries[index]?.id || item.node !== entries[index]?.node);
+      if (!changed) {
+        entries = nextEntries;
+        updateLabels();
+        position(); syncPosition();
+        return;
+      }
+      const selectedId = entries[selected]?.id;
+      const focusedId = buttons.find(button => button === document.activeElement)?.dataset.indexingStop;
       hidePreview();
-      rail.hidden = !isAvailable();
-      document.body.classList.toggle('indexing-nav-ready', isAvailable());
-      if (!isAvailable()) return;
-      const blocks = [...messages.querySelectorAll('.unfurl-block')];
-      entries = definitions.map(item => {
-        const node = item.kind ? blocks.find(block => block.querySelector('.unfurl-card-title')?.textContent.trim() === item.title) : document.getElementById(`indexing-topic-${item.id}`);
-        if (!node || !messages.contains(node)) return null;
-        const copy = item.kind ? node.querySelector('.unfurl-card-description')?.textContent.replace(/\s+/g, ' ').trim() : '';
-        return {...item, node, excerpt:copy || item.excerpt};
-      }).filter(Boolean).sort((a, b) => a.node === b.node ? 0 : a.node.compareDocumentPosition(b.node) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
-      selected = Math.min(selected, Math.max(0, entries.length - 1));
+      entries = nextEntries;
+      const retainedSelection = entries.findIndex(item => item.id === selectedId);
+      selected = retainedSelection >= 0 ? retainedSelection : Math.min(selected, entries.length - 1);
       previewIndex = -1;
       escapeDismissedId = null;
       rail.replaceChildren();
@@ -171,7 +176,7 @@
         const button = document.createElement('button');
         button.type = 'button'; button.className = 'indexing-nav-stop';
         button.dataset.indexingStop = item.id;
-        button.setAttribute('aria-label', `${item.kind || 'Topic'} ${index + 1} of ${entries.length}: ${item.title}`);
+        button.setAttribute('aria-label', `Topic ${index + 1} of ${entries.length}: ${item.title}`);
         button.setAttribute('aria-controls', preview.id);
         button.setAttribute('aria-expanded', 'false');
         button.tabIndex = index === selected ? 0 : -1;
@@ -187,6 +192,12 @@
         rail.append(button);
         return button;
       });
+      const retainedFocus = buttons.find(button => button.dataset.indexingStop === focusedId);
+      if (retainedFocus) {
+        suppressFocus = true;
+        retainedFocus.focus({preventScroll:true});
+        suppressFocus = false;
+      }
       position(); syncPosition();
     }
     function queueRefresh() { cancelAnimationFrame(refreshFrame); refreshFrame = requestAnimationFrame(refresh); }
@@ -239,7 +250,7 @@
       hidePreview({restoreFocus:inNavigator(document.activeElement)});
     });
     window.addEventListener('indexing-menu-open', () => hidePreview());
-    window.addEventListener('indexing-ready', queueRefresh);
+    window.addEventListener('ftux-index-change', queueRefresh);
     window.addEventListener('resize', () => { position(); queueSync(); });
     main.addEventListener('transitionend', position);
     new ResizeObserver(() => { position(); queueSync(); }).observe(main);
@@ -247,8 +258,7 @@
     new MutationObserver(() => {
       const available = isAvailable();
       if (!available) {
-        hidePreview(); rail.hidden = true;
-        if (document.body.classList.contains('indexing-nav-ready')) document.body.classList.remove('indexing-nav-ready');
+        hidePreview(); setReady(false);
       }
       else if (rail.hidden) queueRefresh();
     }).observe(document.body, {attributes:true, attributeFilter:['class', 'data-prototype-view']});

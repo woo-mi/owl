@@ -38,7 +38,8 @@
   const turns = () => host()?.querySelector('.ftux-turns');
   const active = () => Boolean(host()) && !document.body.classList.contains('replies-open');
   const announce = text => { const node = host()?.querySelector('.ftux-local-status'); if (node) node.textContent = text; };
-  const setStage = next => { stage = next; document.body.dataset.ftuxStage = next; };
+  const notifyIndex = () => window.dispatchEvent(new Event('ftux-state-change'));
+  const setStage = next => { stage = next; document.body.dataset.ftuxStage = next; notifyIndex(); };
   const stopTimers = () => { connectionTimers.forEach(clearTimeout); connectionTimers.clear(); };
   const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
   function statusHTML(tool) {
@@ -72,6 +73,7 @@
     playback ||= window.FTUXPlayback.create({
       messages:document.getElementById('messages'), scroll:document.getElementById('chat-scroll'),
       motion, scrollToNode, onReveal(node) {
+        notifyIndex();
         if (!node.matches('.ftux-tools')) return;
         node.querySelectorAll('[data-ftux-tool]').forEach(row => {
           const tool = row.dataset.ftuxTool;
@@ -90,6 +92,7 @@
       row.innerHTML = statusHTML(tool);
       if (hadFocus) row.firstElementChild?.focus({preventScroll:true});
     });
+    notifyIndex();
   }
   function startConnection(tool) {
     if (!connections.has(tool) || connections.get(tool) === 'connected' || connectionTimers.has(tool)) return;
@@ -253,7 +256,13 @@
     if (new URL(location.href).searchParams.get('step') === '2') renderSetup(selectedPrompt || prompts[0], selectedFiles);
     else { setStage('welcome'); playWelcome(); }
   }
-  window.FTUX = Object.freeze({send, reset, openConnections});
+  const getIndexState = () => ({
+    stage, selectedPrompt, total:connections.size,
+    connectedCount:[...connections.values()].filter(state => state === 'connected').length,
+    connectingTools:[...connections].filter(([, state]) => state === 'connecting').map(([tool]) => tool)
+  });
+  window.FTUX = Object.freeze({send, reset, openConnections, getIndexState,
+    pauseAutoScroll:() => playback?.stopFollowing()});
   window.addEventListener('indexing-ready', boot);
   window.addEventListener('popstate', () => {
     if (!active()) return;

@@ -166,7 +166,7 @@
         if (pending) schedule(pending.run, pending.delay);
       }
     });
-    return Object.freeze({play, finish, cancel:clear});
+    return Object.freeze({play, finish, cancel:clear, stopFollowing});
   }
   window.FTUXPlayback = Object.freeze({create});
 })();
