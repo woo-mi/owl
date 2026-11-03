@@ -143,12 +143,11 @@
   function detail(goal) {
     if (!goal) return `<div class="wg-empty-detail"><h3>${filter === 'closed' && !query ? 'No closed goals' : 'No matching goals'}</h3><p>${filter === 'closed' && !query ? 'Closed goals will appear here.' : 'Try another search or choose a different filter.'}</p></div>`;
     const version = ['v2','v3','v4'].includes(document.body.dataset.workspaceLayoutVersion) ? document.body.dataset.workspaceLayoutVersion : 'v1';
-    const headerActions = version === 'v2' || version === 'v4';
     const lifecycleLabel = `<span>${goal.lifecycle === 'active' ? 'Active' : 'Paused'}</span>`;
     const toggle = `<button type="button" class="wg-switch" role="switch" aria-checked="${goal.lifecycle === 'active'}" aria-label="${goal.lifecycle === 'active' ? 'Pause' : 'Activate'} ${esc(goal.title)}" data-wg-action="toggle"><span></span></button>`;
-    const actions = `<div class="wg-detail-actions"><div class="wg-lifecycle">${headerActions ? lifecycleLabel + toggle : toggle + lifecycleLabel}</div><button type="button" class="wg-edit" data-wg-action="edit">Edit</button></div>`;
+    const actions = `<div class="wg-detail-actions"><div class="wg-lifecycle">${lifecycleLabel}${toggle}</div><button type="button" class="wg-edit" data-wg-action="edit">Edit</button></div>`;
     const heading = `<h3 id="wg-goal-title">${esc(goal.title)}</h3>`;
-    return `<div class="wg-detail-column wg-layout-${version}"><article class="wg-card" aria-labelledby="wg-goal-title">${headerActions ? `<div class="wg-card-heading">${heading}${actions}</div>` : heading}<section class="wg-copy-group"><h4>Instruction</h4><p>${esc(goal.instruction)}</p></section>${measure(goal)}${references(goal, version)}</article>${headerActions ? '' : actions}</div>`;
+    return `<div class="wg-detail-column wg-layout-${version}"><article class="wg-card" aria-labelledby="wg-goal-title"><div class="wg-card-heading">${heading}${actions}</div><section class="wg-copy-group"><h4>Instruction</h4><p>${esc(goal.instruction)}</p></section>${measure(goal)}${references(goal, version)}</article></div>`;
   }
   function render() {
     const visible = visibleGoals();
