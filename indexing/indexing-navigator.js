@@ -28,7 +28,7 @@
     preview.setAttribute('aria-hidden', 'true');
     preview.dataset.open = 'false';
     preview.inert = true;
-    preview.innerHTML = '<button type="button" class="indexing-nav-jump"><span class="indexing-nav-title"></span><span class="indexing-nav-excerpt"></span></button><button type="button" class="indexing-nav-bookmark" aria-label="Bookmark topic" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button><div class="indexing-nav-artifact-footer" hidden><span class="indexing-nav-artifact-kind"></span><a class="indexing-nav-external" target="_blank" rel="noopener noreferrer"></a></div>';
+    preview.innerHTML = '<button type="button" class="indexing-nav-jump"><span class="indexing-nav-title"></span><span class="indexing-nav-excerpt"></span></button><button type="button" class="indexing-nav-bookmark" aria-label="Bookmark topic" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button><div class="indexing-nav-artifact-footer" hidden><a class="indexing-nav-external" target="_blank" rel="noopener noreferrer"></a></div>';
     const status = document.createElement('div');
     status.className = 'indexing-nav-status';
     status.setAttribute('role', 'status');
@@ -39,7 +39,6 @@
     const jumpButton = preview.querySelector('.indexing-nav-jump');
     const bookmark = preview.querySelector('.indexing-nav-bookmark');
     const artifactFooter = preview.querySelector('.indexing-nav-artifact-footer');
-    const artifactKind = preview.querySelector('.indexing-nav-artifact-kind');
     const externalLink = preview.querySelector('.indexing-nav-external');
     let bookmarks = new Set();
     try {
@@ -120,7 +119,6 @@
       bookmark.setAttribute('aria-label', `${bookmarks.has(item.id) ? 'Remove bookmark for' : 'Bookmark'} ${item.title}`);
       artifactFooter.hidden = !item.kind;
       if (item.kind) {
-        artifactKind.textContent = item.kind;
         externalLink.textContent = `Open ${item.kind.toLowerCase()} ↗`;
         externalLink.href = item.href;
         externalLink.setAttribute('aria-label', `Open ${item.title} ${item.kind.toLowerCase()} in a new tab`);
