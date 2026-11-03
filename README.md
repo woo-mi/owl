@@ -6,6 +6,9 @@ This repository publishes its `main` branch root through GitHub Pages. No build
 step is required.
 
 - `index.html` and `owl-mark.svg` provide the overview page.
+- `owl-old/` is **Owl old**, a standalone snapshot of the overview and its local
+  prototypes at commit `520b976`. Published at https://woo-mi.github.io/owl/owl-old/.
+  Existing external prototype links keep their original destinations.
 - `full-page-workspace-layout-including-goals/` is **Full-Page Workspace Layout Including Goals**, an independent copy of
   `for-dev/` at commit `e3504ba`. V1 opens the Pen **Workspace Page** layout from the owl profile,
   with a compact application rail, full-page workspace navigation, Goals, and the New goal flow.
