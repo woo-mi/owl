@@ -1,0 +1,74 @@
+/* Measurements from the named Pen frames; Original uses the shared styles. */
+.pen-frame-transcript,
+.pen-bubble-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+}
+.pen-frame-transcript .pen-bubble {
+  color: #0d0d0d;
+  background: #f1f1f1;
+  border-radius: 16px;
+  padding: 9px 13px;
+  width: min(605px, 100%);
+  min-width: 0;
+  font: 400 14px/20px Inter, system-ui, sans-serif;
+}
+.pen-frame-transcript .pen-morning-label { width: min(126px, 100%); }
+.pen-frame-transcript .pen-morning-plain { width: min(584px, 100%); }
+.pen-frame-transcript .unfurl-list > li::before {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 10px;
+  top: 5px;
+  left: 0;
+}
+.pen-frame-transcript [data-pen-section="morning"] .unfurl-list > li::before,
+.pen-frame-transcript [data-pen-section="delivery"] .unfurl-list > li::before { top: 4px; }
+.pen-frame-transcript .pen-list-plain > li { padding-left: 0; }
+.pen-frame-transcript .pen-list-plain > li::before { display: none; }
+.pen-frame-transcript .unfurl-list > li[data-trend-arrow]::before {
+  content: attr(data-trend-arrow);
+  font: 400 14px/20px Inter, system-ui, sans-serif;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 20px;
+  text-align: center;
+}
+.pen-frame-transcript .unfurl-show-more { color: #0085ff; margin-top: -6px; }
+.pen-frame-transcript .pen-request > .unfurl-section { gap: 0; }
+.pen-frame-transcript[data-pen-frame="Q354X"] .unfurl-measurement,
+.pen-frame-transcript[data-pen-frame="fXYGm"] .unfurl-measurement,
+.pen-frame-transcript[data-pen-frame="BUoAI"] .unfurl-measurement,
+.pen-frame-transcript[data-pen-frame="f2O6C"] .unfurl-measurement { max-width: none; }
+.pen-frame-transcript[data-pen-frame="f2O6C"] .unfurl-measurement [data-insight-glyph] {
+  position: relative;
+  padding-left: 21px;
+}
+.pen-frame-transcript[data-pen-frame="f2O6C"] .message-source[data-insight-glyph]::before {
+  content: attr(data-insight-glyph);
+  position: absolute;
+  color: currentColor;
+  font: 400 14px/20px Inter, system-ui, sans-serif;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 20px;
+  text-align: center;
+}
+.pen-frame-replies { gap: 24px; }
+body[data-bubble-format="aligned"] .pen-frame-transcript .unfurl-block {
+  width: min(605px, 100%);
+  align-self: flex-start;
+}
+.pen-frame-replies > .replies-date-stamp { align-self: stretch; }
+body[data-bubble-format]:not([data-bubble-format="original"]) .date-stamp,
+.pen-frame-transcript .replies-date-stamp {
+  font-size: 11px;
+  line-height: 15px;
+  height: 29px;
+}

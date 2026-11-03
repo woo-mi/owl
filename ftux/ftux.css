@@ -1,0 +1,208 @@
+/* Pen frames AQxSV (FTUX) and KJKJh (FTUX 2). */
+body.ftux-prototype {
+  --ftux-content-top:132px;
+  --ftux-composer-bottom:48px;
+  --ftux-composer-height:53px;
+  --ftux-prompt-composer-gap:32px;
+}
+
+body.ftux-prototype.has-mvp-versions[data-prototype-view="latest-oct-28"]:not(.replies-open) .conversation {
+  width:min(var(--chat-width), calc(100% - 48px));
+  margin:0 auto;
+  padding-top:var(--ftux-content-top);
+  padding-bottom:calc(var(--ftux-composer-bottom) + var(--ftux-composer-height) + var(--ftux-prompt-composer-gap));
+}
+body.ftux-prototype:not(.replies-open) .conversation > :is(.new-divider, .date-stamp) { display:none; }
+body.ftux-prototype:not(.replies-open) .messages { margin-top:0; gap:16px; }
+body.ftux-prototype.has-mvp-versions[data-prototype-view="latest-oct-28"]:not(.replies-open) .composer-dock {
+  left:50%;
+  transform:translateX(-50%);
+  bottom:var(--ftux-composer-bottom);
+  width:min(var(--chat-width), calc(100% - 48px));
+}
+body.ftux-prototype:not(.replies-open) .composer {
+  min-height:var(--ftux-composer-height);
+  padding:13.5px 13.5px 13.5px 14px;
+}
+body.ftux-prototype .composer .mode-picker { display:none; }
+body.ftux-prototype .composer textarea:focus,
+body.ftux-prototype .composer textarea:focus-visible { outline:none; box-shadow:none; }
+body.ftux-prototype .composer:focus-within { outline-color:#d5d5d9; }
+
+.ftux-flow,
+.ftux-introduction,
+.ftux-turns {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:16px;
+  width:100%;
+  min-width:0;
+  color:#0d0d0d;
+  font:400 14px/20px Inter, system-ui, sans-serif;
+}
+body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
+  min-height:calc(100dvh - var(--ftux-content-top) - var(--ftux-composer-bottom) - var(--ftux-composer-height) - var(--ftux-prompt-composer-gap));
+}
+.ftux-turns:empty { display:none; }
+.ftux-flow .ftux-bubble {
+  width:fit-content;
+  max-width:100%;
+  align-self:flex-start;
+  padding:9px 13px;
+  border-radius:16px;
+  background:#f1f1f1;
+  color:#0d0d0d;
+  font:inherit;
+  overflow-wrap:anywhere;
+}
+.ftux-flow .ftux-bubble-wide { width:min(605px, 100%); }
+.ftux-flow .ftux-bubble-crm { max-width:min(659px, 100%); }
+.ftux-flow p { margin:0; }
+.ftux-prompts {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:8px;
+  width:100%;
+  margin-top:auto;
+  padding-top:24px;
+}
+.ftux-prompt {
+  display:flex;
+  align-items:center;
+  min-height:40px;
+  max-width:100%;
+  padding:8px 16px;
+  border:1px solid #e5e5e5;
+  border-radius:20px;
+  background:#fff;
+  color:#444;
+  font:400 14px/21px Inter, system-ui, sans-serif;
+  text-align:left;
+  transition:background-color 130ms ease, border-color 130ms ease;
+}
+.ftux-prompt:hover { background:#f7f7f7; border-color:#cfcfcf; }
+.ftux-prompt:active { background:#efefef; }
+.ftux-prompt:focus-visible,
+.ftux-connect:focus-visible,
+.ftux-skip:focus-visible { outline:2px solid #0085ff; outline-offset:3px; }
+
+.ftux-user-turn {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:flex-end;
+  gap:4px;
+  width:100%;
+  min-height:79px;
+  padding-top:20px;
+}
+.ftux-flow .ftux-user-bubble {
+  position:relative;
+  width:fit-content;
+  max-width:85%;
+  padding:9px 13px;
+  border-radius:16px;
+  background:#1a96fe;
+  color:#fff;
+  font:inherit;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  overflow-wrap:anywhere;
+}
+.ftux-reaction {
+  position:absolute;
+  top:-18px;
+  left:-17px;
+  width:32px;
+  height:36.5px;
+  object-fit:contain;
+  pointer-events:none;
+}
+.ftux-read { padding:0 10px; color:#8e8e8e; font-size:12px; line-height:17px; }
+
+.ftux-tools {
+  width:min(613px, 100%);
+  align-self:flex-start;
+  overflow:hidden;
+  border:1px solid #ededed;
+  border-radius:12px;
+  background:#fff;
+  color:#24242a;
+}
+.ftux-tool-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:53px;
+  padding:12px 14px;
+}
+.ftux-tool-name { display:flex; align-items:center; gap:12px; min-width:0; font-size:13px; line-height:20px; }
+.ftux-tool-name img { display:block; flex-shrink:0; width:18px; height:18px; object-fit:contain; }
+.ftux-connect,
+.ftux-tool-status {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  gap:4px;
+  min-height:29px;
+  padding:5px 9px;
+  border:1px solid #e4e6ea;
+  border-radius:24px;
+  font:500 12px/17px Inter, system-ui, sans-serif;
+  white-space:nowrap;
+}
+.ftux-connect { padding:6px 10px; border:0; background:#333444; color:#fff; }
+.ftux-connect:hover { background:#242532; }
+.ftux-connect:disabled { background:#f0f0f2; color:#76767b; }
+.ftux-tool-status { background:#fff; color:#000; }
+.ftux-tool-status svg { width:16px; height:16px; }
+.ftux-tool-status.is-connected svg { color:#209855; }
+.ftux-tool-status.is-connecting { gap:10px; }
+.ftux-spinner {
+  width:12px;
+  height:12px;
+  border:1.5px solid #dedee3;
+  border-top-color:#777780;
+  border-radius:50%;
+  animation:ftux-spin 800ms linear infinite;
+}
+.ftux-skip-row {
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  min-height:40px;
+  padding:3px 12px;
+  border-top:1px solid #e8e8ea;
+}
+.ftux-skip { padding:6px 4px; border-radius:5px; background:transparent; color:#24242a80; font:400 14px/21px Inter, system-ui, sans-serif; }
+.ftux-skip:hover { color:#24242a; background:#f6f6f7; }
+.ftux-skip:disabled { color:#8b8b90; cursor:default; }
+.ftux-confirmation { max-width:min(613px, 100%); color:#63666d; font:400 13px/20px Inter, system-ui, sans-serif; }
+.ftux-local-status { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.ftux-turns > :not([hidden]) { animation:ftux-arrive 200ms ease-out both; }
+.ftux-reaction { animation:ftux-reaction-arrive 240ms 160ms ease-out both; }
+@keyframes ftux-arrive { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+@keyframes ftux-reaction-arrive { from { opacity:0; transform:scale(.75); } to { opacity:1; transform:scale(1); } }
+@keyframes ftux-spin { to { transform:rotate(360deg); } }
+
+@media (max-width:760px) {
+  body.ftux-prototype {
+    --ftux-composer-bottom:max(12px, env(safe-area-inset-bottom));
+    --ftux-composer-height:78px;
+    --ftux-prompt-composer-gap:24px;
+  }
+  body.ftux-prototype.has-mvp-versions[data-prototype-view="latest-oct-28"]:not(.replies-open) .conversation,
+  body.ftux-prototype.has-mvp-versions[data-prototype-view="latest-oct-28"]:not(.replies-open) .composer-dock { width:calc(100% - 32px); }
+  .ftux-prompt { border-radius:20px; }
+  .ftux-flow .ftux-user-bubble { max-width:90%; }
+  .ftux-tool-row { gap:8px; padding-left:12px; padding-right:12px; }
+  .ftux-tool-name { gap:9px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .ftux-prompt { transition:none; }
+  .ftux-turns > :not([hidden]), .ftux-reaction, .ftux-spinner { animation:none; }
+}

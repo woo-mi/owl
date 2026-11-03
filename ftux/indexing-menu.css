@@ -1,0 +1,177 @@
+/* The compact conversation index in Pen frame qOfAL. */
+.indexing-menu-toggle {
+  position: fixed;
+  z-index: 24;
+  top: 20px;
+  right: 20px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #14181f;
+}
+
+.indexing-menu-toggle[aria-expanded="true"],
+.indexing-menu-toggle:hover {
+  background: #f5f5f5;
+}
+
+.indexing-menu-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.indexing-menu {
+  position: fixed;
+  z-index: 24;
+  top: 52px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 352px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 64px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  padding: 16px;
+  border: 1px solid #e8e7e5;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px #00000014;
+  color: #14181f;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.indexing-menu-section h2 {
+  margin: 0 0 8px;
+  color: #63666d;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.indexing-menu-connection-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-right: 16px;
+}
+
+.indexing-menu-connection-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 19px;
+}
+
+.indexing-menu-status-dot {
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #209855;
+}
+
+.indexing-menu-manage {
+  padding: 0;
+  border-radius: 3px;
+  color: #63666d;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.indexing-menu-connection-pending {
+  display: block;
+  margin: 0;
+  color: #63666d;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.indexing-menu-topic-list,
+.indexing-menu-artifact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.indexing-menu-topic {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border-radius: 3px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18.9px;
+}
+
+.indexing-menu-artifact {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #0085ff;
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 18.9px;
+  border-radius: 3px;
+}
+
+.indexing-menu-artifact svg {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+}
+
+.indexing-menu-artifact-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.indexing-menu-artifact-type {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: 2px;
+  color: #63666d;
+  font-size: 12px;
+  line-height: 18.9px;
+}
+
+.indexing-menu-topic:hover,
+.indexing-menu-manage:hover,
+.indexing-menu-artifact:hover .indexing-menu-artifact-label {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.indexing-menu :is(button, a):focus-visible,
+.indexing-menu-toggle:focus-visible {
+  outline: 2px solid #0085ff;
+  outline-offset: 3px;
+}
+
+body.workspace-page-open :is(.indexing-menu, .indexing-menu-toggle),
+body.replies-open :is(.indexing-menu, .indexing-menu-toggle),
+body[data-prototype-view$="replies"] :is(.indexing-menu, .indexing-menu-toggle) {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  /* Leave the inherited 48px app rail visible beside the panel. */
+  .indexing-menu { max-width: calc(100vw - 72px); }
+}
