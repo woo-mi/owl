@@ -124,7 +124,7 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  color: #0085ff;
+  color: var(--blue);
   text-decoration: none;
   font-size: 14px;
   line-height: 18.9px;
