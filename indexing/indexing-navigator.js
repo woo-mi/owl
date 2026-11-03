@@ -136,7 +136,9 @@
       jumpingUntil = performance.now() + (reducedMotion.matches ? 0 : 800);
       clearTimeout(jumpTimer);
       jumpTimer = setTimeout(syncPosition, reducedMotion.matches ? 0 : 820);
-      const top = scroller.scrollTop + item.node.getBoundingClientRect().top - clearance();
+      const targetOffset = scroller.scrollTop + item.node.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+      // Account for the header state at the destination, after scrolling has collapsed or expanded it.
+      const top = targetOffset <= 130 ? 0 : targetOffset - 80;
       scroller.scrollTo({top:Math.max(0, top), behavior:reducedMotion.matches ? 'instant' : 'smooth'});
       status.textContent = `${item.kind || 'Topic'} ${index + 1} of ${entries.length}: ${item.title}`;
     }

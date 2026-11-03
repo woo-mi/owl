@@ -94,9 +94,9 @@
       }
       target.focus({ preventScroll: true });
       const chatRect = chat.getBoundingClientRect();
-      const headerRect = main.querySelector('.agent-header')?.getBoundingClientRect();
-      const clearance = Math.max(16, (headerRect?.bottom ?? chatRect.top + 124) - chatRect.top + 16);
-      const top = chat.scrollTop + target.getBoundingClientRect().top - chatRect.top - clearance;
+      const targetOffset = chat.scrollTop + target.getBoundingClientRect().top - chatRect.top;
+      // Return the first topic to the expanded header; later jumps use the compact header's 64px + 16px clearance.
+      const top = targetOffset <= 130 ? 0 : targetOffset - 80;
       chat.scrollTo({ top: Math.max(0, top), behavior: reducedMotion.matches ? 'instant' : 'smooth' });
     }
 

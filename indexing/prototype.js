@@ -36,8 +36,9 @@
     const agentHeader = agentProfile?.closest('.agent-header');
     function syncAgentHeader() {
       if (!agentProfile) return;
-      // The indexing content frame retains the full Owl identity while reading history.
-      const compact = false;
+      // Separate thresholds prevent flicker near the top of the conversation.
+      const threshold = agentProfile.classList.contains('is-compact') ? 8 : 48;
+      const compact = !isReplyView() && replyBase() === 'latest-oct-28' && ui['chat-scroll'].scrollTop > threshold;
       agentProfile.classList.toggle('is-compact', compact);
       agentHeader?.classList.toggle('is-compact', compact);
     }
