@@ -153,6 +153,7 @@
 }
 
 .indexing-menu-topic:hover,
+.indexing-menu-manage:hover,
 .indexing-menu-artifact:hover .indexing-menu-artifact-label {
   text-decoration: underline;
   text-underline-offset: 3px;
