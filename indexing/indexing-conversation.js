@@ -1,0 +1,182 @@
+/* The earlier conversation in Pen S2Qem, preceding the existing revenue thread. */
+(() => {
+  'use strict';
+
+  const view = window.MVPViews?.['latest-oct-28'];
+  if (!view || view.html.includes('indexing-conversation-prefix')) return;
+  // Exact 16px source marks, exported from the Pen, embedded to keep this module portable.
+  const toolMarks = {"notion":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAD+UlEQVR4AcyZzXHbMBCFuakgacEN5OCbL6KLcBmeSSqQVEEy4zJchKSLbjqkAbWQdKDg42Sp5QqgCAGU49Eb/O3Pe1wAGoufmsp/r6+v3yxeXl624PHx8bdFSHuywAaEuaxPUoAlQZ/gCkuEfsjYk3l7e/th8f7+vgCHw+GzRfAZfLAB5BgsXBn0AnC0ZCwJ+gRXWCL0r+S4WG7btmkNrAE54MFDs/OpficA8jjWILNcLhuw2Wwai9Pp1CjsPH3m8UEUROHBQ4MX4zF0Ao7H41drRCACKkiiIJmFzmu7Wq2aVQAxLGz8WB8fYpBT13mo10R0AlCsTrSLxaIjQVCQQwT/EpDPiwjxTikhnYBgMPis1+tOwGDyjgNEUGUvJCYiKgCuiHh+fqb7Idhut/1BVwJsqdA/2QOeFBAMG4KISHY18PNYhXOh4MF4iEgjcoauEwcuFhxwFTEqQJ2ohian1eDaipwTi0ij87YlhgJSHpprarvf75fYThKAoSanLU1OvFLoxTNZQGnCtm37Pd3+63NIFVyhHhxkC/w8jywBBACaVFufmLFNTJ85D7ajgrgeniz5/NxkAQRXAppUW9Y8fKK5xpMF8OU2F4mSuJMFlCSZ0/fDBXCj2etW+yIySXexgBgBEem/lDgnKSasQZgYHrEDG4tTJICkMQI2kX5v2Dntc/AhSqtztNxaiKN/DUUCCA4BQD8FRMTWIA7RkguiSIASgESMoM5RqWs2apvbZgjIDT20pwoIGc6Wj+4mAKqIoK2JWQSwtWIkqUDtrTSLAA5lSgRVQEhM4C1zswiAyNjNhAhsamA2AVQgJYIK1NpKswng6UISIfQ9qAJC/HzueFYBkElVgTVE0JZgdgFUICWCClCl/1oA5CCJEPoepVWYvQJKOFUF1ktE3E0AFQAQrom7CYA0/1PT1sRdBUB8bCuxnotOQHih8CfX8Vb7sQN9S8xOwNPT0/oW51t9alahExB+LP1ZswrcKjxp7vmYSA5zLRGdAJLcWgWI8n8xMSwQwTzrdl77zMdEIE5tprS9AKoQXiDspjipDU8YooxJbAE5bh2Ish4Da9gpsAcx29RcLwCD8AKhzREBYX5BIKkH5Fgn7hiwU0yx97EGAlhERM3zQMxaoOI+1oUADGLnYbfL2F0EKQBELagQ52kd3t35sFEBsfNAQO/sx9h4kNwCIh4i51/yRC7f8ECcuDaf7pKoAAzZSv48iAyDi4wnhijJLSDiQb5cPDw8/MInKYBFRKhSxsAmZ3xvwIcHCzdyjwrAgPOAE/1aIJ4HpBThDeR3j5BbQHg39kXJh3FzVQDnASeC+6Q6Zs3CJ2ccknUEaInnASkFOT2CX/TzFwAA///qIgplAAAABklEQVQDAFagPQziImLlAAAAAElFTkSuQmCC","gmail":"data:image/png;base64,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","calendar":"data:image/png;base64,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","slack":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAER0lEQVR4AdRYwU4UQRCtan5AEjlK4AMgXCRGYtw9qlHPEj9FnEX9FINnMeJxIQZj1gvBD4DgERL4Aaas10uvw+xM73TPDKydKWa6qrv6verZ7ccaqtFW9897939c9Ff3L2R4P+/50q18e9NZ2tnow5Z3NsTev771zvHlQyyaAAATccJCHdI2vHMCMg++n1ufukfXsgJNhftM1IGRNntnSRDTbtQVRQCV5yvgRateznAy5legYz7n0FgsiSgCpJUnT2Mll92FSuCUhCdlaSiYQBZYaVYNFO6C+n0XPiO+eFEsmEBRkkk+YXk8aUxsPJjAz0ezu7GLtTEvmABACNPUkIgi8Ovhne60kIgiQNpAgkg2b5tINAHlQIO12R6IDNbucN7gx5i2rRaBtsFVyT9GAN/zOGlDDfOqLBgzBueDs/z8EYEh4AtJDffJnrSchNwxDzoIeaihBtAQfNBQziACsye7JeCEWTPrQtCd11KYDgdAW8HnHO6usgPE0DWoGKt2Qac546TuK5WtchEuEMMOGWFu7ZgvWriyT6s8aeylcGK48eoPl00Njf1PQBUbKltxKOkO0NTIgoMnH4KwsPCe/RBTC82kNAIzw7JJLTXTzokpm1nVisoK0YgQFTXhIJLId/jsXc/ugEmlW5Tzuq9aT1SpDlRi5Ef/fvq+S2Ug1Q8w+TllfYB3u2oJoFoD1TOk4gwGEKGGeSiEb0ctSAULIgCh3yBdmPXn0CKeN8zDeBQDu4oplgAeYAOtHAwgQg3zUAjk8RnAwhwIByQ7Bz7E84Z5iGXHXiOQDfwvz9cIHM2v947vveoXWRGho4XXHTcWc2FF47K+0y8rnbPtpX6MnX5e7sGy+SwBC2R+XV97Soi5U2jZWfoMsJymfTeWiRIY/BoeuxxwFp1D3KEIY9Y11M62lwX5SJslYIFop+oFkKyAi8bDj13Jx1guE7KgqZE2LASRAZjQjFwCfpRHdxG76vrDbWetuvM0c0de/VYK+80mC8wLI00bB5xfj/X3JmPf4XzE168IjOVfYbCQL2WdmCER/xGP7FXGYFyJiYquklAtN/IamZmZqEGEea/WSsZMLlLkAmbx+OOudxe0+osnW7X+RZx7frArQhMLFcIB+eZeHg7F3MKfT12h8QXgQywkcdlYLIZFy+IhfuRBPswx+ANDlRdOtliM6cLwDB9iTRkWvfvikGHCuk6EYS7yOEwjAs6BVwrm+m3d8VrFWB7PGIH8gCb6OPaLrIncN0KAVUawaqC8WU2jAq0OkRsh4APIV+LMN8YXu3UCDhzktXsOuU8NAYpUqu0QoLiGD3rozHACFWVBjPzA12rrBGLOCOHJeisUuBsfvgM6ExJDb6UX4tlTfFhZ8Qo6yIPShJ5AFAGAkwLtZNcpEX++XQD4rDyweSr+iSKA3I6EJaKgSc1qKBWGiOcNuwAdA7AwItEdkV1RPRQLHmv8BQAA//+JchQTAAAABklEQVQDAAiLwKiNQUt0AAAAAElFTkSuQmCC","gong":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAERUlEQVR4AdSZv2sUQRTH315AUqa081QEW21i0iRKsEvlHyBooyFFLC3EEwtLA4ZYKfgHWNlJUNMk2tgqiPFKy3QGIVnfZ8OTucns3szt3uXuuG9m5s2vz3fm3V7gWuK9OvN7Nztzey86c7++qf6o8lMWDMqiTMrm4cp/A09nf15S0OeSyzuRbFVELqumVaf9hkFZlEnZYITVoAoDBA6z7JkG10SyMzK2r4JtDVaYwSwMHLZaK5JltwhMhJS1YFbYFjkvkq9ofcLe+QrsLc35ZfHS5uPnl4LyPJdxeH3Y3RTUy6LplMuyplC21Ntx3BoX+GOasr/ZkhqQtnivxdl7cv3afS9ar7l4d0Ye77SlfZWHStpaN+ZWBAVmtTFwYsUsy/QzfazApOQQ8AtqgIkLd2YomtI0BmotBlzVApy4wTOONmVTqmUAeOBIDerIBQP29sZZN1TUiReVBv7UMuDujxFkZoAMwTOnyTRqzABgJoyUwTMGc9wWYhyiTl+qhmLAh+h+PRDkxjGJMIPcvpT6SAy8Wf0t26/3S7m2X+3LJ1XpgIqORg08me8KMMj2BJ46N4Com2jTPyg860QZ4IrJURM5i0gBFjExDhiEGeCAtH73FjDp99u4lDLKAE8NYE2Aon4bufCMpW3gmCRWV1EG3JOruyHgGKm7js2PMsCGnJxNckv6EP2Ubt8o6lEGACk7OfIY0c+4USvagIgEH4V8mAeB5jNkD4WqknFV6ycZIEVIFXdBNgDAjcXUMW4PhaqyfeXEP8s9yycZ6JlZs8FhVC1Bf0xqJhngpDktd2NuZJD8L3uyGTjw1N29QvVoAyF4FhwEnnnAIeomDiMW3OZEGSDP/ZNnAR+AWIr8WzjXJ99Da0cZ4Js4NBlj7v//oTFVMf8AWK9qfKgvygDXyvWGFiAWuh3iZQLUVNdElAFAyHX+QSszEgvC49MVRljfVHbb1u+X0QZsIka4EWtT+qYMkA8+/SbaPrD1WUk/sna/MtkAC5Z9ubAxnwlKxpFa1iZGm3g/pdzCQAZ8AG7FTt3vox3qI+UQ/b4w68fK2gMZ8E/STrlsk1CcNER8rhB1RDpShuaEYskGYk4HCBTakFioj9tA3CYl42KUbqDiy4aNOT0gECfrw9KmLwYuZkyygbJvS8CAx4S7MbD0WYy21Zsokw2EUgjwKjD6uA3GNQHtrpFkwIfntIGidBctq8eOK5sfiqcZcPKftEiBD23eRAwDBykLcYqAkxYp84Y09gADXX9xfo9Cfhxo4DHh9w2zDQsK7NFVA/lWoKNeaGSz862WZPwyn/919+T3KOTGTrMOC+plUGZlb3V2LrwXyTZl4l7ZJuwtuKeOjjYlz99Snwgpa8GssIWBR18u/pjK84faXtdf7XvSSWNj9Na0EVmHFWbACgNUCHR2zz/Qz4T+cp9vaOy7KukRq+OH8YZBWZQpk2UYYbWN/gEAAP//BZn96QAAAAZJREFUAwAEj1lrYnD+SQAAAABJRU5ErkJggg==","hubspot":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAD00lEQVR4AcyYXXYbIQyFGfclWUWyk6aLak7fnL71pItKu5NkFclLQ/WpGZfBEgN4cDJnZED86F4hGPAuGM/z7fXdy9erh5fbq0hK2Wj2IVRHBAA8hbgPU7gJPJJSRk/xo8mCgHpaAJsgRa/1ZmWf8vnb9Y2KzDhpzygHAgyAp0uDrNWX+uZ1OGN6jQ8qMuOk6PJ2a+UDgfAa/oVMKD8QLbdYrwWo5Qx0raH6n8Au/AoVz+WPx6p2paEA6tYTqhJabn1WcSBQCwzvZWO8a/FAABQxTN9JS4L3hpOoDGdwLghc3j/e1ZLgG9FNJIZiGIIjVD4LAvShc9xNXyCiIvmL+6eJPPWp9M5G/OTPtGUntZnnjwjQgPUAEZW3RUseYiHzXg8JxtexMJYI4LGTqFazJgGvF4Yvfj7p7KRtINEaUoy1cIY4phU8GJoI0AHBEN4inwpEutdFOlBDvosA40PCWhvnJtFNABIIRPLZgISGVMMHibF65GQCGFUSsluRT6X3fJOOsZbfhABGWJQtIWWdqSwdY5dkMwKzEZ2N7IuuISUXJBY4IDmwMTuHOwed5QyETkOP47UI6jXZnAAGIcFsLLZJAL4dmxfA6ZAJhBEIZ1VHxSEEZit8MxYk5orKFBLMFrPmdRlKwDPapGfm5OLjkWgg0GRWG+O9tXDRhhU/05+4t5oNI6DxK96zjKLj28F5iLWCkEfnhpyMpWPSOZFhBIjfxM4iC1AWOlvvXEEeXWndWGMOIWB5agY6g5/LVloika+FIQQsUOhqwNMO8e4M+VoYQmCK8TMgjqTyjwP6EVKkRyJrIdUNIeDtPC6oFFGalztCWrTyYwhYlirA5N3iNP3OdZTTdTCGgAU2m3qA9Eo6k2MIOMhSzzlNFmpr21w0kMIQArU7iNh3X28rZidLOw0hkBpY5CWMPGBpO2aqxvv0GUJAY9RaB2IRYCUS1HEvkKbmy9c6rRhCAAP6NSVjCCTSiwseBziHP+qMLqrKwwflMAIM7h7MtDLI5yLuAYzHSUXh/sUP+Nz7QZ5hBPBoCZDYrn498AwwhADg1aNYOFFK4Bl6cwIWeM76eubPLvsAcEU2AfpZYZP22ZSAB153JbEKmJkInl2sEQFMGdAIm8DcT7q670kE2D3YOdhRkDxsAGKBgAgCSAipyJ/GlGmPuIizim4C6m25bHsL1QOf2T+52E3APfMLpCix3uJF6dL9dhPwPK9IGi4u2v6En34CLLoTDG/VtZuAd9lgJzlX+OCEbgLsIroVMsosMiveUXpusnXaTQAgkGALZMdB5m2QunPJXwAAAP//uJgXxQAAAAZJREFUAwCNAPsOuaEQ+QAAAABJRU5ErkJggg==","salesforce":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAADv0lEQVR4AeyYP3YaQQzGxaaIO6cjXewLxEcINDmG/XIS4CR59jHSgI/gXMBOF7qkc4p4o59Ywcwyy7IL5s8LfnyMRtJI+qRZ4DmTI/87Edj3AE8TOE1gww78J1fo62NPbh+HhrunsTjQb9jBTY+vngAFUmzWGYt0BoZceuJAf/uUC36S+ENfJo4u4dpWVU2AxBRIsXXR8cPf/ZAhhr5MHB02fNx/gzVNwILT8SaR1Z9zwIquO6v+TLfOrca+TMBGrMFrDqbNnANp65KW6RrhkoUaQEmd2i4TeNOggFTExjrNxyQgYldLnymuGWCPbQWZmACOdKVxERsesJxKJBUGG2QqiMQEUgEORedEmFRQU0xg59cnqGRtUScVkIgJrB1k345KoighJpDn94X+8JdiCjGBwy87qFCnoB86MYGby2HgUSuOP3el9/6s1g8H/PLrDzK8esd2O8ikFxMoxhJGJ7HvkYHvwxU9cB0y8P3g47mMHn7L8OGXkQ5tyMB9kQF7VoCcwoKAFa9jCbzoFolZRUR63TNDufPY8cOODMI9BQBChzbioGPFvyynfPFZoDOYEUgUj9On7lu5n/5BNEymz4LONsHb4Op87ocdv3nB2nFcJz+frfvYR99nk0APsPW/Te16kQ8ZHb7s8fF4yCFmBCp+fBEIZwIRgC6hIyjdxuagaEBxJO/c/TATXTQh8UbMUM15coU6ZPTkRY7QkUlW+VtePXnoPCBFkZCCXKcu9uJuh9cAP/buB1mI4cyKDXAOnYMcNAcbefBlujSOGO43X/VjP5MV3750EeaAQ+y9GzyM6EmKjI2E7AE2gM2JEAMbvm5Dh8wK8GfP6r7EZY89wgsT4DdGpF29IWiVR8pGN+lqylYVp6xPntXrI18u9QqVvbe8925uOazI33xEzExggnRU0OK1+5SciT4ICEcDGh78YsiOpnArVDt/fdE3sXjLxNiooVAc5qL1veT9Wa1xhbMJGInYsJ9drg9mACv6omOFF3e+XNeMANobdeR+Ie8D5KaRISqKDstbEEDL/YI1wdjvDNp1crfIFxMgAKwJxkQgA5CxtQUNcUQxtHBR0PVIv/5mmUB4FjLAdJrI1hZvfOnQFEBDAE2hcNAipB9ZTcC9WElEF5EbQYnPm6AHkYGK23itT4BsdLARCS0e4px9JTQjQBGQ4N4iV0ILx+eViyd9cwKcojDuMHeZQm0qRdHozN7sHwSEbYN2BDwTd5limQorQOf2HaybEagqcIf6E4EdNjuZ6jSBZFt2qDz6CfwDAAD//2qPs2EAAAAGSURBVAMA6IHYcFy6TSUAAAAASUVORK5CYII="};
+  const icon = (name) => {
+    const paths = {
+      app: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+      workflow: '<rect x="3" y="14" width="6" height="6" rx="1.5"/><rect x="15" y="4" width="6" height="6" rx="1.5"/><path d="M6 14V8a1 1 0 0 1 1-1h8M18 10v6a1 1 0 0 1-1 1H9"/>',
+      report: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6M8 13h8M8 17h6"/>',
+      calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18M12 14v3l2 1"/>',
+      check: '<path d="m5 12 4 4L19 6"/>'
+    };
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.report}</svg>`;
+  };
+  const bubble = (copy, source, extra = '') => `<article class="message assistant-message indexing-bubble ${extra}" data-pen-node="${source}"><p>${copy}</p></article>`;
+  const action = (label, name, extra = '') => `<button type="button" class="indexing-action" data-indexing-action="${name}" ${extra}>${label}</button>`;
+  const toolRow = (name, state) => `<div class="indexing-tool-row"><span class="indexing-tool-name"><span class="indexing-tool-mark" data-tool-mark="${name.toLowerCase()}" aria-hidden="true"></span>${name}</span>${state === 'Connected' ? `<span class="indexing-tool-status is-connected">${icon('check')}Connected</span>` : state === 'Connecting...' ? '<span class="indexing-tool-status is-connecting"><span class="indexing-spinner" aria-hidden="true"></span>Connecting...</span>' : action('Connect', 'connect', `data-tool="${name}" aria-label="Connect ${name}"`)}</div>`;
+  const artifact = (title, label, name, source, kind = 'app', description = '', id = '') => `<div class="indexing-card indexing-artifact${description ? ' indexing-compact-card' : ''}" data-pen-node="${source}"${id ? ` id="${id}"` : ''}><span class="indexing-artifact-icon">${icon(kind)}</span><span class="indexing-artifact-copy"><span>${title}</span>${description ? `<small>${description}</small>` : ''}</span>${action(label, name)}</div>`;
+  const updateRows = `<div class="indexing-change-row"><span><span>Orbis Retail Group moved to Closed Won</span><small>Lena K. · Sat 4:12 PM · EMEA now at 92% of quota</small></span><strong class="indexing-change-positive">+$540K</strong></div><div class="indexing-change-row"><span><span>Tamarack Energy slipped to Q1</span><small>Tomás V. · close date Dec 12 → Jan 20 · removed from Q4 forecast</small></span><strong class="indexing-change-negative">−$470K</strong></div><div class="indexing-change-row"><span><span>Halcyon Health · procurement blocked on security review</span><small>First on today's agenda (you asked Fri) · Lena K. tagged</small></span></div>`;
+  const metricCards = [['Net revenue', '$4.82M', '+12.4% vs last month', true], ['Orders', '38,410', '+6.1% vs last month', true], ['Average order value', '$125.50', '+5.9% vs last month'], ['Return rate', '2.1%', '−0.3pt vs last month']].map(([label, value, change, positive]) => `<div class="indexing-metric"><span>${label}</span><strong>${value}</strong><small${positive ? ' class="indexing-change-positive"' : ''}>${change}</small></div>`).join('');
+  const arrRows = `<div class="indexing-change-row"><span><span>Sales domain · $3.1M</span><small>New-logo bookings, by signed date</small></span><strong>$3.1M</strong></div><div class="indexing-change-row"><span><span>Finance domain · $2.4M</span><small>New logo + expansion − contraction, by start date · the board number</small></span><strong>$2.4M</strong></div><div class="indexing-change-row"><span><span>No metric matched</span><small>LLM improvised from arr_usd · varies by wording</small></span><strong>~$2.8M</strong></div>`;
+
+  const prefix = `<div class="indexing-conversation-prefix" data-pen-frame="S2Qem">
+    <section id="indexing-topic-connections" class="indexing-topic" aria-label="Connecting your tools">
+      <div class="indexing-date-stamp" data-pen-node="pX1ye">Oct 1 7:49 PM</div>
+      ${bubble("Hey Woomi, I'm Owl and here to help you. ", 'B0XYZJ')}
+      ${bubble('Let’s make your daily brief useful. Connecting your tools helps me understand what you’re working on, what’s coming up, and what needs your attention.', 'Z9VPKv', 'indexing-bubble-wide')}
+      ${bubble('The more context I have, the better I get. Would you like to connect your context so I can start?', 'AxT6V')}
+      <div class="indexing-card indexing-tools" data-pen-node="UpSOX">${[['Notion', 'Connected'], ['Gmail', 'Connecting...'], ['Calendar', 'Connect'], ['Slack', 'Connect'], ['Gong', 'Connect']].map(([name, state]) => toolRow(name, state)).join('')}<div class="indexing-card-footer">${action('Skip for now', 'skip', 'data-next="indexing-deep-dive"')}</div></div>
+      ${bubble("Thank you. I’ll do a deep dive. Back in a few minutes with some ideas for you. Now that you're set up, here are a few things I can take care of for you.", 'oHhZU', 'indexing-deep-dive')}
+    </section>
+    <section id="indexing-topic-review" class="indexing-topic" aria-label="Weekly sales pipeline review">
+      ${bubble('I noticed you have a Sales Pipeline Review every Monday. Would you like me to build an app to help you track pipeline health and prepare for that meeting?', 'LaLhG', 'indexing-bubble-wide')}
+      ${artifact('Weekly Sales Pipeline Review App', 'Build app', 'build-app', 'uIrWl')}
+      ${bubble('Connect your CRM so I can bring in your opportunities, sales stages, and regional performance.', 'kwVf2')}
+      <div class="indexing-card indexing-tools indexing-crm" data-pen-node="rbbPs">${toolRow('HubSpot', 'Connected')}${toolRow('Salesforce', 'Connect')}<div class="indexing-card-footer">${action('Skip for now', 'skip', 'data-next="indexing-app-built"')}</div></div>
+      ${bubble('Succeed. Owl built the app. Would you like a weekly pipeline update every Friday, so you have time to review it before Monday’s meeting?', 'VCINC', 'indexing-bubble-wide indexing-app-built')}
+      ${artifact('Weekly Sales Pipeline Review App', 'Open', 'open-app', 'fm8Cu')}
+      ${artifact('Weekly Sales Pipeline Update', 'Create workflow', 'create-workflow', 'OJUcj', 'workflow')}
+      ${bubble('What time should I deliver it, and where should it go?', 'fcUMo')}
+      <form id="indexing-schedule-form" class="indexing-card indexing-schedule" data-pen-node="X854uL">
+        <div class="indexing-schedule-heading">${icon('workflow')}<span>Weekly Sales Pipeline Update</span></div>
+        <div class="indexing-schedule-fields">
+          <div class="indexing-schedule-row"><label>Day<select name="day" aria-label="Day">${['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(day => `<option${day === 'Friday' ? ' selected' : ''}>${day}</option>`).join('')}</select></label><label>Time<input name="time" type="time" value="07:00" required aria-label="Time"></label><label class="indexing-zone-field">Timezone<select name="timezone" aria-label="Timezone"><option>America/Los_Angeles</option><option>America/New_York</option><option>Europe/London</option><option>UTC</option></select></label></div>
+          <div class="indexing-schedule-row"><label>Deliver to<select name="destination" aria-label="Deliver to"><option>Slack</option></select></label><label class="indexing-channel-field">Channel · connected workspace<input name="channel" type="text" value="#sales-pipeline" required pattern="#[A-Za-z0-9_-]+" aria-label="Channel"></label></div>
+          <div class="indexing-schedule-submit"><span><span data-schedule-summary>Every Friday at 7:00 AM</span><small data-delivery-summary>Delivered to Slack · #sales-pipeline</small></span><button type="submit" class="indexing-action">Schedule</button></div>
+        </div>
+      </form>
+      <article id="indexing-schedule-confirmation" class="message assistant-message indexing-bubble" data-pen-node="E90ZN6"><p>Your pipeline update is scheduled for Fridays at 7:00 AM America/Los_Angeles in #sales-pipeline, ahead of your Monday review.</p></article>
+      ${artifact('Weekly Sales Pipeline Update', 'Open report', 'open-pipeline-report', 'cZyrz', 'workflow')}
+      <div class="indexing-new-divider" data-pen-node="HFO7d"><span></span><span>NEW</span><span></span></div>
+      <div class="indexing-date-stamp" data-pen-node="P4JGD6">Today, Mon, Oct 13 7:02 AM</div>
+      <div class="indexing-meeting-notice" data-pen-node="jbAQF">${icon('calendar')}<span>Sales Pipeline Review starts in 30 min · 9:00 AM · 6 attendees</span></div>
+      ${bubble("Morning, Woomi. Since Friday's update, 3 things changed that will come up:", 'R9ldSw')}
+      <div class="indexing-card indexing-changes indexing-compact-card" data-pen-node="q1puVo">${updateRows}</div>
+      ${artifact('Weekly Sales Pipeline Review App', 'Open', 'open-app', 'dsV2V', 'app', 'Refreshed 8:29 AM · Q4 forecast now $6.2M')}
+    </section>
+    <section id="indexing-topic-metrics" class="indexing-topic" aria-label="Monthly business metrics">
+      ${bubble('Would you like to see progress of your metrics?', 'thbwu')}
+      <div class="indexing-user-turn" data-pen-node="gahhE"><article class="message user-message indexing-user-bubble">Yes</article><span class="indexing-read">Read 5:12 AM</span></div>
+      ${bubble('Here’s how your key metrics compare with last month.', 'CwZx4')}
+      <div class="indexing-metrics" data-pen-node="CusAB">${metricCards}</div>
+      <div class="indexing-user-turn" data-pen-node="N4h5C"><article class="message user-message indexing-user-bubble">Great. Can you show me weekly update too?</article></div>
+    </section>
+    <section id="indexing-topic-arr" class="indexing-topic" aria-label="Sales vs. Finance ARR">
+      ${bubble('Here’s your weekly update, including a closer look at the conflicting ARR numbers.', 'O3xPew')}
+      ${bubble("Here's why Marcus gets 3 answers:", 'KsqpC')}
+      <div class="indexing-card indexing-arr indexing-compact-card" data-pen-node="MVmXd">${arrRows}</div>
+      ${bubble('Suggestion: create one governed Net New ARR metric using Finance\'s definition, add a synonym so “new ARR” and “net new” resolve to it, and keep New Logo Bookings as a separate Sales metric.', 'wFeox')}
+    </section>
+    <div class="indexing-local-status" role="status" aria-live="polite"></div>
+  </div>`;
+
+  // Preserve the complete existing morning report, revenue analysis, unfurls and replies.
+  view.html = prefix + view.html;
+
+  let connectedHost;
+  let preview;
+  let previewOpener;
+  const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function announce(message) {
+    const status = document.querySelector('#messages .indexing-local-status');
+    if (status) status.textContent = message;
+  }
+  function reveal(selector) {
+    const target = document.querySelector(selector);
+    if (!target) return;
+    target.scrollIntoView({ behavior: reducedMotion() ? 'instant' : 'smooth', block: 'center' });
+    target.classList.remove('indexing-highlight');
+    requestAnimationFrame(() => target.classList.add('indexing-highlight'));
+  }
+  function openPreview(kind, opener) {
+    if (!preview) {
+      preview = document.createElement('dialog');
+      preview.className = 'indexing-preview';
+      preview.setAttribute('aria-labelledby', 'indexing-preview-title');
+      preview.innerHTML = '<header><h2 id="indexing-preview-title"></h2><button type="button" aria-label="Close preview">×</button></header><div class="indexing-preview-content"></div>';
+      document.body.append(preview);
+      preview.querySelector('header button').addEventListener('click', () => preview.close());
+      preview.addEventListener('click', event => { if (event.target === preview) { const bounds = preview.getBoundingClientRect(); if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) preview.close(); } });
+      preview.addEventListener('close', () => { if (previewOpener?.isConnected) previewOpener.focus({ preventScroll: true }); });
+    }
+    previewOpener = opener;
+    const isApp = kind === 'open-app';
+    preview.querySelector('h2').textContent = isApp ? 'Weekly Sales Pipeline Review App' : 'Weekly Sales Pipeline Update';
+    preview.querySelector('.indexing-preview-content').innerHTML = `<p class="indexing-preview-meta">Refreshed 8:29 AM · Q4 forecast now $6.2M</p><div class="indexing-card indexing-changes">${updateRows}</div>${isApp ? '' : `<div class="indexing-metrics">${metricCards}</div><div class="indexing-card indexing-arr">${arrRows}</div>`}`;
+    preview.showModal();
+  }
+  function timeLabel(value) {
+    const [hour, minute] = value.split(':').map(Number);
+    return `${hour % 12 || 12}:${String(minute).padStart(2, '0')} ${hour < 12 ? 'AM' : 'PM'}`;
+  }
+  function syncSchedule(form) {
+    const values = Object.fromEntries(new FormData(form));
+    const time = timeLabel(values.time || '07:00');
+    form.querySelector('[data-schedule-summary]').textContent = `Every ${values.day} at ${time}`;
+    form.querySelector('[data-delivery-summary]').textContent = `Delivered to ${values.destination} · ${values.channel}`;
+    return { ...values, time };
+  }
+  function connect() {
+    const messages = document.getElementById('messages');
+    if (!messages) return;
+    messages.querySelectorAll('[data-tool-mark]').forEach(mark => {
+      const source = toolMarks[mark.dataset.toolMark];
+      if (source && !mark.firstChild) mark.innerHTML = `<img src="${source}" width="16" height="16" alt="">`;
+    });
+    if (connectedHost === messages) return;
+    connectedHost = messages;
+    messages.addEventListener('click', event => {
+      const button = event.target.closest('[data-indexing-action]');
+      if (!button || !messages.contains(button)) return;
+      const name = button.dataset.indexingAction;
+      if (name === 'connect') {
+        const tool = button.dataset.tool;
+        button.outerHTML = `<span class="indexing-tool-status is-connected">${icon('check')}Connected</span>`;
+        announce(`${tool} connected in this prototype.`);
+        window.dispatchEvent(new CustomEvent('indexing-connection-change', { detail: { tool, connected: true } }));
+      } else if (name === 'skip') {
+        reveal(`.${button.dataset.next}`);
+      } else if (name === 'build-app') {
+        button.textContent = 'App built';
+        button.disabled = true;
+        announce('Weekly Sales Pipeline Review App is ready to open.');
+        reveal('.indexing-app-built');
+      } else if (name === 'create-workflow') {
+        reveal('#indexing-schedule-form');
+        document.querySelector('#indexing-schedule-form select')?.focus({ preventScroll: true });
+      } else if (name.startsWith('open-')) openPreview(name, button);
+    });
+    messages.addEventListener('input', event => {
+      const form = event.target.closest('#indexing-schedule-form');
+      if (!form) return;
+      syncSchedule(form);
+      const button = form.querySelector('[type="submit"]');
+      button.textContent = 'Schedule';
+      button.disabled = false;
+    });
+    messages.addEventListener('submit', event => {
+      const form = event.target.closest('#indexing-schedule-form');
+      if (!form) return;
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      const values = syncSchedule(form);
+      const confirmation = document.querySelector('#indexing-schedule-confirmation p');
+      const text = `Your pipeline update is scheduled for ${values.day}s at ${values.time} ${values.timezone} in ${values.channel}, ahead of your Monday review.`;
+      confirmation.textContent = text;
+      const button = form.querySelector('[type="submit"]');
+      button.textContent = 'Scheduled';
+      button.disabled = true;
+      announce(`${text} Saved in this prototype.`);
+      reveal('#indexing-schedule-confirmation');
+    });
+  }
+  window.IndexingConversation = Object.freeze({ connect, openPreview });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', connect, { once: true });
+  else connect();
+  for (const eventName of ['indexing-ready', 'mvp-view-change']) window.addEventListener(eventName, connect);
+})();
