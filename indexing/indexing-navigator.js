@@ -7,9 +7,6 @@
     const messages = document.getElementById('messages');
     if (!main || !scroller || !messages || document.getElementById('indexing-nav-rail')) return;
     const definitions = [
-      {id:'review', title:'Weekly sales pipeline review', excerpt:'Review three updates ahead of Monday’s Sales Pipeline Review: a closed-won deal, a slipped deal, and a blocked security review.'},
-      {id:'metrics', title:'Monthly business metrics', excerpt:'Net revenue is $4.82M, orders are 38,410, average order value is $125.50, and the return rate is 2.1%.'},
-      {id:'arr', title:'Sales vs. Finance ARR', excerpt:'Sales shows $3.1M and Finance $2.4M. Create one governed Net New ARR metric using Finance’s definition.'},
       {id:'pipeline', title:'Pipeline health and app adoption', excerpt:'Pipeline health: $23.36M open across 205 deals. Review sales stages and app adoption.'},
       {id:'revenue', title:'September revenue drivers', excerpt:'September closed-won revenue was $10.11M, down $9.24M (47.8%) from August. Review the regional, account, and product drivers.'},
       {id:'artifact-chat', title:'September 2024 Revenue Analysis', kind:'Chat', href:'https://ayush.gowisdom.ai/chat/33ac3dce-6d77-47cd-8e6b-1c049379ee6b', excerpt:'Open the conversation behind the September revenue analysis.'},
