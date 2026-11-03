@@ -1,4 +1,4 @@
-/* First-use conversation and pipeline review artifact. */
+/* Static FTUX real conversation and pipeline review artifact. */
 body.ftux-prototype {
   --ftux-content-top:132px;
   --ftux-composer-bottom:48px;
@@ -41,8 +41,10 @@ body.ftux-prototype .composer:focus-within { outline-color:#d5d5d9; }
   color:#0d0d0d;
   font:400 14px/20px Inter, system-ui, sans-serif;
 }
-body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
-  min-height:calc(100dvh - var(--ftux-content-top) - var(--ftux-composer-bottom) - var(--ftux-composer-height) - var(--ftux-prompt-composer-gap));
+body.ftux-prototype .ftux-flow,
+body.ftux-prototype .ftux-flow * {
+  animation:none!important;
+  transition:none!important;
 }
 .ftux-turns:empty { display:none; }
 .ftux-flow .ftux-bubble {
@@ -60,56 +62,6 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
 .ftux-flow .ftux-bubble-crm { max-width:min(605px, 100%); }
 .ftux-flow p { margin:0; }
 .ftux-flow .ftux-bubble p + p { margin-top:16px; }
-.ftux-prompts {
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:8px;
-  width:100%;
-  margin-top:auto;
-  padding-top:24px;
-}
-.ftux-prompt {
-  display:flex;
-  align-items:center;
-  min-height:40px;
-  max-width:100%;
-  padding:8px 16px;
-  border:1px solid #e5e5e5;
-  border-radius:20px;
-  background:#fff;
-  color:#444;
-  font:400 14px/21px Inter, system-ui, sans-serif;
-  text-align:left;
-  transition:background-color 130ms ease, border-color 130ms ease;
-}
-.ftux-prompt:hover { background:#f7f7f7; border-color:#cfcfcf; }
-.ftux-prompt:active { background:#efefef; }
-.ftux-choice-row {
-  display:flex;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:8px;
-  width:100%;
-}
-.ftux-choice {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:58px;
-  min-height:36px;
-  padding:7px 16px;
-  border:1px solid #dedee2;
-  border-radius:20px;
-  background:#fff;
-  color:#24242a;
-  font:400 14px/20px Inter, system-ui, sans-serif;
-  transition:background-color 130ms ease, border-color 130ms ease;
-}
-.ftux-choice:hover { background:#f7f7f7; border-color:#c7c7cc; }
-.ftux-choice:active { background:#efefef; }
-.ftux-prompt:focus-visible,
-.ftux-choice:focus-visible,
 .ftux-connect:focus-visible,
 .ftux-skip:focus-visible,
 .ftux-app-card:focus-visible { outline:2px solid #0085ff; outline-offset:3px; }
@@ -195,7 +147,6 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
   border:1.5px solid #dedee3;
   border-top-color:#777780;
   border-radius:50%;
-  animation:ftux-spin 800ms linear infinite;
 }
 .ftux-skip-row {
   display:flex;
@@ -230,7 +181,6 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
   background:#fff;
   color:#1d1c1d;
   text-decoration:none;
-  transition:border-color 140ms ease, box-shadow 140ms ease;
 }
 .ftux-app-card:hover { border-color:#c6d7eb; box-shadow:0 2px 8px #14181f0a; }
 .ftux-app-copy {
@@ -271,33 +221,7 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
 }
 .ftux-pipeline-thumbnail svg { display:block; width:100%; height:100%; min-height:123px; }
 .ftux-local-status { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
-.chat-scroll.is-ftux-playback { overflow-anchor:none; }
-.ftux-flow[hidden], .ftux-flow [hidden], .ftux-typing[hidden] { display:none!important; }
-.ftux-typing {
-  display:flex;
-  align-items:center;
-  align-self:flex-start;
-  justify-content:center;
-  gap:4px;
-  width:50px;
-  height:32px;
-  border-radius:18px;
-  background:#f1f1f1;
-}
-.ftux-typing span {
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#7b7d82;
-  animation:ftux-typing-dot 1050ms ease-in-out infinite;
-}
-.ftux-typing span:nth-child(2) { animation-delay:140ms; }
-.ftux-typing span:nth-child(3) { animation-delay:280ms; }
-@keyframes ftux-typing-dot {
-  0%, 60%, 100% { opacity:.45; transform:translateY(0) scale(.85); }
-  30% { opacity:1; transform:translateY(-2px) scale(1); }
-}
-@keyframes ftux-spin { to { transform:rotate(360deg); } }
+.ftux-flow[hidden], .ftux-flow [hidden] { display:none!important; }
 
 @media (max-width:760px) {
   body.ftux-prototype {
@@ -307,7 +231,6 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
   }
   body.ftux-prototype.has-mvp-versions[data-prototype-view="latest-oct-28"]:not(.replies-open) .conversation,
   body.ftux-prototype.has-mvp-versions[data-prototype-view="latest-oct-28"]:not(.replies-open) .composer-dock { width:calc(100% - 32px); }
-  .ftux-prompt { border-radius:20px; }
   .ftux-flow .ftux-user-bubble { max-width:90%; }
   .ftux-tool-row { gap:8px; padding-left:12px; padding-right:12px; }
   .ftux-tool-name { gap:9px; }
@@ -316,8 +239,4 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
   .ftux-app-card { grid-template-columns:minmax(0, 1fr) 96px; }
   .ftux-app-copy { padding:14px 12px; }
   .ftux-pipeline-thumbnail { width:96px; }
-}
-@media (prefers-reduced-motion:reduce) {
-  .ftux-prompt, .ftux-choice, .ftux-app-card { transition:none; }
-  .ftux-typing span, .ftux-spinner { animation:none; }
 }

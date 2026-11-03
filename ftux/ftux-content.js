@@ -1,4 +1,4 @@
-/* Animated onboarding from Pen frame KJKJh — FTUX real. */
+/* Immediate, complete screen from Pen frame KJKJh — FTUX real. */
 (() => {
   'use strict';
   const view = window.MVPViews?.['latest-oct-28'];
@@ -10,26 +10,19 @@
   ];
   const appURL = 'https://ayush.gowisdom.ai/apps/app_af105ef5a93d4b77a5e9922cd6ffa91f/view';
   const groupTools = {context:['Notion', 'Gmail', 'Calendar', 'Slack', 'Gong'], crm:['HubSpot', 'Salesforce']};
-  const freshConnections = () => new Map(Object.values(groupTools).flat().map(tool => [tool, 'available']));
+  const freshConnections = () => new Map(Object.values(groupTools).flat().map(tool => [tool, tool === 'Notion' || tool === 'HubSpot' ? 'connected' : tool === 'Gmail' ? 'connecting' : 'available']));
   const escape = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
   const bubble = (text, extra = '') => `<article class="message assistant-message ftux-bubble ${extra}"><p>${escape(text)}</p></article>`;
-  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const connectionTimers = new Map();
   let connections = freshConnections();
   let skipped = new Set();
-  let selectedPrompt = '';
   let boundFlow;
-  let stage = 'context';
   let connectionsDialog;
   let connectionsOpener;
-  let playback;
   const host = () => document.querySelector('#messages .ftux-flow');
   const turns = () => host()?.querySelector('.ftux-turns');
   const active = () => Boolean(host()) && !document.body.classList.contains('replies-open');
   const announce = text => { const node = host()?.querySelector('.ftux-local-status'); if (node) node.textContent = text; };
   const notifyIndex = () => window.dispatchEvent(new Event('ftux-state-change'));
-  const setStage = next => { stage = next; document.body.dataset.ftuxStage = next; notifyIndex(); };
-  const stopTimers = () => { connectionTimers.forEach(clearTimeout); connectionTimers.clear(); };
   const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
   function statusHTML(tool) {
     const state = connections.get(tool);
@@ -44,30 +37,6 @@
   function userTurnHTML(value, files = [], reaction = true) {
     return `<div class="ftux-user-turn"><article class="message user-message ftux-user-bubble">${value ? `<p>${escape(value)}</p>` : ''}${files.length ? `<ul class="message-attachments">${files.map(file => `<li>${escape(file)}</li>`).join('')}</ul>` : ''}${reaction ? '<img class="ftux-reaction" src="assets/y1jENV.png" width="32" height="36.5" alt="Thumbs-up reaction">' : ''}</article><span class="ftux-read">Read 5:12 AM</span></div>`;
   }
-  function scrollToNode(node, {alignTop = false, shouldFollow = () => true} = {}) {
-    if (!node || !active()) return;
-    requestAnimationFrame(() => {
-      if (!node.isConnected || !shouldFollow() || document.body.classList.contains('workspace-page-open')) return;
-      const scroller = document.getElementById('chat-scroll');
-      const rect = node.getBoundingClientRect();
-      const composerTop = document.querySelector('.composer-dock')?.getBoundingClientRect().top || innerHeight - 90;
-      if (!alignTop && rect.bottom <= composerTop - 16 && rect.top >= 80) return;
-      const top = alignTop || rect.height > composerTop - 96
-        ? scroller.scrollTop + rect.top - 80
-        : scroller.scrollTop + rect.bottom - composerTop + 20;
-      scroller.scrollTo({top:Math.max(0, top), behavior:motion.matches ? 'instant' : 'smooth'});
-    });
-  }
-  function play(nodes, options) {
-    playback ||= window.FTUXPlayback.create({
-      messages:document.getElementById('messages'), scroll:document.getElementById('chat-scroll'),
-      motion, scrollToNode, onReveal(node) {
-        notifyIndex();
-
-      }
-    });
-    playback.play(nodes, options);
-  }
   function updateTool(tool) {
     document.querySelectorAll(`.ftux-flow [data-ftux-tool="${tool}"] [data-ftux-tool-control], .ftux-connections-dialog [data-ftux-tool="${tool}"] [data-ftux-tool-control]`).forEach(row => {
       const hadFocus = row.contains(document.activeElement);
@@ -78,54 +47,24 @@
   }
 
   function initialHTML() {
-    return `<div class="ftux-flow" data-pen-frame="KJKJh"><section class="ftux-introduction" aria-label="Meet your Owl">${introduction.map((copy, i) => bubble(copy, i ? 'ftux-bubble-wide' : '')).join('')}${cardHTML('context')}</section><div class="ftux-turns"></div><div class="ftux-local-status" role="status" aria-live="polite"></div></div>`;
+    return `<div class="ftux-flow" data-pen-frame="KJKJh"><section class="ftux-introduction" aria-label="Meet your Owl">${introduction.map((copy, i) => bubble(copy, i ? 'ftux-bubble-wide' : '')).join('')}${cardHTML('context')}</section><div class="ftux-turns">${
+      bubble('Thank you. I’ll do a deep dive. Back in a few minutes with some ideas for you.') +
+      bubble("Now that you're set up, here are a few things I can take care of for you.") +
+      bubble('I noticed you have a Sales Pipeline Review every Monday. Would you like me to build an app to help you track pipeline health and prepare for that meeting?', 'ftux-bubble-wide ftux-pipeline-suggestion') +
+      userTurnHTML('Yes') +
+      bubble('Connect your CRM so I can bring in your opportunities, sales stages, and regional performance.', 'ftux-bubble-wide') +
+      cardHTML('crm') +
+      bubble('Succeed. The agent reads the CRM data and builds the app.') + pipelineResultHTML()
+    }</div><div class="ftux-local-status" role="status" aria-live="polite"></div></div>`;
   }
   view.html = initialHTML();
   view.label = 'FTUX';
 
-  function append(html, options = {}) {
-    const start = turns().childElementCount;
-    turns().insertAdjacentHTML('beforeend', html);
-    const nodes = [...turns().children].slice(start);
-    play(nodes, {resetFollow:false, scrollOnReducedMotion:true, enqueue:true, ...options});
-    return nodes;
-  }
   function startConnection(tool) {
-    if (!connections.has(tool) || connections.get(tool) === 'connected' || connectionTimers.has(tool)) return;
-    connections.set(tool, 'connecting');
+    if (!connections.has(tool) || connections.get(tool) === 'connected') return;
+    connections.set(tool, 'connected');
     updateTool(tool);
-    announce(`Connecting ${tool}.`);
-    connectionTimers.set(tool, setTimeout(() => {
-      connectionTimers.delete(tool);
-      connections.set(tool, 'connected');
-      updateTool(tool);
-      announce(`${tool} connected.`);
-      checkCompletion();
-    }, motion.matches ? 250 : 1600));
-  }
-  const groupConnected = group => groupTools[group].some(tool => connections.get(tool) === 'connected');
-
-  function suggestPipeline() {
-    if (stage !== 'context') return;
-    setStage('suggestion');
-    const thanks = groupConnected('context')
-      ? 'Thank you. I’ll do a deep dive. Back in a few minutes with some ideas for you.'
-      : 'You can connect your tools later. Here’s an idea to help you get started.';
-    append(bubble(thanks) +
-      bubble("Now that you're set up, here are a few things I can take care of for you.") +
-      bubble('I noticed you have a Sales Pipeline Review every Monday. Would you like me to build an app to help you track pipeline health and prepare for that meeting?', 'ftux-bubble-wide ftux-pipeline-suggestion') +
-      '<div class="ftux-choice-row"><button class="ftux-choice" type="button" data-ftux-accept>Yes</button></div>', {firstDelay:2000});
-  }
-  function acceptPipeline(value = 'Yes', files = []) {
-    if (stage !== 'suggestion') return;
-    playback?.finish();
-    host().querySelector('.ftux-choice-row')?.remove();
-    selectedPrompt = value;
-    setStage('crm');
-    append(userTurnHTML(value, files) +
-      bubble('Connect your CRM so I can bring in your opportunities, sales stages, and regional performance.', 'ftux-bubble-wide') +
-      cardHTML('crm'), {immediateFirst:true, resetFollow:true});
-    checkCompletion();
+    announce(`${tool} connected.`);
   }
   function pipelineThumbnail() {
     return `<svg viewBox="0 0 125 123" role="img" aria-label="Pipeline dashboard preview" xmlns="http://www.w3.org/2000/svg">
@@ -142,52 +81,30 @@
       <a class="ftux-app-card" href="${appURL}" target="_blank" rel="noopener noreferrer" aria-label="Open ${title}"><div class="ftux-app-copy"><h3>${title}</h3><p>Track pipeline health, sales stages, and regional performance in one app. Get ready for your Monday Sales Pipeline Review.</p><span class="ftux-app-domain"><img src="assets/wisdom-card-logo.svg" width="16" height="16" alt="">ayush.gowisdom.ai</span></div><div class="ftux-pipeline-thumbnail">${pipelineThumbnail()}</div></a>
       </section>`;
   }
-  function finishPipeline() {
-    if (stage !== 'crm' || !groupConnected('crm')) return;
-    setStage('ready');
-    append(bubble('Succeed. The agent reads the CRM data and builds the app.') + pipelineResultHTML(), {firstDelay:2000});
-    announce('Your Weekly Sales Pipeline Review app is ready.');
-  }
-  function checkCompletion() {
-    if (!active()) return;
-    if (stage === 'context' && (groupConnected('context') || skipped.has('context'))) suggestPipeline();
-    if (stage === 'crm') finishPipeline();
-  }
   function send(value, files = []) {
     if (!active()) return false;
-    if (stage === 'suggestion' && /^(yes|yeah|yep|sure|ok|okay|please|let[’']?s|build|create|do it)\b/i.test(value.trim())) {
-      acceptPipeline(value, files);
-      return true;
-    }
-    playback?.finish();
-    const copy = stage === 'context'
-      ? 'Connect the tools you’d like me to use, or choose “Skip for now” to continue.'
-      : stage === 'suggestion' ? 'When you’re ready, choose “Yes” to build your Weekly Sales Pipeline Review app.'
-      : stage === 'crm' ? 'Connect HubSpot or Salesforce so I can build your app with your pipeline data.'
-      : 'Your Weekly Sales Pipeline Review app is ready above. Open it to review your pipeline before Monday’s meeting.';
-    append(userTurnHTML(value, files, false) + bubble(copy, 'ftux-bubble-wide'), {immediateFirst:true, reply:true, resetFollow:true});
+    turns().insertAdjacentHTML('beforeend', userTurnHTML(value, files, false));
+    notifyIndex();
+    const scroller = document.getElementById('chat-scroll');
+    scroller.scrollTo({top:scroller.scrollHeight, behavior:'instant'});
     return true;
   }
   function reset() {
     if (!active()) return false;
-    playback?.cancel();
-    stopTimers();
     connectionsDialog?.close();
     connections = freshConnections();
     skipped = new Set();
-    selectedPrompt = '';
     document.getElementById('messages').innerHTML = initialHTML();
     boundFlow = host();
-    setStage('context');
+    document.body.dataset.ftuxStage = 'ready';
     const url = new URL(location.href);
     url.searchParams.delete('step');
     history.replaceState(history.state, '', url.pathname + url.search + url.hash);
     document.getElementById('chat-scroll').scrollTo({top:0, behavior:'instant'});
-    play([...host().querySelector('.ftux-introduction').children]);
+    notifyIndex();
     return true;
   }
   function openConnections() {
-    playback?.finish();
     if (!connectionsDialog) {
       connectionsDialog = document.createElement('dialog');
       connectionsDialog.className = 'indexing-preview ftux-connections-dialog';
@@ -201,41 +118,34 @@
     connectionsOpener = document.activeElement;
     connectionsDialog.querySelector('.indexing-preview-content').innerHTML = cardHTML('context', true) + cardHTML('crm', true);
     connectionsDialog.showModal();
-    for (const [tool, state] of connections) if (state === 'connecting') startConnection(tool);
   }
 
   function onClick(event) {
-    if (event.target.closest('[data-ftux-accept]')) { acceptPipeline(); return; }
     const connect = event.target.closest('[data-ftux-connect]');
     if (connect) { startConnection(connect.dataset.ftuxConnect); return; }
     const skip = event.target.closest('[data-ftux-skip]');
     if (!skip) return;
-    playback?.finish();
     const group = skip.dataset.ftuxSkip;
     skipped.add(group);
     skip.textContent = 'Skipped for now';
     skip.disabled = true;
-    if (group === 'context') checkCompletion();
-    else if (stage === 'crm' && !groupConnected('crm')) {
-      append(bubble('You can connect your CRM whenever you’re ready. Connect HubSpot or Salesforce above to build your pipeline app.', 'ftux-bubble-wide'));
-    }
     announce(`${group === 'context' ? 'Additional context tools' : 'CRM connection'} skipped for now.`);
   }
   function boot() {
     const flow = host();
     if (!flow || flow === boundFlow) return;
     boundFlow = flow;
-    setStage('context');
-    play([...flow.querySelector('.ftux-introduction').children]);
+    document.body.dataset.ftuxStage = 'ready';
+    notifyIndex();
   }
   const getIndexState = () => ({
-    stage, selectedPrompt, total:connections.size,
+    stage:'ready', selectedPrompt:'Yes', total:connections.size,
     connectedCount:[...connections.values()].filter(state => state === 'connected').length,
     connectingTools:[...connections].filter(([, state]) => state === 'connecting').map(([tool]) => tool),
     artifactReady:Boolean(host()?.querySelector('.ftux-pipeline-result:not([hidden])'))
   });
   window.FTUX = Object.freeze({send, reset, openConnections, getIndexState,
-    pauseAutoScroll:() => playback?.stopFollowing()});
+    pauseAutoScroll:() => {}});
   window.addEventListener('indexing-ready', boot);
   function start() {
     document.getElementById('messages')?.addEventListener('click', onClick);
