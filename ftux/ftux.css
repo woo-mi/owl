@@ -104,7 +104,7 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
   max-width:85%;
   padding:9px 13px;
   border-radius:16px;
-  background:#1a96fe;
+  background:var(--blue);
   color:#fff;
   font:inherit;
   font-weight:400;

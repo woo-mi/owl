@@ -79,7 +79,7 @@
 .indexing-change-negative { color: #e05252; }
 .indexing-user-turn { min-height: 56px; width: 100%; display: flex; flex-direction: column; gap: 4px; justify-content: flex-end; align-items: flex-end; }
 .indexing-user-turn:has(.indexing-read) { min-height: 79px; }
-.indexing-conversation-prefix .indexing-user-bubble { padding: 9px 13px; background: #1a96fe; font: inherit; }
+.indexing-conversation-prefix .indexing-user-bubble { padding: 9px 13px; background:var(--blue); font: inherit; }
 .indexing-read { font-size: 11px; line-height: 16px; color: #8e8e8e; padding: 0 10px; }
 .indexing-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; width: min(623px, 100%); }
 .indexing-metric { min-height: 102px; display: flex; flex-direction: column; gap: 6px; justify-content: center; padding: 12px; border: .5px solid #e6e6e6; border-radius: 10px; }
