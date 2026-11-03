@@ -6,11 +6,11 @@
   right: 20px;
   display: grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border: 0;
-  border-radius: 6px;
+  border-radius: 10px;
   background: transparent;
   color: #14181f;
 }
@@ -21,21 +21,21 @@
 }
 
 .indexing-menu-toggle svg {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
 }
 
 .indexing-menu {
   position: fixed;
   z-index: 24;
-  top: 48px;
+  top: 52px;
   right: 12px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   width: 352px;
   max-width: calc(100vw - 24px);
-  max-height: calc(100dvh - 60px);
+  max-height: calc(100dvh - 64px);
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;

@@ -13,7 +13,6 @@
       ['arr', 'Sales vs. Finance ARR'],
       ['metrics', 'Monthly business metrics'],
       ['review', 'Weekly sales pipeline review'],
-      ['connections', 'Connecting your tools'],
     ];
     const linkIcon = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6.25 9.75 3.5-3.5m-4.5 1-1 1a2.475 2.475 0 0 0 3.5 3.5l1-1m-1.5-5.5 1-1a2.475 2.475 0 0 1 3.5 3.5l-1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     const toggle = document.createElement('button');
@@ -21,7 +20,7 @@
     toggle.className = 'indexing-menu-toggle';
     toggle.type = 'button';
     toggle.setAttribute('aria-controls', 'indexing-menu');
-    toggle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><g transform="translate(5 6)"><path d="M8 11.5h8.5m-8.5-9.5h8.5m-12.5 0c0 1.10457-.89543 2-2 2s-2-.89543-2-2 .89543-2 2-2 2 .89543 2 2m0 9.5c0 1.10457-.89543 2-2 2s-2-.89543-2-2 .89543-2 2-2 2 .89543 2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g></svg>';
+    toggle.innerHTML = '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="4.5" cy="5.5" r="2"/><circle cx="4.5" cy="12.5" r="2"/><path d="M9.5 5.5h6M9.5 12.5h6"/></svg>';
 
     const panel = document.createElement('nav');
     panel.id = 'indexing-menu';
@@ -32,7 +31,7 @@
         <h2 id="indexing-connections-heading">Connections</h2>
         <div class="indexing-menu-connection-row">
           <span class="indexing-menu-connection-status"><span class="indexing-menu-status-dot" aria-hidden="true"></span><span><span class="indexing-menu-connection-count" aria-live="polite">2 tools connected</span><span class="indexing-menu-connection-pending">Gmail connecting…</span></span></span>
-          <button type="button" class="indexing-menu-manage" data-indexing-topic="connections">Manage</button>
+          <button type="button" class="indexing-menu-manage" data-indexing-manage>Manage</button>
         </div>
       </section>
       <section class="indexing-menu-section" aria-labelledby="indexing-topics-heading">
@@ -110,6 +109,11 @@
       (event.key === 'ArrowUp' ? items.at(-1) : items[0])?.focus({ preventScroll: true });
     });
     panel.addEventListener('click', event => {
+      if (event.target.closest('[data-indexing-manage]')) {
+        setOpen(false);
+        window.IndexingConversation?.openPreview('connections', toggle);
+        return;
+      }
       const topic = event.target.closest('[data-indexing-topic]');
       if (topic) goToTopic(topic.dataset.indexingTopic);
       else if (event.target.closest('a')) setOpen(false, { restoreFocus: true });

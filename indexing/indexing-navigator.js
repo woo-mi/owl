@@ -7,8 +7,7 @@
     const messages = document.getElementById('messages');
     if (!main || !scroller || !messages || document.getElementById('indexing-nav-rail')) return;
     const definitions = [
-      {id:'connections', title:'Connecting your tools', excerpt:'Connect your tools to give Owl context for your daily brief, upcoming work, and what needs your attention.'},
-      {id:'review', title:'Weekly sales pipeline review', excerpt:'Prepare for Monday’s Sales Pipeline Review with an app and a Friday pipeline update.'},
+      {id:'review', title:'Weekly sales pipeline review', excerpt:'Review three updates ahead of Monday’s Sales Pipeline Review: a closed-won deal, a slipped deal, and a blocked security review.'},
       {id:'metrics', title:'Monthly business metrics', excerpt:'Net revenue is $4.82M, orders are 38,410, average order value is $125.50, and the return rate is 2.1%.'},
       {id:'arr', title:'Sales vs. Finance ARR', excerpt:'Sales shows $3.1M and Finance $2.4M. Create one governed Net New ARR metric using Finance’s definition.'},
       {id:'pipeline', title:'Pipeline health and app adoption', excerpt:'Pipeline health: $23.36M open across 205 deals. Review sales stages and app adoption.'},
