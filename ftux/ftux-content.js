@@ -11,7 +11,8 @@
   ];
   const introduction = [
     'Hi Woo-Mi! I’m your Owl, a teammate that works in your tools.',
-    'I do the work and bring the results back here, so you don’t have to copy and paste my responses.'
+    'I do the work and bring the results back here, so you don’t have to copy and paste my responses.',
+    'Where would you like to start? Pick a question below, or tell me what’s on your mind.'
   ];
   const groupTools = {context:['Notion', 'Gmail', 'Calendar', 'Slack', 'Gong'], crm:['HubSpot', 'Salesforce']};
   const freshConnections = () => new Map(Object.values(groupTools).flat().map(tool => [tool, 'available']));
