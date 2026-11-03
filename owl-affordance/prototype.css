@@ -23,22 +23,35 @@ button:focus-visible, a:focus-visible {
   min-height: 100dvh;
   height: auto !important;
   overflow: clip !important;
-  padding: clamp(220px, 29.2276vh, 280px) 24px 80px 72px;
+  padding: clamp(220px, 26.5vh, 256px) 24px 64px 72px;
 }
 [data-pencil-name="Search home content"] {
   position: relative !important;
   top: auto !important;
   left: auto !important;
-  width: min(636px, 100%) !important;
+  width: min(768px, 100%) !important;
+  height: auto !important;
+  display: flex;
+  flex-direction: column;
   margin: 0 auto;
 }
+[data-pencil-name="Search home content"] > div {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+}
+[data-pencil-name="Personalized greeting"] { margin-bottom: 44.4px; }
+[data-pencil-name="Composer and data source"] { margin-bottom: 40.8px; }
 [data-pencil-name="Personalized greeting"],
 [data-pencil-name="Composer and data source"],
 [data-pencil-name="Ask WisdomAI composer"] { width: 100% !important; }
 [data-pencil-name="Selected data source"],
-[data-pencil-name="Composer controls"] { width: calc(100% - 26px) !important; }
-[data-pencil-name="Starter questions"] { width: calc(100% - 44px) !important; }
-[data-pencil-name="Starter questions"] > div { min-height: 24px; height: auto !important; }
+[data-pencil-name="Composer controls"] { width: calc(100% - 31.2px) !important; }
+[data-pencil-name="Starter questions"] {
+  width: calc(100% - 52.8px) !important;
+  margin: 0 auto;
+}
+[data-pencil-name="Starter questions"] > div { min-height: 28.8px; height: auto !important; }
 [data-pencil-name="Starter questions"] > div > div:last-child {
   white-space: normal !important;
   min-width: 0;
@@ -69,20 +82,19 @@ button:focus-visible, a:focus-visible {
 [data-pencil-name="Open Owls button"]:hover { background-color: #7139e8 !important; }
 [data-pencil-name="Owls navigation target"]:hover { background-color: #ddd !important; }
 
+@media (min-width: 701px) and (max-width: 1399px) {
+  [data-pencil-name="owl affordance"]:not(.coach-dismissed) { padding-top: 340px; }
+}
+
 @media (max-width: 700px) {
   [data-pencil-name="owl affordance"] { padding: 380px 16px 48px 64px; }
   [data-pencil-name="Search home content"] {
-    height: auto !important;
-    display: flex;
-    flex-direction: column;
     gap: 28px;
   }
   [data-pencil-name="Search home content"] > div {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
+    margin-bottom: 0;
   }
-  [data-pencil-name="Personalized greeting"] { font-size: 18px !important; }
+  [data-pencil-name="Personalized greeting"] { font-size: 22px !important; line-height: 29px !important; }
   [data-pencil-name="Starter questions"] { width: 100% !important; }
   [data-pencil-name="Coach mark title"] { font-size: 18px !important; }
   [data-pencil-name="Thinking voice and send controls"] { gap: 10px !important; }
