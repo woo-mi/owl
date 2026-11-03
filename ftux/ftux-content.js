@@ -18,7 +18,7 @@
   const freshConnections = () => new Map(Object.values(groupTools).flat().map(tool => [tool, 'available']));
   const escape = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
   const bubble = (text, extra = '') => `<article class="message assistant-message ftux-bubble ${extra}"><p>${escape(text)}</p></article>`;
-  const initialHTML = `<div class="ftux-flow" data-pen-frame="AQxSV"><section class="ftux-introduction" aria-label="Meet your Owl">${introduction.map((copy, i) => bubble(copy, i ? 'ftux-bubble-wide' : '')).join('')}</section><div class="ftux-turns"></div><div class="ftux-prompts" aria-label="Suggested prompts">${prompts.map((copy, i) => `<button class="ftux-prompt" type="button" data-ftux-prompt="${i}">${escape(copy)}</button>`).join('')}</div><div class="ftux-local-status" role="status" aria-live="polite"></div></div>`;
+  const initialHTML = `<div class="ftux-flow" data-pen-frame="AQxSV"><section class="ftux-introduction" aria-label="Meet your Owl">${introduction.map((copy, i) => bubble(copy, i === 1 ? 'ftux-bubble-wide' : '')).join('')}</section><div class="ftux-turns"></div><div class="ftux-prompts" aria-label="Suggested prompts">${prompts.map((copy, i) => `<button class="ftux-prompt" type="button" data-ftux-prompt="${i}">${escape(copy)}</button>`).join('')}</div><div class="ftux-local-status" role="status" aria-live="polite"></div></div>`;
   view.html = initialHTML;
   view.label = 'FTUX';
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
