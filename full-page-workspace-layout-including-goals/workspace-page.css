@@ -30,6 +30,11 @@ body.workspace-page-open { overflow:hidden; }
 .workspace-page .fsw-notice { bottom:56px!important; left:40px; right:40px; }
 .workspace-page .fsw-composer { margin-bottom:0; }
 .workspace-page-open .toast { z-index:160; }
+/* Keep the three chat artifacts together across the full-page workspace. */
+@container(min-width:1000px) {
+  body[data-prototype-view="latest-oct-28"] .workspace-page .latest-artifact-chat-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  body[data-prototype-view="latest-oct-28"] .workspace-page .latest-artifact-chat-grid .latest-artifact-card { max-width:none; }
+}
 @media(max-width:1250px) {
   .workspace-page[open] { grid-template-columns:190px minmax(0,1fr); }
   .workspace-page .fsw-main { padding:28px 24px 80px; }
