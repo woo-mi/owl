@@ -81,8 +81,11 @@
     function position() {
       if (!isAvailable()) return;
       const bounds = main.getBoundingClientRect();
-      main.style.setProperty('--indexing-nav-rail-left', `${bounds.left + (innerWidth <= 760 ? 12 : 20)}px`);
-      main.style.setProperty('--indexing-nav-preview-left', `${bounds.left + (innerWidth <= 760 ? 48 : 60)}px`);
+      const right = Math.max(0, innerWidth - bounds.right);
+      const previewInset = innerWidth <= 760 ? 48 : 64;
+      main.style.setProperty('--indexing-nav-rail-right', `${right + (innerWidth <= 760 ? 12 : 20)}px`);
+      main.style.setProperty('--indexing-nav-preview-right', `${right + previewInset}px`);
+      main.style.setProperty('--indexing-nav-preview-width', `${Math.max(0, bounds.width - previewInset - 12)}px`);
       if (previewIndex < 0 || preview.dataset.open !== 'true') return;
       const tick = buttons[previewIndex]?.getBoundingClientRect();
       const railBounds = rail.getBoundingClientRect();
