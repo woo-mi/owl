@@ -18,7 +18,7 @@
   };
   const bubble = (copy, source, extra = '') => `<article class="message assistant-message indexing-bubble ${extra}" data-pen-node="${source}"><p>${copy}</p></article>`;
   const action = (label, name, extra = '') => `<button type="button" class="indexing-action" data-indexing-action="${name}" ${extra}>${label}</button>`;
-  const connectionStates = new Map([['Notion', 'Connected'], ['HubSpot', 'Connected'], ['Gmail', 'Connecting...'], ['Calendar', 'Connect'], ['Slack', 'Connect'], ['Gong', 'Connect'], ['Salesforce', 'Connect']]);
+  const connectionStates = new Map(['Notion', 'HubSpot', 'Gmail', 'Calendar', 'Slack', 'Gong', 'Salesforce'].map(name => [name, 'Connected']));
   const toolRow = (name, state) => `<div class="indexing-tool-row"><span class="indexing-tool-name"><span class="indexing-tool-mark" data-tool-mark="${name.toLowerCase()}" aria-hidden="true"></span>${name}</span>${state === 'Connected' ? `<span class="indexing-tool-status is-connected">${icon('check')}Connected</span>` : state === 'Connecting...' ? '<span class="indexing-tool-status is-connecting"><span class="indexing-spinner" aria-hidden="true"></span>Connecting...</span>' : action('Connect', 'connect', `data-tool="${name}" aria-label="Connect ${name}"`)}</div>`;
   const artifact = (title, label, name, source, kind = 'app', description = '', id = '') => `<div class="indexing-card indexing-artifact${description ? ' indexing-compact-card' : ''}" data-pen-node="${source}"${id ? ` id="${id}"` : ''}><span class="indexing-artifact-icon">${icon(kind)}</span><span class="indexing-artifact-copy"><span>${title}</span>${description ? `<small>${description}</small>` : ''}</span>${action(label, name)}</div>`;
   const updateRows = `<div class="indexing-change-row"><span><span>Orbis Retail Group moved to Closed Won</span><small>Lena K. · Sat 4:12 PM · EMEA now at 92% of quota</small></span><strong class="indexing-change-positive">+$540K</strong></div><div class="indexing-change-row"><span><span>Tamarack Energy slipped to Q1</span><small>Tomás V. · close date Dec 12 → Jan 20 · removed from Q4 forecast</small></span><strong class="indexing-change-negative">−$470K</strong></div><div class="indexing-change-row"><span><span>Halcyon Health · procurement blocked on security review</span><small>First on today's agenda (you asked Fri) · Lena K. tagged</small></span></div>`;
@@ -78,7 +78,7 @@
     preview.querySelector('.indexing-preview-content').innerHTML = `<p class="indexing-preview-meta">Refreshed 8:29 AM · Q4 forecast now $6.2M</p><div class="indexing-card indexing-changes">${updateRows}</div>${isApp ? '' : `<div class="indexing-metrics">${metricCards}</div><div class="indexing-card indexing-arr">${arrRows}</div>`}`;
     if (kind === 'connections') {
       preview.querySelector('h2').textContent = 'Connections';
-      preview.querySelector('.indexing-preview-content').innerHTML = `<div class="indexing-card indexing-tools">${[...connectionStates].map(([name, state]) => toolRow(name, state)).join('')}</div>`;
+      preview.querySelector('.indexing-preview-content').innerHTML = `<p class="indexing-preview-meta">Salesforce token expires in 3 days</p><div class="indexing-card indexing-tools">${[...connectionStates].map(([name, state]) => toolRow(name, state)).join('')}</div>`;
       hydrateTools(preview);
     }
     preview.showModal();

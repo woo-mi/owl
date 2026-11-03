@@ -30,7 +30,7 @@
       <section class="indexing-menu-section" aria-labelledby="indexing-connections-heading">
         <h2 id="indexing-connections-heading">Connections</h2>
         <div class="indexing-menu-connection-row">
-          <span class="indexing-menu-connection-status"><span class="indexing-menu-status-dot" aria-hidden="true"></span><span><span class="indexing-menu-connection-count" aria-live="polite">2 tools connected</span><span class="indexing-menu-connection-pending">Gmail connecting…</span></span></span>
+          <span class="indexing-menu-connection-status"><span class="indexing-menu-status-dot" aria-hidden="true"></span><span><span class="indexing-menu-connection-count" aria-live="polite">7 tools connected</span><span class="indexing-menu-connection-pending">Salesforce token expires in 3 days</span></span></span>
           <button type="button" class="indexing-menu-manage" data-indexing-manage>Manage</button>
         </div>
       </section>
@@ -47,7 +47,7 @@
       </section>`;
     main.append(toggle, panel);
 
-    const connectedTools = new Set(['Notion', 'HubSpot']);
+    const connectedTools = new Set(['Notion', 'HubSpot', 'Gmail', 'Calendar', 'Slack', 'Gong', 'Salesforce']);
     const connectionCount = panel.querySelector('.indexing-menu-connection-count');
     window.addEventListener('indexing-connection-change', event => {
       const { tool, connected } = event.detail || {};
