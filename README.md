@@ -6,6 +6,10 @@ This repository publishes its `main` branch root through GitHub Pages. No build
 step is required.
 
 - `index.html` and `owl-mark.svg` provide the overview page.
+- `owl-affordance/` is **Owl affordance**, based on the Pen `owl affordance`
+  frame (`C33Bu`). Its coach mark introduces Owls from the search home screen.
+  “Not now” dismisses the coach mark; “Open Owls” and the highlighted rail icon
+  open the FTUX prototype. Published at https://woo-mi.github.io/owl/owl-affordance/.
 - `owl-old/` is **Owl old**, a standalone snapshot of the overview and its local
   prototypes at commit `520b976`. Published at https://woo-mi.github.io/owl/owl-old/.
   Existing external prototype links keep their original destinations.

@@ -1,0 +1,91 @@
+@font-face {
+  font-family: Inter;
+  src: url('../ftux/assets/InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html { background: #fff; }
+body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { border: 0; font: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+[hidden] { display: none !important; }
+button:focus-visible, a:focus-visible {
+  outline: 2px solid #8247ff !important;
+  outline-offset: 3px !important;
+}
+
+[data-pencil-name="owl affordance"] {
+  width: 100% !important;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: auto !important;
+  overflow: clip !important;
+  padding: clamp(220px, 29.2276vh, 280px) 24px 80px 72px;
+}
+[data-pencil-name="Search home content"] {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  width: min(636px, 100%) !important;
+  margin: 0 auto;
+}
+[data-pencil-name="Personalized greeting"],
+[data-pencil-name="Composer and data source"],
+[data-pencil-name="Ask WisdomAI composer"] { width: 100% !important; }
+[data-pencil-name="Selected data source"],
+[data-pencil-name="Composer controls"] { width: calc(100% - 26px) !important; }
+[data-pencil-name="Starter questions"] { width: calc(100% - 44px) !important; }
+[data-pencil-name="Starter questions"] > div { min-height: 24px; height: auto !important; }
+[data-pencil-name="Starter questions"] > div > div:last-child {
+  white-space: normal !important;
+  min-width: 0;
+}
+[data-pencil-name="Navigation rail"] {
+  position: fixed !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+}
+[data-pencil-name="Navigation rail"] > [data-pencil-name="div"] {
+  top: auto !important;
+  bottom: 0;
+}
+[data-pencil-name="owl affordance"] > [data-pencil-name="Owls navigation target"] {
+  position: fixed !important;
+}
+[data-pencil-name="Coach mark · Owls spotlight"] {
+  position: fixed !important;
+  width: min(384px, calc(100vw - 80px)) !important;
+  z-index: 10 !important;
+}
+[data-pencil-name="Owl description"] { width: 100% !important; }
+[data-pencil-name="Coach mark · Owls spotlight"] a:focus-visible,
+[data-pencil-name="Coach mark · Owls spotlight"] button:focus-visible {
+  outline-color: #fff !important;
+}
+[data-pencil-name="Not now button"]:hover { background-color: #ededed !important; }
+[data-pencil-name="Open Owls button"]:hover { background-color: #7139e8 !important; }
+[data-pencil-name="Owls navigation target"]:hover { background-color: #ddd !important; }
+
+@media (max-width: 700px) {
+  [data-pencil-name="owl affordance"] { padding: 380px 16px 48px 64px; }
+  [data-pencil-name="Search home content"] {
+    height: auto !important;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  [data-pencil-name="Search home content"] > div {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+  }
+  [data-pencil-name="Personalized greeting"] { font-size: 18px !important; }
+  [data-pencil-name="Starter questions"] { width: 100% !important; }
+  [data-pencil-name="Coach mark title"] { font-size: 18px !important; }
+  [data-pencil-name="Thinking voice and send controls"] { gap: 10px !important; }
+  [data-pencil-name="Thinking dropdown"] { display: none !important; }
+  [data-pencil-name="owl affordance"].coach-dismissed { padding-top: 110px; }
+}
