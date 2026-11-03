@@ -1,4 +1,4 @@
-/* Pen frames AQxSV (FTUX) and KJKJh (FTUX 2). */
+/* First-use conversation and pipeline review artifact. */
 body.ftux-prototype {
   --ftux-content-top:132px;
   --ftux-composer-bottom:48px;
@@ -47,7 +47,7 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
 .ftux-turns:empty { display:none; }
 .ftux-flow .ftux-bubble {
   width:fit-content;
-  max-width:100%;
+  max-width:min(605px, 100%);
   align-self:flex-start;
   padding:9px 13px;
   border-radius:16px;
@@ -57,8 +57,9 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
   overflow-wrap:anywhere;
 }
 .ftux-flow .ftux-bubble-wide { width:min(605px, 100%); }
-.ftux-flow .ftux-bubble-crm { max-width:min(659px, 100%); }
+.ftux-flow .ftux-bubble-crm { max-width:min(605px, 100%); }
 .ftux-flow p { margin:0; }
+.ftux-flow .ftux-bubble p + p { margin-top:16px; }
 .ftux-prompts {
   display:flex;
   flex-direction:column;
@@ -84,9 +85,34 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
 }
 .ftux-prompt:hover { background:#f7f7f7; border-color:#cfcfcf; }
 .ftux-prompt:active { background:#efefef; }
+.ftux-choice-row {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  width:100%;
+}
+.ftux-choice {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:58px;
+  min-height:36px;
+  padding:7px 16px;
+  border:1px solid #dedee2;
+  border-radius:20px;
+  background:#fff;
+  color:#24242a;
+  font:400 14px/20px Inter, system-ui, sans-serif;
+  transition:background-color 130ms ease, border-color 130ms ease;
+}
+.ftux-choice:hover { background:#f7f7f7; border-color:#c7c7cc; }
+.ftux-choice:active { background:#efefef; }
 .ftux-prompt:focus-visible,
+.ftux-choice:focus-visible,
 .ftux-connect:focus-visible,
-.ftux-skip:focus-visible { outline:2px solid #0085ff; outline-offset:3px; }
+.ftux-skip:focus-visible,
+.ftux-app-card:focus-visible { outline:2px solid #0085ff; outline-offset:3px; }
 
 .ftux-user-turn {
   display:flex;
@@ -183,6 +209,67 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
 .ftux-skip:hover { color:#24242a; background:#f6f6f7; }
 .ftux-skip:disabled { color:#8b8b90; cursor:default; }
 .ftux-confirmation { max-width:min(613px, 100%); color:#63666d; font:400 13px/20px Inter, system-ui, sans-serif; }
+.ftux-pipeline-result {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:12px;
+  width:min(605px, 100%);
+  min-width:0;
+}
+.ftux-pipeline-result .unfurl-link { font-family:Inter, system-ui, sans-serif; }
+.ftux-pipeline-result .unfurl-link span { white-space:normal; overflow-wrap:anywhere; }
+.ftux-app-card {
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) 125px;
+  width:100%;
+  min-height:125px;
+  overflow:hidden;
+  border:1px solid #ededed;
+  border-radius:14px;
+  background:#fff;
+  color:#1d1c1d;
+  text-decoration:none;
+  transition:border-color 140ms ease, box-shadow 140ms ease;
+}
+.ftux-app-card:hover { border-color:#c6d7eb; box-shadow:0 2px 8px #14181f0a; }
+.ftux-app-copy {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  min-width:0;
+  gap:6px;
+  padding:17px 18px 15px 14px;
+}
+.ftux-app-copy h3 {
+  margin:0;
+  color:#1d1c1d;
+  font:600 14px/20px Inter, system-ui, sans-serif;
+}
+.ftux-app-copy p { color:#484648; font:400 13px/18px Inter, system-ui, sans-serif; }
+.ftux-app-domain {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:auto;
+  padding-top:3px;
+  color:#616061;
+  font:400 12px/18px Inter, system-ui, sans-serif;
+}
+.ftux-app-domain img,
+.ftux-app-domain svg { width:16px; height:16px; flex-shrink:0; object-fit:contain; }
+.ftux-pipeline-thumbnail {
+  display:block;
+  align-self:stretch;
+  width:125px;
+  min-height:123px;
+  height:100%;
+  overflow:hidden;
+  border-left:1px solid #ededed;
+  background:#f7f8fa;
+  object-fit:cover;
+}
+.ftux-pipeline-thumbnail svg { display:block; width:100%; height:100%; min-height:123px; }
 .ftux-local-status { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 .chat-scroll.is-ftux-playback { overflow-anchor:none; }
 .ftux-flow[hidden], .ftux-flow [hidden], .ftux-typing[hidden] { display:none!important; }
@@ -225,7 +312,12 @@ body.ftux-prototype[data-ftux-stage="welcome"] .ftux-flow {
   .ftux-tool-row { gap:8px; padding-left:12px; padding-right:12px; }
   .ftux-tool-name { gap:9px; }
 }
+@media (max-width:420px) {
+  .ftux-app-card { grid-template-columns:minmax(0, 1fr) 96px; }
+  .ftux-app-copy { padding:14px 12px; }
+  .ftux-pipeline-thumbnail { width:96px; }
+}
 @media (prefers-reduced-motion:reduce) {
-  .ftux-prompt { transition:none; }
+  .ftux-prompt, .ftux-choice, .ftux-app-card { transition:none; }
   .ftux-typing span, .ftux-spinner { animation:none; }
 }

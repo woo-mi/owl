@@ -9,21 +9,16 @@
   function getTopics() {
     const flow = document.querySelector('#messages .ftux-flow');
     if (!flow) return [];
-    const request = window.FTUX.getIndexState().selectedPrompt;
-    const requestTitle = request.startsWith('Which enterprise deals') ? 'Enterprise deal follow-ups'
-      : request.startsWith('Why did our September revenue') ? 'September revenue analysis'
-      : request.startsWith('Build a deal-risk dashboard') ? 'Leadership deal-risk dashboard'
-      : request.startsWith('Send me a pipeline brief') ? 'Monday pipeline briefs'
-      : 'Your first request';
     return [
       {id:'welcome', title:'Getting started with your Owl',
         excerpt:'Meet your Owl, a teammate that works in your tools and brings the results back here.',
         node:flow.querySelector('.ftux-introduction > .ftux-bubble')},
-      {id:'first-request', title:requestTitle, excerpt:request || 'Your first request to your Owl.',
-        node:flow.querySelector('.ftux-user-turn')},
       {id:'context', title:'Connecting your tools',
         excerpt:'Connect Notion, Gmail, Calendar, Slack, and Gong to give your Owl context. You can also skip for now.',
         node:flow.querySelector('#ftux-context')},
+      {id:'pipeline-review', title:'Weekly sales pipeline review',
+        excerpt:'Prepare a Monday sales pipeline review with deal updates, risks, and next steps.',
+        node:flow.querySelector('.ftux-pipeline-suggestion')},
       {id:'crm', title:'Connecting your CRM',
         excerpt:'Connect HubSpot or Salesforce to bring in your opportunities, sales stages, and regional performance.',
         node:flow.querySelector('#ftux-crm')}
@@ -49,6 +44,7 @@
     const main = document.querySelector('.main');
     const messages = document.getElementById('messages');
     if (!main || !messages) return;
+    const linkIcon = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6.25 9.75 3.5-3.5m-4.5 1-1 1a2.475 2.475 0 0 0 3.5 3.5l1-1m-1.5-5.5 1-1a2.475 2.475 0 0 1 3.5 3.5l-1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     const toggle = document.createElement('button');
     toggle.id = 'indexing-menu-toggle';
     toggle.className = 'indexing-menu-toggle';
@@ -75,14 +71,15 @@
       </section>
       <section class="indexing-menu-section" aria-labelledby="indexing-artifacts-heading">
         <h2 id="indexing-artifacts-heading">Artifacts</h2>
-        <p class="ftux-index-empty">No artifacts yet.</p>
+        <div data-indexing-artifacts><p class="ftux-index-empty">No artifacts yet.</p></div>
       </section>`;
     main.append(toggle, panel);
     const list = panel.querySelector('.indexing-menu-topic-list');
     let open = false;
     let frame;
     let topicKey = '';
-    const controls = () => [...list.querySelectorAll('button')];
+    let artifactReady = false;
+    const controls = () => [...panel.querySelectorAll('button, a[href]')];
     function setOpen(next, {restoreFocus = false, focusFirst = false} = {}) {
       const wasOpen = open;
       open = next && isAvailable();
@@ -123,6 +120,12 @@
         topicKey = key;
       }
       panel.querySelector('[data-empty-topics]').hidden = topics.length > 0;
+      if (Boolean(state.artifactReady) !== artifactReady) {
+        artifactReady = Boolean(state.artifactReady);
+        panel.querySelector('[data-indexing-artifacts]').innerHTML = artifactReady
+          ? `<ul class="indexing-menu-artifact-list"><li><a class="indexing-menu-artifact" href="https://ayush.gowisdom.ai/apps/app_af105ef5a93d4b77a5e9922cd6ffa91f/view" target="_blank" rel="noopener noreferrer">${linkIcon}<span class="indexing-menu-artifact-label">Weekly Sales Pipeline Review</span><span class="indexing-menu-artifact-type">App</span></a></li></ul>`
+          : '<p class="ftux-index-empty">No artifacts yet.</p>';
+      }
       toggle.hidden = !isAvailable();
       setOpen(open);
       window.dispatchEvent(new Event('ftux-index-change'));
