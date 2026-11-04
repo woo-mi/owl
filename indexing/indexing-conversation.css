@@ -99,6 +99,11 @@
 .indexing-preview-content { display: flex; flex-direction: column; gap: 20px; padding: 22px; }
 .indexing-preview-content .indexing-card, .indexing-preview-content .indexing-metrics { width: 100%; }
 .indexing-preview-meta { margin: 0; color: #777; font-size: 12px; }
+.indexing-connections-footer { display: flex; justify-content: flex-end; }
+.indexing-manage-connections { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; border-radius: 4px; color: #0069E0; font-size: 14px; line-height: 20px; font-weight: 500; text-decoration: none; }
+.indexing-manage-connections svg { width: 16px; height: 16px; }
+.indexing-manage-connections:hover { text-decoration: underline; text-underline-offset: 3px; }
+.indexing-manage-connections:focus-visible { outline: 2px solid #0069E0; outline-offset: 4px; }
 @media (max-width: 600px) {
   .indexing-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .indexing-schedule-row { flex-wrap: wrap; }
