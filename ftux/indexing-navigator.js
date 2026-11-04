@@ -6,7 +6,6 @@
     const scroller = document.getElementById('chat-scroll');
     const messages = document.getElementById('messages');
     if (!main || !scroller || !messages || document.getElementById('indexing-nav-rail')) return;
-    const storageKey = 'owl-ftux-bookmarks-v1';
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const rail = document.createElement('nav');
     rail.id = 'indexing-nav-rail';
@@ -20,7 +19,7 @@
     preview.setAttribute('aria-hidden', 'true');
     preview.dataset.open = 'false';
     preview.inert = true;
-    preview.innerHTML = '<button type="button" class="indexing-nav-jump"><span class="indexing-nav-title"></span><span class="indexing-nav-excerpt"></span></button><button type="button" class="indexing-nav-bookmark" aria-label="Bookmark topic" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>';
+    preview.innerHTML = '<button type="button" class="indexing-nav-jump"><span class="indexing-nav-title"></span><span class="indexing-nav-excerpt"></span></button>';
     const status = document.createElement('div');
     status.className = 'indexing-nav-status';
     status.setAttribute('role', 'status');
@@ -29,12 +28,6 @@
     const title = preview.querySelector('.indexing-nav-title');
     const excerpt = preview.querySelector('.indexing-nav-excerpt');
     const jumpButton = preview.querySelector('.indexing-nav-jump');
-    const bookmark = preview.querySelector('.indexing-nav-bookmark');
-    let bookmarks = new Set();
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      if (Array.isArray(saved)) bookmarks = new Set(saved.filter(id => typeof id === 'string'));
-    } catch (_) {}
     let entries = [], buttons = [], selected = 0, hovered = -1, previewIndex = -1;
     let openTimer, closeTimer, scrollFrame, refreshFrame, jumpTimer, jumpingUntil = 0;
     let suppressFocus = false, escapeDismissedId = null;
@@ -105,8 +98,6 @@
       title.textContent = item.title;
       excerpt.textContent = item.excerpt;
       jumpButton.setAttribute('aria-label', `Jump to ${item.title} in conversation`);
-      bookmark.setAttribute('aria-pressed', String(bookmarks.has(item.id)));
-      bookmark.setAttribute('aria-label', `${bookmarks.has(item.id) ? 'Remove bookmark for' : 'Bookmark'} ${item.title}`);
       buttons.forEach((button, i) => button.setAttribute('aria-expanded', String(i === index)));
       preview.inert = false;
       preview.setAttribute('aria-hidden', 'false');
@@ -147,7 +138,6 @@
       title.textContent = item.title;
       excerpt.textContent = item.excerpt;
       jumpButton.setAttribute('aria-label', `Jump to ${item.title} in conversation`);
-      bookmark.setAttribute('aria-label', `${bookmarks.has(item.id) ? 'Remove bookmark for' : 'Bookmark'} ${item.title}`);
     }
     function refresh() {
       const nextEntries = (window.FTUXIndex?.getTopics() || []).filter(item =>
@@ -233,14 +223,6 @@
     rail.addEventListener('scroll', position, {passive:true});
     rail.addEventListener('wheel', event => event.stopPropagation(), {passive:true});
     jumpButton.addEventListener('click', () => jumpTo(previewIndex));
-    bookmark.addEventListener('click', () => {
-      const item = entries[previewIndex]; if (!item) return;
-      bookmarks.has(item.id) ? bookmarks.delete(item.id) : bookmarks.add(item.id);
-      try { localStorage.setItem(storageKey, JSON.stringify([...bookmarks])); } catch (_) {}
-      bookmark.setAttribute('aria-pressed', String(bookmarks.has(item.id)));
-      bookmark.setAttribute('aria-label', `${bookmarks.has(item.id) ? 'Remove bookmark for' : 'Bookmark'} ${item.title}`);
-      status.textContent = bookmarks.has(item.id) ? `${item.title} bookmarked.` : `Bookmark removed for ${item.title}.`;
-    });
     scroller.addEventListener('scroll', queueSync, {passive:true});
     for (const eventName of ['wheel', 'touchstart', 'pointerdown', 'keydown']) scroller.addEventListener(eventName, () => { jumpingUntil = 0; clearTimeout(jumpTimer); queueSync(); }, {passive:true});
     document.addEventListener('pointerdown', event => { if (!inNavigator(event.target)) hidePreview(); });
