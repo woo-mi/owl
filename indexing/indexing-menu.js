@@ -27,7 +27,7 @@
       <section class="indexing-menu-section" aria-labelledby="indexing-connections-heading">
         <h2 id="indexing-connections-heading">Connections</h2>
         <div class="indexing-menu-connection-row">
-          <span class="indexing-menu-connection-status"><span class="indexing-menu-status-dot" aria-hidden="true"></span><span><span class="indexing-menu-connection-count" aria-live="polite">7 tools connected</span><span class="indexing-menu-connection-pending">Salesforce token expires in 3 days</span></span></span>
+          <span class="indexing-menu-connection-status has-failure"><span class="indexing-menu-status-dot" aria-hidden="true"></span><span><span class="indexing-menu-connection-count" aria-live="polite">6 connected · 1 failed</span><span class="indexing-menu-connection-pending">Salesforce couldn’t connect</span></span></span>
           <button type="button" class="indexing-menu-manage" data-indexing-manage>Manage</button>
         </div>
       </section>
@@ -44,14 +44,21 @@
       </section>`;
     main.append(toggle, panel);
 
-    const connectedTools = new Set(['Notion', 'HubSpot', 'Gmail', 'Calendar', 'Slack', 'Gong', 'Salesforce']);
+    const connectionStatus = panel.querySelector('.indexing-menu-connection-status');
     const connectionCount = panel.querySelector('.indexing-menu-connection-count');
-    window.addEventListener('indexing-connection-change', event => {
-      const { tool, connected } = event.detail || {};
-      if (typeof tool !== 'string' || connected !== true) return;
-      connectedTools.add(tool);
-      connectionCount.textContent = `${connectedTools.size} tools connected`;
-    });
+    const connectionDetail = panel.querySelector('.indexing-menu-connection-pending');
+    function updateConnectionSummary() {
+      const states = window.IndexingConversation?.getConnectionStates?.();
+      if (!states) return;
+      const connected = [...states.values()].filter(state => state === 'Connected').length;
+      const failed = [...states].filter(([, state]) => state === 'Failed').map(([name]) => name);
+      connectionCount.textContent = `${connected} connected${failed.length ? ` · ${failed.length} failed` : ''}`;
+      connectionDetail.textContent = failed.length ? `${failed.join(', ')} couldn’t connect` : '';
+      connectionDetail.hidden = !failed.length;
+      connectionStatus.classList.toggle('has-failure', failed.length > 0);
+    }
+    window.addEventListener('indexing-connection-change', updateConnectionSummary);
+    updateConnectionSummary();
 
     let open = true;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');

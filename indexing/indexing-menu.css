@@ -82,6 +82,10 @@
   background: #209855;
 }
 
+.indexing-menu-connection-status.has-failure .indexing-menu-status-dot {
+  background: #EA0028;
+}
+
 .indexing-menu-manage {
   padding: 0;
   border-radius: 3px;
@@ -97,6 +101,8 @@
   font-size: 12px;
   line-height: 16px;
 }
+
+.indexing-menu-connection-pending[hidden] { display: none; }
 
 .indexing-menu-topic-list,
 .indexing-menu-artifact-list {
