@@ -53,7 +53,7 @@
     preview.querySelector('.indexing-preview-content').innerHTML = `<p class="indexing-preview-meta">Refreshed 8:29 AM · Q4 forecast now $6.2M</p><div class="indexing-card indexing-changes">${updateRows}</div>${isApp ? '' : `<div class="indexing-metrics">${metricCards}</div><div class="indexing-card indexing-arr">${arrRows}</div>`}`;
     if (kind === 'connections') {
       preview.querySelector('h2').textContent = 'Connections';
-      preview.querySelector('.indexing-preview-content').innerHTML = `<div class="indexing-card indexing-tools">${[...connectionStates].map(([name, state]) => toolRow(name, state)).join('')}</div>`;
+      preview.querySelector('.indexing-preview-content').innerHTML = `<p class="indexing-preview-meta">6 tools are connected. Salesforce couldn’t connect.</p><div class="indexing-card indexing-tools">${[...connectionStates].map(([name, state]) => toolRow(name, state)).join('')}</div>`;
       hydrateTools(preview);
     }
     preview.showModal();
