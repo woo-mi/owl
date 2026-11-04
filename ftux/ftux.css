@@ -1,4 +1,4 @@
-/* Static FTUX real conversation and pipeline review artifact. */
+/* FTUX real conversation with MVP Animated's bubble entrances and typing dots. */
 body.ftux-prototype {
   --ftux-content-top:132px;
   --ftux-composer-bottom:48px;
@@ -40,11 +40,6 @@ body.ftux-prototype .composer:focus-within { outline-color:#d5d5d9; }
   min-width:0;
   color:#0d0d0d;
   font:400 14px/20px Inter, system-ui, sans-serif;
-}
-body.ftux-prototype .ftux-flow,
-body.ftux-prototype .ftux-flow * {
-  animation:none!important;
-  transition:none!important;
 }
 .ftux-turns:empty { display:none; }
 .ftux-flow .ftux-bubble {
@@ -221,6 +216,31 @@ body.ftux-prototype .ftux-flow * {
 }
 .ftux-pipeline-thumbnail svg { display:block; width:100%; height:100%; min-height:123px; }
 .ftux-local-status { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.chat-scroll.is-ftux-playback { overflow-anchor:none; }
+.ftux-typing {
+  display:flex;
+  align-items:center;
+  align-self:flex-start;
+  justify-content:center;
+  gap:4px;
+  width:50px;
+  height:32px;
+  border-radius:18px;
+  background:#f1f1f1;
+}
+.ftux-typing span {
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#7b7d82;
+  animation:ftux-typing-dot 1050ms ease-in-out infinite;
+}
+.ftux-typing span:nth-child(2) { animation-delay:140ms; }
+.ftux-typing span:nth-child(3) { animation-delay:280ms; }
+@keyframes ftux-typing-dot {
+  0%, 60%, 100% { opacity:.45; transform:translateY(0) scale(.85); }
+  30% { opacity:1; transform:translateY(-2px) scale(1); }
+}
 .ftux-flow[hidden], .ftux-flow [hidden] { display:none!important; }
 
 @media (max-width:760px) {
@@ -239,4 +259,7 @@ body.ftux-prototype .ftux-flow * {
   .ftux-app-card { grid-template-columns:minmax(0, 1fr) 96px; }
   .ftux-app-copy { padding:14px 12px; }
   .ftux-pipeline-thumbnail { width:96px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .ftux-typing span { animation:none; }
 }

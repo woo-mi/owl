@@ -1,4 +1,4 @@
-/* Immediate, complete screen from Pen frame KJKJh — FTUX real. */
+/* FTUX real content with MVP Animated's conversation playback. */
 (() => {
   'use strict';
   const view = window.MVPViews?.['latest-oct-28'];
@@ -18,6 +18,8 @@
   let boundFlow;
   let connectionsDialog;
   let connectionsOpener;
+  let playback;
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const host = () => document.querySelector('#messages .ftux-flow');
   const turns = () => host()?.querySelector('.ftux-turns');
   const active = () => Boolean(host()) && !document.body.classList.contains('replies-open');
@@ -36,6 +38,26 @@
   }
   function userTurnHTML(value, files = [], reaction = true) {
     return `<div class="ftux-user-turn"><article class="message user-message ftux-user-bubble">${value ? `<p>${escape(value)}</p>` : ''}${files.length ? `<ul class="message-attachments">${files.map(file => `<li>${escape(file)}</li>`).join('')}</ul>` : ''}${reaction ? '<img class="ftux-reaction" src="assets/y1jENV.png" width="32" height="36.5" alt="Thumbs-up reaction">' : ''}</article><span class="ftux-read">Read 5:12 AM</span></div>`;
+  }
+  function scrollToNode(node, {shouldFollow = () => true} = {}) {
+    requestAnimationFrame(() => {
+      if (!node?.isConnected || !active() || !shouldFollow() || document.body.classList.contains('workspace-page-open')) return;
+      const scroller = document.getElementById('chat-scroll');
+      const rect = node.getBoundingClientRect();
+      const composerTop = document.querySelector('.composer-dock')?.getBoundingClientRect().top || innerHeight - 90;
+      if (rect.bottom <= composerTop - 16 && rect.top >= 80) return;
+      const top = rect.height > composerTop - 96
+        ? scroller.scrollTop + rect.top - 80
+        : scroller.scrollTop + rect.bottom - composerTop + 20;
+      scroller.scrollTo({top:Math.max(0, top), behavior:motion.matches ? 'instant' : 'smooth'});
+    });
+  }
+  function play(nodes, options) {
+    playback ||= window.FTUXPlayback.create({
+      messages:document.getElementById('messages'), scroll:document.getElementById('chat-scroll'),
+      motion, scrollToNode, onReveal:notifyIndex
+    });
+    playback.play(nodes, options);
   }
   function updateTool(tool) {
     document.querySelectorAll(`.ftux-flow [data-ftux-tool="${tool}"] [data-ftux-tool-control], .ftux-connections-dialog [data-ftux-tool="${tool}"] [data-ftux-tool-control]`).forEach(row => {
@@ -83,25 +105,24 @@
   }
   function send(value, files = []) {
     if (!active()) return false;
+    playback?.finish();
     turns().insertAdjacentHTML('beforeend', userTurnHTML(value, files, false));
-    notifyIndex();
-    const scroller = document.getElementById('chat-scroll');
-    scroller.scrollTo({top:scroller.scrollHeight, behavior:'instant'});
+    play([turns().lastElementChild], {immediateFirst:true, scrollOnReducedMotion:true});
     return true;
   }
   function reset() {
     if (!active()) return false;
+    playback?.cancel();
     connectionsDialog?.close();
     connections = freshConnections();
     skipped = new Set();
     document.getElementById('messages').innerHTML = initialHTML();
-    boundFlow = host();
-    document.body.dataset.ftuxStage = 'ready';
+    boundFlow = undefined;
     const url = new URL(location.href);
     url.searchParams.delete('step');
     history.replaceState(history.state, '', url.pathname + url.search + url.hash);
     document.getElementById('chat-scroll').scrollTo({top:0, behavior:'instant'});
-    notifyIndex();
+    boot();
     return true;
   }
   function openConnections() {
@@ -133,9 +154,11 @@
   }
   function boot() {
     const flow = host();
-    if (!flow || flow === boundFlow) return;
+    if (!flow) { playback?.finish(); return; }
+    if (flow === boundFlow) return;
     boundFlow = flow;
     document.body.dataset.ftuxStage = 'ready';
+    play(flow.querySelectorAll('.ftux-introduction > *, .ftux-turns > *'));
     notifyIndex();
   }
   const getIndexState = () => ({
@@ -145,7 +168,7 @@
     artifactReady:Boolean(host()?.querySelector('.ftux-pipeline-result:not([hidden])'))
   });
   window.FTUX = Object.freeze({send, reset, openConnections, getIndexState,
-    pauseAutoScroll:() => {}});
+    pauseAutoScroll:() => playback?.stopFollowing()});
   window.addEventListener('indexing-ready', boot);
   function start() {
     document.getElementById('messages')?.addEventListener('click', onClick);

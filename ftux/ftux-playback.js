@@ -1,8 +1,15 @@
-/* MVP Animated's iMessage pacing, adapted to the interactive FTUX conversation. */
+/*
+ * Automatic FTUX real playback, matching MVP Animated:
+ *   900ms  first bubble rises 14px and settles from scale .96 to 1
+ *  +700ms  hold, then type for 1300–1700ms before the next bubble
+ *  +850ms  reaction appears separately with a 650ms bounce and 1500ms hold
+ *          follow new arrivals until the reader scrolls back
+ *          New Chat restarts; workspace opens finish the sequence
+ */
 (() => {
   'use strict';
   const TIMING = Object.freeze({first:900, hold:700, typingMin:1300, typingMax:1700,
-    character:1.2, card:1000, entrance:360, reactionDelay:850, reactionEntrance:650,
+    character:1.2, user:1300, card:1000, entrance:360, reactionDelay:850, reactionEntrance:650,
     reactionHold:1500, reply:2000});
 
   function create({messages, scroll, motion, onReveal, scrollToNode}) {
@@ -79,7 +86,7 @@
       }
       const delay = sequence.index === 0 ? sequence.firstDelay : node.matches('.ftux-bubble')
         ? Math.min(TIMING.typingMax, TIMING.typingMin + node.textContent.trim().length * TIMING.character)
-        : TIMING.card;
+        : node.matches('.ftux-user-turn') ? TIMING.user : TIMING.card;
       schedule(reveal, delay);
     }
     function reveal() {
