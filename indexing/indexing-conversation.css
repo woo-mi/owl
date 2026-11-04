@@ -38,6 +38,7 @@
 .indexing-tool-status { display: inline-flex; align-items: center; gap: 4px; min-height: 29px; padding: 6px 10px; font-size: 12px; line-height: 17px; font-weight: 500; }
 .indexing-tool-status svg { width: 16px; height: 16px; }
 .indexing-tool-status.is-connected { color: #333444; }
+.indexing-tool-status.is-connected svg { color: #209855; }
 .indexing-tool-status.is-failed { color: #EA0028; }
 .indexing-tool-status.is-connecting { gap: 10px; color: #24242a80; }
 .indexing-spinner { display: block; width: 12px; height: 12px; border: 1.3px solid #d6d6db; border-top-color: #777780; border-radius: 50%; }
