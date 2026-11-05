@@ -61,7 +61,7 @@
         <h2 id="indexing-connections-heading">Connections</h2>
         <div class="indexing-menu-connection-row">
           <span class="indexing-menu-connection-status"><span class="indexing-menu-status-dot" aria-hidden="true"></span><span><span class="indexing-menu-connection-count" aria-live="polite"></span><span class="indexing-menu-connection-pending"></span></span></span>
-          <span class="indexing-menu-manage">Manage</span>
+          <button type="button" class="indexing-menu-manage" data-indexing-manage>Manage</button>
         </div>
       </section>
       <section class="indexing-menu-section" aria-labelledby="indexing-topics-heading">
@@ -139,6 +139,11 @@
       (event.key === 'ArrowUp' ? controls().at(-1) : controls()[0])?.focus({preventScroll:true});
     });
     panel.addEventListener('click', event => {
+      if (event.target.closest('[data-indexing-manage]')) {
+        setOpen(false);
+        window.FTUX.openConnections(toggle);
+        return;
+      }
       const topic = event.target.closest('[data-indexing-topic]');
       if (!topic) return;
       setOpen(false);

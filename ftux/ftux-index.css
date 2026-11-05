@@ -26,11 +26,12 @@ body.ftux-prototype .ftux-index-empty {
   line-height:20px;
 }
 
-body.ftux-prototype span.indexing-menu-manage {
+body.ftux-prototype .indexing-menu-manage {
   flex-shrink:0;
-  cursor:default;
-  text-decoration:none;
+  cursor:pointer;
 }
+body.ftux-prototype .indexing-menu-manage:hover { text-decoration:underline; text-underline-offset:3px; }
+body.ftux-prototype .indexing-menu-manage:focus-visible { outline:2px solid #0069E0; outline-offset:4px; }
 
 @media (max-width:760px) {
   body.ftux-prototype .indexing-menu {

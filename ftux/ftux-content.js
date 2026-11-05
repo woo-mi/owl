@@ -38,9 +38,12 @@
     const running = connectionRuns.has(toolGroup(tool));
     return `<button type="button" class="ftux-connect" data-ftux-connect="${escape(tool)}" aria-label="Connect ${escape(tool)}"${running ? ' disabled' : ''}>Connect</button>`;
   }
-  function cardHTML(group, manage = false) {
-    const footer = manage ? '' : `<footer class="ftux-skip-row"><button type="button" class="ftux-skip" data-ftux-skip="${group}"${skipped.has(group) ? ' disabled' : ''}>${skipped.has(group) ? 'Skipped for now' : 'Skip for now'}</button></footer>`;
-    return `<section class="ftux-tools" id="ftux-${manage ? 'manage-' : ''}${group}" data-ftux-group="${group}" aria-label="${group === 'context' ? 'Connect your context' : 'Connect your CRM'}" tabindex="-1">${groupTools[group].map(tool => `<div class="ftux-tool-row" data-ftux-tool="${escape(tool)}"><span class="ftux-tool-name"><img src="assets/ftux-tools/${tool.toLowerCase()}.png" alt="" width="18" height="18">${escape(tool)}</span><span data-ftux-tool-control>${statusHTML(tool)}</span></div>`).join('')}${footer}</section>`;
+  function toolRowHTML(tool) {
+    return `<div class="ftux-tool-row" data-ftux-tool="${escape(tool)}"><span class="ftux-tool-name"><img src="assets/ftux-tools/${tool.toLowerCase()}.png" alt="" width="18" height="18">${escape(tool)}</span><span data-ftux-tool-control>${statusHTML(tool)}</span></div>`;
+  }
+  function cardHTML(group) {
+    const footer = `<footer class="ftux-skip-row"><button type="button" class="ftux-skip" data-ftux-skip="${group}"${skipped.has(group) ? ' disabled' : ''}>${skipped.has(group) ? 'Skipped for now' : 'Skip for now'}</button></footer>`;
+    return `<section class="ftux-tools" id="ftux-${group}" data-ftux-group="${group}" aria-label="${group === 'context' ? 'Connect your context' : 'Connect your CRM'}" tabindex="-1">${groupTools[group].map(toolRowHTML).join('')}${footer}</section>`;
   }
   function userTurnHTML(value, files = [], reaction = true) {
     return `<div class="ftux-user-turn"><article class="message user-message ftux-user-bubble">${value ? `<p>${escape(value)}</p>` : ''}${files.length ? `<ul class="message-attachments">${files.map(file => `<li>${escape(file)}</li>`).join('')}</ul>` : ''}${reaction ? '<img class="ftux-reaction" src="assets/y1jENV.png" width="32" height="36.5" alt="Thumbs-up reaction">' : ''}</article><span class="ftux-read">Read 5:12 AM</span></div>`;
@@ -81,6 +84,7 @@
       row.innerHTML = statusHTML(tool);
       if (hadFocus) row.firstElementChild?.focus({preventScroll:true});
     });
+    updateConnectionsDescription();
     notifyIndex();
   }
 
@@ -229,19 +233,33 @@
     boot();
     return true;
   }
-  function openConnections() {
+  function updateConnectionsDescription() {
+    const description = connectionsDialog?.querySelector('#ftux-connections-description');
+    if (!description) return;
+    const connected = [...connections.values()].filter(state => state === 'connected').length;
+    const pending = [...connections].filter(([, state]) => state === 'connecting').map(([tool]) => tool);
+    description.textContent = `${connected === connections.size ? `All ${connected} tools are connected.` : connected ? `${connected} of ${connections.size} tools are connected.` : 'No tools are connected yet.'}${pending.length ? ` Connecting ${pending.join(' and ')}…` : ''}`;
+  }
+  function openConnections(opener = document.activeElement) {
     if (!connectionsDialog) {
       connectionsDialog = document.createElement('dialog');
       connectionsDialog.className = 'indexing-preview ftux-connections-dialog';
       connectionsDialog.setAttribute('aria-labelledby', 'ftux-connections-title');
+      connectionsDialog.setAttribute('aria-describedby', 'ftux-connections-description');
       connectionsDialog.innerHTML = '<header><h2 id="ftux-connections-title">Connections</h2><button type="button" aria-label="Close connections">×</button></header><div class="indexing-preview-content"></div>';
       document.body.append(connectionsDialog);
       connectionsDialog.addEventListener('click', onClick);
       connectionsDialog.querySelector('header button').addEventListener('click', () => connectionsDialog.close());
+      connectionsDialog.addEventListener('click', event => {
+        if (event.target !== connectionsDialog) return;
+        const bounds = connectionsDialog.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) connectionsDialog.close();
+      });
       connectionsDialog.addEventListener('close', () => connectionsOpener?.focus({preventScroll:true}));
     }
-    connectionsOpener = document.activeElement;
-    connectionsDialog.querySelector('.indexing-preview-content').innerHTML = cardHTML('context', true) + cardHTML('crm', true);
+    connectionsOpener = opener;
+    connectionsDialog.querySelector('.indexing-preview-content').innerHTML = `<p id="ftux-connections-description" class="ftux-connections-description" aria-live="polite"></p><section class="ftux-tools" aria-label="Your connections">${Object.values(groupTools).flat().map(toolRowHTML).join('')}</section><footer class="ftux-connections-footer"><a href="https://canary.gowisdom.ai/settings/my-connections" target="_blank" rel="noopener noreferrer" aria-label="Manage data connections (opens in a new tab)">Manage data connections<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 3.5h5v5m0-5-8 8M8.5 4.5h-4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-4"/></svg></a></footer>`;
+    updateConnectionsDescription();
     connectionsDialog.showModal();
   }
 

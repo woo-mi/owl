@@ -23,4 +23,6 @@ back or choosing an index topic stops automatic scrolling. Reduced motion remove
 motion while retaining the connection states and gates.
 
 The conversation index, app link, workspace, and Owl customization remain available.
+Manage in the conversation index opens the Connections dialog with current tool
+statuses, a live summary, and a Manage data connections link to product settings.
 No real account connection or app generation occurs in this prototype.

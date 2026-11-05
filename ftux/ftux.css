@@ -158,6 +158,15 @@ body.ftux-prototype .composer:focus-within { outline-color:#d5d5d9; }
 .ftux-skip { padding:6px 4px; border-radius:5px; background:transparent; color:#24242a80; font:400 14px/21px Inter, system-ui, sans-serif; }
 .ftux-skip:hover { color:#24242a; background:#f6f6f7; }
 .ftux-skip:disabled { color:#8b8b90; cursor:default; }
+.ftux-connections-dialog .ftux-tools { width:100%; }
+.ftux-connections-dialog .ftux-tool-row + .ftux-tool-row { border-top:1px solid #e8e8ea; }
+.ftux-connections-dialog .ftux-tool-status.is-connected { border-color:transparent; }
+.ftux-connections-description { margin:0; color:#777; font-size:14px; line-height:20px; }
+.ftux-connections-footer { display:flex; justify-content:flex-end; }
+.ftux-connections-footer a { display:inline-flex; align-items:center; gap:6px; min-height:32px; color:#0069E0; font-size:14px; line-height:20px; font-weight:500; text-decoration:none; }
+.ftux-connections-footer svg { width:16px; height:16px; }
+.ftux-connections-footer a:hover { text-decoration:underline; text-underline-offset:3px; }
+.ftux-connections-footer a:focus-visible { outline:2px solid #0069E0; outline-offset:4px; }
 .ftux-confirmation { max-width:min(613px, 100%); color:#63666d; font:400 13px/20px Inter, system-ui, sans-serif; }
 .ftux-pipeline-result {
   display:flex;
