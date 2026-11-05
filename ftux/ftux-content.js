@@ -22,7 +22,6 @@
   let connectionsOpener;
   let playback;
   let stage = 'context';
-  let autoConnect = false;
   let middleTurns = [];
   let finalTurns = [];
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -69,7 +68,7 @@
         queueMicrotask(() => {
           if (!node.isConnected || node.hidden || !host()?.contains(node)) return;
           const group = node.dataset.ftuxGroup;
-          if (group === 'crm' && stage === 'crm' && autoConnect && !skipped.has(group)) startGroup(group);
+          if (stage === group && !skipped.has(group)) startGroup(group);
           advance(group);
         });
       }
@@ -189,7 +188,6 @@
   }
   function startConnection(tool) {
     if (!connections.has(tool) || connections.get(tool) !== 'available') return;
-    autoConnect = true;
     startGroup(toolGroup(tool), tool);
   }
   function pipelineThumbnail() {
@@ -222,7 +220,6 @@
     connections = freshConnections();
     skipped = new Set();
     stage = 'context';
-    autoConnect = false;
     document.getElementById('messages').innerHTML = initialHTML();
     boundFlow = undefined;
     const url = new URL(location.href);

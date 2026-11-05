@@ -5,11 +5,12 @@ Live URL: https://woo-mi.github.io/owl/ftux/
 The prototype presents the “FTUX real” (KJKJh) screen using the same automatic
 conversation animation as MVP with animation. Bubbles arrive about two seconds
 apart with typing dots, a soft rise and settle, and a separate emoji reaction.
-The first connection card waits for a Connect click before continuing.
+The connection buttons activate automatically; no click is needed to start.
 
-Every tool starts with Connect. Clicking one starts a demo: that tool shows a
-spinner and Connecting… for 1.6 seconds, then a green check and Connected. After
-a short hold, the remaining buttons activate in order. Only after the context
+Every tool starts with Connect. Each connection card stays visible for 1.1 seconds,
+then its first button automatically presses and shows a spinner and Connecting…
+for 1.6 seconds, followed by a green check and Connected. After a short hold,
+the remaining buttons activate in order. Only after the context
 connections finish do the next bubbles and the existing blue Yes message appear.
 The CRM card then shows both Connect buttons, runs the same sequence automatically,
 and reveals the final bubbles and Weekly Sales Pipeline Review app preview.
