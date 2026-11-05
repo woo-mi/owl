@@ -131,7 +131,9 @@ body.ftux-prototype .composer:focus-within { outline-color:#d5d5d9; }
 }
 .ftux-connect { padding:6px 10px; border:0; background:#333444; color:#fff; }
 .ftux-connect:hover { background:#242532; }
-.ftux-connect:disabled { background:#f0f0f2; color:#76767b; }
+.ftux-connect:disabled { background:#333444; color:#fff; opacity:1; cursor:default; }
+.ftux-connect.is-auto-connecting { background:#242532; animation:ftux-connect-press 180ms ease-in-out both; }
+@keyframes ftux-connect-press { 50%, 100% { transform:scale(.94); } }
 .ftux-tool-status { background:#fff; color:#000; }
 .ftux-tool-status svg { width:16px; height:16px; }
 .ftux-tool-status.is-connected svg { color:#209855; }
@@ -142,7 +144,9 @@ body.ftux-prototype .composer:focus-within { outline-color:#d5d5d9; }
   border:1.5px solid #dedee3;
   border-top-color:#777780;
   border-radius:50%;
+  animation:ftux-connecting-spin 800ms linear infinite;
 }
+@keyframes ftux-connecting-spin { to { transform:rotate(360deg); } }
 .ftux-skip-row {
   display:flex;
   align-items:center;
@@ -261,5 +265,5 @@ body.ftux-prototype .composer:focus-within { outline-color:#d5d5d9; }
   .ftux-pipeline-thumbnail { width:96px; }
 }
 @media (prefers-reduced-motion:reduce) {
-  .ftux-typing span { animation:none; }
+  .ftux-typing span, .ftux-spinner, .ftux-connect.is-auto-connecting { animation:none; }
 }

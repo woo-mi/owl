@@ -10,7 +10,9 @@
   ];
   const appURL = 'https://ayush.gowisdom.ai/apps/app_af105ef5a93d4b77a5e9922cd6ffa91f/view';
   const groupTools = {context:['Notion', 'Gmail', 'Calendar', 'Slack', 'Gong'], crm:['HubSpot', 'Salesforce']};
-  const freshConnections = () => new Map(Object.values(groupTools).flat().map(tool => [tool, tool === 'Notion' || tool === 'HubSpot' ? 'connected' : tool === 'Gmail' ? 'connecting' : 'available']));
+  const freshConnections = () => new Map(Object.values(groupTools).flat().map(tool => [tool, 'available']));
+  const connectionTiming = {connecting:1600, connected:650, press:180, card:1100};
+  const connectionRuns = new Map();
   const escape = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
   const bubble = (text, extra = '') => `<article class="message assistant-message ftux-bubble ${extra}"><p>${escape(text)}</p></article>`;
   let connections = freshConnections();
@@ -19,6 +21,10 @@
   let connectionsDialog;
   let connectionsOpener;
   let playback;
+  let stage = 'context';
+  let autoConnect = false;
+  let middleTurns = [];
+  let finalTurns = [];
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const host = () => document.querySelector('#messages .ftux-flow');
   const turns = () => host()?.querySelector('.ftux-turns');
@@ -29,8 +35,9 @@
   function statusHTML(tool) {
     const state = connections.get(tool);
     if (state === 'connected') return `<span class="ftux-tool-status is-connected" tabindex="-1" aria-label="${escape(tool)} connected">${checkIcon}Connected</span>`;
-    if (state === 'connecting') return `<span class="ftux-tool-status is-connecting" tabindex="-1" aria-label="Connecting ${escape(tool)}"><span class="ftux-spinner" aria-hidden="true"></span>Connecting...</span>`;
-    return `<button type="button" class="ftux-connect" data-ftux-connect="${escape(tool)}" aria-label="Connect ${escape(tool)}">Connect</button>`;
+    if (state === 'connecting') return `<span class="ftux-tool-status is-connecting" tabindex="-1" aria-label="Connecting ${escape(tool)}"><span class="ftux-spinner" aria-hidden="true"></span>Connecting…</span>`;
+    const running = connectionRuns.has(toolGroup(tool));
+    return `<button type="button" class="ftux-connect" data-ftux-connect="${escape(tool)}" aria-label="Connect ${escape(tool)}"${running ? ' disabled' : ''}>Connect</button>`;
   }
   function cardHTML(group, manage = false) {
     const footer = manage ? '' : `<footer class="ftux-skip-row"><button type="button" class="ftux-skip" data-ftux-skip="${group}"${skipped.has(group) ? ' disabled' : ''}>${skipped.has(group) ? 'Skipped for now' : 'Skip for now'}</button></footer>`;
@@ -55,7 +62,17 @@
   function play(nodes, options) {
     playback ||= window.FTUXPlayback.create({
       messages:document.getElementById('messages'), scroll:document.getElementById('chat-scroll'),
-      motion, scrollToNode, onReveal:notifyIndex
+      motion, scrollToNode, onReveal:node => {
+        notifyIndex();
+        if (!node.matches('.ftux-tools')) return;
+        // Defer stage changes until the current playback callback has finished.
+        queueMicrotask(() => {
+          if (!node.isConnected || node.hidden || !host()?.contains(node)) return;
+          const group = node.dataset.ftuxGroup;
+          if (group === 'crm' && stage === 'crm' && autoConnect && !skipped.has(group)) startGroup(group);
+          advance(group);
+        });
+      }
     });
     playback.play(nodes, options);
   }
@@ -82,11 +99,98 @@
   view.html = initialHTML();
   view.label = 'FTUX';
 
+  function toolGroup(tool) { return Object.keys(groupTools).find(group => groupTools[group].includes(tool)); }
+  const groupComplete = group => groupTools[group].every(tool => connections.get(tool) === 'connected');
+  const refreshGroup = group => groupTools[group].forEach(updateTool);
+  const connectionPaused = () => document.hidden || document.body.matches('.workspace-open, .workspace-page-open, .replies-open');
+  function scheduleConnection(run, callback, delay) {
+    clearTimeout(run.timer);
+    run.pending = {callback, remaining:delay, started:null};
+    resumeConnection(run);
+  }
+  function resumeConnection(run) {
+    if (!run.pending || run.pending.started !== null || connectionPaused()) return;
+    run.pending.started = performance.now();
+    run.timer = setTimeout(() => {
+      if (connectionRuns.get(run.group) !== run) return;
+      const callback = run.pending.callback;
+      run.pending = undefined;
+      callback();
+    }, run.pending.remaining);
+  }
+  function syncConnectionTimers() {
+    connectionRuns.forEach(run => {
+      if (connectionPaused()) {
+        if (!run.pending || run.pending.started === null) return;
+        clearTimeout(run.timer);
+        run.pending.remaining = Math.max(0, run.pending.remaining - (performance.now() - run.pending.started));
+        run.pending.started = null;
+      } else resumeConnection(run);
+    });
+  }
+  function cancelGroup(group) {
+    const run = connectionRuns.get(group);
+    if (run) clearTimeout(run.timer);
+    connectionRuns.delete(group);
+    groupTools[group].forEach(tool => { if (connections.get(tool) === 'connecting') connections.set(tool, 'available'); });
+    refreshGroup(group);
+  }
+  function advance(group) {
+    const card = host()?.querySelector(`#ftux-${group}`);
+    const resumedCRM = group === 'crm' && stage === 'crm-skipped' && groupComplete(group);
+    if ((stage !== group && !resumedCRM) || !card || card.hidden || connectionRuns.has(group) || (!groupComplete(group) && !skipped.has(group))) return;
+    // Only play this stage: send/workspace/finish must never reveal future gated bubbles.
+    stage = group === 'context' ? 'crm' : groupComplete(group) ? 'complete' : 'crm-skipped';
+    document.body.dataset.ftuxStage = stage;
+    if (group === 'context') {
+      if (skipped.has(group)) middleTurns[0].querySelector('p').textContent = 'No problem. You can connect your context tools later. Here’s an idea to get started.';
+      play(middleTurns, {resetFollow:false, scrollOnReducedMotion:true});
+    } else if (skipped.has(group) && !groupComplete(group)) {
+      finalTurns[0].querySelector('p').textContent = 'No problem. Connect your CRM when you’re ready, and I can build your Weekly Sales Pipeline Review app.';
+      play([finalTurns[0]], {resetFollow:false, scrollOnReducedMotion:true});
+    } else {
+      finalTurns[0].querySelector('p').textContent = 'Succeed. The agent reads the CRM data and builds the app.';
+      play(finalTurns, {resetFollow:false, scrollOnReducedMotion:true});
+    }
+    notifyIndex();
+  }
+  function startGroup(group, firstTool) {
+    if (connectionRuns.has(group) || groupComplete(group)) return;
+    const tools = [firstTool, ...groupTools[group].filter(tool => tool !== firstTool)]
+      .filter(tool => tool && connections.get(tool) !== 'connected');
+    const run = {group, tools, index:0};
+    connectionRuns.set(group, run);
+    refreshGroup(group);
+    function connectNext() {
+      const tool = tools[run.index++];
+      connections.set(tool, 'connecting');
+      updateTool(tool);
+      announce(`Connecting ${tool}.`);
+      scheduleConnection(run, () => {
+        connections.set(tool, 'connected');
+        updateTool(tool);
+        announce(`${tool} connected.`);
+        scheduleConnection(run, () => {
+          if (run.index < tools.length) pressNext();
+          else {
+            connectionRuns.delete(group);
+            refreshGroup(group);
+            advance(group);
+          }
+        }, connectionTiming.connected);
+      }, connectionTiming.connecting);
+    }
+    function pressNext() {
+      document.querySelectorAll(`[data-ftux-connect="${tools[run.index]}"]`).forEach(button => button.classList.add('is-auto-connecting'));
+      scheduleConnection(run, connectNext, connectionTiming.press);
+    }
+    if (firstTool) connectNext();
+    else scheduleConnection(run, pressNext, connectionTiming.card);
+  }
   function startConnection(tool) {
-    if (!connections.has(tool) || connections.get(tool) === 'connected') return;
-    connections.set(tool, 'connected');
-    updateTool(tool);
-    announce(`${tool} connected.`);
+    if (!connections.has(tool) || connections.get(tool) !== 'available') return;
+    autoConnect = true;
+    startGroup(toolGroup(tool), tool);
   }
   function pipelineThumbnail() {
     return `<svg viewBox="0 0 125 123" role="img" aria-label="Pipeline dashboard preview" xmlns="http://www.w3.org/2000/svg">
@@ -113,9 +217,12 @@
   function reset() {
     if (!active()) return false;
     playback?.cancel();
+    Object.keys(groupTools).forEach(cancelGroup);
     connectionsDialog?.close();
     connections = freshConnections();
     skipped = new Set();
+    stage = 'context';
+    autoConnect = false;
     document.getElementById('messages').innerHTML = initialHTML();
     boundFlow = undefined;
     const url = new URL(location.href);
@@ -147,22 +254,28 @@
     const skip = event.target.closest('[data-ftux-skip]');
     if (!skip) return;
     const group = skip.dataset.ftuxSkip;
+    cancelGroup(group);
     skipped.add(group);
     skip.textContent = 'Skipped for now';
     skip.disabled = true;
     announce(`${group === 'context' ? 'Additional context tools' : 'CRM connection'} skipped for now.`);
+    advance(group);
   }
   function boot() {
     const flow = host();
     if (!flow) { playback?.finish(); return; }
     if (flow === boundFlow) return;
     boundFlow = flow;
-    document.body.dataset.ftuxStage = 'ready';
-    play(flow.querySelectorAll('.ftux-introduction > *, .ftux-turns > *'));
+    document.body.dataset.ftuxStage = stage;
+    const future = [...flow.querySelectorAll('.ftux-turns > *')];
+    future.forEach(node => { node.hidden = true; });
+    middleTurns = future.slice(0, 6);
+    finalTurns = future.slice(6);
+    play(flow.querySelectorAll('.ftux-introduction > *'));
     notifyIndex();
   }
   const getIndexState = () => ({
-    stage:'ready', selectedPrompt:'Yes', total:connections.size,
+    stage, selectedPrompt:'Yes', total:connections.size,
     connectedCount:[...connections.values()].filter(state => state === 'connected').length,
     connectingTools:[...connections].filter(([, state]) => state === 'connecting').map(([tool]) => tool),
     artifactReady:Boolean(host()?.querySelector('.ftux-pipeline-result:not([hidden])'))
@@ -172,6 +285,8 @@
   window.addEventListener('indexing-ready', boot);
   function start() {
     document.getElementById('messages')?.addEventListener('click', onClick);
+    document.addEventListener('visibilitychange', syncConnectionTimers);
+    new MutationObserver(syncConnectionTimers).observe(document.body, {attributes:true, attributeFilter:['class']});
     boot();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
