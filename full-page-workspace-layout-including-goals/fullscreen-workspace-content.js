@@ -4,6 +4,7 @@
   const escape = value => String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
   const svg = path => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${path}"/></svg>`;
   const icons = {
+    settings: '<svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" fill="none"><path d="M5.128 2.46415l-0.70326-0.16229c-0.59471-0.13724-1.21816 0.04157-1.64974 0.47314-0.43157 0.43157-0.61038 1.05503-0.47314 1.64974l0.16229 0.70326c0.18706 0.81061-0.14719 1.65236-0.83938 2.11382l-0.85512 0.57008c-0.48083 0.32056-0.76965 0.86021-0.76965 1.4381 0 0.57789 0.28881 1.11754 0.76965 1.4381l0.85512 0.57008c0.69219 0.46146 1.02644 1.30322 0.83938 2.11382l-0.16229 0.70327c-0.13724 0.59471 0.04157 1.21816 0.47314 1.64973 0.43157 0.43157 1.05503 0.61038 1.64974 0.47314l0.70326-0.1623c0.8106-0.18706 1.65236 0.14719 2.11382 0.83939l0.57008 0.85512c0.32056 0.48083 0.86021 0.76965 1.4381 0.76965 0.57789 0 1.11754-0.28881 1.4381-0.76965l0.57008-0.85512c0.46146-0.69219 1.30322-1.02644 2.11382-0.83939l0.70327 0.1623c0.59471 0.13724 1.21816-0.04156 1.64973-0.47314 0.43157-0.43157 0.61038-1.05503 0.47314-1.64973l-0.1623-0.70327c-0.18706-0.8106 0.14719-1.65236 0.83939-2.11382l0.85512-0.57008c0.48083-0.32056 0.76965-0.86021 0.76965-1.4381 0-0.57789-0.28881-1.11754-0.76965-1.4381l-0.85512-0.57008c-0.69219-0.46146-1.02644-1.30321-0.83939-2.11382l0.1623-0.70327c0.13724-0.59471-0.04156-1.21816-0.47314-1.64973-0.43157-0.43157-1.05503-0.61038-1.64974-0.47314l-0.70326 0.16229c-0.8106 0.18706-1.65236-0.14719-2.11382-0.83938l-0.57008-0.85512c-0.32056-0.48083-0.86021-0.76965-1.4381-0.76965-0.57789 0-1.11754 0.28881-1.4381 0.76965l-0.57008 0.85512c-0.46146 0.69219-1.30322 1.02644-2.11382 0.83938z" fill="none" stroke="#626268" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="matrix(0.8333514 0 0 0.8333514 2.2920001 2.2919998)"></path><path d="M5.5 2.75c0 1.51878-1.23122 2.75-2.75 2.75-1.51878 0-2.75-1.23122-2.75-2.75 0-1.51878 1.23122-2.75 2.75-2.75 1.51878 0 2.75 1.23122 2.75 2.75z" fill="none" stroke="#626268" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke" transform="matrix(0.8332728 0 0 0.8332728 7.7080002 7.7080002)"></path></svg>',
     connections: svg('M19.25 5.31944c0 1.41907-3.2459 2.56945-7.25 2.56945-4.00406 0-7.25-1.15038-7.25-2.56945m14.5 0c0-1.41906-3.2459-2.56944-7.25-2.56944-4.00406 0-7.25 1.15038-7.25 2.56944m14.5 0v13.36116c0 1.419-3.2459 2.5694-7.25 2.5694-4.00406 0-7.25-1.1504-7.25-2.5694v-13.36116m14.5 4.36025c0 1.41911-3.2459 2.56941-7.25 2.56941-4.00406 0-7.25-1.1503-7.25-2.56941m14.5 4.25001c0 1.4191-3.2459 2.5694-7.25 2.5694-4.00406 0-7.25-1.1503-7.25-2.5694'),
     schedules: svg('M14.5 6.5h-5.68686c-1.80975 0-2.42909 2.41123-0.84336 3.28338l8.06042 4.43322c1.5858 0.8722 0.9664 3.2834-0.8433 3.2834h-5.6869m5.25-11.75v1.5c0 1.10457 0.8954 2 2 2h1.5c1.1046 0 2-0.89543 2-2v-1.5c0-1.10457-0.8954-2-2-2h-1.5c-1.1046 0-2 0.89543-2 2z m-11 11v1.5c0 1.1046 0.89543 2 2 2h1.5c1.10457 0 2-0.8954 2-2v-1.5c0-1.1046-0.89543-2-2-2h-1.5c-1.10457 0-2 0.8954-2 2z'),
     artifacts: svg('M17 10.25c-1.7949 0-3.25-1.45507-3.25-3.25 0-1.79493 1.4551-3.25 3.25-3.25 1.7949 0 3.25 1.45507 3.25 3.25 0 1.79493-1.4551 3.25-3.25 3.25z m-10-6.5v3.25m0 0v3.25m0-3.25h-3.25m3.25 0h3.25m9.0481 7.7021l-2.2981 2.2981m0 0l-2.2981 2.2981m2.2981-2.2981l-2.2981-2.2981m2.2981 2.2981l2.2981 2.2981m-14.0481-5.5483h3.5c0.82843 0 1.5 0.6716 1.5 1.5v3.5c0 0.8284-0.67157 1.5-1.5 1.5h-3.5c-0.82843 0-1.5-0.6716-1.5-1.5v-3.5c0-0.8284 0.67157-1.5 1.5-1.5z'),
@@ -50,6 +51,16 @@
     ['q4-slip-analysis', 'renewal-watch', 'capacity-planning']
   ];
   const artifactLinkIcon = svg('M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71');
+  const approvalStorageKey = 'owl:full-page-workspace:action-approval-mode';
+  const approvalModes = [
+    { id: 'auto', title: 'Auto', description: 'The Owl acts when the review is confident you asked for it, and declines otherwise.' },
+    { id: 'always-ask', title: 'Always ask', description: 'The Owl asks you before every action that changes something.' }
+  ];
+  let approvalMode = 'auto';
+  try {
+    const saved = localStorage.getItem(approvalStorageKey);
+    if (approvalModes.some(mode => mode.id === saved)) approvalMode = saved;
+  } catch (_) { /* Keep the in-memory preference when browser storage is unavailable. */ }
 
   function switchButton(item, kind) {
     return `<button type="button" class="fsw-content-switch" role="switch" aria-checked="${item.enabled}" aria-label="${escape(item.title)}" aria-describedby="fsw-${kind}-${item.id}-details" data-fsw-switch="${kind}" data-id="${item.id}"><span></span></button>`;
@@ -63,10 +74,24 @@
   function artifactContent() {
     return `<div class="fsw-section-content fsw-artifacts"><div class="fsw-artifact-grid" aria-label="Artifact library">${artifactColumns.map(column => `<div class="fsw-artifact-column">${column.map(id => artifactCard(artifacts.find(item => item.id === id))).join('')}</div>`).join('')}</div></div>`;
   }
+  function settings() {
+    return `<section class="fsw-section-content fsw-settings" aria-labelledby="fsw-approvals-heading"><h3 class="fsw-content-label" id="fsw-approvals-heading">Action approvals</h3><div class="fsw-approval-options" role="radiogroup" aria-labelledby="fsw-approvals-heading">${approvalModes.map(mode => `<label class="fsw-approval-row"><span class="fsw-approval-copy"><span class="fsw-content-title" id="fsw-approval-${mode.id}-label">${mode.title}</span><span class="fsw-approval-description" id="fsw-approval-${mode.id}-description">${mode.description}</span></span><input class="fsw-approval-radio" type="radio" name="fsw-action-approval" value="${mode.id}" aria-labelledby="fsw-approval-${mode.id}-label" aria-describedby="fsw-approval-${mode.id}-description" ${approvalMode === mode.id ? 'checked' : ''}></label>`).join('')}</div></section>`;
+  }
   function render(section) {
     if (section === 'connections') return connections();
     if (section === 'artifacts') return artifactContent();
+    if (section === 'settings') return settings();
     return '';
+  }
+  function handleChange(event, api = {}) {
+    const input = event.target.closest('input[name="fsw-action-approval"]');
+    const mode = input?.checked && approvalModes.find(mode => mode.id === input.value);
+    if (!mode) return false;
+    approvalMode = mode.id;
+    try { localStorage.setItem(approvalStorageKey, approvalMode); }
+    catch (_) { /* The selection still works for this session. */ }
+    api.announce?.(`${mode.title} selected for action approvals.`);
+    return true;
   }
   function askButton(prompt, label) {
     return `<button type="button" class="fsw-content-primary" data-fsw-action="ask" data-prompt="${escape(prompt)}">${escape(label)}</button>`;
@@ -101,5 +126,5 @@
     return false;
   }
 
-  window.FullscreenWorkspaceContent = { render, icons, handleClick, data: { tools, artifactGroups } };
+  window.FullscreenWorkspaceContent = { render, icons, handleClick, handleChange, data: { tools, artifactGroups } };
 })();

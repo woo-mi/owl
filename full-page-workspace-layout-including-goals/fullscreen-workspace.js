@@ -1,8 +1,8 @@
 /* Workspace Page (Pen PGWL8): a full-page workspace beside the compact app rail. */
 (() => {
   'use strict';
-  const SECTIONS = ['profile', 'goals', 'connections', 'schedules', 'artifacts', 'memory', 'history'];
-  const LABELS = { profile: 'Profile', goals: 'Goals', connections: 'Connections', schedules: 'Schedules', artifacts: 'Artifacts', memory: 'Memory', history: 'History' };
+  const SECTIONS = ['profile', 'goals', 'connections', 'schedules', 'artifacts', 'memory', 'settings', 'history'];
+  const LABELS = { profile: 'Profile', goals: 'Goals', connections: 'Connections', schedules: 'Schedules', artifacts: 'Artifacts', memory: 'Memory', settings: 'Settings', history: 'History' };
   const icon = paths => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
   const backIcon = icon('<path d="m14 6-6 6 6 6"/>');
   const arrowIcon = icon('<path d="m5 12 7-7 7 7M12 5v15"/>');
@@ -230,6 +230,9 @@
     });
     dialog.addEventListener('input', event => {
       if (section === 'goals') window.WorkspaceGoals.handleInput(event, api);
+    });
+    dialog.addEventListener('change', event => {
+      if (section === 'settings') content.handleChange(event, api);
     });
     dialog.addEventListener('cancel', event => {
       event.preventDefault();
