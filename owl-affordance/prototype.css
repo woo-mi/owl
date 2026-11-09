@@ -23,13 +23,13 @@ button:focus-visible, a:focus-visible {
   min-height: 100dvh;
   height: auto !important;
   overflow: clip !important;
-  padding: clamp(250px, 29.23vh, 280px) 24px 64px 72px;
+  padding: clamp(230px, 26vh, 250px) 24px 64px 72px;
 }
 [data-pencil-name="Search home content"] {
   position: relative !important;
   top: auto !important;
   left: auto !important;
-  width: min(636px, 100%) !important;
+  width: min(763.2px, 100%) !important;
   height: auto !important;
   display: flex;
   flex-direction: column;
@@ -40,18 +40,18 @@ button:focus-visible, a:focus-visible {
   top: auto !important;
   left: auto !important;
 }
-[data-pencil-name="Personalized greeting"] { margin-bottom: 37px; }
-[data-pencil-name="Composer and data source"] { margin-bottom: 34px; }
+[data-pencil-name="Personalized greeting"] { margin-bottom: 48px; line-height: 32px !important; }
+[data-pencil-name="Composer and data source"] { margin-bottom: 40.8px; }
 [data-pencil-name="Personalized greeting"],
 [data-pencil-name="Composer and data source"],
 [data-pencil-name="Ask WisdomAI composer"] { width: 100% !important; }
 [data-pencil-name="Selected data source"],
-[data-pencil-name="Composer controls"] { width: calc(100% - 26px) !important; }
+[data-pencil-name="Composer controls"] { width: calc(100% - 31.2px) !important; }
 [data-pencil-name="Starter questions"] {
-  width: calc(100% - 44px) !important;
+  width: calc(100% - 52.8px) !important;
   margin: 0 auto;
 }
-[data-pencil-name="Starter questions"] > div { min-height: 24px; height: auto !important; }
+[data-pencil-name="Starter questions"] > div { min-height: 28.8px; height: auto !important; }
 [data-pencil-name="Starter questions"] > div > div:last-child {
   white-space: normal !important;
   min-width: 0;
@@ -78,6 +78,7 @@ button:focus-visible, a:focus-visible {
 @media (max-width: 700px) {
   [data-pencil-name="Owl affordance new"] { padding: 270px 16px 48px 64px; }
   [data-pencil-name="Personalized greeting"] { margin-bottom: 28px; }
+  [data-pencil-name="Editable question placeholder"] { width: calc(100% - 40.8px); white-space: normal !important; }
   [data-pencil-name="Starter questions"] { width: 100% !important; }
   [data-pencil-name="Thinking voice and send controls"] { gap: 10px !important; }
   [data-pencil-name="Thinking dropdown"] { display: none !important; }
