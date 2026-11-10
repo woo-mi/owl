@@ -7,8 +7,8 @@
     <meta name="description" content="Owl emoji reaction prototype — 1 default.">
     <meta name="color-scheme" content="light">
     <link rel="icon" href="../owl-mark.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="prototype.css?v=emoji-nov-9">
-    <script src="prototype.js?v=emoji-nov-9" defer></script>
+    <link rel="stylesheet" href="prototype.css?v=emoji-interactions-nov-9">
+    <script src="prototype.js?v=emoji-interactions-nov-9" defer></script>
 
     <style>
       *, ::before, ::after {
@@ -2296,5 +2296,193 @@
         </div>
       </div>
     </div>
+<template id="message-actions-template"><div
+
+      data-pencil-name="Message actions"
+      style="align-items: center; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 17px; height: 25px; justify-content: flex-start; width: 92px"
+    >
+      <svg
+
+        data-pencil-name="Add reaction"
+        viewBox="0 0 19 19"
+        preserveAspectRatio="xMidYMid meet"
+        data-icon-name="smile"
+        data-icon-set="lucide"
+        xmlns="http://www.w3.org/2000/svg"
+        style="box-sizing: border-box; flex-shrink: 0; height: 19px; overflow: visible; width: 19px"
+      >
+        <path
+          d="M9.083 .816q-1.578 .056-3.025 .687-1.443 .626-2.584 1.721-1.136 1.09-1.823 2.514-.663 1.368-.816 2.927-.037 .264-.037 .835 0 .571 .037 .835 .153 1.559 .816 2.927 .896 1.902 2.575 3.173 1.684 1.271 3.734 1.633 .724 .134 1.54 .134 1.025 0 1.944-.209 .923-.208 1.837-.644 1.711-.84 2.936-2.31 1.224-1.471 1.702-3.317 .399-1.517 .246-3.057-.153-1.54-.816-2.946-.798-1.632-2.199-2.829-1.396-1.197-3.14-1.73-1.369-.418-2.927-.344zM10.395 2.431q1.461 .19 2.705 .923 1.243 .733 2.12 1.911 1.122 1.498 1.368 3.456 .019 .227 .019 .779 0 .552-.019 .779-.19 1.577-.979 2.89-.788 1.308-2.083 2.204-.644 .454-1.424 .76-.779 .302-1.614 .418-.343 .055-.988 .055-.645 0-.988-.055-1.461-.209-2.658-.933-1.197-.723-2.073-1.883-1.123-1.498-1.369-3.456-.018-.227-.018-.779 0-.552 .018-.779 .19-1.522 .909-2.784 .724-1.261 1.944-2.157 .737-.552 1.637-.909 .905-.362 1.8-.44l.343-.037q.13-.019 .645 0 .515 .018 .705 .037zM6.916 6.364q-.343 .116-.515 .418-.055 .116-.055 .324 0 .209 .046 .325 .051 .111 .181 .246 .209 .209 .543 .227 .334 .019 .57-.218 .237-.236 .237-.561 0-.325-.227-.543-.228-.218-.534-.236-.19 0-.246 .018zM11.666 6.364q-.343 .116-.515 .418-.055 .116-.055 .324 0 .209 .046 .325 .051 .111 .181 .246 .209 .209 .543 .227 .334 .019 .57-.218 .237-.236 .237-.561 0-.325-.227-.543-.228-.218-.534-.236-.19 0-.246 .018zM6.193 10.316q-.191 .019-.362 .163-.167 .144-.246 .334-.037 .13-.037 .292 0 .162 .056 .297 .116 .246 .496 .608 .38 .357 .835 .644 .932 .627 1.967 .761 1.034 .13 2.078-.209 .589-.19 1.169-.589 .58-.399 .997-.877 .172-.19 .237-.329 .069-.144 .069-.315 0-.492-.454-.724-.153-.074-.325-.074-.209 0-.353 .079-.139 .074-.31 .264-.307 .339-.715 .626-.408 .283-.825 .436-.265 .098-.464 .126-.2 .027-.506 .027-.306 0-.506-.027-.199-.028-.463-.126-.418-.153-.826-.436-.408-.287-.714-.626-.13-.153-.209-.209-.265-.171-.589-.116z"
+          fill="#777777"
+        />
+      </svg>
+      <svg
+
+        data-pencil-name="Reply"
+        viewBox="0 0 19 19"
+        preserveAspectRatio="xMidYMid meet"
+        data-icon-name="undo-2"
+        data-icon-set="lucide"
+        xmlns="http://www.w3.org/2000/svg"
+        style="box-sizing: border-box; flex-shrink: 0; height: 19px; overflow: visible; width: 19px"
+      >
+        <path
+          d="M6.916 2.412q-.116 .019-.19 .07-.074 .046-2.148 2.133-1.289 1.276-1.702 1.694-.408 .417-.427 .491-.074 .135-.074 .325 0 .19 .056 .325 .037 .074 .445 .491 .413 .418 1.702 1.712l.325 .32q1.044 1.048 1.35 1.331 .399 .399 .547 .497 .116 .074 .269 .055h.056q.209 0 .343-.055 .265-.135 .376-.427 .116-.297 .023-.58-.037-.097-.25-.325-.209-.227-1.174-1.196l-1.368-1.369 6.248 .019q.589 .018 .724 .037 1.122 .209 1.897 .96 .779 .752 1.03 1.832 .037 .228 .055 .58 .019 .353-.018 .58-.153 1.16-.951 2.013-.779 .817-1.958 1.067-.111 .019-1.841 .037l-1.73 .019-.135 .056q-.32 .153-.436 .477-.111 .32 .037 .627 .06 .092 .162 .19 .107 .093 .218 .153l.135 .055 1.596 .019q1.595 0 1.86-.019 1.141-.115 2.12-.695 .978-.58 1.642-1.526 .422-.627 .658-1.378 .237-.752 .237-1.512 0-1.081-.427-2.051-.426-.969-1.196-1.702-.77-.733-1.777-1.109-.399-.134-.932-.232-.154-.037-.724-.037l-6.494-.018 1.368-1.369q.965-.988 1.174-1.206 .213-.218 .25-.315 .13-.376-.079-.71-.208-.334-.607-.352-.172-.019-.265 .018z"
+          fill="#777777"
+        />
+      </svg>
+      <div
+
+        data-pencil-name="square-behind-square-1, copy 1, layers, pages"
+        style="box-sizing: border-box; flex-shrink: 0; height: 19px; overflow: hidden; position: relative; width: 19px"
+      >
+        <svg
+
+          data-pencil-name="Rear square — editable vector"
+          viewBox="0 0 19 19"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="box-sizing: border-box; height: 19px; left: 0px; overflow: visible; position: absolute; top: 0px; width: 19px; z-index: 0"
+        >
+          <path
+            d="M11.323 6.927v-3.76q0-.1-.07-.17-.07-.07-.17-.07h-7.916q-.1 0-.17 .07-.07 .07-.07 .17v7.916q0 .1 .07 .17 .07 .07 .17 .07h3.76q.149 0 .287 .057 .138 .057 .243 .163 .106 .105 .163 .243 .057 .138 .057 .287 0 .149-.057 .287-.057 .138-.163 .243-.105 .106-.243 .163-.138 .057-.287 .057h-3.76q-.354 0-.678-.137-.312-.132-.552-.373-.241-.24-.373-.552-.137-.324-.137-.678v-7.916q0-.354 .137-.678 .132-.312 .373-.552 .24-.241 .552-.373 .324-.137 .678-.137h7.916q.354 0 .678 .137 .312 .132 .552 .373 .241 .24 .373 .552 .137 .324 .137 .678v3.76q0 .149-.057 .287-.057 .138-.163 .243-.105 .106-.243 .163-.138 .057-.287 .057-.149 0-.287-.057-.138-.057-.243-.163-.106-.105-.163-.243-.057-.138-.057-.287z"
+            fill="#777777"
+          />
+        </svg>
+        <svg
+
+          data-pencil-name="Front square — editable vector"
+          viewBox="0 0 19 19"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="box-sizing: border-box; height: 19px; left: 0px; overflow: visible; position: absolute; top: 0px; width: 19px; z-index: 1"
+        >
+          <path
+            d="M7.917 6.177h7.916q.354 0 .678 .137 .312 .132 .552 .373 .241 .24 .373 .552 .137 .324 .137 .678v7.916q0 .354-.137 .678-.132 .312-.373 .552-.24 .241-.552 .373-.324 .137-.678 .137h-7.916q-.354 0-.678-.137-.312-.132-.552-.373-.241-.24-.373-.552-.137-.324-.137-.678v-7.916q0-.354 .137-.678 .132-.312 .373-.552 .24-.241 .552-.373 .324-.137 .678-.137zM7.917 7.677q-.1 0-.17 .07-.07 .07-.07 .17v7.916q0 .1 .07 .17 .07 .07 .17 .07h7.916q.1 0 .17-.07 .07-.07 .07-.17v-7.916q0-.1-.07-.17-.07-.07-.17-.07h-7.916z"
+            fill="#777777"
+          />
+        </svg>
+      </div>
+    </div></template>
+<template id="reaction-picker-template"><div
+
+        data-pencil-name="Reaction picker — open - owl"
+        style="align-items: center; background-color: #FFFFFF; border-radius: 31px; box-shadow: 0px 7px 14px #00000014; box-sizing: border-box; display: flex; flex-direction: row; gap: 12px; height: fit-content; justify-content: flex-start; left: 507px; outline-offset: -0.5px; outline: 1px solid #ECECEC; padding: 15px; position: absolute; top: 53px; width: fit-content"
+      >
+        <div
+
+          data-pencil-name="Thumbs up reaction — screenshot"
+          style="box-sizing: border-box; flex-shrink: 0; height: 24px; overflow: hidden; position: relative; width: 24px"
+        >
+          <div
+
+            data-pencil-name="Thumbs up — original screenshot crop"
+            style="box-sizing: border-box; height: 24px; left: 0px; position: absolute; top: 0px; width: 24px"
+          >
+            <div
+              style="border-radius: inherit; height: 100%; left: 0; overflow: hidden; position: absolute; top: 0; width: 100%; z-index: 0"
+            >
+              <div
+                style="background-image: url('assets/reaction-strip-reference.png'); background-repeat: no-repeat; background-size: 100% 100%; height: 100%; left: 0; position: absolute; top: 0; transform-origin: 0 0; transform: matrix(9.792, 0, 0, 2.375, -14.75, -18.5); width: 100%"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div
+
+          data-pencil-name="Thumbs down reaction — screenshot"
+          style="box-sizing: border-box; flex-shrink: 0; height: 24px; overflow: hidden; position: relative; width: 24px"
+        >
+          <div
+
+            data-pencil-name="Thumbs down — original screenshot crop"
+            style="box-sizing: border-box; height: 24px; left: 0px; position: absolute; top: 0px; width: 24px"
+          >
+            <div
+              style="border-radius: inherit; height: 100%; left: 0; overflow: hidden; position: absolute; top: 0; width: 100%; z-index: 0"
+            >
+              <div
+                style="background-image: url('assets/reaction-strip-reference.png'); background-repeat: no-repeat; background-size: 100% 100%; height: 100%; left: 0; position: absolute; top: 0; transform-origin: 0 0; transform: matrix(9.792, 0, 0, 2.375, -51, -17.5); width: 100%"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div
+
+          data-pencil-name="Eyes reaction — screenshot"
+          style="box-sizing: border-box; flex-shrink: 0; height: 24px; overflow: hidden; position: relative; width: 24px"
+        >
+          <div
+
+            data-pencil-name="Eyes — original screenshot crop"
+            style="box-sizing: border-box; height: 24px; left: 0px; position: absolute; top: 0px; width: 24px"
+          >
+            <div
+              style="border-radius: inherit; height: 100%; left: 0; overflow: hidden; position: absolute; top: 0; width: 100%; z-index: 0"
+            >
+              <div
+                style="background-image: url('assets/eyes-picker-reference.png'); background-repeat: no-repeat; background-size: 100% 100%; height: 100%; left: 0; position: absolute; top: 0; transform-origin: 0 0; transform: matrix(1.583, 0, 0, 1.583, -6.75, -7); width: 100%"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div
+
+          data-pencil-name="Check reaction — screenshot"
+          style="box-sizing: border-box; flex-shrink: 0; height: 24px; overflow: hidden; position: relative; width: 24px"
+        >
+          <div
+
+            data-pencil-name="Check — original screenshot crop"
+            style="box-sizing: border-box; height: 24px; left: 0px; position: absolute; top: 0px; width: 24px"
+          >
+            <div
+              style="border-radius: inherit; height: 100%; left: 0; overflow: hidden; position: absolute; top: 0; width: 100%; z-index: 0"
+            >
+              <div
+                style="background-image: url('assets/check-reaction-reference.png'); background-repeat: no-repeat; background-size: 100% 100%; height: 100%; left: 0; position: absolute; top: 0; transform-origin: 0 0; transform: matrix(1.333, 0, 0, 1.333, -4, -4); width: 100%"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div
+
+          data-pencil-name="Heart reaction — screenshot"
+          style="box-sizing: border-box; flex-shrink: 0; height: 24px; overflow: hidden; position: relative; width: 24px"
+        >
+          <div
+
+            data-pencil-name="Heart — original screenshot crop"
+            style="box-sizing: border-box; height: 24px; left: 0px; position: absolute; top: 0px; width: 24px"
+          >
+            <div
+              style="border-radius: inherit; height: 100%; left: 0; overflow: hidden; position: absolute; top: 0; width: 100%; z-index: 0"
+            >
+              <div
+                style="background-image: url('assets/reaction-strip-reference.png'); background-repeat: no-repeat; background-size: 100% 100%; height: 100%; left: 0; position: absolute; top: 0; transform-origin: 0 0; transform: matrix(9.194, 0, 0, 2.23, -81.068, -15.698); width: 100%"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div
+
+          data-pencil-name="Add reaction — screenshot"
+          style="box-sizing: border-box; flex-shrink: 0; height: 24px; overflow: hidden; position: relative; width: 24px"
+        >
+          <div
+
+            data-pencil-name="Add reaction icon — original screenshot crop"
+            style="box-sizing: border-box; height: 20px; left: 2px; position: absolute; top: 2px; width: 20px"
+          >
+            <div
+              style="border-radius: inherit; height: 100%; left: 0; overflow: hidden; position: absolute; top: 0; width: 100%; z-index: 0"
+            >
+              <div
+                style="background-image: url('assets/reaction-strip-reference.png'); background-repeat: no-repeat; background-size: 100% 100%; height: 100%; left: 0; position: absolute; top: 0; transform-origin: 0 0; transform: matrix(13.824, 0, 0, 3.353, -233.53, -25.294); width: 100%"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div></template>
   </body>
 </html>

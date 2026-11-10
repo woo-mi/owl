@@ -11,7 +11,7 @@ body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antial
 [data-pencil-id="tWCyO"] {
   width: 100% !important;
   height: auto !important;
-  min-height: max(958px, 100dvh);
+  min-height: max(958px, 100dvh, var(--conversation-height, 0px));
 }
 [data-pencil-id="nWGqT"] { height: 100% !important; }
 [data-pencil-id="kfRUL"] { top: auto !important; bottom: 56px; }
@@ -22,11 +22,68 @@ body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antial
 [data-pencil-id="e7JA4"] { left: calc(50% - 252px) !important; }
 [data-pencil-name="User turn"] { width: 100% !important; padding-left: 0 !important; }
 
+button, textarea { font: inherit; }
+[hidden] { display: none !important; }
+.owl-message { position: relative; outline: none; }
+.owl-message.is-open { z-index: 20; }
+.message-actions {
+  position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+  visibility: hidden; opacity: 0; pointer-events: none;
+}
+.message-actions::before { content: ''; position: absolute; inset: -8px -5px -8px -11px; }
+.owl-message:hover .message-actions,
+.owl-message:focus-within .message-actions,
+.owl-message.touch-active .message-actions,
+.owl-message.is-open .message-actions { visibility: visible; opacity: 1; pointer-events: auto; }
+.message-action {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  width: 19px; height: 25px; flex: 0 0 19px; padding: 0; border: 0; background: none; cursor: pointer;
+}
+.message-action::before { content: ''; position: absolute; inset: -5px; }
+button:focus-visible { outline: 2px solid #1a96fe !important; outline-offset: 3px; }
+.reaction-picker { left: calc(100% - 98px) !important; top: calc(50% + 14px) !important; z-index: 30; }
+.reaction-option { border: 0; padding: 0; background: #fff; cursor: pointer; }
+.reaction-option:hover { border-radius: 5px; outline: 4px solid #f1f2f4; }
+.reaction-option[aria-checked="true"] { border-radius: 4px; outline: 2px solid #1a96fe; }
+.more-reactions {
+  position: absolute; top: calc(100% + 8px); right: 0; width: 234px; box-sizing: border-box;
+  display: grid; grid-template-columns: repeat(6, 24px); gap: 10px 8px; padding: 14px;
+  background: #fff; border: 1px solid #ececec; border-radius: 16px; box-shadow: 0 7px 14px #00000014;
+}
+.reaction-glyph { width: 24px; height: 24px; font: 18px/24px 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+.owl-reaction {
+  position: absolute; left: calc(100% - 16.25px); top: -15.25px; width: 31.5px; height: 36.5px;
+  padding: 0; border: 0; background: none; cursor: pointer; z-index: 2;
+}
+.owl-reaction .reaction-circle { position: absolute; left: 0; top: 0; width: 29px; height: 29px; border-radius: 50%; background: #1a96fe; }
+.owl-reaction::before { content: ''; position: absolute; left: 18.5px; top: 22px; width: 10px; height: 10px; border-radius: 50%; background: #1a96fe; }
+.owl-reaction::after { content: ''; position: absolute; left: 27px; top: 32px; width: 4.5px; height: 4.5px; border-radius: 50%; background: #1a96fe; }
+.owl-reaction .reaction-glyph { position: absolute; left: 5.5px; top: 5.5px; width: 18px; height: 18px; line-height: 18px; }
+.owl-reaction img { position: absolute; left: 6.222px; top: 5.556px; width: 16.111px; height: 17.778px; object-fit: contain; transform: scaleX(-1); }
+.prototype-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 100; border-radius: 8px; padding: 10px 16px; color: #fff; background: #26282b; font-size: 13px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+[data-pencil-id="OZ1fa"] { position: relative; }
+[data-pencil-id="oIz18"] { flex: 1 1 auto !important; width: auto !important; min-width: 0; }
+.message-input { width: 100%; height: 20px; resize: none; border: 0; outline: none; padding: 0; background: transparent; font-size: 14px; line-height: 20px; color: #26282b; }
+.send-message { border: 0; padding: 0; cursor: pointer; }
+.send-message:disabled { cursor: default; }
+.send-message:not(:disabled) { background: #1a96fe !important; }
+.send-message:not(:disabled) path { fill: #fff; }
+.reply-context { position: absolute; bottom: calc(100% + 8px); left: 0; right: 0; padding: 8px 42px 8px 14px; border-left: 3px solid #1a96fe; border-radius: 8px; background: #f1f1f1; font-size: 12px; }
+.reply-context strong { display: block; margin-bottom: 3px; }
+.reply-context p { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cancel-reply { position: absolute; top: 10px; right: 12px; background: none; border: 0; cursor: pointer; font-size: 20px; }
+.local-message { width: 100%; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding-top: 16px; }
+.local-message-bubble { max-width: 442px; box-sizing: border-box; padding: 10px 16px; border-radius: 16px; background: #1a96fe; color: white; font-size: 14px; line-height: 20px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.local-message-bubble blockquote { margin: 0 0 8px; padding-left: 10px; border-left: 2px solid #ffffff88; font-size: 12px; line-height: 18px; opacity: .85; max-height: 54px; overflow: hidden; }
+.local-message time { font-size: 12px; color: #888; padding-right: 16px; }
+.has-local-messages [data-pencil-id="keLVD"] { height: auto !important; min-height: 709px; }
+
 /* Keep the source screen's proportions on compact preview windows. */
 @media (max-width: 1099px) {
   [data-pencil-id="tWCyO"] {
     width: 1440px !important;
-    min-height: 958px;
+    min-height: max(958px, var(--conversation-height, 0px));
     zoom: var(--preview-scale, 1);
   }
 }
