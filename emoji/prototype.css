@@ -1,0 +1,32 @@
+@font-face {
+  font-family: Inter;
+  src: url('../ftux/assets/InterVariable.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+html { background: #fff; }
+body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+[data-pencil-id="tWCyO"] {
+  width: 100% !important;
+  height: auto !important;
+  min-height: max(958px, 100dvh);
+}
+[data-pencil-id="nWGqT"] { height: 100% !important; }
+[data-pencil-id="kfRUL"] { top: auto !important; bottom: 56px; }
+[data-pencil-id="dXUkO"] { top: auto !important; bottom: 16px; }
+[data-pencil-id="M87OXD"] { top: auto !important; bottom: 64px; }
+[data-pencil-id="FQ642"] { top: auto !important; bottom: 24px; }
+[data-pencil-id="RmO8B"] { left: calc(50% + 130px) !important; transform: translateX(-50%); }
+[data-pencil-id="e7JA4"] { left: calc(50% - 252px) !important; }
+[data-pencil-name="User turn"] { width: 100% !important; padding-left: 0 !important; }
+
+/* Keep the source screen's proportions on compact preview windows. */
+@media (max-width: 1099px) {
+  [data-pencil-id="tWCyO"] {
+    width: 1440px !important;
+    min-height: 958px;
+    zoom: var(--preview-scale, 1);
+  }
+}
