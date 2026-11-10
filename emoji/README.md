@@ -17,7 +17,10 @@ Copy includes the full message and numeric values. Reply opens a quoted local
 composer; sending adds a message to this prototype only. Reload resets all
 interactions. No messages are sent to a backend.
 
-The conversation stays centered beside the 260 px navigation at desktop sizes.
-Compact windows scale the 1440 × 958 source screen proportionally. PNG crops are
-copied from the Pen document into `assets/`; the shared Inter font is served
+The conversation stays centered beside the 260 px navigation at desktop sizes,
+growing up to 1040 px on wide windows. The composer stays at the viewport bottom
+and messages scroll independently. Below 1100 px the sidebar becomes an icon
+rail; below 768 px messages wrap and actions move beneath each Owl bubble.
+Pickers stay inside the viewport and flip above their trigger when needed.
+PNG crops are copied from the Pen document into `assets/`; the shared Inter font is served
 from `../ftux/assets/`. There is no build step.

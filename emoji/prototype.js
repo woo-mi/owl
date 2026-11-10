@@ -68,17 +68,33 @@
     previous.more.hidden = true;
     previous.moreButton.setAttribute('aria-expanded', 'false');
     previous.trigger.setAttribute('aria-expanded', 'false');
+    previous.anchor?.setAttribute('aria-expanded', 'false');
+    if (returnFocus) (previous.anchor?.isConnected ? previous.anchor : previous.badge || previous.trigger).focus({ preventScroll: true });
     previous.bubble.classList.remove('is-open');
     active = null;
-    if (returnFocus) previous.trigger.focus();
   };
-  const openPicker = state => {
+  const positionPicker = () => {
+    if (!active) return;
+    const anchor = (active.anchor || active.trigger).getBoundingClientRect();
+    const scrollport = byId('keLVD').getBoundingClientRect();
+    if (anchor.bottom < scrollport.top || anchor.top > scrollport.bottom) return closePicker();
+    const height = 54 + (active.more.hidden ? 0 : active.more.offsetHeight + 8);
+    const left = Math.max(12, Math.min(anchor.left + anchor.width / 2 - 117.5, window.innerWidth - 246));
+    const below = anchor.bottom + 1.5;
+    const top = below + height <= window.innerHeight - 12 ? below : Math.max(8, anchor.top - height - 4);
+    active.picker.style.left = `${left}px`;
+    active.picker.style.top = `${top}px`;
+  };
+  const openPicker = (state, anchor = state.trigger) => {
     if (active === state) return closePicker(true);
     closePicker();
     active = state;
+    state.anchor = anchor;
     state.picker.hidden = false;
     state.bubble.classList.add('is-open');
     state.trigger.setAttribute('aria-expanded', 'true');
+    anchor.setAttribute('aria-expanded', 'true');
+    positionPicker();
     const selected = state.options.find(option => option.dataset.reaction === state.selected);
     (selected && !selected.closest('[hidden]') ? selected : state.options[0]).focus({ preventScroll: true });
   };
@@ -89,6 +105,9 @@
     state.badge = null;
     if (!remove) {
       const badge = button(`Change ${reaction.label.toLowerCase()} reaction on Owl message ${state.number}`, 'owl-reaction');
+      badge.setAttribute('aria-haspopup', 'menu');
+      badge.setAttribute('aria-expanded', 'false');
+      badge.setAttribute('aria-controls', state.picker.id);
       const circle = document.createElement('span');
       circle.className = 'reaction-circle';
       const glyph = document.createElement(reaction.id === 'like' ? 'img' : 'span');
@@ -101,7 +120,7 @@
       }
       glyph.setAttribute('aria-hidden', 'true');
       badge.append(circle, glyph);
-      badge.addEventListener('click', () => openPicker(state));
+      badge.addEventListener('click', () => openPicker(state, badge));
       state.bubble.append(badge);
       state.badge = badge;
     }
@@ -123,6 +142,21 @@
     const bubble = byId(id);
     const number = index + 1;
     const text = messageText(bubble);
+    const paragraph = document.createElement('p');
+    paragraph.className = 'owl-message-copy';
+    for (const part of text.split(/(\$?\d+(?:\.\d+)?M?)/g)) {
+      if (/^\$?\d/.test(part)) {
+        const number = document.createElement('strong');
+        number.textContent = part;
+        paragraph.append(number);
+      } else paragraph.append(document.createTextNode(part));
+    }
+    bubble.replaceChildren(paragraph);
+    let row = bubble.parentElement;
+    while (row && row !== byId('dvbeu')) {
+      row.classList.add('owl-message-row');
+      row = row.parentElement;
+    }
     bubble.classList.add('owl-message');
     bubble.tabIndex = 0;
     bubble.setAttribute('aria-label', `Owl message ${number}: ${text}`);
@@ -188,6 +222,7 @@
     state.moreButton.addEventListener('click', () => {
       more.hidden = !more.hidden;
       state.moreButton.setAttribute('aria-expanded', String(!more.hidden));
+      positionPicker();
       if (!more.hidden) extraOptions[0].focus();
     });
     picker.append(more);
@@ -220,12 +255,13 @@
     bubble.addEventListener('pointerdown', event => {
       if (event.pointerType === 'touch') bubble.classList.add('touch-active');
     });
-    bubble.append(actions, picker);
+    bubble.append(actions);
+    document.body.append(picker);
     bubble.querySelectorAll('svg').forEach(svg => svg.setAttribute('aria-hidden', 'true'));
     states.push(state);
   });
   document.addEventListener('pointerdown', event => {
-    if (active && !active.bubble.contains(event.target)) closePicker();
+    if (active && !active.bubble.contains(event.target) && !active.picker.contains(event.target)) closePicker();
     states.forEach(state => { if (!state.bubble.contains(event.target)) state.bubble.classList.remove('touch-active'); });
   });
   document.addEventListener('keydown', event => {
@@ -235,6 +271,7 @@
       active.more.hidden = true;
       active.moreButton.setAttribute('aria-expanded', 'false');
       active.moreButton.focus();
+      positionPicker();
     } else closePicker(true);
   });
 
@@ -262,7 +299,11 @@
   cancel.addEventListener('click', () => { replyTo = null; replyContext.hidden = true; input.focus(); });
   replyContext.append(replyLabel, quote, cancel);
   composer.append(replyContext);
-  input.addEventListener('input', () => { send.disabled = !input.value.trim(); });
+  input.addEventListener('input', () => {
+    send.disabled = !input.value.trim();
+    input.style.height = '20px';
+    input.style.height = `${Math.min(input.scrollHeight, 100)}px`;
+  });
   const sendMessage = () => {
     const text = input.value.trim();
     if (!text) return;
@@ -280,13 +321,12 @@
     stamp.textContent = 'Just now';
     turn.append(bubble, stamp);
     byId('dvbeu').append(turn);
-    screen.classList.add('has-local-messages');
-    screen.style.setProperty('--conversation-height', `${byId('e7JA4').offsetTop + byId('e7JA4').scrollHeight + 24}px`);
     input.value = '';
+    input.style.height = '20px';
     send.disabled = true;
     replyTo = null;
     replyContext.hidden = true;
-    composer.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    byId('keLVD').scrollTo({ top: byId('keLVD').scrollHeight, behavior: 'smooth' });
     input.focus();
     announce('Message added to this prototype');
   };
@@ -294,7 +334,6 @@
   input.addEventListener('keydown', event => {
     if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); sendMessage(); }
   });
-  const fitPreview = () => screen.style.setProperty('--preview-scale', Math.min(1, window.innerWidth / 1440));
-  fitPreview();
-  window.addEventListener('resize', fitPreview);
+  byId('keLVD').addEventListener('scroll', positionPicker, { passive: true });
+  window.addEventListener('resize', positionPicker);
 })();
