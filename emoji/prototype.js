@@ -24,12 +24,6 @@
     { id: 'check', label: 'Check', glyph: '✅' },
     { id: 'heart', label: 'Heart', glyph: '❤️' },
   ];
-  const extras = [
-    ['grin', 'Smile', '😀'], ['laugh', 'Laugh', '😂'], ['celebrate', 'Celebrate', '🎉'],
-    ['fire', 'Fire', '🔥'], ['clap', 'Clap', '👏'], ['thanks', 'Thanks', '🙏'],
-    ['hundred', 'Hundred', '💯'], ['rocket', 'Rocket', '🚀'], ['idea', 'Idea', '💡'],
-    ['think', 'Thinking', '🤔'], ['hooray', 'Hooray', '🙌'], ['wow', 'Wow', '😮'],
-  ].map(([id, label, glyph]) => ({ id, label, glyph }));
   const states = [];
   let active = null;
   let replyTo = null;
@@ -78,12 +72,18 @@
     const anchor = (active.anchor || active.trigger).getBoundingClientRect();
     const scrollport = byId('keLVD').getBoundingClientRect();
     if (anchor.bottom < scrollport.top || anchor.top > scrollport.bottom) return closePicker();
+    if (!active.more.hidden) active.more.style.height = `${Math.max(120, Math.min(400, window.innerHeight - 86))}px`;
     const height = 54 + (active.more.hidden ? 0 : active.more.offsetHeight + 8);
     const left = Math.max(12, Math.min(anchor.left + anchor.width / 2 - 117.5, window.innerWidth - 246));
     const below = anchor.bottom + 1.5;
     const top = below + height <= window.innerHeight - 12 ? below : Math.max(8, anchor.top - height - 4);
     active.picker.style.left = `${left}px`;
     active.picker.style.top = `${top}px`;
+    if (!active.more.hidden) {
+      const width = active.more.offsetWidth;
+      active.more.style.left = `${Math.max(12, Math.min(left + 234 - width, window.innerWidth - width - 12))}px`;
+      active.more.style.top = `${top + 62}px`;
+    }
   };
   const openPicker = (state, anchor = state.trigger) => {
     if (active === state) return closePicker(true);
@@ -201,33 +201,55 @@
     more.className = 'more-reactions';
     more.id = `more-reactions-${number}`;
     more.hidden = true;
-    more.setAttribute('role', 'menu');
-    more.setAttribute('aria-label', 'More reactions');
-    const extraOptions = extras.map(reaction => {
-      const choice = button(reaction.label, 'reaction-option reaction-glyph');
-      choice.textContent = reaction.glyph;
-      choice.dataset.reaction = reaction.id;
-      choice.setAttribute('role', 'menuitemradio');
-      choice.setAttribute('aria-checked', 'false');
-      choice.addEventListener('click', () => selectReaction(state, reaction));
-      more.append(choice);
-      state.options.push(choice);
-      return choice;
-    });
+    more.setAttribute('role', 'dialog');
+    more.setAttribute('aria-label', 'Emoji picker');
     state.more = more;
     state.moreButton = choices[5];
-    state.moreButton.setAttribute('aria-haspopup', 'menu');
+    state.moreButton.setAttribute('aria-haspopup', 'dialog');
     state.moreButton.setAttribute('aria-expanded', 'false');
     state.moreButton.setAttribute('aria-controls', more.id);
     state.moreButton.addEventListener('click', () => {
       more.hidden = !more.hidden;
       state.moreButton.setAttribute('aria-expanded', String(!more.hidden));
+      if (!more.hidden && !state.library) {
+        state.library = createOwlEmojiLibrary({
+          onSelect: emoji => {
+            const quick = reactions.find(reaction => reaction.glyph === emoji.native);
+            selectReaction(state, quick || { id: `emoji:${emoji.unified.toLowerCase()}`, label: emoji.name, glyph: emoji.native });
+          },
+          onStatus: notify,
+          onResize: positionPicker,
+        });
+        more.append(state.library.element);
+      }
       positionPicker();
-      if (!more.hidden) extraOptions[0].focus();
+      if (!more.hidden) state.library.open();
     });
+    more.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        more.hidden = true;
+        state.moreButton.setAttribute('aria-expanded', 'false');
+        state.moreButton.focus();
+        positionPicker();
+        return;
+      }
+      if (event.key !== 'Tab' || event.defaultPrevented) return;
+      const shadow = more.querySelector('em-emoji-picker')?.shadowRoot;
+      const controls = [...(shadow?.querySelectorAll('input, button') || []), ...more.querySelectorAll('button')]
+        .filter(element => element.tabIndex >= 0 && !element.disabled && element.getClientRects().length && !element.closest('[hidden]'));
+      const focused = document.activeElement.shadowRoot?.activeElement || document.activeElement;
+      if (!controls.length) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const index = controls.indexOf(focused);
+      controls[(index + (event.shiftKey ? -1 : 1) + controls.length) % controls.length].focus();
+    }, true);
     picker.append(more);
     picker.addEventListener('keydown', event => {
-      navigateOptions(event, more.contains(event.target) ? extraOptions : choices);
+      if (more.contains(event.target)) return;
+      navigateOptions(event, choices);
       if (event.key === 'Tab') {
         event.preventDefault();
         closePicker();
