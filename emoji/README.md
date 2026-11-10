@@ -9,7 +9,9 @@ composer as HTML and vector layers. Hover or focus an Owl bubble to reveal
 cropped icons and picker dimensions from Pen.
 
 Selecting a reaction adds the blue badge from **4 reacted**. Click the badge
-to change it; choosing the selected reaction again removes it. Click outside
+to change it; choosing the selected reaction again removes it. Selecting an emoji
+also hides the message toolbar until the next pointer or keyboard interaction.
+Click outside
 or press Escape to dismiss the picker. Arrow keys move through choices; the
 plus icon opens a full searchable Emoji Mart picker with categories and native
 emoji. Right-click an emoji to pin or unpin it. Pins are stored locally in the

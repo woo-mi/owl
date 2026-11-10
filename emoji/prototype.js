@@ -90,6 +90,7 @@
     closePicker();
     active = state;
     state.anchor = anchor;
+    state.bubble.classList.remove('actions-dismissed');
     state.picker.hidden = false;
     state.bubble.classList.add('is-open');
     state.trigger.setAttribute('aria-expanded', 'true');
@@ -126,7 +127,11 @@
     }
     state.options.forEach(option => option.setAttribute('aria-checked', String(option.dataset.reaction === state.selected)));
     announce(remove ? 'Reaction removed' : `${reaction.label} reaction added`);
-    closePicker(true);
+    closePicker();
+    state.bubble.classList.remove('touch-active');
+    (state.badge || state.bubble).focus({ preventScroll: true });
+    // Keep restored focus and the stationary pointer from reopening the toolbar.
+    state.bubble.classList.add('actions-dismissed');
   };
   const navigateOptions = (event, choices) => {
     const current = choices.indexOf(document.activeElement);
@@ -270,13 +275,17 @@
       catch { notify('Copy unavailable. Select the message text to copy it.'); }
     });
     bubble.addEventListener('keydown', event => {
+      bubble.classList.remove('actions-dismissed');
       if (event.target === bubble && (event.key === 'Enter' || event.key === ' ')) {
         event.preventDefault(); openPicker(state);
       }
     });
     bubble.addEventListener('pointerdown', event => {
+      bubble.classList.remove('actions-dismissed');
       if (event.pointerType === 'touch') bubble.classList.add('touch-active');
     });
+    bubble.addEventListener('pointermove', () => bubble.classList.remove('actions-dismissed'));
+    bubble.addEventListener('focusin', () => bubble.classList.remove('actions-dismissed'));
     bubble.append(actions);
     document.body.append(picker);
     bubble.querySelectorAll('svg').forEach(svg => svg.setAttribute('aria-hidden', 'true'));

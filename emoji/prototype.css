@@ -55,6 +55,7 @@ button, textarea { font: inherit; }
 .owl-message:focus-within .message-actions,
 .owl-message.touch-active .message-actions,
 .owl-message.is-open .message-actions { visibility: visible; opacity: 1; pointer-events: auto; }
+.owl-message.actions-dismissed .message-actions { visibility: hidden; opacity: 0; pointer-events: none; }
 .message-action {
   position: relative; display: flex; align-items: center; justify-content: center;
   width: 19px; height: 25px; flex: 0 0 19px; padding: 0; border: 0; background: none; cursor: pointer;
