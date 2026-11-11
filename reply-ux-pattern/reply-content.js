@@ -1,18 +1,16 @@
-/* Reply UX Pattern: the complete FTUX conversation, rendered immediately. */
+/* Reply UX Pattern: connecting line · one topic, copied from Pen frame omuzR. */
 (() => {
   'use strict';
   const view = window.MVPViews?.['latest-oct-28'];
   if (!view) return;
-  const introduction = [
-    "Hey Woomi, I'm Owl and here to help you.",
-    'Let’s make your daily brief useful. Connecting your tools helps me understand what you’re working on, what’s coming up, and what needs your attention.',
-    'The more context I have, the better I get. Would you like to connect your context so I can start?'
-  ];
-  const appURL = 'https://ayush.gowisdom.ai/apps/app_af105ef5a93d4b77a5e9922cd6ffa91f/view';
   const groupTools = {context:['Notion', 'Gmail', 'Calendar', 'Slack', 'Gong'], crm:['HubSpot', 'Salesforce']};
   const freshConnections = () => new Map(Object.values(groupTools).flat().map(tool => [tool, 'connected']));
   const escape = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
-  const bubble = (text, extra = '') => `<article class="message assistant-message ftux-bubble ${extra}"><p>${escape(text)}</p></article>`;
+  const paragraph = text => `<p>${escape(text)}</p>`;
+  const row = (glyph, text) => `<li class="reply-insight"><span class="reply-glyph" aria-hidden="true">${glyph}</span><span>${escape(text)}</span></li>`;
+  const list = rows => `<ul class="reply-insights">${rows.map(([glyph, text]) => row(glyph, text)).join('')}</ul>`;
+  const bubble = (body, title = '', id = '') => `<article${id ? ` id="${id}"` : ''} class="message assistant-message ftux-bubble reply-bubble">${title ? `<h2>${escape(title)}</h2>` : ''}${body}</article>`;
+  const separator = '<div class="reply-group-separator" aria-hidden="true"></div>';
   let connections = freshConnections();
   let boundFlow;
   let connectionsDialog;
@@ -29,41 +27,52 @@
   function toolRowHTML(tool) {
     return `<div class="ftux-tool-row" data-ftux-tool="${escape(tool)}"><span class="ftux-tool-name"><img src="assets/ftux-tools/${tool.toLowerCase()}.png" alt="" width="18" height="18">${escape(tool)}</span><span data-ftux-tool-control>${statusHTML(tool)}</span></div>`;
   }
-  function cardHTML(group) {
-    return `<section class="ftux-tools" id="ftux-${group}" data-ftux-group="${group}" aria-label="${group === 'context' ? 'Connect your context' : 'Connect your CRM'}" tabindex="-1">${groupTools[group].map(toolRowHTML).join('')}</section>`;
-  }
   function userTurnHTML(value, files = [], reaction = true) {
     return `<div class="ftux-user-turn"><article class="message user-message ftux-user-bubble">${value ? `<p>${escape(value)}</p>` : ''}${files.length ? `<ul class="message-attachments">${files.map(file => `<li>${escape(file)}</li>`).join('')}</ul>` : ''}${reaction ? '<img class="ftux-reaction" src="assets/y1jENV.png" width="32" height="36.5" alt="Thumbs-up reaction">' : ''}</article><span class="ftux-read">Read 5:12 AM</span></div>`;
   }
   function initialHTML() {
-    return `<div class="ftux-flow" data-pen-frame="KJKJh"><section class="ftux-introduction" aria-label="Meet your Owl">${introduction.map((copy, i) => bubble(copy, i ? 'ftux-bubble-wide' : '')).join('')}${cardHTML('context')}</section><div class="ftux-turns">${
-      bubble('Thank you. I’ll do a deep dive. Back in a few minutes with some ideas for you.') +
-      bubble("Now that you're set up, here are a few things I can take care of for you.") +
-      bubble('I noticed you have a Sales Pipeline Review every Monday. Would you like me to build an app to help you track pipeline health and prepare for that meeting?', 'ftux-bubble-wide ftux-pipeline-suggestion') +
-      userTurnHTML('Yes') +
-      bubble('Connect your CRM so I can bring in your opportunities, sales stages, and regional performance.', 'ftux-bubble-wide') +
-      cardHTML('crm') +
-      bubble('Succeed. The agent reads the CRM data and builds the app.') + pipelineResultHTML()
-    }</div><div class="ftux-local-status" role="status" aria-live="polite"></div></div>`;
+    return `<div class="ftux-flow reply-pattern" data-pen-frame="omuzR">
+      <div class="reply-date">Today, Mon, Oct 13 7:02 AM</div>
+      <div class="reply-prompt-turn">
+        <div class="reply-prompt"><p>how are you doing on my goals? why did you not reach out to me with updates over the last few days?</p></div>
+        <a class="reply-count" href="#reply-q4">5 Replies</a>
+        <svg class="reply-connector" viewBox="0 0 56 51" width="56" height="51" fill="none" aria-hidden="true"><path d="M55 2h-13c-26 0-40 17-40 47" stroke="#E9E9EB" stroke-width="6" stroke-linecap="round"/></svg>
+      </div>
+      <div class="ftux-turns">${
+        bubble(paragraph("Sales Ops documents fiscal Q4 as Nov 1-Jan 31, not Oct-Dec. That window has $11.416M of open deal Amount in the primary pipeline―not verified incremental ARR or a forecast. I'm still reconciling ARR definitions, so I won't assert a gap against $3.5M yet."), 'Back to Q4', 'reply-q4') +
+        bubble(paragraph('The immediate deal moves are') + list([
+          ['•', 'RMB / Edvin Strandberg: use the Nov 10 meeting to secure the governance-board date and funding, risk and contract owners.'],
+          ['•', "Wells Fargo / Paul O'Rourke: substantiate the Nov 13 close with a dated MSA path and infrastructure owners."],
+          ['•', 'P&G Malaysia / Daniel Muldowney: agree UAT exit criteria and confirm the purchasing/commercial steps for Nov 30.']
+        ])) +
+        bubble(paragraph("Owner follow-ups are drafted in Q4-owner-followups.md; none have been sent. For your $3.5M targetm should I use the company's Nov-Jan fiscal Q4?")) +
+        separator +
+        bubble(list([
+          ['↑', 'External users: 1,489 (+1.3%)'],
+          ['↓', 'Human questions: 19,328 (−12.9%)'],
+          ['↓', '101GenAI: users 6 → 2; questions 348 → 14'],
+          ['•', 'My clearest recommendation is for CS to validate 101GenAI’s drop.']
+        ]), 'QA confirmed Customer-growth · Nov 2–8', 'reply-growth') +
+        bubble(list([
+          ['•', 'I published the weekly fix: correct human-activity filters, at most 150 words and two priorities.'],
+          ['↑', 'Property Finder: 315.7s → 668.1s (+111.6%)'],
+          ['•', 'I corrected the daily wording from “111.6% of prior” to “up 111.6%”; the alert itself was valid.']
+        ]), 'Published fixes') +
+        bubble(paragraph('Schedules and recipients are unchanged, but revised outputs still need runtime verification.'), 'Runtime verification') +
+        `<article class="message assistant-message ftux-bubble reply-bubble reply-question">${paragraph('Run both updated Agents now to test them without email, or skip for now?')}</article>` +
+        separator +
+        bubble(list([
+          ['•', 'The wider audit found zero qualifying Nov 1–9 CRM closed wins, including other pipelines and renewals. If Nov–Jan is your target window, I propose $0 from qualifying recorded wins as the provisional baseline, not certified company-wide incremental ARR.'],
+          ['•', 'The $11.416M open total uses a populated custom ARR field, but its expansion-uplift definition remains unproven.'],
+          ['•', 'Also, 71 of 105 deals are still in Discovery or Scoping, so I would not treat that headline as close-ready coverage.'],
+          ['→', 'Verification status: the gap to $3.5M remains unresolved.']
+        ]), 'Back to Q4', 'reply-q4-audit')
+      }</div>
+    </div>`;
   }
   view.html = initialHTML();
   view.label = 'Reply UX Pattern';
 
-  function pipelineThumbnail() {
-    return `<svg viewBox="0 0 125 123" role="img" aria-label="Pipeline dashboard preview" xmlns="http://www.w3.org/2000/svg">
-      <rect width="125" height="123" fill="#fafbfe"/><g font-family="Inter,system-ui,sans-serif" fill="#333b55">
-      <text x="10" y="17" font-size="8" font-weight="600">Pipeline health</text><text x="10" y="28" font-size="6" fill="#7e8698">Monday review</text>
-      ${['Deals','Stages','Regions'].map((label,i)=>`<rect x="${10+i*36}" y="36" width="32" height="25" rx="3" fill="#fff" stroke="#e6e9ef"/><text x="${14+i*36}" y="45" font-size="5">${label}</text><rect x="${14+i*36}" y="50" width="18" height="4" rx="1" fill="#d9e1ef"/>`).join('')}
-      <text x="10" y="75" font-size="5">Opportunity</text><text x="66" y="75" font-size="5">Stage</text><text x="95" y="75" font-size="5">Region</text>
-      ${[83,95,107].map(y=>`<rect x="10" y="${y}" width="40" height="3" rx="1" fill="#c5ccd9"/><rect x="66" y="${y-1}" width="20" height="6" rx="2" fill="#e3eaf7"/><rect x="95" y="${y}" width="15" height="3" rx="1" fill="#c5ccd9"/>`).join('')}</g></svg>`;
-  }
-  function pipelineResultHTML() {
-    const title = 'Weekly Sales Pipeline Review';
-    return `<section class="ftux-pipeline-result" aria-label="${title}">
-      <a class="unfurl-link" href="${appURL}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m10 13 4-4m-5 7-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m0 10a4 4 0 0 0 6 0l4-4a4 4 0 0 0-6-6l-1 1"/></svg>${title}</a>
-      <a class="ftux-app-card" href="${appURL}" target="_blank" rel="noopener noreferrer" aria-label="Open ${title}"><div class="ftux-app-copy"><h3>${title}</h3><p>Track pipeline health, sales stages, and regional performance in one app. Get ready for your Monday Sales Pipeline Review.</p><span class="ftux-app-domain"><img src="assets/wisdom-card-logo.svg" width="16" height="16" alt="">ayush.gowisdom.ai</span></div><div class="ftux-pipeline-thumbnail">${pipelineThumbnail()}</div></a>
-      </section>`;
-  }
   function send(value, files = []) {
     if (!active()) return false;
     turns().insertAdjacentHTML('beforeend', userTurnHTML(value, files, false));
@@ -120,15 +129,27 @@
     notifyIndex();
   }
   const getIndexState = () => ({
-    stage, selectedPrompt:'Yes', total:connections.size,
+    stage, total:connections.size,
     connectedCount:[...connections.values()].filter(state => state === 'connected').length,
     connectingTools:[...connections].filter(([, state]) => state === 'connecting').map(([tool]) => tool),
-    artifactReady:Boolean(host()?.querySelector('.ftux-pipeline-result:not([hidden])'))
+    artifactReady:false
   });
   window.FTUX = Object.freeze({send, reset, openConnections, getIndexState,
     pauseAutoScroll:() => {}});
   window.addEventListener('indexing-ready', boot);
-  function start() { boot(); }
+  function start() {
+    document.getElementById('messages')?.addEventListener('click', event => {
+      if (!event.target.closest('.reply-count')) return;
+      event.preventDefault();
+      const target = document.getElementById('reply-q4');
+      const scroller = document.getElementById('chat-scroll');
+      const top = scroller.scrollTop + target.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 80;
+      scroller.scrollTo({top:Math.max(0, top), behavior:'instant'});
+      target.tabIndex = -1;
+      target.focus({preventScroll:true});
+    });
+    boot();
+  }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
   else start();
 })();

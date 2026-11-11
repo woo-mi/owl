@@ -312,8 +312,7 @@
     }
 
     function renderView(view, label) {
-      const nextView = replyViews[view] && new URL(location.href).searchParams.get('thread') === 'revenue'
-        ? replyViews[view] : view;
+      const nextView = view;
       const presentation = viewPresentation(nextView);
       if (presentation.key === currentStateKey) {
         syncReplyLinks();
