@@ -54,3 +54,26 @@ body.ftux-prototype { --ftux-content-top:126px; --ftux-composer-bottom:24px; }
 .reply-glyph { width:14px; font-size:16px; line-height:20px; }
 .reply-group-separator { width:6px; height:42px; margin-left:16px; border-radius:3px; background:#ebebeb; }
 .ftux-flow .reply-question { width:fit-content; }
+
+#reply-version-picker[hidden] { display:none; }
+.reply-version-controls { right:16px; bottom:24px; }
+.reply-version-menu { width:92px; }
+.reply-version-option {
+  width:100%;
+  border:0;
+  background:transparent;
+  font-family:inherit;
+  font-weight:400;
+  text-align:left;
+  cursor:pointer;
+}
+.reply-version-option[aria-checked="true"]::after {
+  content:"";
+  flex-shrink:0;
+  width:6px;
+  height:11px;
+  margin-left:auto;
+  border:solid currentColor;
+  border-width:0 1.5px 1.5px 0;
+  transform:translateY(-2px) rotate(45deg);
+}

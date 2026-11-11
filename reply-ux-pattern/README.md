@@ -10,3 +10,6 @@ are preserved. All conversation content appears immediately without animation.
 New Chat restores the complete conversation. The composer, conversation index,
 Connections dialog, workspace, and Owl customization remain available.
 The prototype is a static design sample; no messages or account actions are sent.
+
+The bottom-right V1–V4 picker stores the selected version in the URL. All four
+versions currently share the same conversation, ready for future variants.
