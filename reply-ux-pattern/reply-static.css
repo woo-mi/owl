@@ -70,9 +70,54 @@ body.ftux-prototype { --ftux-content-top:126px; --ftux-composer-bottom:24px; }
   .reply-revenue-turn .ftux-user-bubble { max-width:calc(100% - 76px); }
 }
 
+/* V3 includes the red annotations in the source frame. */
+.reply-topic-anchor { position:relative; display:flex; flex-direction:column; width:100%; min-width:0; }
+.reply-topic-label {
+  position:absolute;
+  left:calc(100% + 28px);
+  top:16px;
+  color:#ff0000;
+  font:400 40px/1.2 Inter, system-ui, sans-serif;
+  white-space:nowrap;
+}
+.reply-topic-quote > .reply-topic-label { top:-8px; }
+.reply-topic-app > .reply-topic-label { top:20px; }
+.reply-red-note {
+  position:absolute;
+  top:-3px;
+  left:0;
+  width:252px;
+  color:#ff0000;
+  font:400 12px/1.2 Inter, system-ui, sans-serif;
+}
+.reply-app-turn { position:relative; width:100%; }
+.reply-app-turn .ftux-user-turn { min-height:118px; padding-top:19px; }
+.reply-app-turn .ftux-user-bubble { width:442px; }
+.reply-app-turn .ftux-reaction { width:32px; height:36px; }
+.reply-app-turn .reply-connector { top:auto; bottom:0; }
+.reply-v3-user .ftux-user-bubble { background:#1a96fe; }
+.reply-multi-topics .reply-loop-connector { top:-28px; }
+.reply-interleaved-topics { position:relative; display:flex; flex-direction:column; gap:16px; width:100%; }
+.reply-quote-compact { min-height:50px; }
+.reply-long-connector { position:absolute; left:16px; top:-44px; width:58px; height:calc(100% + 53px); overflow:visible; pointer-events:none; }
+.reply-multi-topics strong { font-weight:600; font-variant-numeric:tabular-nums; }
+.reply-multi-topics .reply-bubble p + p { margin-top:0; }
+@media (max-width:1399px) {
+  .reply-topic-label { position:static; align-self:flex-end; margin-bottom:8px; font-size:20px; }
+}
+@media (max-width:1100px) {
+  .reply-red-note { position:static; width:min(252px, 100%); margin-bottom:12px; }
+  .reply-app-turn .ftux-user-bubble { max-width:calc(100% - 76px); }
+}
+@media (max-width:760px) {
+  .reply-v3-user .ftux-user-bubble { max-width:calc(100% - 76px); }
+}
+
 #reply-version-picker[hidden] { display:none; }
 .reply-version-controls { right:16px; bottom:24px; }
-.reply-version-menu { width:300px; }
+.reply-version-menu { width:420px; }
+.reply-version-trigger { max-width:min(420px, calc(100vw - 32px)); height:auto; min-height:36px; padding:7px 10px; }
+.reply-version-label { min-width:0; white-space:normal; text-align:left; }
 .reply-version-option {
   width:100%;
   border:0;
@@ -81,6 +126,7 @@ body.ftux-prototype { --ftux-content-top:126px; --ftux-composer-bottom:24px; }
   font-weight:400;
   text-align:left;
   cursor:pointer;
+  white-space:normal;
 }
 .reply-version-option[aria-checked="true"]::after {
   content:"";

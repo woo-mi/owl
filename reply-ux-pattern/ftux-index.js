@@ -15,7 +15,13 @@
         node:flow.querySelector('.reply-prompt-turn')},
       {id:'revenue-changes', title:'Revenue changes',
         excerpt:'What are the revenue numbers, and what is driving the changes?',
-        node:flow.querySelector('#reply-revenue')}
+        node:flow.querySelector('#reply-revenue')},
+      {id:'leadership-app', title:'App, HTML, and PPT for leadership',
+        excerpt:'Turn the revenue analysis into a live app, offline HTML, and a presentation.',
+        node:flow.querySelector('#reply-app-request')},
+      {id:'q4-insights', title:'Key insights from Back to Q4',
+        excerpt:'Key insights requested while the earlier revenue conversation is still ongoing.',
+        node:flow.querySelector('#reply-insight-request')}
     ].filter(item => revealed(item.node));
   }
   function jumpTo(id) {

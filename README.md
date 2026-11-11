@@ -8,7 +8,8 @@ step is required.
 - `index.html` and `owl-mark.svg` provide the overview page.
 - `reply-ux-pattern/` is **Reply UX Pattern**, an independent static copy of FTUX.
   V1 matches **connecting line · one topic** and V2 matches **connecting line · two topic**.
-  Both conversations appear in full without animation.
+  V3 matches **constraints of connecting line · more than three ongoing topics**, including its red annotations.
+  All conversations appear in full without animation.
   Published at https://woo-mi.github.io/owl/reply-ux-pattern/.
 - `emoji/` is **emoji**, based on the Pen `1 default` screen.
   Published at https://woo-mi.github.io/owl/emoji/.

@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const versions = ['v1', 'v2', 'v3', 'v4'];
-  const versionLabel = version => ({v1:'V1 · connecting line · one topic', v2:'V2 · connecting line · two topic'}[version] || version.toUpperCase());
+  const versionLabel = version => ({v1:'V1 · connecting line · one topic', v2:'V2 · connecting line · two topic', v3:'V3 · constraints of connecting line · more than three ongoing topics'}[version] || version.toUpperCase());
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
     return versions.includes(value) ? value : 'v1';

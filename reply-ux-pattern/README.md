@@ -13,5 +13,7 @@ The prototype is a static design sample; no messages or account actions are sent
 
 The bottom-right V1–V4 picker stores the selected version in the URL. V2 matches
 **connecting line · two topic** (`I0AYM4`), adding the revenue question, its
-reaction, and the looped thread connector. V3 and V4 still use the V1 conversation.
+reaction, and the looped thread connector. V3 matches **constraints of connecting
+line · more than three ongoing topics** (`bvO7d`), including the red Topic A–D labels,
+red explanatory note, repeated prompts, and revenue analysis. V4 still uses V1.
 Each version keeps its own messages, draft, and scroll position when switching.

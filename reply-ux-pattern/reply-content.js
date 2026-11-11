@@ -27,8 +27,8 @@
   function toolRowHTML(tool) {
     return `<div class="ftux-tool-row" data-ftux-tool="${escape(tool)}"><span class="ftux-tool-name"><img src="assets/ftux-tools/${tool.toLowerCase()}.png" alt="" width="18" height="18">${escape(tool)}</span><span data-ftux-tool-control>${statusHTML(tool)}</span></div>`;
   }
-  function userTurnHTML(value, files = [], reaction = true, reactionSource = 'assets/y1jENV.png') {
-    return `<div class="ftux-user-turn"><article class="message user-message ftux-user-bubble">${value ? `<p>${escape(value)}</p>` : ''}${files.length ? `<ul class="message-attachments">${files.map(file => `<li>${escape(file)}</li>`).join('')}</ul>` : ''}${reaction ? `<img class="ftux-reaction" src="${reactionSource}" width="32" height="36.5" alt="Thumbs-up reaction">` : ''}</article><span class="ftux-read">Read 5:12 AM</span></div>`;
+  function userTurnHTML(value, files = [], reaction = true, reactionSource = 'assets/y1jENV.png', reactionAlt = 'Thumbs-up reaction') {
+    return `<div class="ftux-user-turn"><article class="message user-message ftux-user-bubble">${value ? `<p>${escape(value)}</p>` : ''}${files.length ? `<ul class="message-attachments">${files.map(file => `<li>${escape(file)}</li>`).join('')}</ul>` : ''}${reaction ? `<img class="ftux-reaction" src="${reactionSource}" width="32" height="36.5" alt="${escape(reactionAlt)}">` : ''}</article><span class="ftux-read">Read 5:12 AM</span></div>`;
   }
   function secondTopicHTML() {
     return `<div id="reply-revenue" class="reply-revenue-turn">
@@ -37,6 +37,7 @@
     </div>`;
   }
   function initialHTML(version = new URL(location.href).searchParams.get('version')) {
+    if (version === 'v3') return window.ReplyV3Content(initialHTML('v1'), {paragraph, bubble, userTurnHTML, secondTopicHTML});
     const twoTopics = version === 'v2';
     return `<div class="ftux-flow reply-pattern${twoTopics ? ' reply-two-topics' : ''}" data-pen-frame="${twoTopics ? 'I0AYM4' : 'omuzR'}">
       <div class="reply-date">Today, Mon, Oct 13 7:02 AM</div>
@@ -146,9 +147,11 @@
   window.addEventListener('indexing-ready', boot);
   function start() {
     document.getElementById('messages')?.addEventListener('click', event => {
-      if (!event.target.closest('.reply-count')) return;
+      const link = event.target.closest('.reply-count');
+      if (!link) return;
       event.preventDefault();
-      const target = document.getElementById('reply-q4');
+      const target = document.getElementById(link.getAttribute('href').slice(1));
+      if (!target) return;
       const scroller = document.getElementById('chat-scroll');
       const top = scroller.scrollTop + target.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 80;
       scroller.scrollTo({top:Math.max(0, top), behavior:'instant'});
