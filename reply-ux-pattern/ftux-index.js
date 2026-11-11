@@ -12,7 +12,10 @@
     return [
       {id:'goal-updates', title:'Goal updates',
         excerpt:'Q4 deal moves, Customer-growth trends and fixes, and the latest Q4 audit.',
-        node:flow.querySelector('.reply-prompt-turn')}
+        node:flow.querySelector('.reply-prompt-turn')},
+      {id:'revenue-changes', title:'Revenue changes',
+        excerpt:'What are the revenue numbers, and what is driving the changes?',
+        node:flow.querySelector('#reply-revenue')}
     ].filter(item => revealed(item.node));
   }
   function jumpTo(id) {

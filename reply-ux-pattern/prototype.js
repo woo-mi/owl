@@ -45,6 +45,14 @@
     ui['chat-scroll'].addEventListener('scroll', syncAgentHeader, { passive: true });
     function viewPresentation(view) {
       const definition = window.MVPViews?.[view];
+      if (view === 'latest-oct-28') {
+        const requested = new URL(location.href).searchParams.get('version');
+        const version = ['v1', 'v2', 'v3', 'v4'].includes(requested) ? requested : 'v1';
+        return {
+          key: `${view}::${version}`,
+          html: window.FTUX?.getConversationHTML?.(version) ?? definition?.html
+        };
+      }
       if (replyBase(view) !== 'multiple-bubbles') return { key: view, html: definition?.html };
       // Read the URL directly: popstate reaches this controller before the version menu.
       const requested = new URL(location.href).searchParams.get('bubbles')?.trim().replace(/[\s,]+$/, '');
@@ -574,6 +582,9 @@
     updateSendButtons();
     syncSidebar();
     window.addEventListener('mvp-view-change', event => renderView(event.detail.view, event.detail.label));
+    window.addEventListener('reply-version-change', () => {
+      renderView(currentView, window.MVPViews?.[currentView]?.label);
+    });
     window.addEventListener('mvp-bubble-format-change', () => {
       const requestedView = new URL(location.href).searchParams.get('view');
       // Main-version navigation has its own event; format changes keep the current screen.

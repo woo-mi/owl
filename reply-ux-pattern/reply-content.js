@@ -1,4 +1,4 @@
-/* Reply UX Pattern: connecting line · one topic, copied from Pen frame omuzR. */
+/* Reply UX Pattern: one-topic and two-topic conversations copied from Pen. */
 (() => {
   'use strict';
   const view = window.MVPViews?.['latest-oct-28'];
@@ -27,11 +27,18 @@
   function toolRowHTML(tool) {
     return `<div class="ftux-tool-row" data-ftux-tool="${escape(tool)}"><span class="ftux-tool-name"><img src="assets/ftux-tools/${tool.toLowerCase()}.png" alt="" width="18" height="18">${escape(tool)}</span><span data-ftux-tool-control>${statusHTML(tool)}</span></div>`;
   }
-  function userTurnHTML(value, files = [], reaction = true) {
-    return `<div class="ftux-user-turn"><article class="message user-message ftux-user-bubble">${value ? `<p>${escape(value)}</p>` : ''}${files.length ? `<ul class="message-attachments">${files.map(file => `<li>${escape(file)}</li>`).join('')}</ul>` : ''}${reaction ? '<img class="ftux-reaction" src="assets/y1jENV.png" width="32" height="36.5" alt="Thumbs-up reaction">' : ''}</article><span class="ftux-read">Read 5:12 AM</span></div>`;
+  function userTurnHTML(value, files = [], reaction = true, reactionSource = 'assets/y1jENV.png') {
+    return `<div class="ftux-user-turn"><article class="message user-message ftux-user-bubble">${value ? `<p>${escape(value)}</p>` : ''}${files.length ? `<ul class="message-attachments">${files.map(file => `<li>${escape(file)}</li>`).join('')}</ul>` : ''}${reaction ? `<img class="ftux-reaction" src="${reactionSource}" width="32" height="36.5" alt="Thumbs-up reaction">` : ''}</article><span class="ftux-read">Read 5:12 AM</span></div>`;
   }
-  function initialHTML() {
-    return `<div class="ftux-flow reply-pattern" data-pen-frame="omuzR">
+  function secondTopicHTML() {
+    return `<div id="reply-revenue" class="reply-revenue-turn">
+      ${userTurnHTML('what are the revenue numbers - what are driving the changes?', [], true, 'assets/reply-v2-reaction.png')}
+      <svg class="reply-loop-connector" viewBox="0 0 34 114" width="34" height="114" fill="none" aria-hidden="true"><path d="M3 27l0 21c0 16 4 22 4 32 0 10-4 17-4 29m27-29c0 1.459-0.279 2.862-0.837 4.21-0.559 1.347-1.353 2.537-2.385 3.568-1.031 1.032-2.221 1.826-3.568 2.385-1.348 0.558-2.751 0.837-4.21 0.837-1.459 0-2.862-0.279-4.21-0.837-1.347-0.559-2.537-1.353-3.568-2.385-1.032-1.031-1.826-2.221-2.385-3.568-0.558-1.348-0.837-2.751-0.837-4.21 0-1.459 0.279-2.862 0.837-4.21 0.559-1.347 1.353-2.537 2.385-3.568 1.031-1.032 2.221-1.826 3.568-2.385 1.348-0.558 2.751-0.837 4.21-0.837 1.459 0 2.862 0.279 4.21 0.837 1.347 0.559 2.537 1.353 3.568 2.385 1.032 1.031 1.826 2.221 2.385 3.568 0.558 1.348 0.837 2.751 0.837 4.21z" stroke="#EBEBEB" stroke-width="6" stroke-linecap="round"/></svg>
+    </div>`;
+  }
+  function initialHTML(version = new URL(location.href).searchParams.get('version')) {
+    const twoTopics = version === 'v2';
+    return `<div class="ftux-flow reply-pattern${twoTopics ? ' reply-two-topics' : ''}" data-pen-frame="${twoTopics ? 'I0AYM4' : 'omuzR'}">
       <div class="reply-date">Today, Mon, Oct 13 7:02 AM</div>
       <div class="reply-prompt-turn">
         <div class="reply-prompt"><p>how are you doing on my goals? why did you not reach out to me with updates over the last few days?</p></div>
@@ -60,7 +67,7 @@
         ]), 'Published fixes') +
         bubble(paragraph('Schedules and recipients are unchanged, but revised outputs still need runtime verification.'), 'Runtime verification') +
         `<article class="message assistant-message ftux-bubble reply-bubble reply-question">${paragraph('Run both updated Agents now to test them without email, or skip for now?')}</article>` +
-        separator +
+        (twoTopics ? secondTopicHTML() : separator) +
         bubble(list([
           ['•', 'The wider audit found zero qualifying Nov 1–9 CRM closed wins, including other pipelines and renewals. If Nov–Jan is your target window, I propose $0 from qualifying recorded wins as the provisional baseline, not certified company-wide incremental ARR.'],
           ['•', 'The $11.416M open total uses a populated custom ARR field, but its expansion-uplift definition remains unproven.'],
@@ -134,7 +141,7 @@
     connectingTools:[...connections].filter(([, state]) => state === 'connecting').map(([tool]) => tool),
     artifactReady:false
   });
-  window.FTUX = Object.freeze({send, reset, openConnections, getIndexState,
+  window.FTUX = Object.freeze({send, reset, openConnections, getIndexState, getConversationHTML:initialHTML,
     pauseAutoScroll:() => {}});
   window.addEventListener('indexing-ready', boot);
   function start() {
