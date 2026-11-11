@@ -7,7 +7,7 @@ body *, body *::before, body *::after {
 }
 
 /* Conversation from Pen: connecting line · one topic (omuzR). */
-body.ftux-prototype { --ftux-content-top:126px; }
+body.ftux-prototype { --ftux-content-top:126px; --ftux-composer-bottom:24px; }
 .reply-date {
   width:100%;
   padding:10px 0 4px;
