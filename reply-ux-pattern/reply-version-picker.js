@@ -1,8 +1,18 @@
 /* Reply versions are separate from the existing Owl and workspace variants. */
 (() => {
   'use strict';
-  const versions = ['v1', 'v2', 'v3', 'v4'];
-  const versionLabel = version => ({v1:'V1 · connecting line · one topic', v2:'V2 · connecting line · two topic', v3:'V3 · constraints of connecting line · more than three ongoing topics'}[version] || version.toUpperCase());
+  const versionLabels = {
+    v1:'V1 · connecting line · one topic',
+    v2:'V2 · connecting line · two topic',
+    v3:'V3 · constraints of connecting line · more than three ongoing topics',
+    v4:'V4 · color code ~ second topic · connecting line',
+    v5:'V5 · color code ~ first topic · connecting line',
+    v6:'V6 · color code ~ first topic · connecting line for only time gap',
+    v7:'V7 · color code ~ second topic · space',
+    v8:'V8 · color code ~ first topic · space'
+  };
+  const versions = Object.keys(versionLabels);
+  const versionLabel = version => versionLabels[version] || version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
     return versions.includes(value) ? value : 'v1';
@@ -26,10 +36,21 @@
   const menu = control.querySelector('[role="menu"]');
   const options = [...menu.querySelectorAll('button')];
 
+  function focusOption(option) {
+    if (!option) return;
+    option.focus({preventScroll:true});
+    const top = option.offsetTop;
+    const bottom = top + option.offsetHeight;
+    if (top < menu.scrollTop) menu.scrollTop = top;
+    else if (bottom > menu.scrollTop + menu.clientHeight) menu.scrollTop = bottom - menu.clientHeight;
+  }
   function setOpen(open, restoreFocus = false) {
     menu.hidden = !open;
     trigger.setAttribute('aria-expanded', String(open));
-    if (open) options.find(option => option.dataset.replyVersion === selected)?.focus({preventScroll:true});
+    if (open) {
+      position();
+      focusOption(options.find(option => option.dataset.replyVersion === selected));
+    }
     else if (restoreFocus && !control.hidden) trigger.focus({preventScroll:true});
   }
   function sync() {
@@ -69,7 +90,7 @@
       return;
     }
     event.preventDefault();
-    options[index].focus({preventScroll:true});
+    focusOption(options[index]);
   });
   document.addEventListener('pointerdown', event => {
     if (!control.contains(event.target)) setOpen(false);
@@ -98,6 +119,7 @@
     const bounds = dock?.getBoundingClientRect();
     const overlaps = bounds && bounds.right + 12 > innerWidth - 16 - control.offsetWidth;
     control.style.bottom = `${overlaps ? Math.max(24, innerHeight - bounds.top + 12) : 24}px`;
+    menu.style.maxHeight = `${Math.max(0, control.getBoundingClientRect().top - 22)}px`;
   }
   function schedulePosition() {
     if (!positionFrame) positionFrame = requestAnimationFrame(position);

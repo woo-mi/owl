@@ -113,6 +113,26 @@ body.ftux-prototype { --ftux-content-top:126px; --ftux-composer-bottom:24px; }
   .reply-v3-user .ftux-user-bubble { max-width:calc(100% - 76px); }
 }
 
+/* V4–V8 preserve each source frame's topic colors and grouping. */
+.reply-color-topics #reply-revenue .ftux-user-bubble { background:#c3418b; }
+.reply-color-topics #reply-app-request .ftux-user-bubble { background:#209855; }
+.reply-color-topics #reply-insight-request .ftux-user-bubble { background:#7a4cb6; }
+.reply-color-topics #reply-q4-return, .reply-color-topics #reply-revenue-return, .reply-color-topics #reply-insight-request { width:100%; }
+.reply-color-topics [data-reply-topic="app"] { background:#2098551a; }
+.reply-color-topics [data-reply-topic="revenue"] { background:#c3418b14; }
+.reply-color-first [data-reply-topic="goals"] { background:#1c67c414; }
+.reply-color-topics .reply-revenue-handoff { gap:0; }
+.reply-color-topics #reply-revenue-return .reply-prompt { color:#c3418b; box-shadow:inset 0 0 0 1px #c3418b80; }
+.reply-color-first-quote > .reply-prompt-turn .reply-prompt { color:#1c67c4; box-shadow:inset 0 0 0 1px #1c67c480; }
+.reply-color-first-quote > .reply-prompt-turn .reply-count { color:#1c67c4; }
+.reply-empty-stamp { width:98px; height:17px; flex-shrink:0; }
+.reply-space-group { display:flex; flex-direction:column; align-items:flex-start; gap:12px; width:100%; min-width:0; }
+.reply-space-gap { gap:40px; }
+.reply-spaced .reply-prompt-turn { min-height:50px; }
+.reply-spaced #reply-revenue .ftux-user-turn { min-height:67px; padding-top:29px; }
+.reply-spaced #reply-revenue .ftux-reaction { top:-30px; }
+.reply-spaced #reply-app-request .ftux-user-turn { min-height:97px; }
+
 #reply-version-picker[hidden] { display:none; }
 .reply-version-controls { right:16px; bottom:24px; }
 .reply-version-menu { width:420px; }

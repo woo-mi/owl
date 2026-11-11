@@ -9,6 +9,7 @@ step is required.
 - `reply-ux-pattern/` is **Reply UX Pattern**, an independent static copy of FTUX.
   V1 matches **connecting line · one topic** and V2 matches **connecting line · two topic**.
   V3 matches **constraints of connecting line · more than three ongoing topics**, including its red annotations.
+  V4–V8 compare topic colors with connecting lines, a time-gap line, or section spacing.
   All conversations appear in full without animation.
   Published at https://woo-mi.github.io/owl/reply-ux-pattern/.
 - `emoji/` is **emoji**, based on the Pen `1 default` screen.
