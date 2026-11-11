@@ -57,7 +57,7 @@ body.ftux-prototype { --ftux-content-top:126px; --ftux-composer-bottom:24px; }
 
 #reply-version-picker[hidden] { display:none; }
 .reply-version-controls { right:16px; bottom:24px; }
-.reply-version-menu { width:92px; }
+.reply-version-menu { width:300px; }
 .reply-version-option {
   width:100%;
   border:0;

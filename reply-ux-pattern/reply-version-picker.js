@@ -2,6 +2,7 @@
 (() => {
   'use strict';
   const versions = ['v1', 'v2', 'v3', 'v4'];
+  const versionLabel = version => version === 'v1' ? 'V1 · connecting line · one topic' : version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
     return versions.includes(value) ? value : 'v1';
@@ -16,7 +17,7 @@
       <span class="reply-version-label"></span><svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
     </button>
     <ul id="reply-version-menu" class="prototype-version-menu reply-version-menu" role="menu" aria-label="Reply versions" hidden>
-      ${versions.map(version => `<li role="none"><button type="button" class="prototype-version-option reply-version-option" role="menuitemradio" aria-checked="false" tabindex="-1" data-reply-version="${version}">${version.toUpperCase()}</button></li>`).join('')}
+      ${versions.map(version => `<li role="none"><button type="button" class="prototype-version-option reply-version-option" role="menuitemradio" aria-checked="false" tabindex="-1" data-reply-version="${version}">${versionLabel(version)}</button></li>`).join('')}
     </ul>
   </div>`;
   document.body.prepend(control);
@@ -32,8 +33,8 @@
     else if (restoreFocus && !control.hidden) trigger.focus({preventScroll:true});
   }
   function sync() {
-    label.textContent = selected.toUpperCase();
-    trigger.setAttribute('aria-label', `Reply version, ${selected.toUpperCase()}`);
+    label.textContent = versionLabel(selected);
+    trigger.setAttribute('aria-label', `Reply version, ${versionLabel(selected)}`);
     options.forEach(option => option.setAttribute('aria-checked', String(option.dataset.replyVersion === selected)));
     document.body.dataset.replyVersion = selected;
   }
@@ -102,6 +103,7 @@
     if (!positionFrame) positionFrame = requestAnimationFrame(position);
   }
   const resize = new ResizeObserver(schedulePosition);
+  resize.observe(control);
   if (dock) resize.observe(dock);
   resize.observe(document.getElementById('main'));
   new MutationObserver(schedulePosition).observe(document.body, {attributes:true, attributeFilter:['class']});
