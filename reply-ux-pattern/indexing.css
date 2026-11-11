@@ -1,0 +1,13 @@
+/* The transcript includes its own dates; the copied outer date is redundant. */
+.indexing-prototype:not(.replies-open) .conversation > .new-divider,
+.indexing-prototype:not(.replies-open) .conversation > .date-stamp { display:none; }
+.indexing-prototype:not(.replies-open) .messages { margin-top:0; }
+.indexing-prototype.has-mvp-versions[data-prototype-view="latest-oct-28"]:not(.replies-open) .composer-dock { bottom:24px; }
+.indexing-prototype.has-mvp-versions[data-prototype-view="latest-oct-28"]:not(.replies-open) .conversation { padding-bottom:117px; }
+.indexing-prototype:not(.replies-open) .composer { min-height:53px; padding-top:11.5px; padding-bottom:11.5px; }
+.indexing-prototype [id^="indexing-topic-"] { scroll-margin-top:130px; }
+.indexing-prototype [id^="indexing-topic-"]:focus { outline:none; }
+@media (max-width:760px) {
+  .indexing-prototype.has-mvp-versions[data-prototype-view="latest-oct-28"]:not(.replies-open) .composer-dock { bottom:max(12px, env(safe-area-inset-bottom)); }
+  .indexing-prototype.has-mvp-versions[data-prototype-view="latest-oct-28"]:not(.replies-open) .conversation { padding-bottom:140px; }
+}

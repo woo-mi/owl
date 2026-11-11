@@ -6,6 +6,9 @@ This repository publishes its `main` branch root through GitHub Pages. No build
 step is required.
 
 - `index.html` and `owl-mark.svg` provide the overview page.
+- `reply-ux-pattern/` is **Reply UX Pattern**, an independent static copy of FTUX.
+  It opens with the full chat outcome and connected tool states, without animation.
+  Published at https://woo-mi.github.io/owl/reply-ux-pattern/.
 - `emoji/` is **emoji**, based on the Pen `1 default` screen.
   Published at https://woo-mi.github.io/owl/emoji/.
 - `owl-affordance/` is **Owl affordance**, based on the Pen `Owl affordance new`
