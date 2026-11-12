@@ -16,7 +16,7 @@ const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>'
 function toast(text){$('#toast').textContent=text;$('#toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').hidden=true,3600)}
 function refreshSend(){send.disabled=!prompt.value.trim()}
 function chooseSuggestion(index){selectedSuggestion=suggestions[index];prompt.value=selectedSuggestion[1]+(/[.!?]$/.test(selectedSuggestion[1])?'':'.');refreshSend();prompt.focus();prompt.setSelectionRange(prompt.value.length,prompt.value.length)}
-function renderSuggestions(){const list=$('#suggestion-list');list.className='suggestion-list';list.innerHTML=suggestions.map((s,i)=>`<button type="button" class="suggestion" data-suggestion="${i}"><span class="suggestion-copy"><strong>${s[0]}</strong><p>${s[1]}</p></span><img src="assets/${s[2]}" alt="" width="72" height="52"></button>`).join('');list.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>chooseSuggestion(Number(b.dataset.suggestion))))}
+function renderSuggestions(){const list=$('#suggestion-list');list.className='suggestion-list';list.innerHTML=suggestions.map((s,i)=>`<button type="button" class="suggestion" data-suggestion="${i}"><span class="suggestion-copy"><strong>${s[0]}</strong><p>${s[1]}</p></span><span class="suggestion-thumbnail" aria-hidden="true"><img src="assets/${s[2]}" alt="" width="72" height="52"><img class="suggestion-thumbnail-hover" src="assets/hover/${s[2]}" alt="" width="72" height="52"></span></button>`).join('');list.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>chooseSuggestion(Number(b.dataset.suggestion))))}
 renderSuggestions();
 function setSuggestionLayout(version){
   const next=suggestionsForVersion(version);
