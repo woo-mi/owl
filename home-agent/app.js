@@ -1,16 +1,27 @@
 const paths={plus:'<path d="M12 5v14M5 12h14"/>',chevron:'<path d="m6 9 6 6 6-6"/>',arrow:'<path d="M12 19V5m-7 7 7-7 7 7"/>',close:'<path d="m6 6 12 12M6 18 18 6"/>',mic:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2m-7 9v3m-4 0h8"/>',domain:'<circle cx="12" cy="5" r="3"/><path d="M12 8v4M5 16v-4h14v4"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/>',apps:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',panel:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>'};
 function icons(root=document){root.querySelectorAll('[data-icon]').forEach(el=>{if(el.dataset.icon==='agent'){el.classList.add('central-agent-icon');el.setAttribute('aria-hidden','true');return}el.innerHTML=`<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${paths[el.dataset.icon]||''}</svg>`})}
 icons();
-const suggestions=[['Daily deal triage','Surface the most important open deals to follow up on each day','YE7Al.svg'],['Weekly win-loss summary','Show how deal outcomes are shifting and why opportunities are being won or lost','accMA.svg'],['Customer growth report','Track how many customers were added and how much revenue they represent','MmzdP.svg'],['Contact coverage summary','Monitor contact coverage by role so teams know where buyer reach is strong or thin','jFoos.svg']];
+const oneColumnSuggestions=[['Daily deal triage','Surface the most important open deals to follow up on each day','YE7Al.svg'],['Weekly win-loss summary','Show how deal outcomes are shifting and why opportunities are being won or lost','accMA.svg'],['Customer growth report','Track how many customers were added and how much revenue they represent','MmzdP.svg'],['Contact coverage summary','Monitor contact coverage by role so teams know where buyer reach is strong or thin','jFoos.svg']];
+const gridSuggestions=[
+  ['Weekly pipeline review','Track open pipeline by stage and deal size so leaders can spot shifts and prioritize reviews.','v3-pipeline.svg'],
+  ...oneColumnSuggestions.slice(1).map(([title,description],index)=>[title,description+'.',['v3-win-loss.svg','v3-growth.svg','v3-coverage.svg'][index]])
+];
+const rightGridSuggestions=gridSuggestions.map(([title,description,image],index)=>[title,description,index===1?'v4-win-loss.svg':index===2?'v4-growth.svg':image]);
+const suggestionsForVersion=version=>version==='v3'?gridSuggestions:version==='v4'?rightGridSuggestions:oneColumnSuggestions;
+let suggestions=suggestionsForVersion(document.documentElement.dataset.homeVersion);
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 let intent='Build',type='Agents',selectedSuggestion=null,toastTimer,recognition;
 const prompt=$('#prompt'),send=$('#send'),dialog=$('#detail-dialog');
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function toast(text){$('#toast').textContent=text;$('#toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').hidden=true,3600)}
 function refreshSend(){send.disabled=!prompt.value.trim()}
-function chooseSuggestion(index){selectedSuggestion=suggestions[index];prompt.value=selectedSuggestion[1]+'.';refreshSend();prompt.focus();prompt.setSelectionRange(prompt.value.length,prompt.value.length)}
+function chooseSuggestion(index){selectedSuggestion=suggestions[index];prompt.value=selectedSuggestion[1]+(/[.!?]$/.test(selectedSuggestion[1])?'':'.');refreshSend();prompt.focus();prompt.setSelectionRange(prompt.value.length,prompt.value.length)}
 function renderSuggestions(){const list=$('#suggestion-list');list.className='suggestion-list';list.innerHTML=suggestions.map((s,i)=>`<button type="button" class="suggestion" data-suggestion="${i}"><span class="suggestion-copy"><strong>${s[0]}</strong><p>${s[1]}</p></span><img src="assets/${s[2]}" alt="" width="72" height="52"></button>`).join('');list.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>chooseSuggestion(Number(b.dataset.suggestion))))}
 renderSuggestions();
+function setSuggestionLayout(version){
+  const next=suggestionsForVersion(version);
+  if(next!==suggestions){suggestions=next;renderSuggestions()}
+}
 function setIntent(next){if(next!==intent)selectedSuggestion=null;intent=next;$$('[data-intent]').forEach(b=>{b.classList.toggle('selected',b.dataset.intent===intent);b.setAttribute('aria-pressed',b.dataset.intent===intent)});$('#greeting').textContent=intent==='Ask'?'What do you want to know, Woo-Mi?':'What do you want to build, Woo-Mi?';prompt.placeholder=intent==='Ask'?'Ask a question about your data':type==='Agents'?'Describe the metrics and analysis you want the agent to report, or the condition it should alert on':'Describe the app you want to build';send.setAttribute('aria-label',intent==='Ask'?'Send question':`Build ${type==='Agents'?'agent':'app'}`);$('.type-switch').hidden=intent==='Ask';$('.suggestions').hidden=intent==='Ask'||type==='Apps'}
 $$('[data-intent]').forEach(b=>b.addEventListener('click',()=>setIntent(b.dataset.intent)));
 function setType(next){if(next!==type)selectedSuggestion=null;type=next;$$('[data-type]').forEach(b=>{b.classList.toggle('selected',b.dataset.type===type);b.setAttribute('aria-pressed',b.dataset.type===type)});setIntent('Build')}

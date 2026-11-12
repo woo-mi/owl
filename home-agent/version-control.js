@@ -3,7 +3,9 @@
   'use strict';
   const labels = {
     v1: 'V1 · One column img right',
-    v2: 'V2 · One column img left'
+    v2: 'V2 · One column img left',
+    v3: 'V3 · 2×2 img left',
+    v4: 'V4 · 2×2 img right'
   };
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
@@ -37,6 +39,7 @@
   }
   function sync() {
     document.documentElement.dataset.homeVersion = selected;
+    setSuggestionLayout(selected);
     label.textContent = labels[selected];
     trigger.setAttribute('aria-label', `Home version, ${labels[selected]}`);
     options.forEach(option => option.setAttribute('aria-checked', String(option.dataset.version === selected)));

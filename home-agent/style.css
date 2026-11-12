@@ -10,3 +10,22 @@
 html[data-home-version="v2"] .suggestion{justify-content:flex-start;align-items:flex-start}
 html[data-home-version="v2"] .suggestion img{order:-1}
 html[data-home-version="v2"] .suggestion-copy{flex:1}
+
+/* V3 and V4 share the reference-sized two-column suggestion grid. */
+html:is([data-home-version="v3"],[data-home-version="v4"]) .suggestion-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+}
+html:is([data-home-version="v3"],[data-home-version="v4"]) .suggestion {
+  min-width: 0;
+  align-items: flex-start;
+}
+html:is([data-home-version="v3"],[data-home-version="v4"]) .suggestion-copy {
+  flex: 1;
+}
+html[data-home-version="v3"] .suggestion img { order: -1; }
+@media (max-width: 767px) {
+  html:is([data-home-version="v3"],[data-home-version="v4"]) .suggestion-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
