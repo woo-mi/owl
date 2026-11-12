@@ -9,7 +9,7 @@
     'two-topics':'two topics'
   };
   const versions = Object.keys(versionLabels);
-  const visibleVersions = versions.filter(version => !['color-code', 'color-code-ticks'].includes(version));
+  const visibleVersions = ['one-topic-time-gap', 'two-topics', 'color-code-previews'];
   const versionLabel = version => versionLabels[version] || version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');

@@ -11,8 +11,8 @@ New Chat restores the complete conversation. The composer, conversation index,
 Connections dialog, workspace, and Owl customization remain available.
 The prototype is a static design sample; no messages or account actions are sent.
 
-The bottom-right picker shows **more than three topics**,
-**one topic - time gap**, and **two topics**. The selection is stored in the URL.
+The bottom-right picker shows **one topic - time gap**, **two topics**,
+and **more than three topics**, in that order. The selection is stored in the URL.
 **color code** and **color code · colored ticks** are hidden from the picker
 but remain available through their existing direct links.
 
