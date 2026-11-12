@@ -2,6 +2,9 @@
 
 Live URL: https://woo-mi.github.io/owl/reply-ux-pattern/
 
+The default is **color code · colored previews**. Explicit version links retain
+their selected version.
+
 V1 matches the Pen frame **connecting line · one topic** (`omuzR`):
 the outlined goals prompt and 5 Replies link, curved reply connector, Q4 updates,
 Customer-growth trends and fixes, and Q4 audit. Section connectors and trend glyphs

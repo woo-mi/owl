@@ -46,6 +46,7 @@
     </div>`;
   }
   function initialHTML(version = new URL(location.href).searchParams.get('version')) {
+    if (!['v1', 'v2', 'v3', 'color-code', 'color-code-ticks', 'color-code-previews'].includes(version)) version = 'color-code-previews';
     if (['color-code', 'color-code-ticks', 'color-code-previews'].includes(version)) return window.ReplyColorContent(initialHTML('v3'));
     if (version === 'v3') return window.ReplyV3Content(initialHTML('v1'), {paragraph, bubble, userTurnHTML, secondTopicHTML});
     const twoTopics = version === 'v2';

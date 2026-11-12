@@ -13,7 +13,7 @@
   const versionLabel = version => versionLabels[version] || version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
-    return versions.includes(value) ? value : 'v1';
+    return versions.includes(value) ? value : 'color-code-previews';
   };
   let selected = readVersion();
   const control = document.createElement('nav');
