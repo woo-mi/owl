@@ -42,3 +42,14 @@ body:not(.sidebar-collapsed) #home-sidebar [data-pencil-id="rBtof"]{gap:0!import
 body:not(.sidebar-collapsed) #home-sidebar [data-pencil-id="kfRUL"],
 body:not(.sidebar-collapsed) #home-sidebar [data-pencil-id="dXUkO"]{width:calc(100% - 8px)!important}
 }
+
+/* Match the spacing of the supplied WisdomAI desktop reference. */
+@media(min-width:1100px){
+body:not(.sidebar-collapsed) #home-sidebar [data-pencil-id="mvPsb"]{left:8px!important;top:12px!important;width:calc(100% - 16px)!important}
+body:not(.sidebar-collapsed) #home-sidebar [data-pencil-id="XW2JA"]{gap:12px!important}
+body:not(.sidebar-collapsed) #home-sidebar [data-pencil-id="j4zth"]{height:auto!important;gap:4px!important}
+body:not(.sidebar-collapsed) #home-sidebar .sidebar-nav-item{height:34px!important;gap:2px!important}
+body:not(.sidebar-collapsed) #home-sidebar .sidebar-recent-item{height:29px!important;padding-left:8px!important;padding-right:8px!important}
+body:not(.sidebar-collapsed) #home-sidebar [data-pencil-id="kfRUL"],
+body:not(.sidebar-collapsed) #home-sidebar [data-pencil-id="dXUkO"]{left:8px!important;width:calc(100% - 16px)!important}
+}
