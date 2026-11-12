@@ -30,7 +30,7 @@ html[data-home-version="v3"] .suggestion-thumbnail { order: -1; }
   }
 }
 
-/* Reference hover palette: orange diagrams on a pale peach thumbnail. */
+/* Hover palette by suggestion: blue, pink, green, then purple with matching pale tints. */
 .suggestion-thumbnail { display: block; position: relative; }
 .suggestion-thumbnail img {
   display: block;
