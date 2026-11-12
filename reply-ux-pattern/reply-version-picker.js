@@ -9,6 +9,7 @@
     'two-topics':'two topics'
   };
   const versions = Object.keys(versionLabels);
+  const visibleVersions = versions.filter(version => !['color-code', 'color-code-ticks'].includes(version));
   const versionLabel = version => versionLabels[version] || version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
@@ -24,7 +25,7 @@
       <span class="reply-version-label"></span><svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
     </button>
     <ul id="reply-version-menu" class="prototype-version-menu reply-version-menu" role="menu" aria-label="Reply versions" hidden>
-      ${versions.map(version => `<li role="none"><button type="button" class="prototype-version-option reply-version-option" role="menuitemradio" aria-checked="false" tabindex="-1" data-reply-version="${version}">${versionLabel(version)}</button></li>`).join('')}
+      ${visibleVersions.map(version => `<li role="none"><button type="button" class="prototype-version-option reply-version-option" role="menuitemradio" aria-checked="false" tabindex="-1" data-reply-version="${version}">${versionLabel(version)}</button></li>`).join('')}
     </ul>
   </div>`;
   document.body.prepend(control);
@@ -46,7 +47,7 @@
     trigger.setAttribute('aria-expanded', String(open));
     if (open) {
       position();
-      focusOption(options.find(option => option.dataset.replyVersion === selected));
+      focusOption(options.find(option => option.dataset.replyVersion === selected) || options[0]);
     }
     else if (restoreFocus && !control.hidden) trigger.focus({preventScroll:true});
   }

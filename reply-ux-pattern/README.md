@@ -11,9 +11,10 @@ New Chat restores the complete conversation. The composer, conversation index,
 Connections dialog, workspace, and Owl customization remain available.
 The prototype is a static design sample; no messages or account actions are sent.
 
-The bottom-right picker includes **color code**, **color code · colored ticks**,
-**color code · colored previews**, **one topic - time gap**, and **two topics**.
-The selection is stored in the URL.
+The bottom-right picker shows **color code · colored previews**,
+**one topic - time gap**, and **two topics**. The selection is stored in the URL.
+**color code** and **color code · colored ticks** are hidden from the picker
+but remain available through their existing direct links.
 
 **color code** matches Pen frame `S9VbBy`. Gray assistant bubbles have no colored
 borders. Blue, green, and magenta connectors use 4px strokes at 20% opacity;
