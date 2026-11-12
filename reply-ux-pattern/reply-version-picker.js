@@ -5,7 +5,8 @@
     v1:'V1 · connecting line · one topic',
     v2:'V2 · connecting line · two topic',
     v3:'V3 · constraints of connecting line · more than three ongoing topics',
-    'color-code':'color code'
+    'color-code':'color code',
+    'color-code-ticks':'color code · colored ticks'
   };
   const versions = Object.keys(versionLabels);
   const versionLabel = version => versionLabels[version] || version.toUpperCase();

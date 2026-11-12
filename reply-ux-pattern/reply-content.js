@@ -46,7 +46,7 @@
     </div>`;
   }
   function initialHTML(version = new URL(location.href).searchParams.get('version')) {
-    if (version === 'color-code') return window.ReplyColorContent(initialHTML('v3'));
+    if (version === 'color-code' || version === 'color-code-ticks') return window.ReplyColorContent(initialHTML('v3'));
     if (version === 'v3') return window.ReplyV3Content(initialHTML('v1'), {paragraph, bubble, userTurnHTML, secondTopicHTML});
     const twoTopics = version === 'v2';
     return `<div class="ftux-flow reply-pattern${twoTopics ? ' reply-two-topics' : ''}" data-pen-frame="${twoTopics ? 'I0AYM4' : 'omuzR'}">

@@ -35,14 +35,22 @@
     const inNavigator = node => node && (rail.contains(node) || preview.contains(node));
     const cancelOpen = () => { clearTimeout(openTimer); openTimer = undefined; };
     const clearance = () => Math.max(scroller.getBoundingClientRect().top + 16, (main.querySelector('.agent-header')?.getBoundingClientRect().bottom || 114) + 16);
+    const topicColors = Object.freeze({
+      'goal-updates':'#1c67c4',
+      'revenue-changes':'#c3418b',
+      'leadership-app':'#209855',
+      'q4-insights':'#7a4cb6'
+    });
 
     function paint() {
+      const coloredTicks = document.body.dataset.replyVersion === 'color-code-ticks';
       buttons.forEach((button, index) => {
         const distance = Math.abs(index - hovered);
         const active = hovered >= 0 ? hovered === index : selected === index;
         const width = hovered >= 0 ? ([30, 23, 16, 11, 8][distance] || 6) : active ? 18 : 6;
+        const topicColor = coloredTicks ? topicColors[entries[index]?.id] : undefined;
         button.style.setProperty('--indexing-nav-tick-width', `${width}px`);
-        button.style.setProperty('--indexing-nav-tick-color', active ? '#202123' : '#d1d3d4');
+        button.style.setProperty('--indexing-nav-tick-color', topicColor || (active ? '#202123' : '#d1d3d4'));
         if (index === selected) button.setAttribute('aria-current', 'location');
         else button.removeAttribute('aria-current');
       });
