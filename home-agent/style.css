@@ -48,3 +48,8 @@ html[data-home-version="v3"] .suggestion-thumbnail { order: -1; }
 @media (prefers-reduced-motion: reduce) {
   .suggestion-thumbnail-hover { transition: none; }
 }
+
+/* Preserve the desktop layout spacing without the prototype controls. */
+@media (min-width: 1100px) {
+  .home { padding-bottom: 32px; }
+}
