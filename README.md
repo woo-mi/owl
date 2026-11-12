@@ -7,12 +7,10 @@ step is required.
 
 - `index.html` and `owl-mark.svg` provide the overview page.
 - `reply-ux-pattern/` is **Reply UX Pattern**, an independent static copy of FTUX.
-  V1 matches **connecting line · one topic** and V2 matches **connecting line · two topic**.
-  V3 matches **constraints of connecting line · more than three ongoing topics**, including its red annotations.
   **color code** matches the updated Pen frame, using topic-colored prompts and connectors.
-  The picker contains V1–V3, color code, color code · colored ticks,
+  The picker contains color code, color code · colored ticks,
   color code · colored previews, one topic - time gap, and two topics.
-  Former V4–V9 links open color code.
+  Former V1–V9 links open their current replacement designs.
   All conversations appear in full without animation.
   Published at https://woo-mi.github.io/owl/reply-ux-pattern/.
 - `emoji/` is **emoji**, based on the Pen `1 default` screen.

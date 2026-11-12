@@ -4,8 +4,11 @@
   // Consolidate removed versions into the current color-code design.
   function normalizeVersionURL() {
     const url = new URL(location.href);
-    if (!/^v[4-9]$/.test(url.searchParams.get('version') || '')) return;
-    url.searchParams.set('version', 'color-code');
+    const version = url.searchParams.get('version') || '';
+    const replacement = {v1:'one-topic-time-gap', v2:'two-topics', v3:'color-code-previews'}[version]
+      || (/^v[4-9]$/.test(version) ? 'color-code' : null);
+    if (!replacement) return;
+    url.searchParams.set('version', replacement);
     history.replaceState(history.state, '', url.pathname + url.search + url.hash);
   }
   normalizeVersionURL();
