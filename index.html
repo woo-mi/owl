@@ -55,8 +55,8 @@
         font-weight: 500;
       }
       h2 + h2 { margin-top: 14px; }
-      h2:has(.new-chip) { max-width: calc(100% - 100px); }
-      .new-chip {
+      h2:has(.pending-chip) { max-width: calc(100% - 100px); }
+      .pending-chip {
         position: absolute;
         left: calc(100% + 8px);
         top: 50%;
@@ -66,7 +66,7 @@
         padding: 1px 7px;
         border: 1px solid currentColor;
         border-radius: 999px;
-        color: #0069E0;
+        color: #686868;
         background: transparent;
         font-size: 12px;
         line-height: 16px;
@@ -85,7 +85,7 @@
   <body>
     <main>
       <h1 aria-label="Owl"><img class="owl-mark" src="owl-mark.svg?v=2" alt="" width="24" height="24"><span class="owl-letters">wl</span></h1>
-      <h2><a href="reply-ux-pattern/">Reply UX Pattern</a><span class="new-chip">New</span></h2>
+      <h2><a href="reply-ux-pattern/">Reply UX Pattern</a><span class="pending-chip">Pending</span></h2>
       <h2><a href="emoji/">Emoji</a></h2>
       <h2><a href="owl-affordance/">Owl affordance</a></h2>
       <h2><a href="ftux/">FTUX</a></h2>
