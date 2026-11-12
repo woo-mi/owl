@@ -19,7 +19,7 @@ V3 matches **constraints of connecting line · more than three ongoing topics**
 **color code** matches Pen frame `S9VbBy`. Gray assistant bubbles have no colored
 borders. Blue, green, and magenta connectors use 4px strokes at 20% opacity;
 user prompts and Replies text use their corresponding topic colors. The frame
-retains 16px message gaps and hides the tick navigator and receipt text.
+retains 16px message gaps and the V3 tick navigator; receipt text is hidden.
 
 V4–V9 have been removed. Existing links to those versions open color code.
 Each remaining version keeps its own messages, draft, and scroll position.

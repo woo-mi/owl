@@ -126,7 +126,6 @@ body.ftux-prototype { --ftux-content-top:126px; --ftux-composer-bottom:24px; }
 .reply-color-code #reply-revenue-return .reply-count { color:#c3418b; }
 .reply-color-code .reply-group-separator { width:4px; background:#1c67c433; }
 .reply-empty-stamp { width:98px; height:17px; flex-shrink:0; }
-body[data-reply-version="color-code"] #indexing-nav-rail { display:none !important; }
 
 #reply-version-picker[hidden] { display:none; }
 .reply-version-controls { right:16px; bottom:24px; }
