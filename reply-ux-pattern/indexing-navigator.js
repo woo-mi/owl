@@ -43,7 +43,7 @@
     });
 
     function paint() {
-      const coloredTicks = ['color-code-ticks', 'color-code-previews'].includes(document.body.dataset.replyVersion);
+      const coloredTicks = ['color-code-ticks', 'color-code-previews', 'one-topic-time-gap', 'two-topics'].includes(document.body.dataset.replyVersion);
       buttons.forEach((button, index) => {
         const distance = Math.abs(index - hovered);
         const active = hovered >= 0 ? hovered === index : selected === index;

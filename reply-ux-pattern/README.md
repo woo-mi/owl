@@ -15,7 +15,8 @@ Connections dialog, workspace, and Owl customization remain available.
 The prototype is a static design sample; no messages or account actions are sent.
 
 The bottom-right picker includes V1, V2, V3, **color code**,
-**color code · colored ticks**, and **color code · colored previews**,
+**color code · colored ticks**, **color code · colored previews**,
+**one topic - time gap**, and **two topics**,
 with the selection stored in the URL. V2 matches **connecting line · two topic** (`I0AYM4`).
 V3 matches **constraints of connecting line · more than three ongoing topics**
 (`bvO7d`), including its red annotations.
@@ -33,6 +34,15 @@ The original color code version keeps its black and gray ticks.
 **color code · colored previews** duplicates colored ticks and adds matching
 solid topic-color backgrounds to the navigator previews, with white titles
 and descriptions. The colored ticks version keeps its white preview cards.
+
+**one topic - time gap** matches Pen frame `P12Pau`, retaining the V1
+conversation with blue prompt text, Replies, and 4px time-gap connectors.
+Its navigator has one blue topic tick and preview.
+
+**two topics** matches Pen frame `ceIsC`, retaining the V2 conversation
+with the same blue connectors and a magenta revenue prompt. Its navigator
+has blue and magenta topic ticks and matching previews with white text.
+Both new options preserve 16px gaps and gray assistant bubbles.
 
 V4–V9 have been removed. Existing links to those versions open color code.
 Each remaining version keeps its own messages, draft, and scroll position.
