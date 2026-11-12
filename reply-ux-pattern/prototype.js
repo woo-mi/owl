@@ -47,7 +47,7 @@
       const definition = window.MVPViews?.[view];
       if (view === 'latest-oct-28') {
         const requested = new URL(location.href).searchParams.get('version');
-        const version = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8'].includes(requested) ? requested : 'v1';
+        const version = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9'].includes(requested) ? requested : 'v1';
         return {
           key: `${view}::${version}`,
           html: window.FTUX?.getConversationHTML?.(version) ?? definition?.html

@@ -5,7 +5,8 @@ window.ReplyColorContent = (baseHTML, version) => {
     v5:{frame:'r8oLW7', first:true, connectors:'all'},
     v6:{frame:'hhV0d', first:true, connectors:'time'},
     v7:{frame:'uDGee', first:false, connectors:'none'},
-    v8:{frame:'iaibf', first:true, connectors:'none'}
+    v8:{frame:'iaibf', first:true, connectors:'none'},
+    v9:{frame:'w0mpbK', first:false, connectors:'all'}
   };
   const variant = variants[version];
   const template = document.createElement('template');
@@ -34,6 +35,21 @@ window.ReplyColorContent = (baseHTML, version) => {
   });
   if (variant.connectors !== 'all') {
     flow.querySelectorAll('.reply-connector, .reply-loop-connector, .reply-long-connector').forEach(node => node.remove());
+  }
+
+  if (version === 'v9') {
+    flow.classList.add('reply-tickers');
+    flow.querySelectorAll('.reply-empty-stamp').forEach(node => node.remove());
+    flow.querySelectorAll('.reply-connector path').forEach(node => node.setAttribute('stroke-width', '4'));
+    const divider = document.createElement('div');
+    divider.className = 'reply-ticker-divider';
+    divider.setAttribute('aria-hidden', 'true');
+    flow.querySelector('.reply-loop-connector').replaceWith(divider);
+    const thread = document.createElement('div');
+    thread.className = 'reply-ticker-thread';
+    thread.setAttribute('aria-hidden', 'true');
+    thread.innerHTML = '<svg viewBox="0 0 56 51" width="56" height="51" fill="none"><path d="M55 2h-13c-26 0-40 17-40 47" stroke="#E9E9EB" stroke-width="4" stroke-linecap="round"/></svg><span></span>';
+    flow.querySelector('.reply-long-connector').replaceWith(thread);
   }
 
   if (variant.connectors === 'none') {

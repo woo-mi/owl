@@ -37,7 +37,7 @@
     </div>`;
   }
   function initialHTML(version = new URL(location.href).searchParams.get('version')) {
-    if (['v4', 'v5', 'v6', 'v7', 'v8'].includes(version)) return window.ReplyColorContent(initialHTML('v3'), version);
+    if (['v4', 'v5', 'v6', 'v7', 'v8', 'v9'].includes(version)) return window.ReplyColorContent(initialHTML('v3'), version);
     if (version === 'v3') return window.ReplyV3Content(initialHTML('v1'), {paragraph, bubble, userTurnHTML, secondTopicHTML});
     const twoTopics = version === 'v2';
     return `<div class="ftux-flow reply-pattern${twoTopics ? ' reply-two-topics' : ''}" data-pen-frame="${twoTopics ? 'I0AYM4' : 'omuzR'}">
