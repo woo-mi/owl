@@ -5,3 +5,8 @@
 
 /* Central Icon System: plan, process, connect, path; off / 1.5 / 2 / round. */
 .central-agent-icon{display:inline-block;width:20px;height:20px;flex-shrink:0;background-color:currentColor;-webkit-mask:url("assets/central-plan.svg") center / contain no-repeat;mask:url("assets/central-plan.svg") center / contain no-repeat}
+
+/* V2 follows the Pen frame “One column img left”. */
+html[data-home-version="v2"] .suggestion{justify-content:flex-start;align-items:flex-start}
+html[data-home-version="v2"] .suggestion img{order:-1}
+html[data-home-version="v2"] .suggestion-copy{flex:1}

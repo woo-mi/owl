@@ -16,7 +16,7 @@ $$('[data-intent]').forEach(b=>b.addEventListener('click',()=>setIntent(b.datase
 function setType(next){if(next!==type)selectedSuggestion=null;type=next;$$('[data-type]').forEach(b=>{b.classList.toggle('selected',b.dataset.type===type);b.setAttribute('aria-pressed',b.dataset.type===type)});setIntent('Build')}
 $$('[data-type]').forEach(b=>b.addEventListener('click',()=>setType(b.dataset.type)));
 prompt.addEventListener('input',()=>{selectedSuggestion=null;refreshSend()});prompt.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){e.preventDefault();$('#prompt-form').requestSubmit()}});
-function closeMenus(){$$('.menu').forEach(el=>el.hidden=true);$$('[aria-expanded]').forEach(el=>el.setAttribute('aria-expanded','false'))}
+function closeMenus(){$$('.menu').forEach(el=>el.hidden=true);$$('.menu-anchor [aria-expanded]').forEach(el=>el.setAttribute('aria-expanded','false'))}
 for(const name of ['domain','thinking']){$(`#${name}-button`).addEventListener('click',e=>{e.stopPropagation();const menu=$(`#${name}-menu`),wasHidden=menu.hidden;closeMenus();menu.hidden=!wasHidden;$(`#${name}-button`).setAttribute('aria-expanded',wasHidden)})}
 $$('[data-thinking]').forEach(b=>b.addEventListener('click',()=>{$('#thinking-button span').textContent=b.dataset.thinking;closeMenus()}));$$('[data-domain]').forEach(b=>b.addEventListener('click',closeMenus));document.addEventListener('click',e=>{if(!e.target.closest('.menu-anchor'))closeMenus()});
 function openDialog(title,html){closeMenus();$('#dialog-title').textContent=title;$('#dialog-content').innerHTML=html;dialog.showModal()}
