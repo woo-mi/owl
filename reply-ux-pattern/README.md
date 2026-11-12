@@ -11,8 +11,9 @@ New Chat restores the complete conversation. The composer, conversation index,
 Connections dialog, workspace, and Owl customization remain available.
 The prototype is a static design sample; no messages or account actions are sent.
 
-The bottom-right picker includes V1, V2, V3, **color code**, and
-**color code · colored ticks**, with the selection stored in the URL. V2 matches **connecting line · two topic** (`I0AYM4`).
+The bottom-right picker includes V1, V2, V3, **color code**,
+**color code · colored ticks**, and **color code · colored previews**,
+with the selection stored in the URL. V2 matches **connecting line · two topic** (`I0AYM4`).
 V3 matches **constraints of connecting line · more than three ongoing topics**
 (`bvO7d`), including its red annotations.
 
@@ -25,6 +26,10 @@ retains 16px message gaps and the V3 tick navigator; receipt text is hidden.
 magenta, green, and purple navigator ticks matching the four conversation topics.
 Its active tick, hover previews, and jump controls retain the same behavior.
 The original color code version keeps its black and gray ticks.
+
+**color code · colored previews** duplicates colored ticks and adds matching
+solid topic-color backgrounds to the navigator previews, with white titles
+and descriptions. The colored ticks version keeps its white preview cards.
 
 V4–V9 have been removed. Existing links to those versions open color code.
 Each remaining version keeps its own messages, draft, and scroll position.

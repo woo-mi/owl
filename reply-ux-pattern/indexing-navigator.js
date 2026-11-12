@@ -43,7 +43,7 @@
     });
 
     function paint() {
-      const coloredTicks = document.body.dataset.replyVersion === 'color-code-ticks';
+      const coloredTicks = ['color-code-ticks', 'color-code-previews'].includes(document.body.dataset.replyVersion);
       buttons.forEach((button, index) => {
         const distance = Math.abs(index - hovered);
         const active = hovered >= 0 ? hovered === index : selected === index;
@@ -105,6 +105,7 @@
       hovered = previewIndex = index;
       title.textContent = item.title;
       excerpt.textContent = item.excerpt;
+      preview.style.setProperty('--indexing-nav-preview-color', topicColors[item.id] || '#202123');
       jumpButton.setAttribute('aria-label', `Jump to ${item.title} in conversation`);
       buttons.forEach((button, i) => button.setAttribute('aria-expanded', String(i === index)));
       preview.inert = false;
