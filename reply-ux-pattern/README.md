@@ -2,7 +2,7 @@
 
 Live URL: https://woo-mi.github.io/owl/reply-ux-pattern/
 
-The default is **color code · colored previews**. Explicit version links retain
+The default is **more than three topics**. Explicit version links retain
 their selected version.
 
 All conversation content appears immediately without animation.
@@ -11,7 +11,7 @@ New Chat restores the complete conversation. The composer, conversation index,
 Connections dialog, workspace, and Owl customization remain available.
 The prototype is a static design sample; no messages or account actions are sent.
 
-The bottom-right picker shows **color code · colored previews**,
+The bottom-right picker shows **more than three topics**,
 **one topic - time gap**, and **two topics**. The selection is stored in the URL.
 **color code** and **color code · colored ticks** are hidden from the picker
 but remain available through their existing direct links.
@@ -26,7 +26,7 @@ magenta, green, and purple navigator ticks matching the four conversation topics
 Its active tick, hover previews, and jump controls retain the same behavior.
 The original color code version keeps its black and gray ticks.
 
-**color code · colored previews** duplicates colored ticks and adds matching
+**more than three topics** duplicates colored ticks and adds matching
 solid topic-color backgrounds to the navigator previews, with white titles
 and descriptions. The colored ticks version keeps its white preview cards.
 
@@ -40,6 +40,6 @@ has blue and magenta topic ticks and matching previews with white text.
 Both new options preserve 16px gaps and gray assistant bubbles.
 
 V1–V9 have been removed from the picker. V1 links open one topic - time gap;
-V2 links open two topics; V3 links open color code · colored previews.
+V2 links open two topics; V3 links open more than three topics.
 V4–V9 links continue to open color code.
 Each remaining version keeps its own messages, draft, and scroll position.

@@ -4,7 +4,7 @@
   const versionLabels = {
     'color-code':'color code',
     'color-code-ticks':'color code · colored ticks',
-    'color-code-previews':'color code · colored previews',
+    'color-code-previews':'more than three topics',
     'one-topic-time-gap':'one topic - time gap',
     'two-topics':'two topics'
   };

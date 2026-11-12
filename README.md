@@ -8,7 +8,7 @@ step is required.
 - `index.html` and `owl-mark.svg` provide the overview page.
 - `reply-ux-pattern/` is **Reply UX Pattern**, an independent static copy of FTUX.
   **color code** matches the updated Pen frame, using topic-colored prompts and connectors.
-  The picker shows color code · colored previews, one topic - time gap, and two topics.
+  The picker shows more than three topics, one topic - time gap, and two topics.
   Color code and color code · colored ticks remain available by direct link.
   Former V1–V9 links open their current replacement designs.
   All conversations appear in full without animation.
