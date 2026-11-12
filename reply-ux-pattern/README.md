@@ -29,8 +29,9 @@ red explanatory note, repeated prompts, and revenue analysis.
 V4–V8 retain the same conversation with each frame's topic colors. V4 and V5 keep
 the curved and looped connectors; V6 keeps only the time-gap separator. V7 and V8
 use 40px section gaps and 12px gaps between related replies. Red design annotations
-appear only in V3. V9 uses 3px topic-colored left edges on gray replies, 4px
-connecting lines, and the frame's revised prompt padding. The nine-option menu
+appear only in V3. V9 uses 2px topic-colored left edges on gray replies, 4px
+connecting lines inset 10px, and 10px connector-to-reply gaps. Replies text
+uses blue (#1C67C4) for Q4 and magenta (#C3418B) for revenue. The nine-option menu
 scrolls when the viewport is short.
 
 Each version keeps its own messages, draft, and scroll position when switching.

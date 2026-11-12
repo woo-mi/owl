@@ -137,18 +137,28 @@ body.ftux-prototype { --ftux-content-top:126px; --ftux-composer-bottom:24px; }
 .reply-tickers .reply-bubble { position:relative; background:#f1f1f1; --reply-ticker-color:#1c67c4; }
 .reply-tickers [data-reply-topic="app"] { --reply-ticker-color:#209855; }
 .reply-tickers [data-reply-topic="revenue"] { --reply-ticker-color:#c3418b; }
-.reply-tickers .reply-bubble::before { content:""; position:absolute; inset:0; border-left:3px solid var(--reply-ticker-color); border-radius:16px; pointer-events:none; }
-.reply-tickers #reply-q4::before { left:-3px; }
+.reply-tickers .reply-bubble::before { content:""; position:absolute; inset:0; border-left:2px solid var(--reply-ticker-color); border-radius:16px; pointer-events:none; }
+.reply-tickers #reply-q4::before { left:-2px; }
 .reply-tickers > .reply-prompt-turn .reply-prompt,
 .reply-tickers #reply-q4-return .reply-prompt { color:#1c67c4; box-shadow:inset 0 0 0 1px #1c67c480; }
-.reply-tickers .reply-group-separator { width:4px; }
+.reply-tickers .reply-count { color:#1c67c4; }
+.reply-tickers #reply-revenue-return .reply-count { color:#c3418b; }
+.reply-tickers .reply-connector { left:10px; top:auto; bottom:0; }
+.reply-tickers .reply-group-separator { width:4px; margin-left:10px; }
+/* Reduce only connector-to-reply gaps from 16px to 10px. */
+.reply-tickers > .ftux-turns,
+.reply-tickers .reply-group-separator + .reply-bubble,
+.reply-tickers #reply-revenue + .reply-bubble,
+.reply-tickers #reply-app-request + .reply-bubble,
+.reply-tickers #reply-q4-return + .reply-bubble,
+.reply-tickers .reply-interleaved-topics + .reply-bubble { margin-top:-6px; }
 .reply-tickers #reply-revenue .ftux-user-turn { min-height:74px; padding:18px 0; }
 .reply-tickers #reply-app-request .ftux-user-turn { min-height:114px; padding:18px 0; }
 .reply-tickers #reply-q4-return .reply-prompt-turn { min-height:86px; padding:18px 0; }
 .reply-tickers #reply-q4-return .reply-connector { top:auto; bottom:0; }
 .reply-tickers #reply-revenue-return { padding:18px 0; }
-.reply-ticker-divider { position:absolute; left:16px; top:2px; bottom:0; width:4px; border-radius:3px; background:#ebebeb; }
-.reply-ticker-thread { position:absolute; left:16px; top:30px; bottom:2px; width:56px; pointer-events:none; }
+.reply-ticker-divider { position:absolute; left:10px; top:2px; bottom:0; width:4px; border-radius:3px; background:#ebebeb; }
+.reply-ticker-thread { position:absolute; left:10px; top:30px; bottom:0; width:56px; pointer-events:none; }
 .reply-ticker-thread svg { display:block; width:56px; height:51px; overflow:visible; }
 .reply-ticker-thread span { position:absolute; left:0; top:49px; bottom:0; width:4px; border-radius:0 0 2px 2px; background:#e9e9eb; }
 
