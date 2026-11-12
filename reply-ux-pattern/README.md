@@ -11,27 +11,15 @@ New Chat restores the complete conversation. The composer, conversation index,
 Connections dialog, workspace, and Owl customization remain available.
 The prototype is a static design sample; no messages or account actions are sent.
 
-The bottom-right V1–V9 picker stores the selected version in the URL. V2 matches
-**connecting line · two topic** (`I0AYM4`), adding the revenue question, its
-reaction, and the looped thread connector. V3 matches **constraints of connecting
-line · more than three ongoing topics** (`bvO7d`), including the red Topic A–D labels,
-red explanatory note, repeated prompts, and revenue analysis.
+The bottom-right picker includes V1, V2, V3, and **color code**, with the
+selection stored in the URL. V2 matches **connecting line · two topic** (`I0AYM4`).
+V3 matches **constraints of connecting line · more than three ongoing topics**
+(`bvO7d`), including its red annotations.
 
-| Version | Pen frame | Source ID |
-| --- | --- | --- |
-| V4 | color code ~ second topic · connecting line | `DBpU5` |
-| V5 | color code ~ first topic · connecting line | `r8oLW7` |
-| V6 | color code ~ first topic · connecting line for only time gap | `hhV0d` |
-| V7 | color code ~ second topic · space | `uDGee` |
-| V8 | color code ~ first topic · space | `iaibf` |
-| V9 | tickers | `w0mpbK` |
+**color code** matches Pen frame `S9VbBy`. Gray assistant bubbles have no colored
+borders. Blue, green, and magenta connectors use 4px strokes at 20% opacity;
+user prompts and Replies text use their corresponding topic colors. The frame
+retains 16px message gaps and hides the tick navigator and receipt text.
 
-V4–V8 retain the same conversation with each frame's topic colors. V4 and V5 keep
-the curved and looped connectors; V6 keeps only the time-gap separator. V7 and V8
-use 40px section gaps and 12px gaps between related replies. Red design annotations
-appear only in V3. V9 uses 2px topic-colored left edges on gray replies, 4px
-connecting lines inset 10px, and 10px connector-to-reply gaps. Replies text
-uses blue (#1C67C4) for Q4 and magenta (#C3418B) for revenue. The nine-option menu
-scrolls when the viewport is short.
-
-Each version keeps its own messages, draft, and scroll position when switching.
+V4–V9 have been removed. Existing links to those versions open color code.
+Each remaining version keeps its own messages, draft, and scroll position.

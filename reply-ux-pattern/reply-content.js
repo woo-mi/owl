@@ -1,6 +1,15 @@
 /* Reply UX Pattern: conversations copied from the corresponding Pen frames. */
 (() => {
   'use strict';
+  // Consolidate removed versions into the current color-code design.
+  function normalizeVersionURL() {
+    const url = new URL(location.href);
+    if (!/^v[4-9]$/.test(url.searchParams.get('version') || '')) return;
+    url.searchParams.set('version', 'color-code');
+    history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+  }
+  normalizeVersionURL();
+  window.addEventListener('popstate', normalizeVersionURL);
   const view = window.MVPViews?.['latest-oct-28'];
   if (!view) return;
   const groupTools = {context:['Notion', 'Gmail', 'Calendar', 'Slack', 'Gong'], crm:['HubSpot', 'Salesforce']};
@@ -37,7 +46,7 @@
     </div>`;
   }
   function initialHTML(version = new URL(location.href).searchParams.get('version')) {
-    if (['v4', 'v5', 'v6', 'v7', 'v8', 'v9'].includes(version)) return window.ReplyColorContent(initialHTML('v3'), version);
+    if (version === 'color-code') return window.ReplyColorContent(initialHTML('v3'));
     if (version === 'v3') return window.ReplyV3Content(initialHTML('v1'), {paragraph, bubble, userTurnHTML, secondTopicHTML});
     const twoTopics = version === 'v2';
     return `<div class="ftux-flow reply-pattern${twoTopics ? ' reply-two-topics' : ''}" data-pen-frame="${twoTopics ? 'I0AYM4' : 'omuzR'}">
