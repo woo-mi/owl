@@ -127,6 +127,9 @@ body.ftux-prototype { --ftux-content-top:126px; --ftux-composer-bottom:24px; }
 .reply-color-code .reply-group-separator { width:4px; background:#1c67c433; }
 .reply-empty-stamp { width:98px; height:17px; flex-shrink:0; }
 
+body[data-reply-version="one-topic-time-gap"] .reply-connector path { stroke:#e9e9eb; }
+body[data-reply-version="one-topic-time-gap"] .reply-group-separator { background:#e9e9eb; }
+
 #reply-version-picker[hidden] { display:none; }
 .reply-version-controls { right:16px; bottom:24px; }
 .reply-version-menu { width:420px; }
