@@ -47,8 +47,9 @@
       case 'footer': {
         const status = node.texts.filter(text => !/Repl(?:y|ies)$/.test(text));
         const reply = node.texts.find(text => /Repl(?:y|ies)$/.test(text));
-        if (parentMessage === 'SN8ox') {
-          const trigger = 'type="button" data-timeline-thread="profile" aria-haspopup="dialog" aria-controls="timeline-profile-thread"';
+        const thread = {SN8ox:'profile', m8is7b:'chat-growth'}[parentMessage];
+        if (thread) {
+          const trigger = `type="button" data-timeline-thread="${thread}" aria-haspopup="dialog" aria-controls="timeline-${thread}-thread"`;
           return `<div class="timeline-footer" ${attrs}><button class="timeline-unread" ${trigger}>${status.map(escape).join(' ')}</button><button class="timeline-reply-count" ${trigger}>${escape(reply)}</button></div>`;
         }
         const target = replyTargets[parentMessage];
