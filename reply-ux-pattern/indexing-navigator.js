@@ -50,8 +50,7 @@
         const width = hovered >= 0 ? ([30, 23, 16, 11, 8][distance] || 6) : active ? 18 : 6;
         const topicColor = coloredTicks ? topicColors[entries[index]?.id] : undefined;
         button.style.setProperty('--indexing-nav-tick-width', `${width}px`);
-        const activeColor = document.body.dataset.replyVersion === 'timeline' ? '#1c67c4' : '#202123';
-        button.style.setProperty('--indexing-nav-tick-color', topicColor || (active ? activeColor : '#d1d3d4'));
+        button.style.setProperty('--indexing-nav-tick-color', topicColor || (active ? '#202123' : '#d1d3d4'));
         if (index === selected) button.setAttribute('aria-current', 'location');
         else button.removeAttribute('aria-current');
       });

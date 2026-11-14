@@ -16,7 +16,7 @@ and **more than three topics**, in that order. The selection is stored in the UR
 The **timeline** option follows those existing versions. It duplicates the
 one-topic time-gap shell with the conversation in Pen frame `ZyjHC` (timeline),
 preserving its visible order, blue Ayush/Kapil bubbles, gray Owl bubbles,
-timestamps, and linked previews. Its date navigation uses one blue active tick
+timestamps, and linked previews. Its date navigation uses one dark gray active tick
 and gray inactive ticks, with the original white preview cards.
 Direct link: https://woo-mi.github.io/owl/reply-ux-pattern/?version=timeline
 **color code** and **color code · colored ticks** are hidden from the picker
