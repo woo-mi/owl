@@ -150,7 +150,7 @@ body[data-reply-version="one-topic-time-gap"] .reply-group-separator { backgroun
   gap:4px;
   width:100%;
   min-width:0;
-  padding:0 13px;
+  padding:0;
   color:#8e8e8e;
   font:400 14px/20px Inter, system-ui, sans-serif;
 }
