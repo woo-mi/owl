@@ -33,6 +33,12 @@ the 16px grouped user-message gaps, blue Ayush/Kapil bubbles, and Owl timestamps
 Each reply thread keeps its own draft, attachments, and local replies.
 Direct thread link: https://woo-mi.github.io/owl/reply-ux-pattern/?version=timeline&timeline-thread=chat-growth
 
+**2 Unread** and **5 Replies** under “Similarly build some understanding of chat
+as a surface…” open Pen frame `B9TkG`. This longer thread opens at its latest
+update and composer, with earlier messages available by scrolling up. The four
+Owl timestamps and the Rubrik Usage Drop preview card are preserved.
+Direct thread link: https://woo-mi.github.io/owl/reply-ux-pattern/?version=timeline&timeline-thread=chat-surface
+
 **color code** and **color code · colored ticks** are hidden from the picker
 but remain available through their existing direct links.
 

@@ -1,5 +1,5 @@
 /*
- * Reply popup storyboard (Pen s1WgPQ and SuBGR)
+ * Reply popup storyboard (Pen s1WgPQ, SuBGR and B9TkG)
  * 0ms: keep the timeline in place; fade in its frosted overlay.
  * 0–260ms: lift the focused thread 16px and settle it at full size.
  * Close: fade and lower the thread over 180ms, then restore its opener.
@@ -15,6 +15,11 @@
     'chat-growth': {
       title:'Can you help me grow the dau/mau for chat?',
       groups:[['m8is7b'], ['yRqck'], ['wSwXA'], ['R56w6', 'ECtpL', 'k5sIEa', 'XxtbI'], ['aDGGZ']]
+    },
+    'chat-surface': {
+      title:'Similarly build some understanding of chat as a surface. Why don’t you connect to my slack? But only read no write',
+      groups:[['bUhpm'], ['zCpXs'], ['CY9hb'], ['Dr5fX'], ['z2iL42']],
+      initialScroll:'end'
     }
   };
 
@@ -239,7 +244,7 @@
         document.body.classList.add('timeline-thread-open');
         fitToMain();
         syncComposer();
-        scroller.scrollTop = 0;
+        scroller.scrollTop = thread.initialScroll === 'end' ? scroller.scrollHeight : 0;
         dialog.querySelector('.timeline-thread-close').focus({preventScroll:true});
       }
       transition(true);
