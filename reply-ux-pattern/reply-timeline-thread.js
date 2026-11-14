@@ -10,19 +10,27 @@
   const THREADS = {
     profile: {
       title:'What did you learn about me?',
+      unreadBefore:'SN8ox',
+      unreadFrame:'tYlx8',
       groups:[['SN8ox'], ['C7hyC8']]
     },
     'chat-growth': {
       title:'Can you help me grow the dau/mau for chat?',
+      unreadBefore:'aDGGZ',
+      unreadFrame:'VI1QJ',
       groups:[['m8is7b'], ['yRqck'], ['wSwXA'], ['R56w6', 'ECtpL', 'k5sIEa', 'XxtbI'], ['aDGGZ']]
     },
     'chat-surface': {
       title:'Similarly build some understanding of chat as a surface. Why don’t you connect to my slack? But only read no write',
+      unreadBefore:'Dr5fX',
+      unreadFrame:'z3RA7',
       groups:[['bUhpm'], ['zCpXs'], ['CY9hb'], ['Dr5fX'], ['z2iL42']],
       initialScroll:'end'
     },
     'gandhi-jayanti': {
       title:'Friday was gandhi jayanti, could be the reason?',
+      unreadBefore:'g0x3g',
+      unreadFrame:'ack3g',
       groups:[['ABTkz'], ['VLFVG'], ['pY3xS'], ['g0x3g'], ['D3TJch'], ['ExjZ8'], ['VKDzT'], ['lxiD8']],
       initialScroll:'end'
     }
@@ -34,15 +42,18 @@
     const TIMING = { open:260, close:180 };
     const MOTION = { offset:16, scale:.985, enter:'cubic-bezier(.16, 1, .3, 1)', exit:'cubic-bezier(.4, 0, 1, 1)' };
     const PARAM = 'timeline-thread';
+    const MODE_PARAM = 'timeline-mode';
     const HISTORY_KEY = 'timelineThreadEntry';
     const sessionToken = `${key}-${Date.now()}`;
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     let stage = STAGE.CLOSED;
-    let dialog, header, profile, content, scroller, dock, composer, input, send, files, attachments, status;
+    let dialog, header, profile, content, scroller, dock, composer, input, send, files, attachments, status, unreadDivider;
+    let mode = 'replies';
     let opener, savedScroll = 0, generation = 0, animations = [], pendingFiles = [];
     let pointerStartedOutside = false, followingBottom = false, composerWidth = 0;
     const active = () => document.body.dataset.replyVersion === 'timeline' && document.body.dataset.prototypeView === 'latest-oct-28' && !document.body.classList.contains('workspace-page-open');
     const requested = () => new URL(location.href).searchParams.get(PARAM) === key;
+    const requestedMode = () => new URL(location.href).searchParams.get(MODE_PARAM) === 'unread' ? 'unread' : 'replies';
 
     function cleanClone(source) {
       const clone = source.cloneNode(true);
@@ -148,11 +159,21 @@
       content.className = 'timeline-thread-content';
       const messages = document.createElement('div');
       messages.className = 'timeline-thread-messages reply-timeline';
+      unreadDivider = document.createElement('div');
+      unreadDivider.className = 'timeline-new timeline-thread-new';
+      unreadDivider.textContent = 'NEW';
+      unreadDivider.setAttribute('role', 'separator');
+      unreadDivider.setAttribute('aria-label', 'New messages');
+      unreadDivider.hidden = true;
       for (const sources of sourceGroups) {
         const group = document.createElement('div');
         group.className = 'timeline-group timeline-stack';
         group.style.setProperty('--timeline-gap', '16px');
         for (const source of sources) {
+          if (source.id === `timeline-message-${thread.unreadBefore}`) {
+            if (group.childElementCount) group.append(unreadDivider);
+            else messages.append(unreadDivider);
+          }
           const message = cleanClone(source);
           message.querySelectorAll('.timeline-context').forEach(element => element.remove());
           // Focused frames omit outgoing receipts; Owl reply timestamps remain.
@@ -279,25 +300,44 @@
         if (!anotherThreadOpen) document.body.classList.remove('timeline-thread-open');
         if (active() && !anotherThreadOpen) {
           document.getElementById('chat-scroll').scrollTop = savedScroll;
-          const target = opener?.isConnected ? opener : document.querySelector(`[data-timeline-thread="${key}"]`);
+          const target = opener?.isConnected ? opener : document.querySelector(`[data-timeline-thread="${key}"][data-timeline-mode="${mode}"]`);
           target?.focus({preventScroll:true});
         }
       }
     }
 
+    function positionThread() {
+      scroller.scrollTop = 0;
+      if (mode === 'unread' && unreadDivider.isConnected) {
+        const top = unreadDivider.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+        scroller.scrollTop = Math.max(0, top - 126);
+      } else if (thread.initialScroll === 'end') scroller.scrollTop = scroller.scrollHeight;
+      followingBottom = atBottom();
+      syncHeader();
+    }
+
     function openThread(trigger) {
       if (!active() || !buildDialog()) return;
       if (trigger) opener = trigger;
-      if (stage === STAGE.OPEN || stage === STAGE.OPENING) return;
+      const nextMode = requestedMode();
+      const changed = mode !== nextMode;
+      mode = nextMode;
+      unreadDivider.hidden = mode !== 'unread';
+      dialog.dataset.timelineMode = mode;
+      dialog.setAttribute('aria-label', `${thread.title} - ${mode === 'unread' ? 'unread' : 'reply'} opened`);
+      if (mode === 'unread') dialog.dataset.penFrame = thread.unreadFrame;
+      else delete dialog.dataset.penFrame;
+      if (stage === STAGE.OPEN || stage === STAGE.OPENING) {
+        if (changed) positionThread();
+        return;
+      }
       if (!dialog.open) {
         savedScroll = document.getElementById('chat-scroll').scrollTop;
         dialog.showModal();
         document.body.classList.add('timeline-thread-open');
         fitToMain();
         syncComposer();
-        scroller.scrollTop = thread.initialScroll === 'end' ? scroller.scrollHeight : 0;
-        followingBottom = atBottom();
-        syncHeader();
+        positionThread();
         dialog.querySelector('.timeline-thread-close').focus({preventScroll:true});
       }
       transition(true);
@@ -306,6 +346,7 @@
     function clearParameter() {
       const url = new URL(location.href);
       url.searchParams.delete(PARAM);
+      url.searchParams.delete(MODE_PARAM);
       const state = {...history.state};
       delete state[HISTORY_KEY];
       history.replaceState(state, '', url);
@@ -330,10 +371,14 @@
         if (!trigger || !active()) return;
         event.preventDefault();
         event.stopPropagation();
-        if (!requested()) {
+        const nextMode = trigger.dataset.timelineMode === 'unread' ? 'unread' : 'replies';
+        if (!requested() || nextMode !== requestedMode()) {
           const url = new URL(location.href);
           url.searchParams.set(PARAM, key);
-          history.pushState({...history.state, [HISTORY_KEY]:sessionToken}, '', url);
+          if (nextMode === 'unread') url.searchParams.set(MODE_PARAM, 'unread');
+          else url.searchParams.delete(MODE_PARAM);
+          if (requested()) history.replaceState(history.state, '', url);
+          else history.pushState({...history.state, [HISTORY_KEY]:sessionToken}, '', url);
         }
         openThread(trigger);
       }, true);

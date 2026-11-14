@@ -50,7 +50,7 @@
         const thread = {SN8ox:'profile', m8is7b:'chat-growth', bUhpm:'chat-surface', ABTkz:'gandhi-jayanti'}[parentMessage];
         if (thread) {
           const trigger = `type="button" data-timeline-thread="${thread}" aria-haspopup="dialog" aria-controls="timeline-${thread}-thread"`;
-          return `<div class="timeline-footer" ${attrs}><button class="timeline-unread" ${trigger}>${status.map(escape).join(' ')}</button><button class="timeline-reply-count" ${trigger}>${escape(reply)}</button></div>`;
+          return `<div class="timeline-footer" ${attrs}><button class="timeline-unread" data-timeline-mode="unread" ${trigger}>${status.map(escape).join(' ')}</button><button class="timeline-reply-count" data-timeline-mode="replies" ${trigger}>${escape(reply)}</button></div>`;
         }
         const target = replyTargets[parentMessage];
         const count = reply ? (target ? `<a class="reply-count timeline-reply-count" href="#timeline-message-${escape(target)}">${escape(reply)}</a>` : `<span class="timeline-reply-count">${escape(reply)}</span>`) : '';

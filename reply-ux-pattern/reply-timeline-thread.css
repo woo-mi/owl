@@ -110,6 +110,13 @@ dialog.timeline-thread-dialog::backdrop { background:transparent; }
   font-size:11px;
   line-height:15px;
 }
+.timeline-thread-messages .timeline-thread-new {
+  padding-top:10px;
+  font-size:11px;
+  line-height:1.5;
+  letter-spacing:.08px;
+}
+.timeline-thread-messages .timeline-thread-new[hidden] { display:none; }
 
 .timeline-thread-composer-dock {
   position:absolute;
