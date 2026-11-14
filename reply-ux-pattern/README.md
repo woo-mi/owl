@@ -27,7 +27,7 @@ clicking outside the thread, or browser Back returns to the same scroll position
 and draft. Its composer adds replies locally to this thread only.
 Direct thread link: https://woo-mi.github.io/owl/reply-ux-pattern/?version=timeline&timeline-thread=profile
 
-**2 Unread** and **5 Replies** under “Can you help me grow the dau/mau for chat?”
+**2 Unread** and **2 Replies** under “Can you help me grow the dau/mau for chat?”
 open Pen frame `SuBGR` with the same popup interactions. Its eight messages retain
 the 16px grouped user-message gaps, blue Ayush/Kapil bubbles, and Owl timestamps.
 Each reply thread keeps its own draft, attachments, and local replies.
