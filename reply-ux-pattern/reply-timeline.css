@@ -56,11 +56,12 @@ body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="lat
   width:100%;
 }
 .reply-timeline .timeline-bullet > span { text-align:center; }
+.reply-timeline .timeline-stack:has(> .timeline-date) { gap:12px; }
 .reply-timeline .timeline-date {
   width:100%;
   color:#616061;
-  font-size:11px;
-  line-height:15px;
+  font-size:14px;
+  line-height:20px;
   text-align:center;
 }
 .reply-timeline .timeline-stamp {
