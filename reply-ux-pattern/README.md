@@ -31,7 +31,7 @@ Owl pill as messages scroll underneath. The input stays fixed at the bottom,
 grows for multiline drafts, and reserves room for the last message and timestamp.
 Direct thread link: https://woo-mi.github.io/owl/reply-ux-pattern/?version=timeline&timeline-thread=profile
 
-**2 Unread** and **2 Replies** under “Can you help me grow the dau/mau for chat?”
+**1 Unread** and **2 Replies** under “Can you help me grow the dau/mau for chat?”
 open Pen frame `SuBGR` with the same popup interactions. Its eight messages retain
 the 16px grouped user-message gaps, blue Ayush/Kapil bubbles, and Owl timestamps.
 Each reply thread keeps its own draft, attachments, and local replies.
