@@ -11,9 +11,10 @@ New Chat restores the complete conversation. The composer, conversation index,
 Connections dialog, workspace, and Owl customization remain available.
 The prototype is a static design sample; no messages or account actions are sent.
 
-The bottom-right picker shows **one topic - time gap**, **two topics**,
-and **more than three topics**, in that order. The selection is stored in the URL.
-The **timeline** option follows those existing versions. It duplicates the
+The bottom-right picker shows **one topic - time gap** and **timeline**, in that
+order. **two topics** and **more than three topics** are hidden from the picker
+but remain available through their direct links. The selection is stored in the URL.
+The **timeline** option duplicates the
 one-topic time-gap shell with the conversation in Pen frame `ZyjHC` (timeline),
 preserving its visible order, blue Ayush/Kapil bubbles, gray Owl bubbles,
 timestamps, and linked previews. Its date navigation uses one dark gray active tick
