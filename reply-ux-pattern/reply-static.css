@@ -130,6 +130,44 @@ body.ftux-prototype { --ftux-content-top:126px; --ftux-composer-bottom:24px; }
 body[data-reply-version="one-topic-time-gap"] .reply-connector path { stroke:#e9e9eb; }
 body[data-reply-version="one-topic-time-gap"] .reply-group-separator { background:#e9e9eb; }
 
+/* Current P12Pau conversation: three reply groups with timestamp receipts. */
+.ftux-flow.reply-one-topic { gap:8px; }
+.reply-one-topic .ftux-turns { gap:32px; }
+.reply-one-topic-group,
+.reply-one-topic-stamped {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:16px;
+  width:min(605px, 100%);
+  min-width:0;
+}
+.reply-one-topic-stamped { gap:4px; }
+.reply-one-topic-context {
+  display:flex;
+  align-items:baseline;
+  gap:4px;
+  width:100%;
+  min-width:0;
+  padding:0 13px;
+  color:#8e8e8e;
+  font:400 12px/17px Inter, system-ui, sans-serif;
+}
+.reply-one-topic-context > span:first-child { flex:none; white-space:nowrap; }
+.reply-one-topic-quote {
+  min-width:0;
+  overflow:hidden;
+  color:#0069e0;
+  font-weight:600;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.reply-one-topic-stamp {
+  padding-left:13px;
+  color:#8e8e8e;
+  font:400 11px/15px Inter, system-ui, sans-serif;
+}
+
 #reply-version-picker[hidden] { display:none; }
 .reply-version-controls { right:16px; bottom:24px; }
 .reply-version-menu { width:420px; }

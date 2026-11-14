@@ -61,14 +61,16 @@ The original color code version keeps its black and gray ticks.
 solid topic-color backgrounds to the navigator previews, with white titles
 and descriptions. The colored ticks version keeps its white preview cards.
 
-**one topic - time gap** matches Pen frame `P12Pau`, retaining the V1
-conversation with blue prompt text, Replies, and 4px time-gap connectors.
-Its navigator has one blue topic tick and preview.
+**one topic - time gap** matches the updated Pen frame `P12Pau`: a thread
+reference above eight reply bubbles, arranged in three groups with 9:48 AM
+timestamps. Groups have 32px gaps and their bubbles have 16px gaps. The earlier
+prompt and connector lines are replaced by this arrangement. Its navigator
+retains one blue topic tick and the Goal updates preview.
 
 **two topics** matches Pen frame `ceIsC`, retaining the V2 conversation
 with the same blue connectors and a magenta revenue prompt. Its navigator
 has blue and magenta topic ticks and matching previews with white text.
-Both new options preserve 16px gaps and gray assistant bubbles.
+Both options preserve gray assistant bubbles.
 
 V1–V9 have been removed from the picker. V1 links open one topic - time gap;
 V2 links open two topics; V3 links open more than three topics.
