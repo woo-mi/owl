@@ -99,6 +99,11 @@ body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="lat
   line-height:17px;
 }
 .reply-timeline .timeline-outgoing > .timeline-footer { align-self:flex-end; }
+.reply-timeline .timeline-outgoing > .timeline-footer:has(> .timeline-unread) {
+  justify-content:flex-end;
+  width:fit-content;
+  max-width:100%;
+}
 .reply-timeline .timeline-footer > .timeline-stamp:only-child { margin-left:auto; }
 .reply-timeline .timeline-unread { color:#f00; }
 .reply-timeline .timeline-new {
