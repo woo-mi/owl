@@ -111,6 +111,7 @@ body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="lat
   justify-content:flex-end;
   width:fit-content;
   max-width:100%;
+  padding-right:13px;
 }
 .reply-timeline .timeline-outgoing > .timeline-footer > .timeline-stamp:only-child {
   margin-left:auto;
