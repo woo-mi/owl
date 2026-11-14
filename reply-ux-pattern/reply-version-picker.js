@@ -6,10 +6,11 @@
     'color-code-ticks':'color code · colored ticks',
     'color-code-previews':'more than three topics',
     'one-topic-time-gap':'one topic - time gap',
-    'two-topics':'two topics'
+    'two-topics':'two topics',
+    'timeline':'timeline'
   };
   const versions = Object.keys(versionLabels);
-  const visibleVersions = ['one-topic-time-gap', 'two-topics', 'color-code-previews'];
+  const visibleVersions = ['one-topic-time-gap', 'two-topics', 'color-code-previews', 'timeline'];
   const versionLabel = version => versionLabels[version] || version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');

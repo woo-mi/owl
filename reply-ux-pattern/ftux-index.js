@@ -9,6 +9,14 @@
   function getTopics() {
     const flow = document.querySelector('#messages .ftux-flow');
     if (!flow) return [];
+    if (flow.classList.contains('reply-timeline')) {
+      return [...flow.querySelectorAll('[data-timeline-topic]')].map(node => ({
+        id:node.id,
+        title:node.dataset.timelineTitle,
+        excerpt:node.dataset.timelineExcerpt,
+        node
+      })).filter(item => revealed(item.node));
+    }
     return [
       {id:'goal-updates', title:'Goal updates',
         excerpt:'Q4 deal moves, Customer-growth trends and fixes, and the latest Q4 audit.',

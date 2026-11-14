@@ -1,0 +1,169 @@
+/* Scoped to the timeline duplicate; the existing versions keep their styling. */
+body[data-reply-version="timeline"] { --timeline-nav-gutter:64px; }
+body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="latest-oct-28"][data-reply-version="timeline"]:not(.replies-open):not(.workspace-page-open) .conversation {
+  width:min(var(--chat-width), calc(100% - var(--timeline-nav-gutter) - 16px));
+  margin-left:max(16px, min(calc((100% - var(--chat-width)) / 2), calc(100% - var(--chat-width) - var(--timeline-nav-gutter))));
+  margin-right:0;
+}
+body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="latest-oct-28"][data-reply-version="timeline"]:not(.replies-open):not(.workspace-page-open) .composer-dock {
+  width:min(var(--chat-width), calc(100% - var(--timeline-nav-gutter) - 16px));
+  left:max(16px, min(calc((100% - var(--chat-width)) / 2), calc(100% - var(--chat-width) - var(--timeline-nav-gutter))));
+  transform:none;
+}
+.ftux-flow.reply-timeline {
+  width:min(764px, 100%);
+  max-width:100%;
+  color:#0d0d0d;
+  font:400 14px/20px Inter, system-ui, sans-serif;
+}
+.reply-timeline .ftux-turns { gap:32px; }
+.reply-timeline .timeline-stack {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:var(--timeline-gap, 0px);
+  min-width:0;
+}
+.reply-timeline .timeline-section,
+.reply-timeline .timeline-group,
+.reply-timeline .timeline-message { width:100%; }
+.reply-timeline .timeline-section,
+.reply-timeline .timeline-message { scroll-margin-top:80px; }
+.reply-timeline .timeline-outgoing,
+.reply-timeline .timeline-outgoing .timeline-group { align-items:flex-end; }
+.reply-timeline .timeline-bubble {
+  flex:none;
+  width:fit-content;
+  max-width:min(605px, 100%);
+  padding:9px 13px;
+  margin:0;
+  border:0;
+  border-radius:16px;
+  box-shadow:none;
+  font:inherit;
+  overflow-wrap:anywhere;
+}
+.reply-timeline .timeline-bubble.ftux-bubble { background:#f1f1f1; color:#0d0d0d; }
+.reply-timeline .timeline-bubble.ftux-user-bubble { align-self:flex-end; background:#0069e0; color:#fff; }
+.reply-timeline .timeline-bubble.timeline-bubble-wide { width:min(605px, 100%); }
+.reply-timeline .timeline-text,
+.reply-timeline .timeline-bubble p + p { margin:0; white-space:pre-wrap; }
+.reply-timeline .timeline-text-bold { font-weight:600; }
+.reply-timeline .timeline-bullet {
+  display:grid;
+  grid-template-columns:14px minmax(0, 1fr);
+  gap:7px;
+  width:100%;
+}
+.reply-timeline .timeline-bullet > span { text-align:center; }
+.reply-timeline .timeline-date {
+  width:100%;
+  color:#8e8e8e;
+  font-size:11px;
+  line-height:15px;
+  text-align:center;
+}
+.reply-timeline .timeline-stamp {
+  color:#8e8e8e;
+  font-size:11px;
+  line-height:15px;
+  white-space:pre-wrap;
+}
+.reply-timeline .timeline-context {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  gap:0 4px;
+  max-width:100%;
+  color:#8e8e8e;
+  font-size:12px;
+  line-height:17px;
+}
+.reply-timeline .timeline-quote,
+.reply-timeline .timeline-reply-count {
+  margin:0;
+  color:#0069e0;
+  font:inherit;
+  text-decoration:none;
+}
+.reply-timeline .timeline-quote { font-weight:600; }
+.reply-timeline a.timeline-quote:hover,
+.reply-timeline a.timeline-reply-count:hover { text-decoration:underline; }
+.reply-timeline .timeline-footer {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  width:min(605px, 100%);
+  font-size:12px;
+  line-height:17px;
+}
+.reply-timeline .timeline-outgoing > .timeline-footer { align-self:flex-end; }
+.reply-timeline .timeline-footer > .timeline-stamp:only-child { margin-left:auto; }
+.reply-timeline .timeline-unread { color:#f00; }
+.reply-timeline .timeline-new {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  color:#0069e0;
+  font-size:12px;
+  line-height:17px;
+}
+.reply-timeline .timeline-new::before,
+.reply-timeline .timeline-new::after { content:""; height:1px; flex:1; background:#0069e066; }
+.reply-timeline .timeline-link-chip {
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  align-self:flex-start;
+  max-width:100%;
+  padding:2px 4px;
+  border-radius:3px;
+  color:#0067b5;
+  background:#e2f5fc;
+  font-size:14px;
+  line-height:20px;
+  text-decoration:none;
+}
+.reply-timeline .timeline-link-chip:hover { text-decoration:underline; }
+.reply-timeline .timeline-link-chip svg { flex:none; width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.reply-timeline .timeline-chart { display:block; width:100%; height:auto; object-fit:contain; }
+.reply-timeline .timeline-card {
+  display:flex;
+  flex:none;
+  align-self:flex-start;
+  width:min(605px, 100%);
+  min-height:125px;
+  overflow:hidden;
+  border:1px solid #dedede;
+  border-radius:10px;
+  background:#fff;
+  color:#1d1c1d;
+  text-decoration:none;
+}
+.reply-timeline .timeline-card-details {
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:10px;
+  min-width:0;
+  padding:12px;
+}
+.reply-timeline .timeline-card-copy { display:flex; flex-direction:column; gap:6px; }
+.reply-timeline .timeline-card-copy strong { font-size:14px; line-height:20px; font-weight:700; }
+.reply-timeline .timeline-card-copy > span { color:#484648; font-size:12px; line-height:17px; }
+.reply-timeline .timeline-card-meta { display:flex; align-items:center; gap:6px; color:#616061; font-size:12px; line-height:17px; }
+.reply-timeline .timeline-card-meta svg { flex:none; width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.reply-timeline .timeline-card-thumbnail { display:block; flex:none; width:124px; min-height:125px; align-self:stretch; background:#f6f8fb; }
+.reply-timeline .timeline-card:hover .timeline-card-copy strong { text-decoration:underline; }
+.reply-timeline a:focus-visible { outline:2px solid #1c67c4; outline-offset:3px; }
+.reply-timeline .ftux-user-turn { min-height:0; padding-top:0; }
+.reply-timeline .ftux-user-turn .ftux-user-bubble { background:#0069e0; }
+@media (max-width:760px) {
+  body[data-reply-version="timeline"] { --timeline-nav-gutter:48px; }
+  .reply-timeline .timeline-bubble.ftux-user-bubble { max-width:90%; }
+  .reply-timeline .timeline-card-thumbnail { width:96px; }
+  .reply-timeline .timeline-card-copy > span { overflow-wrap:anywhere; }
+}
