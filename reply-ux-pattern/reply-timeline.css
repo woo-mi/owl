@@ -79,6 +79,12 @@ body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="lat
   font-size:12px;
   line-height:17px;
 }
+.reply-timeline .timeline-outgoing > .timeline-context,
+.reply-timeline .timeline-group:has(> .timeline-context + .timeline-outgoing) > .timeline-context {
+  align-self:flex-end;
+  justify-content:flex-end;
+  text-align:right;
+}
 .reply-timeline .timeline-quote,
 .reply-timeline .timeline-reply-count {
   margin:0;
