@@ -78,9 +78,10 @@ body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="lat
   gap:0 4px;
   max-width:100%;
   padding:0 13px;
+  margin-bottom:calc(8px - var(--timeline-gap, 0px));
   color:#8e8e8e;
-  font-size:12px;
-  line-height:17px;
+  font-size:14px;
+  line-height:20px;
 }
 .reply-timeline .timeline-outgoing > .timeline-context,
 .reply-timeline .timeline-group:has(> .timeline-context + .timeline-outgoing) > .timeline-context {
