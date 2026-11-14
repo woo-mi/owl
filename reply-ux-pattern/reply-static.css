@@ -143,6 +143,7 @@ body[data-reply-version="one-topic-time-gap"] .reply-group-separator { backgroun
   min-width:0;
 }
 .reply-one-topic-stamped { gap:4px; }
+.reply-one-topic-stamped:has(> .reply-one-topic-context) { gap:8px; }
 .reply-one-topic-context {
   display:flex;
   align-items:baseline;
