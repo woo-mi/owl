@@ -19,6 +19,14 @@ preserving its visible order, blue Ayush/Kapil bubbles, gray Owl bubbles,
 timestamps, and linked previews. Its date navigation uses one dark gray active tick
 and gray inactive ticks, with the original white preview cards.
 Direct link: https://woo-mi.github.io/owl/reply-ux-pattern/?version=timeline
+
+In timeline, **Unread** and **1 Reply** beneath “What did you learn about me?”
+open the focused reply screen from Pen frame `s1WgPQ`. The popup fades and lifts
+over a blurred conversation, with reduced-motion support. Close, Escape,
+clicking outside the thread, or browser Back returns to the same scroll position
+and draft. Its composer adds replies locally to this thread only.
+Direct thread link: https://woo-mi.github.io/owl/reply-ux-pattern/?version=timeline&timeline-thread=profile
+
 **color code** and **color code · colored ticks** are hidden from the picker
 but remain available through their existing direct links.
 

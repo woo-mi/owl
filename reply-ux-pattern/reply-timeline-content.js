@@ -47,6 +47,10 @@
       case 'footer': {
         const status = node.texts.filter(text => !/Repl(?:y|ies)$/.test(text));
         const reply = node.texts.find(text => /Repl(?:y|ies)$/.test(text));
+        if (parentMessage === 'SN8ox') {
+          const trigger = 'type="button" data-timeline-thread="profile" aria-haspopup="dialog" aria-controls="timeline-profile-thread"';
+          return `<div class="timeline-footer" ${attrs}><button class="timeline-unread" ${trigger}>${status.map(escape).join(' ')}</button><button class="timeline-reply-count" ${trigger}>${escape(reply)}</button></div>`;
+        }
         const target = replyTargets[parentMessage];
         const count = reply ? (target ? `<a class="reply-count timeline-reply-count" href="#timeline-message-${escape(target)}">${escape(reply)}</a>` : `<span class="timeline-reply-count">${escape(reply)}</span>`) : '';
         return `<div class="timeline-footer" ${attrs}><span class="${status.some(text => /Unread/.test(text)) ? 'timeline-unread' : 'timeline-stamp'}">${status.map(escape).join(' ')}</span>${count}</div>`;
