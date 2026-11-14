@@ -125,6 +125,7 @@ body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="lat
   width:100%;
   color:#0069e0;
   font-size:12px;
+  font-weight:600;
   line-height:17px;
 }
 .reply-timeline .timeline-new::before,
