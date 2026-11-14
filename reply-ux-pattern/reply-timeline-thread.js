@@ -1,5 +1,5 @@
 /*
- * Reply popup storyboard (Pen s1WgPQ, SuBGR and B9TkG)
+ * Reply popup storyboard (Pen s1WgPQ, SuBGR, B9TkG and WkXzo)
  * 0ms: keep the timeline in place; fade in its frosted overlay.
  * 0–260ms: lift the focused thread 16px and settle it at full size.
  * Close: fade and lower the thread over 180ms, then restore its opener.
@@ -19,6 +19,11 @@
     'chat-surface': {
       title:'Similarly build some understanding of chat as a surface. Why don’t you connect to my slack? But only read no write',
       groups:[['bUhpm'], ['zCpXs'], ['CY9hb'], ['Dr5fX'], ['z2iL42']],
+      initialScroll:'end'
+    },
+    'gandhi-jayanti': {
+      title:'Friday was gandhi jayanti, could be the reason?',
+      groups:[['ABTkz'], ['VLFVG'], ['pY3xS'], ['g0x3g'], ['D3TJch'], ['ExjZ8'], ['VKDzT'], ['lxiD8']],
       initialScroll:'end'
     }
   };

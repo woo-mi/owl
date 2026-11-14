@@ -39,6 +39,11 @@ update and composer, with earlier messages available by scrolling up. The four
 Owl timestamps and the Rubrik Usage Drop preview card are preserved.
 Direct thread link: https://woo-mi.github.io/owl/reply-ux-pattern/?version=timeline&timeline-thread=chat-surface
 
+**5 Unread** and **6 Replies** under “Friday was gandhi jayanti, could be the
+reason?” open Pen frame `WkXzo` at its latest update. The popup preserves the six
+replies, memory-update notice, timestamps, BigQuery links, and five preview cards.
+Direct thread link: https://woo-mi.github.io/owl/reply-ux-pattern/?version=timeline&timeline-thread=gandhi-jayanti
+
 **color code** and **color code · colored ticks** are hidden from the picker
 but remain available through their existing direct links.
 
