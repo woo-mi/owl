@@ -38,9 +38,9 @@
     const sessionToken = `${key}-${Date.now()}`;
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     let stage = STAGE.CLOSED;
-    let dialog, content, scroller, composer, input, send, files, attachments, status;
+    let dialog, header, profile, content, scroller, dock, composer, input, send, files, attachments, status;
     let opener, savedScroll = 0, generation = 0, animations = [], pendingFiles = [];
-    let pointerStartedOutside = false;
+    let pointerStartedOutside = false, followingBottom = false, composerWidth = 0;
     const active = () => document.body.dataset.replyVersion === 'timeline' && document.body.dataset.prototypeView === 'latest-oct-28' && !document.body.classList.contains('workspace-page-open');
     const requested = () => new URL(location.href).searchParams.get(PARAM) === key;
 
@@ -60,12 +60,40 @@
       if (!dialog?.open) return;
       const rect = document.querySelector('main.main').getBoundingClientRect();
       Object.assign(dialog.style, {left:`${rect.left}px`, top:`${rect.top}px`, width:`${rect.width}px`, height:`${rect.height}px`});
+      syncComposer(followingBottom);
     }
 
-    function syncComposer() {
+    const atBottom = () => scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop <= 24;
+
+    function syncHeader() {
+      if (!dialog?.open || !profile) return;
+      // Match the main chat's hysteresis so the header does not flicker at the top.
+      const threshold = profile.classList.contains('is-compact') ? 8 : 48;
+      const compact = scroller.scrollTop > threshold;
+      profile.classList.toggle('is-compact', compact);
+      header.classList.toggle('is-compact', compact);
+    }
+
+    function syncComposerDock(keepBottom = atBottom()) {
+      if (!dialog?.open) return;
+      const height = dock.offsetHeight;
+      if (height <= 0) return;
+      dialog.style.setProperty('--timeline-thread-dock-height', `${height}px`);
+      if (keepBottom) scroller.scrollTop = scroller.scrollHeight;
+      followingBottom = atBottom();
+      syncHeader();
+    }
+
+    function syncComposer(keepBottom = atBottom()) {
+      composerWidth = dock.clientWidth;
       input.style.height = '17px';
-      input.style.height = `${Math.min(120, input.scrollHeight)}px`;
+      const maximum = Number.parseFloat(getComputedStyle(input).maxHeight) || 120;
+      const height = Math.min(input.value ? Math.max(17, input.scrollHeight) : 17, maximum);
+      input.style.height = `${height}px`;
+      input.style.overflowY = input.scrollHeight > maximum ? 'auto' : 'hidden';
+      composer.classList.toggle('is-multiline', height > 26);
       send.disabled = !input.value.trim() && !pendingFiles.length;
+      syncComposerDock(keepBottom);
     }
 
     function renderAttachments() {
@@ -94,14 +122,15 @@
       dialog.id = `timeline-${key}-thread`;
       dialog.className = 'timeline-thread-dialog';
       dialog.setAttribute('aria-label', `${thread.title} - reply opened`);
-      const header = cleanClone(document.querySelector('.main > .agent-header'));
+      header = cleanClone(document.querySelector('.main > .agent-header'));
       header.classList.add('timeline-thread-header');
-      const profile = header.querySelector('.agent-profile');
+      profile = header.querySelector('.agent-profile');
       if (profile) {
         const label = document.createElement('div');
         label.className = profile.className;
         label.append(...profile.childNodes);
         profile.replaceWith(label);
+        profile = label;
       }
       const close = document.createElement('button');
       close.type = 'button';
@@ -111,6 +140,10 @@
       close.addEventListener('click', requestClose);
       scroller = document.createElement('div');
       scroller.className = 'timeline-thread-scroll';
+      scroller.addEventListener('scroll', () => {
+        followingBottom = atBottom();
+        syncHeader();
+      }, {passive:true});
       content = document.createElement('div');
       content.className = 'timeline-thread-content';
       const messages = document.createElement('div');
@@ -132,6 +165,8 @@
       }
       composer = cleanClone(document.getElementById('message-form'));
       composer.classList.add('timeline-thread-composer');
+      dock = document.createElement('div');
+      dock.className = 'timeline-thread-composer-dock';
       composer.querySelector('.mode-picker')?.remove();
       input = composer.querySelector('textarea');
       input.value = '';
@@ -155,7 +190,7 @@
       status = document.createElement('div');
       status.className = 'timeline-thread-status';
       status.setAttribute('role', 'status');
-      input.addEventListener('input', syncComposer);
+      input.addEventListener('input', () => syncComposer());
       input.addEventListener('keydown', event => {
         if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
           event.preventDefault();
@@ -186,13 +221,21 @@
         pendingFiles = [];
         renderAttachments();
         scroller.scrollTop = scroller.scrollHeight;
+        followingBottom = true;
+        syncHeader();
         status.textContent = 'Reply added to this prototype thread.';
-        input.focus();
+        input.focus({preventScroll:true});
       });
-      content.append(messages, attachments, composer);
+      content.append(messages);
       scroller.append(content);
-      dialog.append(header, close, scroller, status);
+      dock.append(attachments, composer);
+      dialog.append(header, close, scroller, dock, status);
       document.body.append(dialog);
+      new ResizeObserver(() => {
+        if (!dialog.open || !dock.clientWidth) return;
+        if (dock.clientWidth !== composerWidth) syncComposer(followingBottom);
+        else syncComposerDock();
+      }).observe(dock);
       dialog.addEventListener('cancel', event => { event.preventDefault(); requestClose(); });
       dialog.addEventListener('keydown', event => {
         if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); requestClose(); }
@@ -206,8 +249,11 @@
     async function transition(open) {
       const token = ++generation;
       const opacity = getComputedStyle(dialog).opacity;
-      const transform = getComputedStyle(content).transform;
-      const contentOpacity = getComputedStyle(content).opacity;
+      const layers = [content, dock].map(element => ({
+        element,
+        opacity:getComputedStyle(element).opacity,
+        transform:getComputedStyle(element).transform
+      }));
       animations.forEach(animation => animation.cancel());
       animations = [];
       if (!reducedMotion.matches) {
@@ -215,10 +261,10 @@
         const offset = `translateY(${MOTION.offset}px) scale(${MOTION.scale})`;
         animations = [
           dialog.animate([{opacity:open && stage === STAGE.CLOSED ? 0 : opacity}, {opacity:open ? 1 : 0}], options),
-          content.animate([
-            {opacity:open && stage === STAGE.CLOSED ? 0 : contentOpacity, transform:open && stage === STAGE.CLOSED ? offset : transform},
+          ...layers.map(layer => layer.element.animate([
+            {opacity:open && stage === STAGE.CLOSED ? 0 : layer.opacity, transform:open && stage === STAGE.CLOSED ? offset : layer.transform},
             {opacity:open ? 1 : 0, transform:open ? 'translateY(0) scale(1)' : offset}
-          ], options)
+          ], options))
         ];
       }
       stage = open ? STAGE.OPENING : STAGE.CLOSING;
@@ -250,6 +296,8 @@
         fitToMain();
         syncComposer();
         scroller.scrollTop = thread.initialScroll === 'end' ? scroller.scrollHeight : 0;
+        followingBottom = atBottom();
+        syncHeader();
         dialog.querySelector('.timeline-thread-close').focus({preventScroll:true});
       }
       transition(true);

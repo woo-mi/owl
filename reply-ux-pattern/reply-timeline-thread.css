@@ -12,6 +12,7 @@
 .reply-timeline button[data-timeline-thread]:focus-visible { outline:2px solid #1c67c4; outline-offset:3px; }
 dialog.timeline-thread-dialog {
   --ftux-composer-height:53px;
+  --timeline-thread-dock-bottom:24px;
   position:fixed;
   inset:0 0 0 var(--sidebar-width, 260px);
   width:auto;
@@ -38,31 +39,10 @@ dialog.timeline-thread-dialog::backdrop { background:transparent; }
   position:absolute;
   inset:0 0 auto;
   z-index:2;
-  height:128px;
-  background:transparent;
   pointer-events:none;
 }
-.timeline-thread-header .agent-profile {
-  top:14px;
-  left:50%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:0;
-  width:auto;
-  height:auto;
-  margin:0;
-  padding:0;
-  transform:translateX(-50%);
-  background:transparent;
-  box-shadow:none;
-  pointer-events:none;
-}
-.timeline-thread-header .agent-profile-avatar,
-.timeline-thread-header .agent-profile-mark,
-.timeline-thread-header .agent-profile-label { transform:none; }
-.timeline-thread-header .agent-profile-status,
-.timeline-thread-header .agent-profile-chevron { display:block; }
+/* Expanded and compact geometry/gradients come from the main chat header rules. */
+.timeline-thread-header .agent-profile { pointer-events:none; }
 
 .timeline-thread-dialog .timeline-thread-close {
   position:absolute;
@@ -89,19 +69,17 @@ dialog.timeline-thread-dialog::backdrop { background:transparent; }
 
 .timeline-thread-scroll {
   position:absolute;
-  inset:128px 0 0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  inset:0;
   min-width:0;
   min-height:0;
-  padding:16px 24px 24px;
+  padding:126px 24px calc(var(--timeline-thread-dock-height, 53px) + var(--timeline-thread-dock-bottom) + 24px);
   overflow-x:hidden;
   overflow-y:auto;
   overscroll-behavior:contain;
-  scroll-padding-block:16px 24px;
+  scroll-padding-top:130px;
+  scroll-padding-bottom:calc(var(--timeline-thread-dock-height, 53px) + var(--timeline-thread-dock-bottom) + 24px);
   scrollbar-width:thin;
-  scrollbar-color:#dedee2 transparent;
+  scrollbar-color:#e0e1e4 transparent;
 }
 .timeline-thread-content {
   display:flex;
@@ -112,7 +90,7 @@ dialog.timeline-thread-dialog::backdrop { background:transparent; }
   width:100%;
   max-width:764px;
   min-width:0;
-  margin: auto auto 0;
+  margin:0 auto;
   padding:0;
   transform-origin:50% 100%;
 }
@@ -133,6 +111,20 @@ dialog.timeline-thread-dialog::backdrop { background:transparent; }
   line-height:15px;
 }
 
+.timeline-thread-composer-dock {
+  position:absolute;
+  z-index:2;
+  left:0;
+  right:0;
+  bottom:var(--timeline-thread-dock-bottom);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  width:min(764px, calc(100% - 48px));
+  min-width:0;
+  margin-inline:auto;
+  transform-origin:50% 100%;
+}
 .timeline-thread-dialog .timeline-thread-composer.composer {
   position:relative;
   display:flex;
@@ -151,6 +143,10 @@ dialog.timeline-thread-dialog::backdrop { background:transparent; }
   outline-offset:-.5px;
   background:#fff;
   box-shadow:0 2px 8px #14181f0f;
+}
+.timeline-thread-dialog .timeline-thread-composer.composer.is-multiline {
+  align-items:flex-end;
+  border-radius:24px;
 }
 .timeline-thread-composer.composer textarea {
   flex:1 1 auto;
@@ -198,7 +194,10 @@ body.timeline-thread-open :is(.indexing-nav-rail, .indexing-nav-preview, #reply-
 }
 
 @media (max-width:760px) {
-  dialog.timeline-thread-dialog { left:0; }
+  dialog.timeline-thread-dialog {
+    --timeline-thread-dock-bottom:max(16px, env(safe-area-inset-bottom));
+    left:0;
+  }
   .timeline-thread-dialog .timeline-thread-close {
     top:20px;
     right:16px;
@@ -208,9 +207,8 @@ body.timeline-thread-open :is(.indexing-nav-rail, .indexing-nav-preview, #reply-
   .timeline-thread-close svg { width:24px; height:24px; }
   .timeline-thread-scroll {
     padding-inline:16px;
-    padding-bottom:max(16px, env(safe-area-inset-bottom));
-    scroll-padding-bottom:max(16px, env(safe-area-inset-bottom));
   }
+  .timeline-thread-composer-dock { width:calc(100% - 32px); }
   .timeline-thread-dialog .timeline-thread-composer.composer { gap:12px; }
   .timeline-thread-composer.composer .composer-actions { gap:12px; }
 }

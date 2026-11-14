@@ -25,6 +25,9 @@ open the focused reply screen from Pen frame `s1WgPQ`. The popup fades and lifts
 over a blurred conversation, with reduced-motion support. Close, Escape,
 clicking outside the thread, or browser Back returns to the same scroll position
 and draft. Its composer adds replies locally to this thread only.
+All timeline popups use the main chat's scrolling header: it becomes a compact
+Owl pill as messages scroll underneath. The input stays fixed at the bottom,
+grows for multiline drafts, and reserves room for the last message and timestamp.
 Direct thread link: https://woo-mi.github.io/owl/reply-ux-pattern/?version=timeline&timeline-thread=profile
 
 **2 Unread** and **2 Replies** under “Can you help me grow the dau/mau for chat?”
