@@ -2,7 +2,7 @@
 
 Live URL: https://woo-mi.github.io/owl/reply-ux-pattern/
 
-The default is **more than three topics**. Explicit version links retain
+The default is **timeline**. Explicit version links retain
 their selected version.
 
 All conversation content appears immediately without animation.
