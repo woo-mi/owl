@@ -321,7 +321,8 @@
 
     function openThread(trigger) {
       if (!active() || !buildDialog()) return;
-      if (trigger) opener = trigger;
+      if (trigger) opener = trigger.closest('#indexing-menu') ? document.getElementById('indexing-menu-toggle') : trigger;
+      window.dispatchEvent(new Event('timeline-thread-open'));
       const nextMode = requestedMode();
       const changed = mode !== nextMode;
       mode = nextMode;

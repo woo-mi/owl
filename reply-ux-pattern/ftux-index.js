@@ -58,6 +58,15 @@
         type:node.querySelector('.timeline-card-meta').textContent.split('·')[0].trim()
       }));
   }
+  function getUnreadThreads() {
+    if (!usesConversationIndex()) return [];
+    return [...document.querySelectorAll('#messages .ftux-flow .timeline-outgoing .timeline-footer [data-timeline-mode="unread"]')]
+      .filter(revealed).map(trigger => ({
+        key:trigger.dataset.timelineThread,
+        title:trigger.closest('[data-timeline-message]').querySelector('.timeline-text').textContent,
+        count:Number(trigger.textContent.match(/(\d+)\s*Unread/)?.[1] || 1)
+      }));
+  }
   function jumpTo(id) {
     if (!isAvailable()) return;
     const target = [...getTopics(), ...getRecentTopics()].find(item => item.id === id)?.node;
@@ -105,6 +114,10 @@
       <section class="indexing-menu-section" aria-labelledby="indexing-artifacts-heading">
         <h2 id="indexing-artifacts-heading">Artifacts</h2>
         <div data-indexing-artifacts><p class="ftux-index-empty">No artifacts yet.</p></div>
+      </section>
+      <section class="indexing-menu-section indexing-menu-unread" aria-labelledby="indexing-unread-heading" hidden>
+        <h2 id="indexing-unread-heading">Unread<span class="indexing-menu-unread-dot" aria-hidden="true">•</span></h2>
+        <ul class="indexing-menu-unread-list"></ul>
       </section>`;
     main.append(toggle, panel);
     const list = panel.querySelector('.indexing-menu-topic-list');
@@ -112,6 +125,7 @@
     let frame;
     let topicKey = '';
     let artifactKey;
+    let unreadKey;
     const controls = () => [...panel.querySelectorAll('button, a[href]')];
     function setOpen(next, {restoreFocus = false, focusFirst = false} = {}) {
       const wasOpen = open;
@@ -178,6 +192,30 @@
         } else container.innerHTML = '<p class="ftux-index-empty">No artifacts yet.</p>';
         artifactKey = nextArtifactKey;
       }
+      const unreadThreads = getUnreadThreads();
+      const nextUnreadKey = JSON.stringify(unreadThreads);
+      if (unreadKey !== nextUnreadKey) {
+        const section = panel.querySelector('.indexing-menu-unread');
+        section.hidden = !unreadThreads.length;
+        section.querySelector('ul').replaceChildren(...unreadThreads.map(({key, title, count}) => {
+          const li = document.createElement('li');
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'indexing-menu-topic indexing-menu-unread-thread';
+          button.dataset.timelineThread = key;
+          button.dataset.timelineMode = 'unread';
+          button.title = title;
+          button.setAttribute('aria-haspopup', 'dialog');
+          button.setAttribute('aria-controls', `timeline-line-user-${key}-thread`);
+          button.setAttribute('aria-label', `${title} — ${count} unread ${count === 1 ? 'reply' : 'replies'}`);
+          button.innerHTML = '<span class="indexing-menu-unread-title"></span><span class="indexing-menu-unread-count" aria-hidden="true"></span>';
+          button.querySelector('.indexing-menu-unread-title').textContent = title;
+          button.querySelector('.indexing-menu-unread-count').textContent = count;
+          li.append(button);
+          return li;
+        }));
+        unreadKey = nextUnreadKey;
+      }
       toggle.hidden = !isAvailable();
       setOpen(open);
       window.dispatchEvent(new Event('ftux-index-change'));
@@ -217,6 +255,7 @@
       if (open && !panel.contains(event.target) && event.target !== toggle) setOpen(false);
     });
     window.addEventListener('indexing-navigator-open', () => setOpen(false));
+    window.addEventListener('timeline-thread-open', () => setOpen(false));
     window.addEventListener('ftux-state-change', scheduleSync);
     window.addEventListener('indexing-ready', scheduleSync);
     new MutationObserver(scheduleSync).observe(messages, {childList:true, subtree:true, attributes:true, attributeFilter:['hidden']});
