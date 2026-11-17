@@ -11,12 +11,17 @@
     'timeline-unread':'Unread',
     'timeline-unread-dark':'Unread dark',
     'links':'use case 1',
+    'links-2':'use case 2',
+    'links-3':'use case 3',
+    'links-4':'use case 4',
     'timeline-bubble-user':'bubble, read/reply - user',
     'timeline-line-user':'Hybrid style',
     'timeline-line-both':'bubble, connecting line, read/reply both'
   };
   const versions = Object.keys(versionLabels);
-  const visibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-unread', 'timeline-unread-dark', 'links'];
+  const linksVersions = ['links', 'links-2', 'links-3', 'links-4'];
+  const legacyVisibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-unread', 'timeline-unread-dark', 'links'];
+  const visibleVersions = [...legacyVisibleVersions, ...linksVersions.slice(1)];
   const versionLabel = version => versionLabels[version] || version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
@@ -54,19 +59,22 @@
     trigger.setAttribute('aria-expanded', String(open));
     if (open) {
       position();
-      focusOption(options.find(option => option.dataset.replyVersion === selected) || options[0]);
+      const availableOptions = options.filter(option => !option.parentElement.hidden);
+      focusOption(availableOptions.find(option => option.dataset.replyVersion === selected) || availableOptions[0]);
     }
     else if (restoreFocus && !control.hidden) trigger.focus({preventScroll:true});
   }
   function sync() {
     label.textContent = versionLabel(selected);
     trigger.setAttribute('aria-label', `Reply version, ${versionLabel(selected)}`);
+    const links = linksVersions.includes(selected);
+    const displayedVersions = links ? linksVersions : legacyVisibleVersions;
     options.forEach(option => {
       option.setAttribute('aria-checked', String(option.dataset.replyVersion === selected));
-      option.parentElement.hidden = selected === 'links' && option.dataset.replyVersion !== 'links';
+      option.parentElement.hidden = !displayedVersions.includes(option.dataset.replyVersion);
     });
-    const unread = ['timeline-unread', 'timeline-unread-dark', 'links'].includes(selected);
-    if (selected === 'links') {
+    const unread = links || ['timeline-unread', 'timeline-unread-dark'].includes(selected);
+    if (links) {
       const url = new URL(location.href);
       if (url.searchParams.has('timeline-thread') || url.searchParams.has('timeline-mode')) {
         url.searchParams.delete('timeline-thread');
@@ -81,7 +89,7 @@
     document.body.dataset.replyVersion = selected;
     const themeColor = getComputedStyle(document.body).getPropertyValue('--reply-theme-color').trim() || (theme === 'dark' ? '#17191d' : '#ffffff');
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
-    document.body.dataset.replyLayout = selected === 'links' || selected === 'timeline' || selected.startsWith('timeline-') ? 'timeline' : '';
+    document.body.dataset.replyLayout = links || selected === 'timeline' || selected.startsWith('timeline-') ? 'timeline' : '';
   }
   function select(version) {
     if (!versions.includes(version)) return;
