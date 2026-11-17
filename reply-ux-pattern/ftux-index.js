@@ -24,7 +24,7 @@
   function getUnreadTopics(flow) {
     // Threads interleave in the timeline; associate artifacts with their source messages.
     const definitions = [
-      {message:'ZPjs0', title:'Live App growth report',
+      {message:currentVersion() === 'links-5' ? 'D6IAGc' : 'ZPjs0', title:'Live App growth report',
         excerpt:'Live App loads rose to 4,284 and distinct users to 231. Review September’s growth trend and the shorter prior tracking window.',
         artifactMessages:['D6IAGc', 'nsyvF']},
       {message:'SN8ox', title:'What Owl learned about you',

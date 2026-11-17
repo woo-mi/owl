@@ -48,7 +48,10 @@
     const line = connector || counts ? `<div class="timeline-reference-row" style="gap:${Number(row.gap) || 0}px;padding:${paddingCSS(row.padding || 0)}">${row.lineLast ? counts + connector : connector + counts}</div>` : '';
     return `<div class="timeline-reference timeline-stack${node.align === 'end' ? ' timeline-align-end' : ''}" data-pen-node="${escape(node.id)}" style="--timeline-gap:${Number(node.gap) || 0}px">${quote}${line}</div>`;
   }
+  // Use case 5 starts at the completed report, after the removed setup exchange.
+  const linksCaseFiveIntro = new Set(['wGADP', 'BvMRL', 'kFbxH', 'V84zc']);
   function render(node, author = '', parentMessage = '', version = 'timeline') {
+    if (version === 'links-5' && linksCaseFiveIntro.has(node.id)) return '';
     const attrs = `data-pen-node="${escape(node.id)}"`;
     const children = () => (node.children || []).map(child => render(child, author, parentMessage, version)).join('');
     const gap = `style="--timeline-gap:${Number(node.gap) || 0}px"`;
