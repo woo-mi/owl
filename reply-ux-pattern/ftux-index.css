@@ -6,6 +6,17 @@ body.ftux-prototype[data-reply-version="timeline-line-user"] .indexing-menu {
   /* Keep the expanded index above the floating prototype version picker. */
   z-index:151;
 }
+.indexing-menu-toggle.has-unread::after {
+  content:"";
+  position:absolute;
+  top:-2px;
+  right:-3px;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#ff0000;
+  pointer-events:none;
+}
 
 body.ftux-prototype :is(.indexing-menu, .indexing-nav-rail)[hidden] {
   display:none !important;

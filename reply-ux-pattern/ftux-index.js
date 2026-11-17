@@ -132,7 +132,7 @@
       open = next && isAvailable();
       panel.hidden = !open;
       toggle.setAttribute('aria-expanded', String(open));
-      toggle.setAttribute('aria-label', `${open ? 'Close' : 'Open'} conversation index`);
+      toggle.setAttribute('aria-label', `${open ? 'Close' : 'Open'} conversation index${toggle.classList.contains('has-unread') ? ', unread replies' : ''}`);
       if (restoreFocus && !toggle.hidden) toggle.focus({preventScroll:true});
       if (open && focusFirst) controls()[0]?.focus({preventScroll:true});
       if (open && !wasOpen) window.dispatchEvent(new Event('indexing-menu-open'));
@@ -193,6 +193,7 @@
         artifactKey = nextArtifactKey;
       }
       const unreadThreads = getUnreadThreads();
+      toggle.classList.toggle('has-unread', unreadThreads.some(thread => thread.count > 0));
       const nextUnreadKey = JSON.stringify(unreadThreads);
       if (unreadKey !== nextUnreadKey) {
         const section = panel.querySelector('.indexing-menu-unread');
