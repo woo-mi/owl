@@ -20,8 +20,8 @@
   };
   const versions = Object.keys(versionLabels);
   const linksVersions = ['links', 'links-2', 'links-3', 'links-4'];
-  const legacyVisibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-unread', 'links'];
-  const visibleVersions = [...legacyVisibleVersions, ...linksVersions.slice(1)];
+  const legacyVisibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-unread'];
+  const visibleVersions = [...legacyVisibleVersions, ...linksVersions];
   const versionLabel = version => versionLabels[version] || version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
