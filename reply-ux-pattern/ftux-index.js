@@ -1,15 +1,8 @@
 /* A conversation index derived from FTUX's revealed messages and connection state. */
 (() => {
   'use strict';
-  const recentConversations = [
-    {id:'revenue-drivers', title:'September revenue drivers'},
-    {id:'morning-pipeline', title:'Pipeline health and app adoption'}
-  ];
+  const usesConversationIndex = () => new URL(location.href).searchParams.get('version') === 'timeline-line-user';
   const linkIcon = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6.25 9.75 3.5-3.5m-4.5 1-1 1a2.475 2.475 0 0 0 3.5 3.5l1-1m-1.5-5.5 1-1a2.475 2.475 0 0 1 3.5 3.5l-1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const referenceArtifacts = `<ul class="indexing-menu-artifact-list">
-    <li><a class="indexing-menu-artifact" href="https://ayush.gowisdom.ai/apps/app_af105ef5a93d4b77a5e9922cd6ffa91f/view" target="_blank" rel="noopener noreferrer">${linkIcon}<span class="indexing-menu-artifact-label">September Revenue Drivers</span><span class="indexing-menu-artifact-type">App</span></a></li>
-    <li><a class="indexing-menu-artifact" href="https://ayush.gowisdom.ai/chat/33ac3dce-6d77-47cd-8e6b-1c049379ee6b" target="_blank" rel="noopener noreferrer">${linkIcon}<span class="indexing-menu-artifact-label">September 2024 Revenue Analysis</span><span class="indexing-menu-artifact-type">Chat</span></a></li>
-  </ul>`;
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const isAvailable = () => Boolean(document.querySelector('#messages .ftux-flow')) &&
     !document.body.classList.contains('workspace-page-open') &&
@@ -41,9 +34,33 @@
         node:flow.querySelector('#reply-insight-request')}
     ].filter(item => revealed(item.node));
   }
+  function getRecentTopics() {
+    if (!usesConversationIndex()) return getTopics().reverse();
+    const flow = document.querySelector('#messages .ftux-flow');
+    return [
+      {id:'timeline-message-lxiD8', title:'Rubrik usage monitoring'},
+      {id:'timeline-message-bUhpm', title:'Chat adoption and Slack access'},
+      {id:'timeline-message-D6IAGc', title:'Live App growth report'}
+    ].map(item => ({...item, node:flow?.querySelector(`#${item.id}`)}))
+      .filter(item => revealed(item.node));
+  }
+  function getArtifacts() {
+    if (!usesConversationIndex()) return [];
+    const seen = new Set();
+    return [...document.querySelectorAll('#messages .ftux-flow .timeline-card[href]')]
+      .reverse().filter(revealed).filter(node => {
+        if (seen.has(node.href)) return false;
+        seen.add(node.href);
+        return true;
+      }).map(node => ({
+        href:node.href,
+        title:node.querySelector('.timeline-card-copy strong').textContent,
+        type:node.querySelector('.timeline-card-meta').textContent.split('·')[0].trim()
+      }));
+  }
   function jumpTo(id) {
     if (!isAvailable()) return;
-    const target = getTopics().find(item => item.id === id)?.node;
+    const target = [...getTopics(), ...getRecentTopics()].find(item => item.id === id)?.node;
     const scroller = document.getElementById('chat-scroll');
     if (!target || !scroller) return;
     window.FTUX.pauseAutoScroll();
@@ -95,41 +112,6 @@
     let frame;
     let topicKey = '';
     let artifactKey;
-    let recentDialog, restoreRecentFocus = true;
-    function handleRecent(event) {
-      return window.FullscreenHistory?.handleClick(event, {
-        showDetail(title, html) {
-          if (!recentDialog) {
-            recentDialog = document.createElement('dialog');
-            recentDialog.className = 'indexing-preview ftux-index-recent-dialog';
-            recentDialog.setAttribute('aria-labelledby', 'ftux-index-recent-title');
-            recentDialog.innerHTML = '<header><h2 id="ftux-index-recent-title"></h2><button type="button" aria-label="Close conversation preview">×</button></header><div class="indexing-preview-content"></div>';
-            recentDialog.querySelector('header button').addEventListener('click', () => recentDialog.close());
-            recentDialog.addEventListener('close', () => { if (restoreRecentFocus) toggle.focus({preventScroll:true}); });
-            recentDialog.addEventListener('click', event => {
-              if (event.target === recentDialog) {
-                const rect = recentDialog.getBoundingClientRect();
-                if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) recentDialog.close();
-              } else handleRecent(event);
-            });
-            main.append(recentDialog);
-          }
-          const recentOpener = event.target.closest('[data-history-id]');
-          restoreRecentFocus = true;
-          recentDialog.querySelector('h2').textContent = recentOpener?.textContent || title;
-          recentDialog.querySelector('.indexing-preview-content').innerHTML = html;
-          recentDialog.showModal();
-        },
-        ask(question) {
-          restoreRecentFocus = false;
-          recentDialog?.close();
-          const input = document.getElementById('message-input');
-          input.value = question;
-          input.dispatchEvent(new Event('input', {bubbles:true}));
-          input.focus({preventScroll:true});
-        }
-      });
-    }
     const controls = () => [...panel.querySelectorAll('button, a[href]')];
     function setOpen(next, {restoreFocus = false, focusFirst = false} = {}) {
       const wasOpen = open;
@@ -154,8 +136,8 @@
         : count === state.total ? 'All your tools are connected.'
         : count ? `${state.total - count} more ${state.total - count === 1 ? 'tool' : 'tools'} available to connect.`
         : 'Connect your tools to get started.';
-      const topics = state.referenceIndex ? recentConversations : getTopics().reverse();
-      const key = JSON.stringify([state.referenceIndex, topics.map(({id, title}) => [id, title])]);
+      const topics = getRecentTopics();
+      const key = JSON.stringify(topics.map(({id, title}) => [id, title]));
       if (key !== topicKey) {
         const focused = document.activeElement?.dataset.indexingTopic;
         list.replaceChildren(...topics.map(({id, title}) => {
@@ -163,10 +145,7 @@
           const button = document.createElement('button');
           button.type = 'button';
           button.className = 'indexing-menu-topic';
-          if (state.referenceIndex) {
-            button.dataset.fswHistory = 'open';
-            button.dataset.historyId = id;
-          } else button.dataset.indexingTopic = id;
+          button.dataset.indexingTopic = id;
           button.textContent = title;
           li.append(button);
           return li;
@@ -175,9 +154,29 @@
         topicKey = key;
       }
       panel.querySelector('[data-empty-topics]').hidden = topics.length > 0;
-      if (artifactKey !== state.referenceIndex) {
-        panel.querySelector('[data-indexing-artifacts]').innerHTML = state.referenceIndex ? referenceArtifacts : '<p class="ftux-index-empty">No artifacts yet.</p>';
-        artifactKey = state.referenceIndex;
+      const artifacts = getArtifacts();
+      const nextArtifactKey = JSON.stringify(artifacts);
+      if (artifactKey !== nextArtifactKey) {
+        const container = panel.querySelector('[data-indexing-artifacts]');
+        if (artifacts.length) {
+          const artifactList = document.createElement('ul');
+          artifactList.className = 'indexing-menu-artifact-list';
+          artifactList.replaceChildren(...artifacts.map(({href, title, type}) => {
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            link.className = 'indexing-menu-artifact';
+            link.href = href;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.innerHTML = `${linkIcon}<span class="indexing-menu-artifact-label"></span><span class="indexing-menu-artifact-type"></span>`;
+            link.querySelector('.indexing-menu-artifact-label').textContent = title;
+            link.querySelector('.indexing-menu-artifact-type').textContent = type;
+            li.append(link);
+            return li;
+          }));
+          container.replaceChildren(artifactList);
+        } else container.innerHTML = '<p class="ftux-index-empty">No artifacts yet.</p>';
+        artifactKey = nextArtifactKey;
       }
       toggle.hidden = !isAvailable();
       setOpen(open);
@@ -195,11 +194,6 @@
       if (event.target.closest('[data-indexing-manage]')) {
         setOpen(false);
         window.FTUX.openConnections(toggle);
-        return;
-      }
-      if (event.target.closest('[data-fsw-history]')) {
-        setOpen(false);
-        handleRecent(event);
         return;
       }
       if (event.target.closest('a[href]')) {
