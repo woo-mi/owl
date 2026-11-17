@@ -17,7 +17,8 @@ body.ftux-prototype[data-reply-theme="dark"] {
   --dark-muted:#b0b3bd;
   --dark-link:#79b4ff;
   --dark-unread:#ff7379;
-  --dark-unread-bg:#472a30;
+  /* A light neutral tint keeps the red legible on both cards and navigation. */
+  --dark-unread-bg:#34363b;
   --dark-shadow:0 12px 32px #0006, 0 2px 8px #0003;
   --line:#2c2e35;
   --blue:#2767d5;
@@ -118,8 +119,7 @@ body.ftux-prototype[data-reply-theme="dark"] .unread-menu { box-shadow:inset 0 0
 body.ftux-prototype[data-reply-theme="dark"] :is(.indexing-menu-section h2,.indexing-menu-manage,.indexing-menu-connection-pending,.indexing-menu-artifact-type,.ftux-index-empty,.indexing-nav-excerpt) { color:var(--dark-muted); }
 body.ftux-prototype[data-reply-theme="dark"] :is(.indexing-menu-unread-thread,.indexing-nav-title) { color:var(--dark-text); }
 body.ftux-prototype[data-reply-theme="dark"] :is(.indexing-menu-artifact,.indexing-nav-external) { color:var(--dark-link); }
-body.ftux-prototype[data-reply-theme="dark"] :is(.indexing-menu-unread-count,.owls-unread-count) { color:var(--dark-unread); background:var(--dark-unread-bg); }
-body.ftux-prototype[data-reply-theme="dark"] .indexing-nav-unread { color:var(--dark-unread); background:transparent; }
+body.ftux-prototype[data-reply-theme="dark"] :is(.indexing-menu-unread-count,.indexing-nav-unread,.owls-unread-count) { color:var(--dark-unread); background:var(--dark-unread-bg); }
 body.ftux-prototype[data-reply-theme="dark"] .indexing-menu-unread-dot { color:var(--dark-unread); }
 body.ftux-prototype[data-reply-theme="dark"] .indexing-menu-toggle.has-unread::after { background:#ff5d65; }
 body.ftux-prototype[data-reply-theme="dark"] .indexing-menu-status-dot[data-state="connected"] { background:#43c883; }
