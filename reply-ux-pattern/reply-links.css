@@ -1,0 +1,29 @@
+/* “dot style” uses compact bubbles, dotted inline links, and an app card. */
+@font-face { font-family:Lato; src:url('assets/Lato-Bold.ttf') format('truetype'); font-weight:700; font-display:swap; }
+.reply-links { line-height:1.4; }
+.reply-links .ftux-turns,
+.reply-links .links-topic { display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
+.reply-links .links-topic { width:100%; min-width:0; scroll-margin-top:80px; }
+.reply-links .timeline-date { padding:10px 0 4px; color:#8e8e8e; font-size:11px; line-height:1.4; }
+.reply-links .timeline-bubble { line-height:1.4; }
+.reply-links .timeline-bubble strong { font-weight:700; }
+.reply-links a.links-inline { display:inline-flex; align-items:center; gap:2px; max-width:100%; color:#0069e0; text-decoration:none; vertical-align:bottom; }
+.reply-links .links-inline-icon { display:inline-flex; align-items:center; justify-content:center; flex:none; width:14px; height:14px; }
+.reply-links .links-inline-icon img { display:block; }
+.reply-links .links-inline-label { background:repeating-linear-gradient(to right,#0069e0 0 1.25px,transparent 1.25px 2.5px) left bottom 2.25px / 100% .5px no-repeat; }
+.reply-links .links-app-card { min-height:125px; border-color:#eee; border-radius:14px; font-family:Lato,Inter,system-ui,sans-serif; }
+.reply-links .timeline-card-details { justify-content:center; padding:14px 16px; gap:10px; }
+.reply-links .timeline-card-copy { gap:10px; }
+.reply-links .timeline-card-copy strong,
+.reply-links .timeline-card-copy > span { font-size:14px; line-height:1.25; }
+.reply-links .timeline-card-meta { font-size:13px; line-height:1.25; }
+.reply-links .timeline-card-meta img { flex:none; }
+.reply-links .timeline-card-thumbnail { object-fit:cover; object-position:left center; border-left:1px solid #eee; }
+.links-app-preview { width:min(520px,calc(100vw - 32px)); }
+.links-app-preview .indexing-preview-content { display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
+.links-preview-artwork { align-self:center; width:248px; max-width:100%; height:auto; border:1px solid #eee; border-radius:12px; }
+.links-preview-source { display:flex; align-items:center; gap:6px; color:#616061; font-size:13px; }
+@media (max-width:480px) {
+  .reply-links .timeline-card-details { padding:12px; }
+  .reply-links .timeline-card-thumbnail { width:80px; }
+}

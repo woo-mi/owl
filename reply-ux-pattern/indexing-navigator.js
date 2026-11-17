@@ -133,10 +133,17 @@
           const link = document.createElement('a');
           link.className = 'indexing-nav-external';
           link.href = artifact.href;
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-          link.textContent = `Open ${artifact.type === 'PDF' ? 'PDF' : artifact.type.toLowerCase()} ↗`;
-          link.setAttribute('aria-label', `Open ${artifact.title} ${artifact.type.toLowerCase()} in a new tab`);
+          const typeLabel = artifact.type === 'PDF' ? 'PDF' : artifact.type.toLowerCase();
+          if (artifact.opensDialog) {
+            link.textContent = `Preview ${typeLabel}`;
+            link.setAttribute('aria-haspopup', 'dialog');
+            link.setAttribute('aria-label', `Preview ${artifact.title} ${artifact.type.toLowerCase()}`);
+          } else {
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = `Open ${typeLabel} ↗`;
+            link.setAttribute('aria-label', `Open ${artifact.title} ${artifact.type.toLowerCase()} in a new tab`);
+          }
           return link;
         }));
         artifactKey = nextArtifactKey;

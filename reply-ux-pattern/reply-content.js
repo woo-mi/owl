@@ -49,7 +49,8 @@
     </div>`;
   }
   function initialHTML(version = new URL(location.href).searchParams.get('version')) {
-    if (!['v1', 'v2', 'v3', 'color-code', 'color-code-ticks', 'color-code-previews', 'one-topic-time-gap', 'two-topics', 'timeline', 'timeline-unread', 'timeline-unread-dark', 'timeline-bubble-user', 'timeline-line-user', 'timeline-line-both'].includes(version)) version = 'timeline';
+    if (!['v1', 'v2', 'v3', 'color-code', 'color-code-ticks', 'color-code-previews', 'one-topic-time-gap', 'two-topics', 'timeline', 'timeline-unread', 'timeline-unread-dark', 'links', 'timeline-bubble-user', 'timeline-line-user', 'timeline-line-both'].includes(version)) version = 'timeline';
+    if (version === 'links') return window.ReplyLinksContent();
     if (version === 'timeline' || version.startsWith('timeline-')) return window.ReplyTimelineContent(version);
     if (version === 'one-topic-time-gap' || version === 'two-topics') return window.ReplyTopicContent(initialHTML(version === 'two-topics' ? 'v2' : 'v1'), version);
     if (['color-code', 'color-code-ticks', 'color-code-previews'].includes(version)) return window.ReplyColorContent(initialHTML('v3'));

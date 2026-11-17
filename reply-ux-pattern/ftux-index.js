@@ -1,10 +1,10 @@
 /* A conversation index derived from FTUX's revealed messages and connection state. */
 (() => {
   'use strict';
-  const conversationVersions = ['timeline', 'timeline-line-user', 'timeline-unread', 'timeline-unread-dark'];
+  const conversationVersions = ['timeline', 'timeline-line-user', 'timeline-unread', 'timeline-unread-dark', 'links'];
   const currentVersion = () => document.body.dataset.replyVersion || new URL(location.href).searchParams.get('version') || 'timeline';
   const usesConversationIndex = () => conversationVersions.includes(currentVersion());
-  const usesUnreadMenu = () => ['timeline-unread', 'timeline-unread-dark'].includes(currentVersion());
+  const usesUnreadMenu = () => ['timeline-unread', 'timeline-unread-dark', 'links'].includes(currentVersion());
   const readThreads = new Set();
   const linkIcon = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6.25 9.75 3.5-3.5m-4.5 1-1 1a2.475 2.475 0 0 0 3.5 3.5l1-1m-1.5-5.5 1-1a2.475 2.475 0 0 1 3.5 3.5l-1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -16,7 +16,8 @@
     return {
       href:node.href,
       title:node.querySelector('.timeline-card-copy strong').textContent,
-      type:node.querySelector('.timeline-card-meta').textContent.split('·')[0].trim()
+      type:node.querySelector('.timeline-card-meta').textContent.split('·')[0].trim(),
+      opensDialog:node.getAttribute('aria-haspopup') === 'dialog'
     };
   }
   function getUnreadTopics(flow) {
@@ -69,6 +70,15 @@
   function getTopics() {
     const flow = document.querySelector('#messages .ftux-flow');
     if (!flow) return [];
+    if (flow.classList.contains('reply-links')) {
+      return [...flow.querySelectorAll('[data-links-topic]')].map(node => ({
+        id:node.id,
+        title:node.dataset.linksTitle,
+        excerpt:node.dataset.linksExcerpt,
+        node,
+        artifacts:[...node.querySelectorAll('.timeline-card[href]')].filter(revealed).map(artifactFromCard)
+      })).filter(item => revealed(item.node));
+    }
     if (flow.classList.contains('reply-timeline')) {
       if (usesUnreadMenu()) return getUnreadTopics(flow);
       return [...flow.querySelectorAll('[data-timeline-topic]')].map(node => ({
@@ -94,6 +104,7 @@
     ].filter(item => revealed(item.node));
   }
   function getRecentTopics() {
+    if (currentVersion() === 'links') return getTopics().slice(-3).reverse();
     if (!usesConversationIndex()) return getTopics().reverse();
     const flow = document.querySelector('#messages .ftux-flow');
     return [
@@ -114,7 +125,7 @@
       }).map(artifactFromCard);
   }
   function getUnreadThreads() {
-    if (!usesConversationIndex()) return [];
+    if (currentVersion() === 'links' || !usesConversationIndex()) return [];
     return [...document.querySelectorAll('#messages .ftux-flow .timeline-outgoing .timeline-footer [data-timeline-mode="unread"]')]
       .filter(trigger => revealed(trigger) && !readThreads.has(`${currentVersion()}:${trigger.dataset.timelineThread}`)).map(trigger => ({
         key:trigger.dataset.timelineThread,
@@ -266,13 +277,18 @@
         if (artifacts.length) {
           const artifactList = document.createElement('ul');
           artifactList.className = 'indexing-menu-artifact-list';
-          artifactList.replaceChildren(...artifacts.map(({href, title, type}) => {
+          artifactList.replaceChildren(...artifacts.map(({href, title, type, opensDialog}) => {
             const li = document.createElement('li');
             const link = document.createElement('a');
             link.className = 'indexing-menu-artifact';
             link.href = href;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
+            if (opensDialog) {
+              link.setAttribute('aria-haspopup', 'dialog');
+              link.setAttribute('aria-label', `Preview ${title} ${type.toLowerCase()}`);
+            } else {
+              link.target = '_blank';
+              link.rel = 'noopener noreferrer';
+            }
             link.innerHTML = `${linkIcon}<span class="indexing-menu-artifact-label"></span><span class="indexing-menu-artifact-type"></span>`;
             link.querySelector('.indexing-menu-artifact-label').textContent = title;
             link.querySelector('.indexing-menu-artifact-type').textContent = type;
