@@ -17,6 +17,8 @@ body.ftux-prototype .indexing-menu-status-dot[data-state="connecting"] {
 body.ftux-prototype .indexing-menu-status-dot[data-state="connected"] {
   background:#209855;
 }
+body.ftux-prototype .indexing-menu-status-dot[data-state="failed"] { background:#ea0028; }
+.ftux-connections-dialog .ftux-tool-status.is-failed { color:#ea0028; border-color:transparent; }
 
 body.ftux-prototype .ftux-index-empty {
   margin:0;

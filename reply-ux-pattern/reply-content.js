@@ -24,6 +24,8 @@
   const bubble = (body, title = '', id = '') => `<article${id ? ` id="${id}"` : ''} class="message assistant-message ftux-bubble reply-bubble">${title ? `<h2>${escape(title)}</h2>` : ''}${body}</article>`;
   const separator = '<div class="reply-group-separator" aria-hidden="true"></div>';
   let connections = freshConnections();
+  const usesReferenceIndex = () => new URL(location.href).searchParams.get('version') === 'timeline-line-user';
+  const connectionState = tool => usesReferenceIndex() && tool === 'Salesforce' ? 'failed' : connections.get(tool);
   let boundFlow;
   let connectionsDialog;
   let connectionsOpener;
@@ -34,6 +36,7 @@
   const notifyIndex = () => window.dispatchEvent(new Event('ftux-state-change'));
   const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
   function statusHTML(tool) {
+    if (connectionState(tool) === 'failed') return `<span class="ftux-tool-status is-failed" tabindex="-1" aria-label="${escape(tool)} couldn’t connect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6m0-6-6 6"/></svg>Failed</span>`;
     return `<span class="ftux-tool-status is-connected" tabindex="-1" aria-label="${escape(tool)} connected">${checkIcon}Connected</span>`;
   }
   function toolRowHTML(tool) {
@@ -119,8 +122,11 @@
   function updateConnectionsDescription() {
     const description = connectionsDialog?.querySelector('#ftux-connections-description');
     if (!description) return;
-    const connected = [...connections.values()].filter(state => state === 'connected').length;
-    const pending = [...connections].filter(([, state]) => state === 'connecting').map(([tool]) => tool);
+    const {connectedCount:connected, connectingTools:pending, failedTools:failed} = getIndexState();
+    if (failed.length) {
+      description.textContent = `${connected} tools are connected. ${failed.join(', ')} couldn’t connect.`;
+      return;
+    }
     description.textContent = `${connected === connections.size ? `All ${connected} tools are connected.` : connected ? `${connected} of ${connections.size} tools are connected.` : 'No tools are connected yet.'}${pending.length ? ` Connecting ${pending.join(' and ')}…` : ''}`;
   }
   function openConnections(opener = document.activeElement) {
@@ -154,8 +160,10 @@
   }
   const getIndexState = () => ({
     stage, total:connections.size,
-    connectedCount:[...connections.values()].filter(state => state === 'connected').length,
-    connectingTools:[...connections].filter(([, state]) => state === 'connecting').map(([tool]) => tool),
+    connectedCount:[...connections.keys()].filter(tool => connectionState(tool) === 'connected').length,
+    connectingTools:[...connections.keys()].filter(tool => connectionState(tool) === 'connecting'),
+    failedTools:[...connections.keys()].filter(tool => connectionState(tool) === 'failed'),
+    referenceIndex:usesReferenceIndex(),
     artifactReady:false
   });
   window.FTUX = Object.freeze({send, reset, openConnections, getIndexState, getConversationHTML:initialHTML,
