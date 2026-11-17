@@ -25,12 +25,13 @@ dialog.timeline-thread-dialog {
   border:0;
   border-radius:0;
   outline:0;
-  background:rgb(255 255 255 / 80%);
+  /* Keep the underlying conversation visible as a distinct, frosted layer. */
+  background:rgb(255 255 255 / 60%);
   color:#0d0d0d;
   font:400 14px/20px Inter, system-ui, sans-serif;
   box-shadow:none;
-  -webkit-backdrop-filter:blur(40px);
-  backdrop-filter:blur(40px);
+  -webkit-backdrop-filter:blur(16px);
+  backdrop-filter:blur(16px);
 }
 dialog.timeline-thread-dialog[open] { display:block; }
 dialog.timeline-thread-dialog::backdrop { background:transparent; }
