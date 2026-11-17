@@ -129,7 +129,7 @@
     unreadToggle.type = 'button';
     unreadToggle.hidden = true;
     unreadToggle.setAttribute('aria-controls', 'unread-menu');
-    unreadToggle.innerHTML = '<img src="assets/bubble-annotation-3.svg" width="20" height="20" alt="" aria-hidden="true">';
+    unreadToggle.innerHTML = '<img src="assets/bubble-annotation-3.svg?v=stroke-1-5" width="20" height="20" alt="" aria-hidden="true">';
     const unreadPanel = document.createElement('nav');
     unreadPanel.id = 'unread-menu';
     unreadPanel.className = 'indexing-menu unread-menu';
