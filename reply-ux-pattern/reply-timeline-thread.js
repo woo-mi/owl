@@ -322,10 +322,10 @@
     function openThread(trigger) {
       if (!active() || !buildDialog()) return;
       if (trigger) opener = trigger.closest('#indexing-menu') ? document.getElementById('indexing-menu-toggle') : trigger;
-      window.dispatchEvent(new Event('timeline-thread-open'));
       const nextMode = requestedMode();
       const changed = mode !== nextMode;
       mode = nextMode;
+      window.dispatchEvent(new CustomEvent('timeline-thread-open', {detail:{key, version, mode}}));
       unreadDivider.hidden = mode !== 'unread';
       dialog.dataset.timelineMode = mode;
       dialog.setAttribute('aria-label', `${thread.title} - ${mode === 'unread' ? 'unread' : 'reply'} opened`);

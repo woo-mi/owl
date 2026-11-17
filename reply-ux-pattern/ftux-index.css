@@ -74,6 +74,9 @@ body.ftux-prototype .indexing-menu-manage:focus-visible { outline:2px solid #006
   gap:10px;
   color:#15171b;
 }
+.indexing-menu-unread-thread:hover {
+  text-decoration:none;
+}
 .indexing-menu-unread-title {
   min-width:0;
   overflow:hidden;

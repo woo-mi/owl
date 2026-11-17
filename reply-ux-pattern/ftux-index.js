@@ -2,6 +2,7 @@
 (() => {
   'use strict';
   const usesConversationIndex = () => new URL(location.href).searchParams.get('version') === 'timeline-line-user';
+  const readThreads = new Set();
   const linkIcon = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6.25 9.75 3.5-3.5m-4.5 1-1 1a2.475 2.475 0 0 0 3.5 3.5l1-1m-1.5-5.5 1-1a2.475 2.475 0 0 1 3.5 3.5l-1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const isAvailable = () => Boolean(document.querySelector('#messages .ftux-flow')) &&
@@ -61,7 +62,7 @@
   function getUnreadThreads() {
     if (!usesConversationIndex()) return [];
     return [...document.querySelectorAll('#messages .ftux-flow .timeline-outgoing .timeline-footer [data-timeline-mode="unread"]')]
-      .filter(revealed).map(trigger => ({
+      .filter(trigger => revealed(trigger) && !readThreads.has(trigger.dataset.timelineThread)).map(trigger => ({
         key:trigger.dataset.timelineThread,
         title:trigger.closest('[data-timeline-message]').querySelector('.timeline-text').textContent,
         count:Number(trigger.textContent.match(/(\d+)\s*Unread/)?.[1] || 1)
@@ -256,7 +257,14 @@
       if (open && !panel.contains(event.target) && event.target !== toggle) setOpen(false);
     });
     window.addEventListener('indexing-navigator-open', () => setOpen(false));
-    window.addEventListener('timeline-thread-open', () => setOpen(false));
+    window.addEventListener('timeline-thread-open', event => {
+      setOpen(false);
+      const {key, version, mode} = event.detail || {};
+      if (version === 'timeline-line-user' && mode === 'unread' && key) {
+        readThreads.add(key);
+        scheduleSync();
+      }
+    });
     window.addEventListener('ftux-state-change', scheduleSync);
     window.addEventListener('indexing-ready', scheduleSync);
     new MutationObserver(scheduleSync).observe(messages, {childList:true, subtree:true, attributes:true, attributeFilter:['hidden']});
