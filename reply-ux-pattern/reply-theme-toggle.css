@@ -19,11 +19,11 @@
   white-space:nowrap;
 }
 .reply-theme-control[hidden] { display:none; }
-.reply-theme-label { color:var(--theme-control-muted); }
-body:not([data-reply-theme="dark"]) .reply-theme-label[data-theme-label="light"],
-body[data-reply-theme="dark"] .reply-theme-label[data-theme-label="dark"] {
+.reply-theme-icon { display:flex; align-items:center; justify-content:center; flex:none; width:18px; height:18px; color:var(--theme-control-muted); }
+.reply-theme-icon svg { width:18px; height:18px; }
+body:not([data-reply-theme="dark"]) .reply-theme-icon[data-theme-label="light"],
+body[data-reply-theme="dark"] .reply-theme-icon[data-theme-label="dark"] {
   color:var(--theme-control-active);
-  font-weight:600;
 }
 .reply-theme-toggle {
   position:relative;

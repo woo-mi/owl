@@ -40,9 +40,9 @@
       ${visibleVersions.map(version => `<li role="none"><button type="button" class="prototype-version-option reply-version-option" role="menuitemradio" aria-checked="false" tabindex="-1" data-reply-version="${version}">${versionLabel(version)}</button></li>`).join('')}
     </ul>
   </div><div class="reply-theme-control" role="group" aria-label="Color mode" hidden>
-    <span class="reply-theme-label" data-theme-label="light">Light</span>
+    <span class="reply-theme-icon" data-theme-label="light" title="Light mode" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></span>
     <button id="reply-theme-toggle" class="reply-theme-toggle" type="button" role="switch" aria-label="Dark mode" aria-checked="true"><span class="reply-theme-thumb" aria-hidden="true"></span></button>
-    <span class="reply-theme-label" data-theme-label="dark">Dark</span>
+    <span class="reply-theme-icon" data-theme-label="dark" title="Dark mode" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></span>
   </div>`;
   document.body.prepend(control);
   const trigger = control.querySelector('.reply-version-trigger');
