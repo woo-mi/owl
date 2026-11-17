@@ -9,12 +9,13 @@
     'two-topics':'two topics',
     'timeline':'Slack style',
     'timeline-unread':'Unread',
+    'timeline-unread-dark':'Unread dark',
     'timeline-bubble-user':'bubble, read/reply - user',
     'timeline-line-user':'Hybrid style',
     'timeline-line-both':'bubble, connecting line, read/reply both'
   };
   const versions = Object.keys(versionLabels);
-  const visibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-unread'];
+  const visibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-unread', 'timeline-unread-dark'];
   const versionLabel = version => versionLabels[version] || version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
@@ -60,7 +61,14 @@
     label.textContent = versionLabel(selected);
     trigger.setAttribute('aria-label', `Reply version, ${versionLabel(selected)}`);
     options.forEach(option => option.setAttribute('aria-checked', String(option.dataset.replyVersion === selected)));
+    const unread = ['timeline-unread', 'timeline-unread-dark'].includes(selected);
+    const theme = selected === 'timeline-unread-dark' ? 'dark' : 'light';
+    document.documentElement.dataset.replyTheme = theme;
+    document.body.dataset.replyTheme = theme;
+    document.body.dataset.replyExperience = unread ? 'unread' : selected;
     document.body.dataset.replyVersion = selected;
+    const themeColor = getComputedStyle(document.body).getPropertyValue('--reply-theme-color').trim() || (theme === 'dark' ? '#17191d' : '#ffffff');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
     document.body.dataset.replyLayout = selected === 'timeline' || selected.startsWith('timeline-') ? 'timeline' : '';
   }
   function select(version) {

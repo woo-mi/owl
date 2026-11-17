@@ -36,7 +36,7 @@
     }
   };
 
-  const VERSIONS = ['timeline', 'timeline-unread', 'timeline-bubble-user', 'timeline-line-user', 'timeline-line-both'];
+  const VERSIONS = ['timeline', 'timeline-unread', 'timeline-unread-dark', 'timeline-bubble-user', 'timeline-line-user', 'timeline-line-both'];
 
   // Each variant's thread owns its cached messages, draft, attachments and motion.
   function createThread(key, thread, version) {
@@ -161,7 +161,7 @@
       content = document.createElement('div');
       content.className = 'timeline-thread-content';
       const messages = document.createElement('div');
-      messages.className = `timeline-thread-messages reply-timeline${['timeline', 'timeline-unread'].includes(version) ? '' : ' reply-timeline-variant'}`;
+      messages.className = `timeline-thread-messages reply-timeline${['timeline', 'timeline-unread', 'timeline-unread-dark'].includes(version) ? '' : ' reply-timeline-variant'}`;
       unreadDivider = document.createElement('div');
       unreadDivider.className = 'timeline-new timeline-thread-new';
       unreadDivider.textContent = 'NEW';

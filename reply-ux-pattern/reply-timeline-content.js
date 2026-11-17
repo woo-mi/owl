@@ -96,6 +96,6 @@
   window.ReplyTimelineContent = (version = 'timeline') => {
     const variant = window.ReplyTimelineVariants?.[version];
     const tree = variant?.tree || timeline;
-    return `<div class="ftux-flow reply-pattern reply-timeline${variant ? ' reply-timeline-variant' : ''}" data-pen-frame="${version === 'timeline-unread' ? 'cleFc' : variant?.frame || 'ZyjHC'}" data-pen-conversation="${variant?.conversation || 'ScCph'}"><div class="ftux-turns">${tree.children.map(node => render(node, '', '', version)).join('')}</div></div>`;
+    return `<div class="ftux-flow reply-pattern reply-timeline${variant ? ' reply-timeline-variant' : ''}" data-pen-frame="${['timeline-unread', 'timeline-unread-dark'].includes(version) ? 'cleFc' : variant?.frame || 'ZyjHC'}" data-pen-conversation="${variant?.conversation || 'ScCph'}"><div class="ftux-turns">${tree.children.map(node => render(node, '', '', version)).join('')}</div></div>`;
   };
 })();

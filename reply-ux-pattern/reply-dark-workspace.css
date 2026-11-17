@@ -1,0 +1,98 @@
+/* Keep the workspace reached from Unread dark in the same color system. */
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-dialog, .workspace-panel, .fsw-notice) {
+  background:var(--dark-canvas);
+  color:var(--dark-text);
+}
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-sidebar, .workspace-panel) {
+  background:var(--dark-sidebar);
+  border-color:var(--dark-border);
+}
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-dialog, .fsw-edit-dialog, .wg-editor)::backdrop { background:#0008; }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-scroll, .workspace-scroll) { scrollbar-color:var(--dark-border) transparent; }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-nav, .fsw-close, .fsw-back, .workspace-chat-back, .workspace-close, .workspace-title, .workspace-profile) { color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-nav[aria-selected="true"], .workspace-tab[aria-selected="true"]) { background:var(--dark-hover); color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-nav:hover, .fsw-close:hover, .fsw-back:hover, .workspace-close, .workspace-close:hover, .profile-name-edit:hover) { background:var(--dark-surface); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.workspace-tab, .ws-tool-status, .ws-detail-back, .ws-detail p, .ws-detail .ws-detail-label, .workspace-panel .ws-tools-heading) { color:var(--dark-muted); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.ws-tool, .ws-task-directory button, .fsw-composer) { background:var(--dark-surface); color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.ws-tool-name, .ws-detail h3, .ws-detail .ws-detail-value, .fsw-composer textarea) { color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] .fsw-composer textarea::placeholder { color:var(--dark-muted); }
+body.ftux-prototype[data-reply-theme="dark"] .fsw-composer button { background:var(--dark-text); color:var(--dark-canvas); }
+body.ftux-prototype[data-reply-theme="dark"] .fsw-composer button:disabled { background:var(--dark-hover); color:var(--composer-send-muted); }
+
+/* Goals and references. */
+body.ftux-prototype[data-reply-theme="dark"] :is(.wg-card, .wg-goal-item, .wg-reference-category-card, .wg-edit, .wg-filters button) {
+  background:var(--dark-surface);
+  color:var(--dark-text);
+  border-color:var(--dark-border);
+}
+body.ftux-prototype[data-reply-theme="dark"] :is(.wg-goal-item:hover, .wg-goal-item[aria-current="true"], .wg-filters button:hover, .wg-filters button[aria-pressed="true"], .wg-edit:hover) { background:var(--dark-hover); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.wg-card h3, .wg-card p, .wg-reference-group h5, .wg-reference-category-card h5, .wg-empty-detail h3) { color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.wg-card h4, .wg-card .wg-muted, .wg-card .wg-updated, .wg-measure-labels, .wg-paused, .wg-closed-link, .wg-lifecycle, .wg-reference-separator, .wg-reference-category-card header>span, .wg-reference-table, .wg-list-empty, .wg-empty-detail) { color:var(--dark-muted); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.wg-reference-table-wrap, .wg-reference-table td, .wg-reference-table th, .wg-empty-detail, .wg-card-heading .wg-edit) { border-color:var(--dark-border); }
+body.ftux-prototype[data-reply-theme="dark"] .wg-reference-table th { background:var(--dark-sidebar); }
+body.ftux-prototype[data-reply-theme="dark"] .wg-track { background:var(--dark-border); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.wg-progress, .wg-marker) { background:var(--dark-link); }
+body.ftux-prototype[data-reply-theme="dark"] .wg-status-on-track { background:#203a2e; color:#82d3a0; }
+body.ftux-prototype[data-reply-theme="dark"] .wg-status-at-risk { background:#403522; color:#e7c17d; }
+body.ftux-prototype[data-reply-theme="dark"] .wg-status-blocked { background:var(--dark-unread-bg); color:var(--dark-unread); }
+body.ftux-prototype[data-reply-theme="dark"] .wg-status-not-started { background:var(--dark-hover); color:var(--dark-muted); }
+
+/* Profile copy and chrome; original Owl and integration artwork keeps its colors. */
+body.ftux-prototype[data-reply-theme="dark"] :is(.profile-metrics strong, .profile-file-copy strong, .profile-activity-tabs [aria-selected="true"], .profile-channel:has(.is-connected)) { color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.profile-handle, .profile-metrics h4, .profile-metrics span, .profile-file-copy>span, .profile-activity-tabs button, .profile-months, .profile-channel) { color:var(--dark-muted); }
+body.ftux-prototype[data-reply-theme="dark"] .profile-metrics { box-shadow:inset 0 0 0 1px var(--dark-border); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.profile-file, .profile-channel-tile) { border-color:var(--dark-border); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.profile-channel-tile, .profile-channel-tile.is-connected, .profile-owl-hover-badge) { background:var(--dark-surface); }
+body.ftux-prototype[data-reply-theme="dark"] .profile-metric-divider { background:var(--dark-border); }
+body.ftux-prototype[data-reply-theme="dark"] .profile-channel-badge { border-color:var(--dark-canvas); background:var(--dark-hover); color:var(--dark-muted); }
+body.ftux-prototype[data-reply-theme="dark"] .is-connected .profile-channel-badge { background:#203a2e; color:#82d3a0; }
+
+/* Shared settings, memory, task, and artifact views. */
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsm-you h3, .fsm-row-open, .fsm-detail-fields p, .fsm-detail-fields li, .fsm-icon-button, .latest-task-row, .latest-task-editor, .latest-task-editor .fsw-edit-header h3, .latest-task-editor .fsw-edit-setting) { color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsm-learn, .fsm-row-summary, .fsm-detail-fields h4, .fsm-empty, .latest-task-group-label, .latest-task-meta, .latest-task-actions, .latest-task-more, .latest-task-more svg, .fsw-schedule-more, .fsw-schedule-more svg) { color:var(--dark-muted); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsm-button, .fsm-undo, .fsm-import-prompt, .fsw-history-row, .fsw-artifact-card, .latest-artifact-card, .latest-artifact-gallery-grid .latest-artifact-card, .latest-artifact-tab) {
+  background:var(--dark-surface);
+  color:var(--dark-text);
+  border-color:var(--dark-border);
+}
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-artifact-card, .latest-artifact-card) { box-shadow:inset 0 0 0 1px var(--dark-border); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.latest-artifact-title, .latest-artifact-gallery-grid .latest-artifact-title) { color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.latest-artifact-description, .latest-artifact-gallery-grid .latest-artifact-description, .latest-artifact-domain, .latest-artifact-gallery-time, .latest-artifact-detail-category, .latest-artifact-detail-description) { color:var(--dark-muted); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.latest-artifact-thumbnail, .latest-artifact-detail-thumbnail) { background:var(--dark-surface); border-color:var(--dark-border); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsm-row:hover, .fsm-row:focus-within, .fsm-button:hover, .fsm-icon-button:hover, .fsw-schedule-row:hover, .fsw-history-row:hover, .latest-task-row:hover, .latest-artifact-tab:hover, .latest-artifact-tab[aria-selected="true"]) { background:var(--dark-hover); color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsm-row, .fsw-schedule-row, .fsw-history-row, .latest-task-row)::after,
+body.ftux-prototype[data-reply-theme="dark"] .fsm-row::before { background:var(--dark-border); }
+body.ftux-prototype[data-reply-theme="dark"] .fsm-empty { border-color:var(--dark-border); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-approval-radio, .fsm-switch, .fsw-content-switch, .wg-switch, .ws-switch, .fsw-edit-switch) { background:var(--dark-border); border-color:var(--dark-muted); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsm-switch, .fsw-content-switch, .wg-switch, .ws-switch, .fsw-edit-switch)[aria-checked="true"] { background:var(--blue); }
+body.ftux-prototype[data-reply-theme="dark"] .fsw-approval-radio:checked { border-color:var(--dark-link); }
+
+/* Nested editors and tables share the surrounding dark surfaces. */
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-edit-dialog, .fsw-edit-menu, .wg-editor) {
+  background:var(--dark-surface);
+  color:var(--dark-text);
+  border-color:var(--dark-border);
+  box-shadow:var(--dark-shadow);
+}
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-dialog, .fsw-edit-dialog, .wg-editor) :is(input, textarea, select) {
+  background:var(--dark-canvas);
+  color:var(--dark-text);
+  border-color:var(--dark-border);
+  accent-color:var(--dark-link);
+}
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-dialog, .fsw-edit-dialog, .wg-editor) :is(input, textarea)::placeholder { color:var(--dark-muted); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-edit-settings, .fsw-edit-advanced-fields>.fsw-edit-setting, .fsw-edit-custom-days label span, .wg-editor-measure, .wg-reference-picker, .wg-editor-reference-chip) { border-color:var(--dark-border); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-edit-close, .fsw-edit-advanced, .fsw-edit-custom-days label span, .latest-task-editor .fsw-edit-select, .wg-editor-close, .wg-editor-field, .wg-editor-reference-section, .wg-editor-reference-chips>p, .wg-editor-reference-chip>button) { color:var(--dark-muted); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-edit-menu button, .wg-reference-options label) { color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-edit-close:hover, .fsw-edit-advanced[aria-expanded="true"], .fsw-edit-menu button:hover, .fsw-edit-menu button[aria-selected="true"], .fsw-edit-menu button:focus-visible, .wg-editor-close:hover, .wg-reference-custom button, .wg-editor-reference-chip, .fsw-edit-pause, .wg-editor-form footer button) { background:var(--dark-hover); color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-new-goal, .fsw-content-primary, .fsm-button-primary, .latest-artifact-ask, .fsw-edit-save, .wg-editor-form footer button[type="submit"], .ws-detail-primary) { background:var(--dark-text); color:var(--dark-canvas); border-color:var(--dark-text); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-edit-save:disabled, .wg-editor-form footer button:disabled) { background:var(--dark-hover); color:var(--dark-muted); }
+body.ftux-prototype[data-reply-theme="dark"] :is(.wg-reference, .wg-editor-reference-heading>button, .profile-file-edit-label, .fsm-text-button, .fsw-artifact-source, .fsw-schedule-screen>.fsw-content-see-all, .latest-task-see-all, .latest-artifact-see-all) { color:var(--dark-link); }
+
+body.ftux-prototype[data-reply-theme="dark"] .wg-references { border-color:var(--dark-border); }
+body.ftux-prototype[data-reply-theme="dark"] .profile-owl { background:var(--dark-surface); outline-color:var(--dark-surface); }
+body[data-reply-theme="dark"] .profile-owl > img[src="assets/profile-oct28-owl.png"] { filter:invert(.94); }
+body[data-reply-theme="dark"] :is(.profile-name-edit,.profile-owl-hover-badge) img { filter:brightness(0) invert(.85); opacity:1; }
+/* The exported activity grid uses inline colors for empty and future days. */
+body[data-reply-theme="dark"] :is(.profile-calendar-row,.profile-weekly) span[style*="#F3F3F3"] { background:#383c46 !important; }
+body[data-reply-theme="dark"] .profile-calendar-row span[style*="#FFFFFF"] { background:#24262c !important; }
