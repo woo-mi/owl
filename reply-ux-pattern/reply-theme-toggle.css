@@ -1,5 +1,6 @@
 /* Color controls change presentation without replacing the conversation. */
-.reply-version-controls.has-theme-picker { flex-direction:column; }
+.reply-version-controls.has-theme-picker { flex-direction:row; }
+.reply-version-controls.has-theme-picker .reply-theme-control { order:-1; }
 .reply-version-controls.has-theme-picker .prototype-control { position:static; }
 .reply-version-controls.has-theme-picker .reply-version-menu { right:0; }
 .reply-theme-control {
