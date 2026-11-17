@@ -53,8 +53,9 @@
         const active = hovered >= 0 ? hovered === index : selected === index;
         const width = hovered >= 0 ? ([30, 23, 16, 11, 8][distance] || 6) : active ? 18 : 6;
         const topicColor = coloredTicks ? topicColors[entries[index]?.id] : undefined;
+        const tickColor = entries[index]?.unread?.count > 0 ? '#ff0000' : topicColor || (active ? '#202123' : '#d1d3d4');
         button.style.setProperty('--indexing-nav-tick-width', `${width}px`);
-        button.style.setProperty('--indexing-nav-tick-color', topicColor || (active ? '#202123' : '#d1d3d4'));
+        button.style.setProperty('--indexing-nav-tick-color', tickColor);
         if (index === selected) button.setAttribute('aria-current', 'location');
         else button.removeAttribute('aria-current');
       });
@@ -196,6 +197,7 @@
       if (!changed) {
         entries = nextEntries;
         updateLabels();
+        paint();
         position(); syncPosition();
         return;
       }
@@ -234,6 +236,7 @@
         retainedFocus.focus({preventScroll:true});
         suppressFocus = false;
       }
+      paint();
       position(); syncPosition();
     }
     function queueRefresh() { cancelAnimationFrame(refreshFrame); refreshFrame = requestAnimationFrame(refresh); }
