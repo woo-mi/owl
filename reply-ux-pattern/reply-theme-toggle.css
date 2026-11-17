@@ -1,0 +1,74 @@
+/* The Unread color control changes presentation without replacing the conversation. */
+.reply-theme-control {
+  --theme-control-bg:#fff;
+  --theme-control-border:#d9dce2;
+  --theme-control-muted:#6a6f79;
+  --theme-control-active:#20242c;
+  --theme-control-track:#737986;
+  --theme-control-thumb:#fff;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  height:36px;
+  padding:0 12px;
+  border:1px solid var(--theme-control-border);
+  border-radius:18px;
+  background:var(--theme-control-bg);
+  box-shadow:0 4px 16px #14181f12, 0 1px 3px #14181f0a;
+  font:400 12px/18px Inter,system-ui,sans-serif;
+  white-space:nowrap;
+}
+.reply-theme-control[hidden] { display:none; }
+.reply-theme-label { color:var(--theme-control-muted); }
+body:not([data-reply-theme="dark"]) .reply-theme-label[data-theme-label="light"],
+body[data-reply-theme="dark"] .reply-theme-label[data-theme-label="dark"] {
+  color:var(--theme-control-active);
+  font-weight:600;
+}
+.reply-theme-toggle {
+  position:relative;
+  display:block;
+  flex:none;
+  width:44px;
+  height:34px;
+  padding:0;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+.reply-theme-toggle::before {
+  content:"";
+  position:absolute;
+  left:3px;
+  top:6px;
+  width:38px;
+  height:22px;
+  border-radius:11px;
+  background:var(--theme-control-track);
+}
+.reply-theme-thumb {
+  position:absolute;
+  left:6px;
+  top:9px;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:var(--theme-control-thumb);
+  box-shadow:0 1px 2px #0003;
+  pointer-events:none;
+}
+.reply-theme-toggle[aria-checked="true"] .reply-theme-thumb { transform:translateX(16px); }
+.reply-theme-toggle:hover::before { filter:brightness(1.08); }
+.reply-theme-toggle:focus-visible { outline:2px solid #0069e0; outline-offset:2px; }
+body[data-reply-theme="dark"] .reply-theme-control {
+  --theme-control-bg:var(--dark-surface, #27292e);
+  --theme-control-border:var(--dark-border, #42454e);
+  --theme-control-muted:var(--dark-muted, #b0b3bd);
+  --theme-control-active:var(--dark-text, #f1f2f5);
+  --theme-control-track:var(--dark-link, #79b4ff);
+  --theme-control-thumb:#18191c;
+  box-shadow:0 4px 16px #0004, 0 1px 3px #0003;
+}
+body[data-reply-theme="dark"] .reply-theme-toggle:focus-visible { outline-color:var(--dark-link, #79b4ff); }

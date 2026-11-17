@@ -39,12 +39,19 @@
     <ul id="reply-version-menu" class="prototype-version-menu reply-version-menu" role="menu" aria-label="Reply versions" hidden>
       ${visibleVersions.map(version => `<li role="none"><button type="button" class="prototype-version-option reply-version-option" role="menuitemradio" aria-checked="false" tabindex="-1" data-reply-version="${version}">${versionLabel(version)}</button></li>`).join('')}
     </ul>
+  </div><div class="reply-theme-control" role="group" aria-label="Color mode" hidden>
+    <span class="reply-theme-label" data-theme-label="light">Light</span>
+    <button id="reply-theme-toggle" class="reply-theme-toggle" type="button" role="switch" aria-label="Dark mode" aria-checked="true"><span class="reply-theme-thumb" aria-hidden="true"></span></button>
+    <span class="reply-theme-label" data-theme-label="dark">Dark</span>
   </div>`;
   document.body.prepend(control);
   const trigger = control.querySelector('.reply-version-trigger');
   const label = control.querySelector('.reply-version-label');
   const menu = control.querySelector('[role="menu"]');
   const options = [...menu.querySelectorAll('button')];
+  const versionControl = control.querySelector('.prototype-control');
+  const themeControl = control.querySelector('.reply-theme-control');
+  const themeToggle = control.querySelector('.reply-theme-toggle');
 
   function focusOption(option) {
     if (!option) return;
@@ -55,6 +62,7 @@
     else if (bottom > menu.scrollTop + menu.clientHeight) menu.scrollTop = bottom - menu.clientHeight;
   }
   function setOpen(open, restoreFocus = false) {
+    if (!themeControl.hidden) open = false;
     menu.hidden = !open;
     trigger.setAttribute('aria-expanded', String(open));
     if (open) {
@@ -62,9 +70,14 @@
       const availableOptions = options.filter(option => !option.parentElement.hidden);
       focusOption(availableOptions.find(option => option.dataset.replyVersion === selected) || availableOptions[0]);
     }
-    else if (restoreFocus && !control.hidden) trigger.focus({preventScroll:true});
+    else if (restoreFocus && !control.hidden) (themeControl.hidden ? trigger : themeToggle).focus({preventScroll:true});
   }
   function sync() {
+    const hasThemeToggle = selected === 'timeline-unread-dark';
+    versionControl.hidden = hasThemeToggle;
+    themeControl.hidden = !hasThemeToggle;
+    control.setAttribute('aria-label', hasThemeToggle ? 'Prototype color mode' : 'Reply UX Pattern versions');
+    if (hasThemeToggle) setOpen(false);
     label.textContent = versionLabel(selected);
     trigger.setAttribute('aria-label', `Reply version, ${versionLabel(selected)}`);
     const links = linksVersions.includes(selected);
@@ -82,9 +95,10 @@
         history.replaceState(history.state, '', url.pathname + url.search + url.hash);
       }
     }
-    const theme = selected === 'timeline-unread-dark' ? 'dark' : 'light';
+    const theme = hasThemeToggle && new URL(location.href).searchParams.get('theme') !== 'light' ? 'dark' : 'light';
     document.documentElement.dataset.replyTheme = theme;
     document.body.dataset.replyTheme = theme;
+    themeToggle.setAttribute('aria-checked', String(theme === 'dark'));
     document.body.dataset.replyExperience = unread ? 'unread' : selected;
     document.body.dataset.replyVersion = selected;
     const themeColor = getComputedStyle(document.body).getPropertyValue('--reply-theme-color').trim() || (theme === 'dark' ? '#17191d' : '#ffffff');
@@ -98,6 +112,7 @@
     if (changed) {
       const url = new URL(location.href);
       url.searchParams.set('version', selected);
+      url.searchParams.delete('theme');
       history.pushState(history.state, '', url.pathname + url.search + url.hash);
     }
     sync();
@@ -105,6 +120,14 @@
     if (changed) window.dispatchEvent(new CustomEvent('reply-version-change', {detail:{version:selected}}));
   }
   trigger.addEventListener('click', () => setOpen(menu.hidden));
+  themeToggle.addEventListener('click', () => {
+    const url = new URL(location.href);
+    if (document.body.dataset.replyTheme === 'dark') url.searchParams.set('theme', 'light');
+    else url.searchParams.delete('theme');
+    history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+    sync();
+    schedulePosition();
+  });
   trigger.addEventListener('keydown', event => {
     if (!['ArrowDown', 'ArrowUp'].includes(event.key)) return;
     event.preventDefault();
