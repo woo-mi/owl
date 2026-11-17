@@ -2,10 +2,10 @@
 (() => {
   'use strict';
   const linksVersions = ['links', 'links-2', 'links-3', 'links-4'];
-  const conversationVersions = ['timeline', 'timeline-line-user', 'timeline-unread', 'timeline-unread-dark', ...linksVersions];
+  const conversationVersions = ['timeline', 'timeline-line-user', 'timeline-unread', 'timeline-unread-dark', 'links-5', ...linksVersions];
   const currentVersion = () => document.body.dataset.replyVersion || new URL(location.href).searchParams.get('version') || 'timeline';
   const usesConversationIndex = () => conversationVersions.includes(currentVersion());
-  const usesUnreadMenu = () => ['timeline-unread', 'timeline-unread-dark', ...linksVersions].includes(currentVersion());
+  const usesUnreadMenu = () => ['timeline-unread', 'timeline-unread-dark', 'links-5', ...linksVersions].includes(currentVersion());
   const readThreads = new Set();
   const linkIcon = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6.25 9.75 3.5-3.5m-4.5 1-1 1a2.475 2.475 0 0 0 3.5 3.5l1-1m-1.5-5.5 1-1a2.475 2.475 0 0 1 3.5 3.5l-1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');

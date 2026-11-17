@@ -14,12 +14,13 @@
     'links-2':'use case 2',
     'links-3':'use case 3',
     'links-4':'use case 4',
+    'links-5':'use case 5',
     'timeline-bubble-user':'bubble, read/reply - user',
     'timeline-line-user':'Hybrid style',
     'timeline-line-both':'bubble, connecting line, read/reply both'
   };
   const versions = Object.keys(versionLabels);
-  const linksVersions = ['links', 'links-2', 'links-3', 'links-4'];
+  const linksVersions = ['links', 'links-2', 'links-3', 'links-4', 'links-5'];
   const legacyVisibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-unread'];
   const visibleVersions = [...legacyVisibleVersions, ...linksVersions];
   const versionLabel = version => versionLabels[version] || version.toUpperCase();
@@ -89,7 +90,7 @@
       option.parentElement.hidden = !displayedVersions.includes(option.dataset.replyVersion);
     });
     const unread = links || ['timeline-unread', 'timeline-unread-dark'].includes(selected);
-    if (links) {
+    if (links && selected !== 'links-5') {
       const url = new URL(location.href);
       if (url.searchParams.has('timeline-thread') || url.searchParams.has('timeline-mode')) {
         url.searchParams.delete('timeline-thread');
