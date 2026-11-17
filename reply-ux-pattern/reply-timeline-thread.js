@@ -36,7 +36,7 @@
     }
   };
 
-  const VERSIONS = ['timeline', 'timeline-bubble-user', 'timeline-line-user', 'timeline-line-both'];
+  const VERSIONS = ['timeline', 'timeline-unread', 'timeline-bubble-user', 'timeline-line-user', 'timeline-line-both'];
 
   // Each variant's thread owns its cached messages, draft, attachments and motion.
   function createThread(key, thread, version) {
@@ -161,7 +161,7 @@
       content = document.createElement('div');
       content.className = 'timeline-thread-content';
       const messages = document.createElement('div');
-      messages.className = `timeline-thread-messages reply-timeline${version === 'timeline' ? '' : ' reply-timeline-variant'}`;
+      messages.className = `timeline-thread-messages reply-timeline${['timeline', 'timeline-unread'].includes(version) ? '' : ' reply-timeline-variant'}`;
       unreadDivider = document.createElement('div');
       unreadDivider.className = 'timeline-new timeline-thread-new';
       unreadDivider.textContent = 'NEW';
@@ -321,7 +321,8 @@
 
     function openThread(trigger) {
       if (!active() || !buildDialog()) return;
-      if (trigger) opener = trigger.closest('#indexing-menu') ? document.getElementById('indexing-menu-toggle') : trigger;
+      if (trigger) opener = trigger.closest('#unread-menu') ? document.getElementById('unread-menu-toggle')
+        : trigger.closest('#indexing-menu') ? document.getElementById('indexing-menu-toggle') : trigger;
       const nextMode = requestedMode();
       const changed = mode !== nextMode;
       mode = nextMode;

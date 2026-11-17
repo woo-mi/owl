@@ -1,9 +1,10 @@
 /* A conversation index derived from FTUX's revealed messages and connection state. */
 (() => {
   'use strict';
-  const conversationVersions = ['timeline', 'timeline-line-user'];
+  const conversationVersions = ['timeline', 'timeline-line-user', 'timeline-unread'];
   const currentVersion = () => document.body.dataset.replyVersion || new URL(location.href).searchParams.get('version') || 'timeline';
   const usesConversationIndex = () => conversationVersions.includes(currentVersion());
+  const usesUnreadMenu = () => currentVersion() === 'timeline-unread';
   const readThreads = new Set();
   const linkIcon = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6.25 9.75 3.5-3.5m-4.5 1-1 1a2.475 2.475 0 0 0 3.5 3.5l1-1m-1.5-5.5 1-1a2.475 2.475 0 0 1 3.5 3.5l-1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -122,9 +123,24 @@
         <h2 id="indexing-unread-heading">Unread<span class="indexing-menu-unread-dot" aria-hidden="true">•</span></h2>
         <ul class="indexing-menu-unread-list"></ul>
       </section>`;
-    main.append(toggle, panel);
+    const unreadToggle = document.createElement('button');
+    unreadToggle.id = 'unread-menu-toggle';
+    unreadToggle.className = 'indexing-menu-toggle unread-menu-toggle';
+    unreadToggle.type = 'button';
+    unreadToggle.hidden = true;
+    unreadToggle.setAttribute('aria-controls', 'unread-menu');
+    unreadToggle.innerHTML = '<img src="assets/bubble-annotation-3.svg" width="20" height="20" alt="" aria-hidden="true">';
+    const unreadPanel = document.createElement('nav');
+    unreadPanel.id = 'unread-menu';
+    unreadPanel.className = 'indexing-menu unread-menu';
+    unreadPanel.hidden = true;
+    unreadPanel.setAttribute('aria-label', 'Unread replies');
+    unreadPanel.innerHTML = '<p class="ftux-index-empty" data-empty-unread hidden>You’re all caught up.</p>';
+    const unreadSection = panel.querySelector('.indexing-menu-unread');
+    main.append(toggle, panel, unreadToggle, unreadPanel);
     const list = panel.querySelector('.indexing-menu-topic-list');
     let open = false;
+    let unreadOpen = false;
     let frame;
     let topicKey = '';
     let artifactKey;
@@ -133,6 +149,7 @@
     function setOpen(next, {restoreFocus = false, focusFirst = false} = {}) {
       const wasOpen = open;
       open = next && isAvailable();
+      if (open) setUnreadOpen(false);
       panel.hidden = !open;
       toggle.setAttribute('aria-expanded', String(open));
       toggle.setAttribute('aria-label', `${open ? 'Close' : 'Open'} conversation index${toggle.classList.contains('has-unread') ? ', unread replies' : ''}`);
@@ -140,8 +157,22 @@
       if (open && focusFirst) controls()[0]?.focus({preventScroll:true});
       if (open && !wasOpen) window.dispatchEvent(new Event('indexing-menu-open'));
     }
+    function setUnreadOpen(next, {restoreFocus = false, focusFirst = false} = {}) {
+      const wasOpen = unreadOpen;
+      unreadOpen = next && usesUnreadMenu() && isAvailable();
+      if (unreadOpen) setOpen(false);
+      unreadPanel.hidden = !unreadOpen;
+      unreadToggle.setAttribute('aria-expanded', String(unreadOpen));
+      unreadToggle.setAttribute('aria-label', `${unreadOpen ? 'Close' : 'Open'} unread replies`);
+      if (restoreFocus && !unreadToggle.hidden) unreadToggle.focus({preventScroll:true});
+      if (unreadOpen && focusFirst) unreadPanel.querySelector('button')?.focus({preventScroll:true});
+      if (unreadOpen && !wasOpen) window.dispatchEvent(new Event('indexing-menu-open'));
+    }
     function sync() {
       frame = undefined;
+      const separateUnread = usesUnreadMenu();
+      const unreadContainer = separateUnread ? unreadPanel : panel;
+      if (unreadSection.parentElement !== unreadContainer) unreadContainer.append(unreadSection);
       const state = window.FTUX.getIndexState();
       const count = state.connectedCount;
       const pending = state.connectingTools;
@@ -196,10 +227,13 @@
         artifactKey = nextArtifactKey;
       }
       const unreadThreads = getUnreadThreads();
-      toggle.classList.toggle('has-unread', unreadThreads.some(thread => thread.count > 0));
+      const hasUnread = unreadThreads.some(thread => thread.count > 0);
+      toggle.classList.toggle('has-unread', !separateUnread && hasUnread);
+      unreadToggle.classList.toggle('has-unread', hasUnread);
+      unreadPanel.querySelector('[data-empty-unread]').hidden = hasUnread;
       const nextUnreadKey = JSON.stringify([currentVersion(), unreadThreads]);
       if (unreadKey !== nextUnreadKey) {
-        const section = panel.querySelector('.indexing-menu-unread');
+        const section = unreadSection;
         section.hidden = !unreadThreads.length;
         section.querySelector('ul').replaceChildren(...unreadThreads.map(({key, title, count}) => {
           const li = document.createElement('li');
@@ -221,11 +255,21 @@
         unreadKey = nextUnreadKey;
       }
       toggle.hidden = !isAvailable();
+      unreadToggle.hidden = !separateUnread || !isAvailable();
       setOpen(open);
+      setUnreadOpen(unreadOpen);
       window.dispatchEvent(new Event('ftux-index-change'));
     }
     function scheduleSync() { if (!frame) frame = requestAnimationFrame(sync); }
     toggle.addEventListener('click', event => setOpen(!open, {focusFirst:event.detail === 0}));
+    unreadToggle.addEventListener('click', event => setUnreadOpen(!unreadOpen, {focusFirst:event.detail === 0}));
+    unreadToggle.addEventListener('keydown', event => {
+      if (!['ArrowDown', 'ArrowUp'].includes(event.key)) return;
+      event.preventDefault();
+      setUnreadOpen(true);
+      const items = [...unreadPanel.querySelectorAll('button')];
+      (event.key === 'ArrowUp' ? items.at(-1) : items[0])?.focus({preventScroll:true});
+    });
     toggle.addEventListener('keydown', event => {
       if (!['ArrowDown', 'ArrowUp'].includes(event.key)) return;
       event.preventDefault();
@@ -249,18 +293,26 @@
     });
     document.addEventListener('pointerdown', event => {
       if (open && !panel.contains(event.target) && !toggle.contains(event.target)) setOpen(false);
+      if (unreadOpen && !unreadPanel.contains(event.target) && !unreadToggle.contains(event.target)) setUnreadOpen(false);
     });
     document.addEventListener('keydown', event => {
-      if (!open || event.key !== 'Escape') return;
+      if (event.key !== 'Escape') return;
+      if (unreadOpen) {
+        event.preventDefault();
+        setUnreadOpen(false, {restoreFocus:true});
+      }
+      if (!open) return;
       event.preventDefault();
       setOpen(false, {restoreFocus:true});
     });
     document.addEventListener('focusin', event => {
       if (open && !panel.contains(event.target) && event.target !== toggle) setOpen(false);
+      if (unreadOpen && !unreadPanel.contains(event.target) && event.target !== unreadToggle) setUnreadOpen(false);
     });
-    window.addEventListener('indexing-navigator-open', () => setOpen(false));
+    window.addEventListener('indexing-navigator-open', () => { setOpen(false); setUnreadOpen(false); });
     window.addEventListener('timeline-thread-open', event => {
       setOpen(false);
+      setUnreadOpen(false);
       const {key, version, mode} = event.detail || {};
       if (conversationVersions.includes(version) && mode === 'unread' && key) {
         readThreads.add(`${version}:${key}`);

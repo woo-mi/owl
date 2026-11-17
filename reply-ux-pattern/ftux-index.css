@@ -2,7 +2,7 @@
 body.ftux-prototype .indexing-menu {
   max-height:max(0px, calc(100dvh - 52px - var(--ftux-composer-bottom, 48px) - var(--ftux-composer-height, 53px) - 16px));
 }
-body.ftux-prototype:is([data-reply-version="timeline"], [data-reply-version="timeline-line-user"]) .indexing-menu {
+body.ftux-prototype:is([data-reply-version="timeline"], [data-reply-version="timeline-line-user"], [data-reply-version="timeline-unread"]) .indexing-menu {
   /* Keep the expanded index above the floating prototype version picker. */
   z-index:151;
 }
@@ -18,7 +18,7 @@ body.ftux-prototype:is([data-reply-version="timeline"], [data-reply-version="tim
   pointer-events:none;
 }
 
-body.ftux-prototype :is(.indexing-menu, .indexing-nav-rail)[hidden] {
+body.ftux-prototype :is(.indexing-menu, .indexing-menu-toggle, .indexing-nav-rail)[hidden] {
   display:none !important;
 }
 
@@ -96,9 +96,46 @@ body.ftux-prototype .indexing-menu-manage:focus-visible { outline:2px solid #006
   line-height:1.45;
 }
 
+/* Separate unread notifications from the index in Pen frame cleFc. */
+body[data-reply-version="timeline-unread"] .indexing-menu-toggle {
+  top:14px;
+  right:22px;
+  width:24px;
+  height:24px;
+  border-radius:6px;
+}
+body[data-reply-version="timeline-unread"] .unread-menu-toggle {
+  right:54px;
+}
+body[data-reply-version="timeline-unread"] .unread-menu-toggle:is(:hover, [aria-expanded="true"]) {
+  background:#d9d9d999;
+}
+.unread-menu-toggle img {
+  display:block;
+  width:20px;
+  height:20px;
+}
+.unread-menu-toggle.has-unread::after {
+  top:2px;
+  right:2px;
+  width:8px;
+  height:8px;
+}
+body[data-reply-version="timeline-unread"] .indexing-menu {
+  top:42px;
+}
+body[data-reply-version="timeline-unread"] .unread-menu {
+  right:44px;
+  border:0;
+  box-shadow:inset 0 0 0 1px #e8e7e5, 0 8px 24px #00000014;
+}
+
 @media (max-width:760px) {
   body.ftux-prototype .indexing-menu {
     /* 48px app navigation + 12px breathing room on both sides. */
     max-width:calc(100vw - 72px);
+  }
+  body.ftux-prototype[data-reply-version="timeline-unread"] .unread-menu {
+    max-width:calc(100vw - 104px);
   }
 }

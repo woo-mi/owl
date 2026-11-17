@@ -8,12 +8,13 @@
     'one-topic-time-gap':'one topic - time gap',
     'two-topics':'two topics',
     'timeline':'Slack style',
+    'timeline-unread':'Unread',
     'timeline-bubble-user':'bubble, read/reply - user',
     'timeline-line-user':'Hybrid style',
     'timeline-line-both':'bubble, connecting line, read/reply both'
   };
   const versions = Object.keys(versionLabels);
-  const visibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-line-user'];
+  const visibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-line-user', 'timeline-unread'];
   const versionLabel = version => versionLabels[version] || version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
