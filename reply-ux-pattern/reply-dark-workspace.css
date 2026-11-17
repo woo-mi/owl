@@ -81,6 +81,11 @@ body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-dialog, .fsw-edit-dialog, 
   accent-color:var(--dark-link);
 }
 body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-dialog, .fsw-edit-dialog, .wg-editor) :is(input, textarea)::placeholder { color:var(--dark-muted); }
+/* Composer text belongs to the enclosing surface, rather than an inset field. */
+body.ftux-prototype[data-reply-theme="dark"] .fsw-dialog .fsw-composer textarea { background:transparent; }
+body.ftux-prototype[data-reply-theme="dark"] :is(.fsm-setting, .fsw-approval-row, .fsw-connection-row, .fsm-empty) { border-color:var(--line); }
+body.ftux-prototype[data-reply-theme="dark"] .fsm-row::before,
+body.ftux-prototype[data-reply-theme="dark"] .fsm-row::after { background:var(--line); }
 body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-edit-settings, .fsw-edit-advanced-fields>.fsw-edit-setting, .fsw-edit-custom-days label span, .wg-editor-measure, .wg-reference-picker, .wg-editor-reference-chip) { border-color:var(--dark-border); }
 body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-edit-close, .fsw-edit-advanced, .fsw-edit-custom-days label span, .latest-task-editor .fsw-edit-select, .wg-editor-close, .wg-editor-field, .wg-editor-reference-section, .wg-editor-reference-chips>p, .wg-editor-reference-chip>button) { color:var(--dark-muted); }
 body.ftux-prototype[data-reply-theme="dark"] :is(.fsw-edit-menu button, .wg-reference-options label) { color:var(--dark-text); }
