@@ -7,9 +7,9 @@
     'color-code-previews':'more than three topics',
     'one-topic-time-gap':'one topic - time gap',
     'two-topics':'two topics',
-    'timeline':'timeline',
+    'timeline':'Slack style',
     'timeline-bubble-user':'bubble, read/reply - user',
-    'timeline-line-user':'bubble, connecting line, read/reply-user',
+    'timeline-line-user':'Hybrid style',
     'timeline-line-both':'bubble, connecting line, read/reply both'
   };
   const versions = Object.keys(versionLabels);
