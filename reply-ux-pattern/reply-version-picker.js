@@ -10,7 +10,7 @@
     'timeline':'Slack style',
     'timeline-unread':'Unread',
     'timeline-unread-dark':'Unread dark',
-    'links':'Links',
+    'links':'use case 1',
     'timeline-bubble-user':'bubble, read/reply - user',
     'timeline-line-user':'Hybrid style',
     'timeline-line-both':'bubble, connecting line, read/reply both'
@@ -61,7 +61,10 @@
   function sync() {
     label.textContent = versionLabel(selected);
     trigger.setAttribute('aria-label', `Reply version, ${versionLabel(selected)}`);
-    options.forEach(option => option.setAttribute('aria-checked', String(option.dataset.replyVersion === selected)));
+    options.forEach(option => {
+      option.setAttribute('aria-checked', String(option.dataset.replyVersion === selected));
+      option.parentElement.hidden = selected === 'links' && option.dataset.replyVersion !== 'links';
+    });
     const unread = ['timeline-unread', 'timeline-unread-dark', 'links'].includes(selected);
     if (selected === 'links') {
       const url = new URL(location.href);
@@ -101,17 +104,18 @@
   });
   options.forEach(option => option.addEventListener('click', () => select(option.dataset.replyVersion)));
   menu.addEventListener('keydown', event => {
-    let index = options.indexOf(document.activeElement);
-    if (event.key === 'ArrowDown') index = (index + 1) % options.length;
-    else if (event.key === 'ArrowUp') index = (index + options.length - 1) % options.length;
+    const availableOptions = options.filter(option => !option.parentElement.hidden);
+    let index = availableOptions.indexOf(document.activeElement);
+    if (event.key === 'ArrowDown') index = (index + 1) % availableOptions.length;
+    else if (event.key === 'ArrowUp') index = (index + availableOptions.length - 1) % availableOptions.length;
     else if (event.key === 'Home') index = 0;
-    else if (event.key === 'End') index = options.length - 1;
+    else if (event.key === 'End') index = availableOptions.length - 1;
     else {
       if (event.key === 'Tab') setOpen(false);
       return;
     }
     event.preventDefault();
-    focusOption(options[index]);
+    focusOption(availableOptions[index]);
   });
   document.addEventListener('pointerdown', event => {
     if (!control.contains(event.target)) setOpen(false);
