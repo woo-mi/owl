@@ -1,7 +1,9 @@
 /* A conversation index derived from FTUX's revealed messages and connection state. */
 (() => {
   'use strict';
-  const usesConversationIndex = () => new URL(location.href).searchParams.get('version') === 'timeline-line-user';
+  const conversationVersions = ['timeline', 'timeline-line-user'];
+  const currentVersion = () => document.body.dataset.replyVersion || new URL(location.href).searchParams.get('version') || 'timeline';
+  const usesConversationIndex = () => conversationVersions.includes(currentVersion());
   const readThreads = new Set();
   const linkIcon = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6.25 9.75 3.5-3.5m-4.5 1-1 1a2.475 2.475 0 0 0 3.5 3.5l1-1m-1.5-5.5 1-1a2.475 2.475 0 0 1 3.5 3.5l-1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -62,7 +64,7 @@
   function getUnreadThreads() {
     if (!usesConversationIndex()) return [];
     return [...document.querySelectorAll('#messages .ftux-flow .timeline-outgoing .timeline-footer [data-timeline-mode="unread"]')]
-      .filter(trigger => revealed(trigger) && !readThreads.has(trigger.dataset.timelineThread)).map(trigger => ({
+      .filter(trigger => revealed(trigger) && !readThreads.has(`${currentVersion()}:${trigger.dataset.timelineThread}`)).map(trigger => ({
         key:trigger.dataset.timelineThread,
         title:trigger.closest('[data-timeline-message]').querySelector('.timeline-text').textContent,
         count:Number(trigger.textContent.match(/(\d+)\s*Unread/)?.[1] || 1)
@@ -195,7 +197,7 @@
       }
       const unreadThreads = getUnreadThreads();
       toggle.classList.toggle('has-unread', unreadThreads.some(thread => thread.count > 0));
-      const nextUnreadKey = JSON.stringify(unreadThreads);
+      const nextUnreadKey = JSON.stringify([currentVersion(), unreadThreads]);
       if (unreadKey !== nextUnreadKey) {
         const section = panel.querySelector('.indexing-menu-unread');
         section.hidden = !unreadThreads.length;
@@ -208,7 +210,7 @@
           button.dataset.timelineMode = 'unread';
           button.title = title;
           button.setAttribute('aria-haspopup', 'dialog');
-          button.setAttribute('aria-controls', `timeline-line-user-${key}-thread`);
+          button.setAttribute('aria-controls', `${currentVersion()}-${key}-thread`);
           button.setAttribute('aria-label', `${title} — ${count} unread ${count === 1 ? 'reply' : 'replies'}`);
           button.innerHTML = '<span class="indexing-menu-unread-title"></span><span class="indexing-menu-unread-count" aria-hidden="true"></span>';
           button.querySelector('.indexing-menu-unread-title').textContent = title;
@@ -260,8 +262,8 @@
     window.addEventListener('timeline-thread-open', event => {
       setOpen(false);
       const {key, version, mode} = event.detail || {};
-      if (version === 'timeline-line-user' && mode === 'unread' && key) {
-        readThreads.add(key);
+      if (conversationVersions.includes(version) && mode === 'unread' && key) {
+        readThreads.add(`${version}:${key}`);
         scheduleSync();
       }
     });

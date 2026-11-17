@@ -2,7 +2,7 @@
 body.ftux-prototype .indexing-menu {
   max-height:max(0px, calc(100dvh - 52px - var(--ftux-composer-bottom, 48px) - var(--ftux-composer-height, 53px) - 16px));
 }
-body.ftux-prototype[data-reply-version="timeline-line-user"] .indexing-menu {
+body.ftux-prototype:is([data-reply-version="timeline"], [data-reply-version="timeline-line-user"]) .indexing-menu {
   /* Keep the expanded index above the floating prototype version picker. */
   z-index:151;
 }
