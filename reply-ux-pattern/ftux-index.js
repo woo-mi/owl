@@ -54,12 +54,17 @@
         excerpt:'Usage fell to 71 loads and 14 users on Oct 19, then recovered to 100 loads and 19 users on Oct 20.',
         artifactMessages:['lxiD8']}
     ];
-    return definitions.map(({message, title, excerpt, artifactMessages = []}) => ({
-      id:`timeline-message-${message}`, title, excerpt,
-      node:flow.querySelector(`#timeline-message-${message}`),
-      artifacts:artifactMessages.flatMap(id => [...(flow.querySelector(`#timeline-message-${id}`)?.querySelectorAll('.timeline-card[href]') || [])])
-        .filter(revealed).map(artifactFromCard)
-    })).filter(item => revealed(item.node));
+    const unreadByThread = new Map(getUnreadThreads().map(thread => [thread.key, thread]));
+    return definitions.map(({message, title, excerpt, artifactMessages = []}) => {
+      const node = flow.querySelector(`#timeline-message-${message}`);
+      const thread = node?.querySelector('.timeline-footer [data-timeline-mode="unread"]')?.dataset.timelineThread;
+      return {
+        id:`timeline-message-${message}`, title, excerpt, node,
+        unread:unreadByThread.get(thread),
+        artifacts:artifactMessages.flatMap(id => [...(flow.querySelector(`#timeline-message-${id}`)?.querySelectorAll('.timeline-card[href]') || [])])
+          .filter(revealed).map(artifactFromCard)
+      };
+    }).filter(item => revealed(item.node));
   }
   function getTopics() {
     const flow = document.querySelector('#messages .ftux-flow');

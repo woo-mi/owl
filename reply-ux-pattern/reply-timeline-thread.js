@@ -322,7 +322,8 @@
     function openThread(trigger) {
       if (!active() || !buildDialog()) return;
       if (trigger) opener = trigger.closest('#unread-menu') ? document.getElementById('unread-menu-toggle')
-        : trigger.closest('#indexing-menu') ? document.getElementById('indexing-menu-toggle') : trigger;
+        : trigger.closest('#indexing-menu') ? document.getElementById('indexing-menu-toggle')
+        : trigger.closest('#indexing-nav-preview') ? document.querySelector(`[data-indexing-stop="${trigger.dataset.indexingTopic}"]`) : trigger;
       const nextMode = requestedMode();
       const changed = mode !== nextMode;
       mode = nextMode;

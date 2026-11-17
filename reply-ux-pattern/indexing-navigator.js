@@ -19,7 +19,7 @@
     preview.setAttribute('aria-hidden', 'true');
     preview.dataset.open = 'false';
     preview.inert = true;
-    preview.innerHTML = '<button type="button" class="indexing-nav-jump"><span class="indexing-nav-title"></span><span class="indexing-nav-excerpt"></span></button><div class="indexing-nav-artifact-footer" hidden></div>';
+    preview.innerHTML = '<button type="button" class="indexing-nav-jump"><span class="indexing-nav-title"></span><span class="indexing-nav-excerpt"></span></button><div class="indexing-nav-actions" hidden><button type="button" class="indexing-nav-unread" data-timeline-mode="unread" aria-haspopup="dialog" hidden></button><div class="indexing-nav-artifact-footer" hidden></div></div>';
     const status = document.createElement('div');
     status.className = 'indexing-nav-status';
     status.setAttribute('role', 'status');
@@ -29,6 +29,8 @@
     const excerpt = preview.querySelector('.indexing-nav-excerpt');
     const jumpButton = preview.querySelector('.indexing-nav-jump');
     const artifactFooter = preview.querySelector('.indexing-nav-artifact-footer');
+    const actions = preview.querySelector('.indexing-nav-actions');
+    const unreadButton = preview.querySelector('.indexing-nav-unread');
     let artifactKey;
     let entries = [], buttons = [], selected = 0, hovered = -1, previewIndex = -1;
     let openTimer, closeTimer, scrollFrame, refreshFrame, jumpTimer, jumpingUntil = 0;
@@ -105,6 +107,22 @@
       excerpt.textContent = item.excerpt;
       jumpButton.setAttribute('aria-label', `Jump to ${item.title} in conversation`);
       const artifacts = item.artifacts || [];
+      const unread = item.unread;
+      unreadButton.hidden = !unread?.count;
+      if (unread?.count) {
+        unreadButton.textContent = `${unread.count} Unread`;
+        unreadButton.dataset.timelineThread = unread.key;
+        unreadButton.dataset.indexingTopic = item.id;
+        unreadButton.setAttribute('aria-controls', `${document.body.dataset.replyVersion}-${unread.key}-thread`);
+        unreadButton.setAttribute('aria-label', `Open ${unread.count} unread ${unread.count === 1 ? 'reply' : 'replies'} in ${item.title}`);
+      } else {
+        unreadButton.textContent = '';
+        delete unreadButton.dataset.timelineThread;
+        delete unreadButton.dataset.indexingTopic;
+        unreadButton.removeAttribute('aria-controls');
+        unreadButton.removeAttribute('aria-label');
+      }
+      actions.hidden = !unread?.count && !artifacts.length;
       artifactFooter.hidden = !artifacts.length;
       const nextArtifactKey = JSON.stringify(artifacts);
       if (nextArtifactKey !== artifactKey) {
@@ -260,6 +278,7 @@
       hidePreview({restoreFocus:inNavigator(document.activeElement)});
     });
     window.addEventListener('indexing-menu-open', () => hidePreview());
+    window.addEventListener('timeline-thread-open', () => hidePreview());
     window.addEventListener('ftux-index-change', queueRefresh);
     window.addEventListener('resize', () => { position(); queueSync(); });
     main.addEventListener('transitionend', position);
