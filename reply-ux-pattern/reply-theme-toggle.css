@@ -1,4 +1,7 @@
-/* The Unread color control changes presentation without replacing the conversation. */
+/* Color controls change presentation without replacing the conversation. */
+.reply-version-controls.has-theme-picker { flex-direction:column; }
+.reply-version-controls.has-theme-picker .prototype-control { position:static; }
+.reply-version-controls.has-theme-picker .reply-version-menu { right:0; }
 .reply-theme-control {
   --theme-control-bg:#fff;
   --theme-control-border:#d9dce2;

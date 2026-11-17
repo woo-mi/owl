@@ -62,7 +62,7 @@
     else if (bottom > menu.scrollTop + menu.clientHeight) menu.scrollTop = bottom - menu.clientHeight;
   }
   function setOpen(open, restoreFocus = false) {
-    if (!themeControl.hidden) open = false;
+    if (versionControl.hidden) open = false;
     menu.hidden = !open;
     trigger.setAttribute('aria-expanded', String(open));
     if (open) {
@@ -70,17 +70,19 @@
       const availableOptions = options.filter(option => !option.parentElement.hidden);
       focusOption(availableOptions.find(option => option.dataset.replyVersion === selected) || availableOptions[0]);
     }
-    else if (restoreFocus && !control.hidden) (themeControl.hidden ? trigger : themeToggle).focus({preventScroll:true});
+    else if (restoreFocus && !control.hidden) (versionControl.hidden ? themeToggle : trigger).focus({preventScroll:true});
   }
   function sync() {
-    const hasThemeToggle = selected === 'timeline-unread-dark';
-    versionControl.hidden = hasThemeToggle;
+    const links = linksVersions.includes(selected);
+    const themeOnly = selected === 'timeline-unread-dark';
+    const hasThemeToggle = themeOnly || links;
+    versionControl.hidden = themeOnly;
     themeControl.hidden = !hasThemeToggle;
-    control.setAttribute('aria-label', hasThemeToggle ? 'Prototype color mode' : 'Reply UX Pattern versions');
-    if (hasThemeToggle) setOpen(false);
+    control.classList.toggle('has-theme-picker', links);
+    control.setAttribute('aria-label', links ? 'Prototype use case and color mode' : themeOnly ? 'Prototype color mode' : 'Reply UX Pattern versions');
+    if (themeOnly) setOpen(false);
     label.textContent = versionLabel(selected);
     trigger.setAttribute('aria-label', `Reply version, ${versionLabel(selected)}`);
-    const links = linksVersions.includes(selected);
     const displayedVersions = links ? linksVersions : legacyVisibleVersions;
     options.forEach(option => {
       option.setAttribute('aria-checked', String(option.dataset.replyVersion === selected));
@@ -95,7 +97,8 @@
         history.replaceState(history.state, '', url.pathname + url.search + url.hash);
       }
     }
-    const theme = hasThemeToggle && new URL(location.href).searchParams.get('theme') !== 'light' ? 'dark' : 'light';
+    const requestedTheme = new URL(location.href).searchParams.get('theme');
+    const theme = (themeOnly && requestedTheme !== 'light') || (links && requestedTheme === 'dark') ? 'dark' : 'light';
     document.documentElement.dataset.replyTheme = theme;
     document.body.dataset.replyTheme = theme;
     themeToggle.setAttribute('aria-checked', String(theme === 'dark'));
@@ -108,11 +111,12 @@
   function select(version) {
     if (!versions.includes(version)) return;
     const changed = selected !== version;
+    const keepLinksTheme = linksVersions.includes(selected) && linksVersions.includes(version);
     selected = version;
     if (changed) {
       const url = new URL(location.href);
       url.searchParams.set('version', selected);
-      url.searchParams.delete('theme');
+      if (!keepLinksTheme) url.searchParams.delete('theme');
       history.pushState(history.state, '', url.pathname + url.search + url.hash);
     }
     sync();
@@ -122,10 +126,14 @@
   trigger.addEventListener('click', () => setOpen(menu.hidden));
   themeToggle.addEventListener('click', () => {
     const url = new URL(location.href);
-    if (document.body.dataset.replyTheme === 'dark') url.searchParams.set('theme', 'light');
-    else url.searchParams.delete('theme');
+    const nextTheme = document.body.dataset.replyTheme === 'dark' ? 'light' : 'dark';
+    const defaultTheme = selected === 'timeline-unread-dark' ? 'dark' : 'light';
+    if (nextTheme === defaultTheme) url.searchParams.delete('theme');
+    else url.searchParams.set('theme', nextTheme);
     history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+    setOpen(false);
     sync();
+    window.dispatchEvent(new CustomEvent('reply-theme-change', {detail:{theme:nextTheme}}));
     schedulePosition();
   });
   trigger.addEventListener('keydown', event => {

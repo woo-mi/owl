@@ -24,8 +24,13 @@
   };
   const previewHash = key => `#links-${key}-preview`;
   const sourceLabel = artifact => artifact.metaLabel || `${artifact.type} · ${artifact.source}`;
+  function localPreviewURL(key, version) {
+    const params = new URLSearchParams({version});
+    if (new URL(location.href).searchParams.get('theme') === 'dark') params.set('theme', 'dark');
+    return `?${params}${previewHash(key)}`;
+  }
   function makeUI(version) {
-    const destination = key => artifacts[key].href || `?version=${version}${previewHash(key)}`;
+    const destination = key => artifacts[key].href || localPreviewURL(key, version);
     const attributes = key => artifacts[key].href ? 'target="_blank" rel="noopener noreferrer"' : `aria-haspopup="dialog" data-links-preview="${escape(key)}"`;
     return {
       flow:(frame, html) => `<div class="ftux-flow reply-pattern reply-timeline reply-links" data-pen-frame="${escape(frame)}" data-links-case="${escape(version)}"><div class="ftux-turns">${html}</div></div>`,
@@ -98,6 +103,22 @@
     if (url.origin !== location.origin || url.pathname !== location.pathname || url.searchParams.get('version') !== document.body.dataset.replyVersion) return;
     return Object.keys(artifacts).find(key => !artifacts[key].href && url.hash === previewHash(key) && document.querySelector(`.reply-links [data-links-preview="${key}"]`));
   }
+  function syncPreviewTheme() {
+    const version = document.body.dataset.replyVersion;
+    if (!versions.includes(version)) return;
+    let changed = false;
+    document.querySelectorAll('.reply-links a[href], #indexing-menu a[href], #indexing-nav-preview a[href]').forEach(link => {
+      const key = previewKey(new URL(link.href, location.href));
+      if (!key) return;
+      const href = localPreviewURL(key, version);
+      if (link.getAttribute('href') === href) return;
+      link.setAttribute('href', href);
+      changed = true;
+    });
+    // The navigator caches artifact objects, so refresh them from the updated cards.
+    if (changed) window.dispatchEvent(new Event('ftux-state-change'));
+  }
+  window.addEventListener('reply-theme-change', syncPreviewTheme);
   document.addEventListener('click', event => {
     if (!versions.includes(document.body.dataset.replyVersion) || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const link = event.target.closest('a[href]');
@@ -111,8 +132,13 @@
     initialPreviewChecked = true;
     dialog?.close();
     if (location.hash.startsWith('#links-')) history.replaceState(history.state, '', location.pathname + location.search);
+    // The controller may restore a previously visited case instead of rendering it again.
+    requestAnimationFrame(syncPreviewTheme);
   });
-  window.addEventListener('popstate', () => dialog?.close());
+  window.addEventListener('popstate', () => {
+    dialog?.close();
+    requestAnimationFrame(syncPreviewTheme);
+  });
   function openInitialPreview() {
     if (initialPreviewChecked || !document.querySelector('.reply-links') || !versions.includes(document.body.dataset.replyVersion)) return;
     initialPreviewChecked = true;

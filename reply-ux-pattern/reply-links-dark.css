@@ -1,0 +1,28 @@
+/* All four Links cases share the Unread dark palette and original artwork. */
+body[data-reply-theme="dark"] .reply-links a.links-inline { color:var(--dark-link, #79b4ff); }
+body[data-reply-theme="dark"] .reply-links .links-inline-label {
+  background-image:repeating-linear-gradient(to right, currentColor 0 1.25px, transparent 1.25px 2.5px);
+}
+
+/* Recolor the exact exported link silhouette without changing its geometry. */
+body[data-reply-theme="dark"] .reply-links .links-inline-icon img { display:none; }
+body[data-reply-theme="dark"] .reply-links .links-inline-icon::before {
+  content:"";
+  display:block;
+  flex:none;
+  width:12.756px;
+  height:12.742px;
+  background:currentColor;
+  -webkit-mask:url('assets/links/link-icon.svg') center / contain no-repeat;
+  mask:url('assets/links/link-icon.svg') center / contain no-repeat;
+}
+
+body[data-reply-theme="dark"] .reply-links :is(.reply-links-read, .timeline-card-meta),
+body[data-reply-theme="dark"] .links-app-preview .links-preview-source { color:var(--dark-muted, #b0b3bd); }
+
+/* These source icons are monochrome; keep thumbnails and reaction images intact. */
+body[data-reply-theme="dark"] .reply-links .timeline-card-meta img,
+body[data-reply-theme="dark"] .links-app-preview .links-preview-source img { filter:brightness(0) invert(.7); }
+
+body[data-reply-theme="dark"] .reply-links :is(.links-app-card, .timeline-card-thumbnail),
+body[data-reply-theme="dark"] .links-app-preview .links-preview-artwork { border-color:var(--dark-border, #42454e); }
