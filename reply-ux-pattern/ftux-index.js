@@ -189,6 +189,12 @@
     unreadPanel.innerHTML = '<p class="ftux-index-empty" data-empty-unread hidden>You’re all caught up.</p>';
     const unreadSection = panel.querySelector('.indexing-menu-unread');
     main.append(toggle, panel, unreadToggle, unreadPanel);
+    const owlsNav = document.querySelector('#sidebar [data-nav="Owls"]');
+    const owlsBadge = document.createElement('span');
+    owlsBadge.className = 'owls-unread-count';
+    owlsBadge.hidden = true;
+    owlsBadge.setAttribute('aria-hidden', 'true');
+    owlsNav?.append(owlsBadge);
     const list = panel.querySelector('.indexing-menu-topic-list');
     let open = false;
     let unreadOpen = false;
@@ -279,6 +285,12 @@
       }
       const unreadThreads = getUnreadThreads();
       const hasUnread = unreadThreads.some(thread => thread.count > 0);
+      const unreadConversations = separateUnread ? unreadThreads.filter(thread => thread.count > 0).length : 0;
+      owlsBadge.textContent = String(unreadConversations);
+      owlsBadge.hidden = !unreadConversations;
+      const owlsLabel = unreadConversations ? `Owls, ${unreadConversations} unread ${unreadConversations === 1 ? 'conversation' : 'conversations'}` : 'Owls';
+      owlsNav?.setAttribute('aria-label', owlsLabel);
+      owlsNav?.setAttribute('title', owlsLabel);
       toggle.classList.toggle('has-unread', !separateUnread && hasUnread);
       unreadToggle.classList.toggle('has-unread', hasUnread);
       unreadPanel.querySelector('[data-empty-unread]').hidden = hasUnread;
