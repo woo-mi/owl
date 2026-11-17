@@ -12,10 +12,60 @@
     !document.body.classList.contains('workspace-page-open') &&
     !document.body.classList.contains('replies-open');
   const revealed = node => node?.isConnected && !node.closest('[hidden]');
+  function artifactFromCard(node) {
+    return {
+      href:node.href,
+      title:node.querySelector('.timeline-card-copy strong').textContent,
+      type:node.querySelector('.timeline-card-meta').textContent.split('·')[0].trim()
+    };
+  }
+  function getUnreadTopics(flow) {
+    // Threads interleave in the timeline; associate artifacts with their source messages.
+    const definitions = [
+      {message:'ZPjs0', title:'Live App growth report',
+        excerpt:'Live App loads rose to 4,284 and distinct users to 231. Review September’s growth trend and the shorter prior tracking window.',
+        artifactMessages:['D6IAGc', 'nsyvF']},
+      {message:'SN8ox', title:'What Owl learned about you',
+        excerpt:'Review your owner profile, morning update preferences, and ongoing focus on Live App adoption.'},
+      {message:'m8is7b', title:'Growing chat DAU/MAU',
+        excerpt:'A request to grow chat usage leads to a discussion about who Owl can respond to and when it should stop replying.'},
+      {message:'m2xuem', title:'Daily Rubrik usage monitoring',
+        excerpt:'Owl will check Rubrik every day at 9:00 IST and flag weekday usage changes of 50% or more.'},
+      {message:'bUhpm', title:'Chat adoption and Slack access',
+        excerpt:'Review read-only Slack access and the planned chat usage baseline, including DAU/MAU trends and customer comparisons.'},
+      {message:'z2iL42', title:'Rubrik usage dropped sharply',
+        excerpt:'Rubrik fell to 6 views and 2 users on Oct 2, with usage remaining low through the weekend.',
+        artifactMessages:['z2iL42']},
+      {message:'ABTkz', title:'Could Gandhi Jayanti explain the drop?',
+        excerpt:'The holiday could explain Friday’s decline if users are mainly in India, but Sunday’s weakness needs another explanation.'},
+      {message:'g0x3g', title:'Rubrik usage recovered',
+        excerpt:'Oct 5–7 averaged 193 Live App views and 31 users per day, recovering from the Oct 2–4 dip.',
+        artifactMessages:['g0x3g']},
+      {message:'D3TJch', title:'Rubrik dipped again',
+        excerpt:'Oct 8 closed at 152 views and 22 users. Oct 9 was trending lower, pending the final daily count.',
+        artifactMessages:['D3TJch']},
+      {message:'ExjZ8', title:'Rubrik’s Tuesday slowdown',
+        excerpt:'Oct 13’s partial count was 112 loads and 21 users—about 64% fewer loads than the previous four Tuesdays.',
+        artifactMessages:['ExjZ8']},
+      {message:'VKDzT', title:'Rubrik user spike',
+        excerpt:'Oct 15 reached 39 distinct users, about 50% above a normal weekday, with 142 Live App loads.',
+        artifactMessages:['VKDzT']},
+      {message:'lxiD8', title:'Latest Rubrik usage check',
+        excerpt:'Usage fell to 71 loads and 14 users on Oct 19, then recovered to 100 loads and 19 users on Oct 20.',
+        artifactMessages:['lxiD8']}
+    ];
+    return definitions.map(({message, title, excerpt, artifactMessages = []}) => ({
+      id:`timeline-message-${message}`, title, excerpt,
+      node:flow.querySelector(`#timeline-message-${message}`),
+      artifacts:artifactMessages.flatMap(id => [...(flow.querySelector(`#timeline-message-${id}`)?.querySelectorAll('.timeline-card[href]') || [])])
+        .filter(revealed).map(artifactFromCard)
+    })).filter(item => revealed(item.node));
+  }
   function getTopics() {
     const flow = document.querySelector('#messages .ftux-flow');
     if (!flow) return [];
     if (flow.classList.contains('reply-timeline')) {
+      if (usesUnreadMenu()) return getUnreadTopics(flow);
       return [...flow.querySelectorAll('[data-timeline-topic]')].map(node => ({
         id:node.id,
         title:node.dataset.timelineTitle,
@@ -56,11 +106,7 @@
         if (seen.has(node.href)) return false;
         seen.add(node.href);
         return true;
-      }).map(node => ({
-        href:node.href,
-        title:node.querySelector('.timeline-card-copy strong').textContent,
-        type:node.querySelector('.timeline-card-meta').textContent.split('·')[0].trim()
-      }));
+      }).map(artifactFromCard);
   }
   function getUnreadThreads() {
     if (!usesConversationIndex()) return [];

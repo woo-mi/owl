@@ -19,7 +19,7 @@
     preview.setAttribute('aria-hidden', 'true');
     preview.dataset.open = 'false';
     preview.inert = true;
-    preview.innerHTML = '<button type="button" class="indexing-nav-jump"><span class="indexing-nav-title"></span><span class="indexing-nav-excerpt"></span></button>';
+    preview.innerHTML = '<button type="button" class="indexing-nav-jump"><span class="indexing-nav-title"></span><span class="indexing-nav-excerpt"></span></button><div class="indexing-nav-artifact-footer" hidden></div>';
     const status = document.createElement('div');
     status.className = 'indexing-nav-status';
     status.setAttribute('role', 'status');
@@ -28,6 +28,8 @@
     const title = preview.querySelector('.indexing-nav-title');
     const excerpt = preview.querySelector('.indexing-nav-excerpt');
     const jumpButton = preview.querySelector('.indexing-nav-jump');
+    const artifactFooter = preview.querySelector('.indexing-nav-artifact-footer');
+    let artifactKey;
     let entries = [], buttons = [], selected = 0, hovered = -1, previewIndex = -1;
     let openTimer, closeTimer, scrollFrame, refreshFrame, jumpTimer, jumpingUntil = 0;
     let suppressFocus = false, escapeDismissedId = null;
@@ -98,15 +100,34 @@
       buttons.forEach(button => button.setAttribute('aria-expanded', 'false'));
       paint();
     }
+    function updatePreview(item) {
+      title.textContent = item.title;
+      excerpt.textContent = item.excerpt;
+      jumpButton.setAttribute('aria-label', `Jump to ${item.title} in conversation`);
+      const artifacts = item.artifacts || [];
+      artifactFooter.hidden = !artifacts.length;
+      const nextArtifactKey = JSON.stringify(artifacts);
+      if (nextArtifactKey !== artifactKey) {
+        artifactFooter.replaceChildren(...artifacts.map(artifact => {
+          const link = document.createElement('a');
+          link.className = 'indexing-nav-external';
+          link.href = artifact.href;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          link.textContent = `Open ${artifact.type === 'PDF' ? 'PDF' : artifact.type.toLowerCase()} ↗`;
+          link.setAttribute('aria-label', `Open ${artifact.title} ${artifact.type.toLowerCase()} in a new tab`);
+          return link;
+        }));
+        artifactKey = nextArtifactKey;
+      }
+    }
     function showPreview(index) {
       const item = entries[index];
       if (!isAvailable() || !item || escapeDismissedId === item.id) return;
       cancelOpen(); clearTimeout(closeTimer);
       hovered = previewIndex = index;
-      title.textContent = item.title;
-      excerpt.textContent = item.excerpt;
+      updatePreview(item);
       preview.style.setProperty('--indexing-nav-preview-color', topicColors[item.id] || '#202123');
-      jumpButton.setAttribute('aria-label', `Jump to ${item.title} in conversation`);
       buttons.forEach((button, i) => button.setAttribute('aria-expanded', String(i === index)));
       preview.inert = false;
       preview.setAttribute('aria-hidden', 'false');
@@ -144,9 +165,7 @@
       });
       const item = entries[previewIndex];
       if (!item || preview.dataset.open !== 'true') return;
-      title.textContent = item.title;
-      excerpt.textContent = item.excerpt;
-      jumpButton.setAttribute('aria-label', `Jump to ${item.title} in conversation`);
+      updatePreview(item);
     }
     function refresh() {
       const nextEntries = (window.FTUXIndex?.getTopics() || []).filter(item =>
