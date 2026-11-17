@@ -48,10 +48,13 @@
     const line = connector || counts ? `<div class="timeline-reference-row" style="gap:${Number(row.gap) || 0}px;padding:${paddingCSS(row.padding || 0)}">${row.lineLast ? counts + connector : connector + counts}</div>` : '';
     return `<div class="timeline-reference timeline-stack${node.align === 'end' ? ' timeline-align-end' : ''}" data-pen-node="${escape(node.id)}" style="--timeline-gap:${Number(node.gap) || 0}px">${quote}${line}</div>`;
   }
-  // Use case 5 starts at the completed report, after the removed setup exchange.
-  const linksCaseFiveIntro = new Set(['wGADP', 'BvMRL', 'kFbxH', 'V84zc']);
+  // Use case 5 contains only the completed growth-report exchange.
+  const growthReportSection = timeline.children.find(section => section.id === 'y5tkH');
+  const linksCaseFiveTimeline = {...timeline, children:[{
+    ...growthReportSection,
+    children:growthReportSection.children.filter(node => node.id === 'Sc96h')
+  }]};
   function render(node, author = '', parentMessage = '', version = 'timeline') {
-    if (version === 'links-5' && linksCaseFiveIntro.has(node.id)) return '';
     const attrs = `data-pen-node="${escape(node.id)}"`;
     const children = () => (node.children || []).map(child => render(child, author, parentMessage, version)).join('');
     const gap = `style="--timeline-gap:${Number(node.gap) || 0}px"`;
@@ -98,7 +101,7 @@
   }
   window.ReplyTimelineContent = (version = 'timeline') => {
     const variant = window.ReplyTimelineVariants?.[version];
-    const tree = variant?.tree || timeline;
+    const tree = version === 'links-5' ? linksCaseFiveTimeline : variant?.tree || timeline;
     return `<div class="ftux-flow reply-pattern reply-timeline${variant ? ' reply-timeline-variant' : ''}" data-pen-frame="${['timeline-unread', 'timeline-unread-dark', 'links-5'].includes(version) ? 'cleFc' : variant?.frame || 'ZyjHC'}" data-pen-conversation="${variant?.conversation || 'ScCph'}"><div class="ftux-turns">${tree.children.map(node => render(node, '', '', version)).join('')}</div></div>`;
   };
 })();

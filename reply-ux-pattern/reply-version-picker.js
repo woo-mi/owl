@@ -90,7 +90,7 @@
       option.parentElement.hidden = !displayedVersions.includes(option.dataset.replyVersion);
     });
     const unread = links || ['timeline-unread', 'timeline-unread-dark'].includes(selected);
-    if (links && selected !== 'links-5') {
+    if (links) {
       const url = new URL(location.href);
       if (url.searchParams.has('timeline-thread') || url.searchParams.has('timeline-mode')) {
         url.searchParams.delete('timeline-thread');
