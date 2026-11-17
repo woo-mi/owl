@@ -14,7 +14,7 @@
     'timeline-line-both':'bubble, connecting line, read/reply both'
   };
   const versions = Object.keys(versionLabels);
-  const visibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-line-user', 'timeline-unread'];
+  const visibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-unread'];
   const versionLabel = version => versionLabels[version] || version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
