@@ -1,0 +1,59 @@
+/* The three named Pen frames share the timeline shell and retain their own reply treatments. */
+@font-face { font-family:Lato; src:url('assets/Lato-Regular.ttf') format('truetype'); font-weight:400; font-display:swap; }
+.reply-timeline-variant .timeline-group-fit { width:fit-content; max-width:100%; }
+.reply-timeline-variant .timeline-stack.timeline-align-start { align-items:flex-start; }
+.reply-timeline-variant .timeline-stack.timeline-align-end { align-items:flex-end; }
+.reply-timeline-variant .timeline-reference {
+  width:fit-content;
+  max-width:100%;
+  color:#0069e0;
+}
+.reply-timeline-variant .timeline-reference-pill {
+  display:block;
+  width:fit-content;
+  max-width:100%;
+  margin:0;
+  padding:var(--reference-padding, 9px 13px);
+  border:0;
+  border-radius:var(--reference-radius, 16px);
+  box-shadow:inset 0 0 0 1px var(--reference-border, #0069e080);
+  background:#fff;
+  color:#0069e0;
+  font:400 var(--reference-font-size, 12px)/var(--reference-line-height, 1.4) Inter, system-ui, sans-serif;
+  text-decoration:none;
+  overflow-wrap:anywhere;
+}
+.reply-timeline-variant a.timeline-reference-pill:hover { background:#f3f8ff; }
+.reply-timeline-variant .timeline-reference-row {
+  display:flex;
+  align-items:flex-start;
+  max-width:100%;
+}
+.reply-timeline-variant .timeline-reference-line { display:block; flex:none; }
+.reply-timeline-variant .timeline-reference-counts {
+  display:flex;
+  align-items:center;
+  min-width:0;
+  font:400 12px/1.45 Inter, system-ui, sans-serif;
+}
+.reply-timeline-variant .timeline-status-item {
+  display:flex;
+  flex:none;
+  align-items:center;
+  height:100%;
+  padding:var(--status-padding, 0);
+  white-space:nowrap;
+}
+.reply-timeline-variant button.timeline-status-item { padding:var(--status-padding, 0); }
+.reply-timeline-variant .timeline-status-dot { width:14px; font-size:14px; line-height:20px; }
+.reply-timeline-variant .timeline-outgoing > .timeline-variant-footer {
+  justify-content:flex-end;
+  align-items:center;
+  gap:0;
+  width:100%;
+  height:var(--status-height, 17px);
+  font:400 12px/1.45 Inter, system-ui, sans-serif;
+}
+.reply-timeline-variant .timeline-date { font:400 14px/20px Inter, system-ui, sans-serif; color:#63666d; }
+.reply-timeline-variant .timeline-new { padding-top:10px; font:400 12px/17px Inter, system-ui, sans-serif; }
+.reply-timeline-variant .timeline-link-chip { gap:4px; padding:3px 5px; border-radius:4px; font:400 14px/1.25 Lato, sans-serif; }

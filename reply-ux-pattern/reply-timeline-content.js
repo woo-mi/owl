@@ -6,7 +6,7 @@
   const flatten = node => [node, ...(node.children || []).flatMap(flatten)];
   const nodes = flatten(timeline);
   const messages = nodes.filter(node => node.k === 'message');
-  const messageID = node => `timeline-message-${node.id}`;
+  const messageID = node => `timeline-message-${node.canonicalId || node.id}`;
   const messageText = node => flatten(node).filter(child => child.k === 'bubble').flatMap(child => flatten(child).filter(part => part.k === 'text').map(part => part.text)).join(' ');
   const quoteTarget = quote => {
     const prefix = quote.replace(/\s*\.\.\.$/, '').trim();
@@ -22,34 +22,62 @@
     const report = '<rect x="12" y="27" width="67" height="3" rx="1.5" fill="#cbd5e5"/><path d="M12 46h100M12 65h100M12 84h100" stroke="#e2e7ef"/><rect x="23" y="66" width="14" height="18" rx="2" fill="#b7cce9"/><rect x="44" y="55" width="14" height="29" rx="2" fill="#9cbde7"/><rect x="65" y="41" width="14" height="43" rx="2" fill="#6798da"/><rect x="86" y="49" width="14" height="35" rx="2" fill="#4d83ca"/><rect x="12" y="96" width="95" height="3" rx="1.5" fill="#c5d0e1"/><rect x="12" y="104" width="68" height="3" rx="1.5" fill="#d9e0eb"/>';
     return `<svg class="timeline-card-thumbnail" viewBox="0 0 124 125" role="img" aria-label="${escape(node.heading)} preview"><rect width="124" height="125" fill="#f6f8fb"/>${heading}${node.kind === 'report' ? report : chat}</svg>`;
   }
-  function render(node, author = '', parentMessage = '') {
+  const threadForMessage = {SN8ox:'profile', m8is7b:'chat-growth', bUhpm:'chat-surface', ABTkz:'gandhi-jayanti'};
+  const paddingCSS = padding => (Array.isArray(padding) ? padding : [padding || 0]).map(value => `${Number(value) || 0}px`).join(' ');
+  function threadTrigger(thread, version, mode) {
+    return `type="button" data-timeline-thread="${thread}" data-timeline-mode="${mode}" aria-haspopup="dialog" aria-controls="${version}-${thread}-thread"`;
+  }
+  function statusItemsHTML(items, thread, version) {
+    return items.map(item => {
+      const unread = item.texts.some(text => /Unread/.test(text));
+      const className = `timeline-status-item ${unread ? 'timeline-unread' : 'timeline-reply-count'}`;
+      const style = `style="--status-padding:${paddingCSS(item.padding || 0)}"`;
+      const text = item.texts.map(text => text === '•' ? '<span class="timeline-status-dot" aria-hidden="true">•</span>' : `<span>${escape(text)}</span>`).join('');
+      return thread ? `<button class="${className}" ${style} ${threadTrigger(thread, version, unread ? 'unread' : 'replies')}>${text}</button>` : `<span class="${className}" ${style}>${text}</span>`;
+    }).join('');
+  }
+  function referenceHTML(node, version) {
+    const target = quoteTarget(node.quote);
+    const thread = target && threadForMessage[target.id];
+    const pill = node.pill || {};
+    const pillStyle = `style="--reference-padding:${paddingCSS(pill.padding || [9,13])};--reference-radius:${Number(pill.radius) || 16}px;--reference-border:${escape(pill.border || '#0069e080')};--reference-font-size:${Number(pill.fontSize) || 12}px;--reference-line-height:${Number(pill.lineHeight) || 1.4}"`;
+    const quote = target ? `<a class="reply-count timeline-reference-pill" href="#${messageID(target)}" ${pillStyle}>${escape(node.quote)}</a>` : `<span class="timeline-reference-pill" ${pillStyle}>${escape(node.quote)}</span>`;
+    const row = node.row || {};
+    const connector = node.connector ? `<span class="timeline-reference-line" aria-hidden="true" data-pen-node="${escape(node.connector.id)}" style="width:${Number(node.connector.width) || 4}px;height:${Number(node.connector.height) || 16}px;background:${escape(node.connector.color || '#ebebeb')};border-radius:${Number(node.connector.radius) || 3}px"></span>` : '';
+    const counts = row.items?.length ? `<span class="timeline-reference-counts" style="height:${Number(row.statusHeight) || 17}px">${statusItemsHTML(row.items, thread, version)}</span>` : '';
+    const line = connector || counts ? `<div class="timeline-reference-row" style="gap:${Number(row.gap) || 0}px;padding:${paddingCSS(row.padding || 0)}">${row.lineLast ? counts + connector : connector + counts}</div>` : '';
+    return `<div class="timeline-reference timeline-stack${node.align === 'end' ? ' timeline-align-end' : ''}" data-pen-node="${escape(node.id)}" style="--timeline-gap:${Number(node.gap) || 0}px">${quote}${line}</div>`;
+  }
+  function render(node, author = '', parentMessage = '', version = 'timeline') {
     const attrs = `data-pen-node="${escape(node.id)}"`;
-    const children = () => (node.children || []).map(child => render(child, author, parentMessage)).join('');
+    const children = () => (node.children || []).map(child => render(child, author, parentMessage, version)).join('');
     const gap = `style="--timeline-gap:${Number(node.gap) || 0}px"`;
     switch (node.k) {
       case 'section': return `<section id="timeline-${escape(node.date)}" class="timeline-section timeline-stack" data-timeline-topic data-timeline-title="${escape(node.title)}" data-timeline-excerpt="${escape(node.excerpt)}" ${attrs} ${gap}>${children()}</section>`;
       case 'message': {
         const outgoing = node.author !== 'Analyst Owl';
-        return `<div id="${messageID(node)}" class="timeline-message timeline-stack${outgoing ? ' timeline-outgoing' : ''}" data-timeline-message data-timeline-author="${escape(node.author)}" aria-label="Message from ${escape(node.author)}" ${attrs} ${gap}>${node.children.map(child => render(child, node.author, node.id)).join('')}</div>`;
+        return `<div id="${messageID(node)}" class="timeline-message timeline-stack${outgoing ? ' timeline-outgoing' : ''}" data-timeline-message data-timeline-author="${escape(node.author)}" aria-label="Message from ${escape(node.author)}" ${attrs} ${gap}>${node.children.map(child => render(child, node.author, node.canonicalId || node.id, version)).join('')}</div>`;
       }
-      case 'group': return `<div class="timeline-group timeline-stack" ${attrs} ${gap}>${children()}</div>`;
+      case 'group': return `<div class="timeline-group timeline-stack${node.fit ? ' timeline-group-fit' : ''}${node.align ? ` timeline-align-${node.align}` : ''}" ${attrs} ${gap}>${children()}</div>`;
       case 'bubble': return `<article class="message ${node.outgoing ? 'user-message ftux-user-bubble' : 'assistant-message ftux-bubble'} timeline-bubble timeline-stack${node.wide ? ' timeline-bubble-wide' : ''}" ${attrs} ${gap}>${children()}</article>`;
       case 'text': return `<p class="timeline-text${node.bold ? ' timeline-text-bold' : ''}" ${attrs}>${escape(node.text)}</p>`;
       case 'bullet': return `<div class="timeline-bullet" ${attrs}><span aria-hidden="true">•</span><p>${escape(node.text)}</p></div>`;
-      case 'date': return `<div class="timeline-date" ${attrs}>${escape(node.text)}</div>`;
+      case 'date': return `<div class="timeline-date" ${attrs}${node.padding ? ` style="padding:${paddingCSS(node.padding)}"` : ''}>${escape(node.text)}</div>`;
       case 'new': return `<div class="timeline-new" role="separator" aria-label="New messages" ${attrs}><span>${escape(node.text)}</span></div>`;
-      case 'timestamp': return `<div class="timeline-stamp" ${attrs}>${escape(node.text)}</div>`;
+      case 'timestamp': return `<div class="timeline-stamp" ${attrs}${node.padding ? ` style="padding:${paddingCSS(node.padding)};align-self:${node.align === 'end' ? 'flex-end' : 'flex-start'}"` : ''}>${escape(node.text)}</div>`;
       case 'context': {
         const target = quoteTarget(node.quote);
         const quote = target ? `<a class="reply-count timeline-quote" href="#${messageID(target)}">${escape(node.quote)}</a>` : `<span class="timeline-quote">${escape(node.quote)}</span>`;
         return `<div class="timeline-context" ${attrs}><span>${escape(node.prefix)}</span>${quote}</div>`;
       }
+      case 'reference': return referenceHTML(node, version);
       case 'footer': {
+        const thread = threadForMessage[parentMessage];
+        if (node.items) return `<div class="timeline-footer timeline-variant-footer" ${attrs} style="padding:${paddingCSS(node.padding || 0)};--status-height:${Number(node.height) || 17}px">${statusItemsHTML(node.items, thread, version)}</div>`;
         const status = node.texts.filter(text => !/Repl(?:y|ies)$/.test(text));
         const reply = node.texts.find(text => /Repl(?:y|ies)$/.test(text));
-        const thread = {SN8ox:'profile', m8is7b:'chat-growth', bUhpm:'chat-surface', ABTkz:'gandhi-jayanti'}[parentMessage];
         if (thread) {
-          const trigger = `type="button" data-timeline-thread="${thread}" aria-haspopup="dialog" aria-controls="timeline-${thread}-thread"`;
+          const trigger = `type="button" data-timeline-thread="${thread}" aria-haspopup="dialog" aria-controls="${version}-${thread}-thread"`;
           return `<div class="timeline-footer" ${attrs}><button class="timeline-unread" data-timeline-mode="unread" ${trigger}>${status.map(escape).join(' ')}</button><button class="timeline-reply-count" data-timeline-mode="replies" ${trigger}>${escape(reply)}</button></div>`;
         }
         const target = replyTargets[parentMessage];
@@ -65,5 +93,9 @@
       default: return '';
     }
   }
-  window.ReplyTimelineContent = () => `<div class="ftux-flow reply-pattern reply-timeline" data-pen-frame="ZyjHC" data-pen-conversation="ScCph"><div class="ftux-turns">${timeline.children.map(node => render(node)).join('')}</div></div>`;
+  window.ReplyTimelineContent = (version = 'timeline') => {
+    const variant = window.ReplyTimelineVariants?.[version];
+    const tree = variant?.tree || timeline;
+    return `<div class="ftux-flow reply-pattern reply-timeline${variant ? ' reply-timeline-variant' : ''}" data-pen-frame="${variant?.frame || 'ZyjHC'}" data-pen-conversation="${variant?.conversation || 'ScCph'}"><div class="ftux-turns">${tree.children.map(node => render(node, '', '', version)).join('')}</div></div>`;
+  };
 })();

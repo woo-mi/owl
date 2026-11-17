@@ -1,11 +1,11 @@
 /* Scoped to the timeline duplicate; the existing versions keep their styling. */
-body[data-reply-version="timeline"] { --timeline-nav-gutter:64px; }
-body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="latest-oct-28"][data-reply-version="timeline"]:not(.replies-open):not(.workspace-page-open) .conversation {
+body[data-reply-layout="timeline"] { --timeline-nav-gutter:64px; }
+body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="latest-oct-28"][data-reply-layout="timeline"]:not(.replies-open):not(.workspace-page-open) .conversation {
   width:min(var(--chat-width), calc(100% - var(--timeline-nav-gutter) - 16px));
   margin-left:max(16px, min(calc((100% - var(--chat-width)) / 2), calc(100% - var(--chat-width) - var(--timeline-nav-gutter))));
   margin-right:0;
 }
-body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="latest-oct-28"][data-reply-version="timeline"]:not(.replies-open):not(.workspace-page-open) .composer-dock {
+body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="latest-oct-28"][data-reply-layout="timeline"]:not(.replies-open):not(.workspace-page-open) .composer-dock {
   width:min(var(--chat-width), calc(100% - var(--timeline-nav-gutter) - 16px));
   left:max(16px, min(calc((100% - var(--chat-width)) / 2), calc(100% - var(--chat-width) - var(--timeline-nav-gutter))));
   transform:none;
@@ -182,7 +182,7 @@ body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="lat
 .reply-timeline .ftux-user-turn { min-height:0; padding-top:0; }
 .reply-timeline .ftux-user-turn .ftux-user-bubble { background:#0069e0; }
 @media (max-width:760px) {
-  body[data-reply-version="timeline"] { --timeline-nav-gutter:48px; }
+  body[data-reply-layout="timeline"] { --timeline-nav-gutter:48px; }
   .reply-timeline .timeline-bubble.ftux-user-bubble { max-width:90%; }
   .reply-timeline .timeline-card-thumbnail { width:96px; }
   .reply-timeline .timeline-card-copy > span { overflow-wrap:anywhere; }

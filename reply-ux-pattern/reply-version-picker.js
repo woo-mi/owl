@@ -7,10 +7,13 @@
     'color-code-previews':'more than three topics',
     'one-topic-time-gap':'one topic - time gap',
     'two-topics':'two topics',
-    'timeline':'timeline'
+    'timeline':'timeline',
+    'timeline-bubble-user':'bubble, read/reply - user',
+    'timeline-line-user':'bubble, connecting line, read/reply-user',
+    'timeline-line-both':'bubble, connecting line, read/reply both'
   };
   const versions = Object.keys(versionLabels);
-  const visibleVersions = ['one-topic-time-gap', 'timeline'];
+  const visibleVersions = ['one-topic-time-gap', 'timeline', 'timeline-bubble-user', 'timeline-line-user', 'timeline-line-both'];
   const versionLabel = version => versionLabels[version] || version.toUpperCase();
   const readVersion = () => {
     const value = new URL(location.href).searchParams.get('version');
@@ -57,6 +60,7 @@
     trigger.setAttribute('aria-label', `Reply version, ${versionLabel(selected)}`);
     options.forEach(option => option.setAttribute('aria-checked', String(option.dataset.replyVersion === selected)));
     document.body.dataset.replyVersion = selected;
+    document.body.dataset.replyLayout = selected === 'timeline' || selected.startsWith('timeline-') ? 'timeline' : '';
   }
   function select(version) {
     if (!versions.includes(version)) return;

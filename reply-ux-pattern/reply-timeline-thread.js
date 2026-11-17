@@ -36,22 +36,24 @@
     }
   };
 
-  // Each thread owns its cached messages, composer draft, attachments and motion.
-  function createThread(key, thread) {
+  const VERSIONS = ['timeline', 'timeline-bubble-user', 'timeline-line-user', 'timeline-line-both'];
+
+  // Each variant's thread owns its cached messages, draft, attachments and motion.
+  function createThread(key, thread, version) {
     const STAGE = { CLOSED:0, OPENING:1, OPEN:2, CLOSING:3 };
     const TIMING = { open:260, close:180 };
     const MOTION = { offset:16, scale:.985, enter:'cubic-bezier(.16, 1, .3, 1)', exit:'cubic-bezier(.4, 0, 1, 1)' };
     const PARAM = 'timeline-thread';
     const MODE_PARAM = 'timeline-mode';
     const HISTORY_KEY = 'timelineThreadEntry';
-    const sessionToken = `${key}-${Date.now()}`;
+    const sessionToken = `${version}-${key}-${Date.now()}`;
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     let stage = STAGE.CLOSED;
     let dialog, header, profile, content, scroller, dock, composer, input, send, files, attachments, status, unreadDivider;
     let mode = 'replies';
     let opener, savedScroll = 0, generation = 0, animations = [], pendingFiles = [];
     let pointerStartedOutside = false, followingBottom = false, composerWidth = 0;
-    const active = () => document.body.dataset.replyVersion === 'timeline' && document.body.dataset.prototypeView === 'latest-oct-28' && !document.body.classList.contains('workspace-page-open');
+    const active = () => document.body.dataset.replyVersion === version && document.body.dataset.prototypeView === 'latest-oct-28' && !document.body.classList.contains('workspace-page-open');
     const requested = () => new URL(location.href).searchParams.get(PARAM) === key;
     const requestedMode = () => new URL(location.href).searchParams.get(MODE_PARAM) === 'unread' ? 'unread' : 'replies';
 
@@ -130,8 +132,9 @@
       const sourceGroups = thread.groups.map(group => group.map(id => document.getElementById(`timeline-message-${id}`)));
       if (sourceGroups.some(group => group.some(source => !source))) return false;
       dialog = document.createElement('dialog');
-      dialog.id = `timeline-${key}-thread`;
+      dialog.id = `${version}-${key}-thread`;
       dialog.className = 'timeline-thread-dialog';
+      dialog.dataset.replyVersion = version;
       dialog.setAttribute('aria-label', `${thread.title} - reply opened`);
       header = cleanClone(document.querySelector('.main > .agent-header'));
       header.classList.add('timeline-thread-header');
@@ -158,7 +161,7 @@
       content = document.createElement('div');
       content.className = 'timeline-thread-content';
       const messages = document.createElement('div');
-      messages.className = 'timeline-thread-messages reply-timeline';
+      messages.className = `timeline-thread-messages reply-timeline${version === 'timeline' ? '' : ' reply-timeline-variant'}`;
       unreadDivider = document.createElement('div');
       unreadDivider.className = 'timeline-new timeline-thread-new';
       unreadDivider.textContent = 'NEW';
@@ -175,7 +178,7 @@
             else messages.append(unreadDivider);
           }
           const message = cleanClone(source);
-          message.querySelectorAll('.timeline-context').forEach(element => element.remove());
+          message.querySelectorAll('.timeline-context, .timeline-reference').forEach(element => element.remove());
           // Focused frames omit outgoing receipts; Owl reply timestamps remain.
           if (message.classList.contains('timeline-outgoing')) {
             message.querySelectorAll('.timeline-footer, .timeline-stamp').forEach(element => element.remove());
@@ -385,7 +388,9 @@
       window.addEventListener('resize', fitToMain);
       window.addEventListener('popstate', syncLocation);
       const leaveThread = () => {
-        if (requested()) clearParameter();
+        if (stage === STAGE.CLOSED) return;
+        const urlVersion = new URL(location.href).searchParams.get('version') || 'timeline';
+        if (requested() && urlVersion === version) clearParameter();
         if (stage !== STAGE.CLOSED && stage !== STAGE.CLOSING) transition(false);
       };
       for (const eventName of ['reply-version-change', 'mvp-view-change']) {
@@ -402,5 +407,7 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
     else start();
   }
-  Object.entries(THREADS).forEach(([key, thread]) => createThread(key, thread));
+  VERSIONS.forEach(version => {
+    Object.entries(THREADS).forEach(([key, thread]) => createThread(key, thread, version));
+  });
 })();
