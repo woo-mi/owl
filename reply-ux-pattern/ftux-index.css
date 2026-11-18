@@ -246,3 +246,7 @@ body[data-reply-version="timeline-unread"] .sidebar-unread-menu .indexing-menu-u
   height:20px;
   font-size:10px;
 }
+
+body[data-reply-version="timeline-unread"] .sidebar-unread-menu #indexing-unread-heading {
+  display:none;
+}
