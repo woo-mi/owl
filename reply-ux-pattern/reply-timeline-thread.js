@@ -304,7 +304,9 @@
         if (active() && !anotherThreadOpen) {
           document.getElementById('chat-scroll').scrollTop = savedScroll;
           const target = opener?.isConnected ? opener : document.querySelector(`[data-timeline-thread="${key}"][data-timeline-mode="${mode}"]`);
-          target?.focus({preventScroll:true});
+          const focusTarget = target?.id === 'unread-menu-toggle' && target.hidden && version === 'timeline-unread'
+            ? document.querySelector('#sidebar [data-nav="Owls"]') : target;
+          focusTarget?.focus({preventScroll:true});
         }
       }
     }

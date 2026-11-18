@@ -186,3 +186,58 @@ body[data-reply-version="timeline-unread"] [data-nav="Notifications"] [data-penc
   /* Override the badge color embedded in the exported sidebar artwork. */
   background-color:var(--reply-unread-neutral) !important;
 }
+
+/* Only Unread anchors its notification list to the Owls navigation badge. */
+.owls-unread-row { display:contents; }
+body[data-reply-version="timeline-unread"] .owls-unread-row {
+  display:block;
+  position:relative;
+  flex-shrink:0;
+  width:248px;
+  height:36px;
+}
+body[data-reply-version="timeline-unread"] .owls-unread-row .owls-unread-count { display:none; }
+body[data-reply-version="timeline-unread"] .owls-unread-trigger {
+  position:absolute;
+  top:8px;
+  right:8px;
+  display:grid;
+  place-items:center;
+  width:18px;
+  height:20px;
+  margin:0;
+  padding:0;
+  border:0;
+  border-radius:16px;
+  background:#eeeff1;
+  color:var(--reply-unread-neutral);
+  font:600 10px/1.45 Inter,system-ui,sans-serif;
+  cursor:pointer;
+}
+body[data-reply-version="timeline-unread"] .owls-unread-trigger::before {
+  /* Expand the clickable area without changing the visible badge. */
+  content:"";
+  position:absolute;
+  inset:-8px;
+}
+body[data-reply-version="timeline-unread"] .owls-unread-trigger::after { display:none; }
+body[data-reply-version="timeline-unread"] .owls-unread-trigger:is(:hover, [aria-expanded="true"]) { background:#e0e2e6; }
+body[data-reply-version="timeline-unread"] .owls-unread-trigger:focus-visible { outline:2px solid var(--reply-unread-neutral); outline-offset:3px; }
+body[data-reply-version="timeline-unread"] .owls-unread-trigger[hidden] { display:none !important; }
+body[data-reply-version="timeline-unread"] .sidebar.is-compact .owls-unread-row { width:40px; }
+body[data-reply-version="timeline-unread"] .sidebar.is-compact .owls-unread-trigger {
+  top:1px;
+  right:1px;
+  width:14px;
+  height:14px;
+  font-size:8px;
+  line-height:14px;
+}
+body[data-reply-version="timeline-unread"] .sidebar.is-compact .owls-unread-trigger::before { inset:-1px -3px -9px -7px; }
+body.ftux-prototype[data-reply-version="timeline-unread"] .indexing-menu.sidebar-unread-menu {
+  position:fixed;
+  right:auto;
+  max-width:calc(100vw - 24px);
+  max-height:calc(100dvh - 24px);
+  z-index:151;
+}

@@ -6,6 +6,7 @@
   const currentVersion = () => document.body.dataset.replyVersion || new URL(location.href).searchParams.get('version') || 'timeline';
   const usesConversationIndex = () => conversationVersions.includes(currentVersion());
   const usesUnreadMenu = () => ['timeline-unread', 'timeline-unread-dark', 'links-5', ...linksVersions].includes(currentVersion());
+  const usesSidebarUnread = () => currentVersion() === 'timeline-unread';
   const readThreads = new Set();
   const linkIcon = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6.25 9.75 3.5-3.5m-4.5 1-1 1a2.475 2.475 0 0 0 3.5 3.5l1-1m-1.5-5.5 1-1a2.475 2.475 0 0 1 3.5 3.5l-1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -207,6 +208,13 @@
     owlsBadge.hidden = true;
     owlsBadge.setAttribute('aria-hidden', 'true');
     owlsNav?.append(owlsBadge);
+    const owlsRow = document.createElement('div');
+    owlsRow.className = 'owls-unread-row';
+    if (owlsNav) {
+      owlsNav.before(owlsRow);
+      owlsRow.append(owlsNav);
+    }
+    const unreadIcon = unreadToggle.innerHTML;
     const list = panel.querySelector('.indexing-menu-topic-list');
     let open = false;
     let unreadOpen = false;
@@ -226,14 +234,33 @@
       if (open && focusFirst) controls()[0]?.focus({preventScroll:true});
       if (open && !wasOpen) window.dispatchEvent(new Event('indexing-menu-open'));
     }
+    function positionUnreadPanel() {
+      if (!usesSidebarUnread() || !owlsNav) {
+        for (const property of ['left', 'top', 'width', 'max-height']) unreadPanel.style.removeProperty(property);
+        return;
+      }
+      if (!unreadOpen) return;
+      const sidebar = document.getElementById('sidebar').getBoundingClientRect();
+      if (sidebar.right <= 0) { setUnreadOpen(false); return; }
+      const anchor = owlsRow.getBoundingClientRect();
+      const width = Math.min(352, innerWidth - 24);
+      const left = Math.max(12, Math.min(sidebar.right + 8, innerWidth - width - 12));
+      unreadPanel.style.width = `${width}px`;
+      unreadPanel.style.maxHeight = `${Math.max(0, innerHeight - 24)}px`;
+      const preferredTop = left < sidebar.right ? anchor.bottom + 8 : anchor.top;
+      unreadPanel.style.left = `${left}px`;
+      unreadPanel.style.top = `${Math.max(12, Math.min(preferredTop, innerHeight - unreadPanel.offsetHeight - 12))}px`;
+    }
     function setUnreadOpen(next, {restoreFocus = false, focusFirst = false} = {}) {
       const wasOpen = unreadOpen;
       unreadOpen = next && usesUnreadMenu() && isAvailable();
       if (unreadOpen) setOpen(false);
       unreadPanel.hidden = !unreadOpen;
       unreadToggle.setAttribute('aria-expanded', String(unreadOpen));
-      unreadToggle.setAttribute('aria-label', `${unreadOpen ? 'Close' : 'Open'} unread replies`);
-      if (restoreFocus && !unreadToggle.hidden) unreadToggle.focus({preventScroll:true});
+      const unreadCountLabel = usesSidebarUnread() && !unreadToggle.hidden ? `, ${unreadToggle.textContent} unread conversations` : '';
+      unreadToggle.setAttribute('aria-label', `${unreadOpen ? 'Close' : 'Open'} unread replies${unreadCountLabel}`);
+      positionUnreadPanel();
+      if (restoreFocus) (unreadToggle.hidden && usesSidebarUnread() ? owlsNav : unreadToggle)?.focus({preventScroll:true});
       if (unreadOpen && focusFirst) unreadPanel.querySelector('button')?.focus({preventScroll:true});
       if (unreadOpen && !wasOpen) window.dispatchEvent(new Event('indexing-menu-open'));
     }
@@ -303,8 +330,18 @@
       const unreadThreads = getUnreadThreads();
       const hasUnread = unreadThreads.some(thread => thread.count > 0);
       const unreadConversations = separateUnread ? unreadThreads.filter(thread => thread.count > 0).length : 0;
+      const sidebarUnread = usesSidebarUnread() && Boolean(owlsNav);
+      const wasSidebarUnread = unreadToggle.classList.contains('owls-unread-trigger');
+      if (sidebarUnread !== wasSidebarUnread) {
+        unreadOpen = false;
+        (sidebarUnread ? owlsRow : main).append(unreadToggle);
+        unreadToggle.classList.toggle('owls-unread-trigger', sidebarUnread);
+        unreadToggle.innerHTML = sidebarUnread ? '' : unreadIcon;
+      }
+      unreadPanel.classList.toggle('sidebar-unread-menu', sidebarUnread);
+      if (sidebarUnread) unreadToggle.textContent = String(unreadConversations);
       owlsBadge.textContent = String(unreadConversations);
-      owlsBadge.hidden = !unreadConversations;
+      owlsBadge.hidden = !unreadConversations || sidebarUnread;
       const owlsLabel = unreadConversations ? `Owls, ${unreadConversations} unread ${unreadConversations === 1 ? 'conversation' : 'conversations'}` : 'Owls';
       owlsNav?.setAttribute('aria-label', owlsLabel);
       owlsNav?.setAttribute('title', owlsLabel);
@@ -335,7 +372,7 @@
         unreadKey = nextUnreadKey;
       }
       toggle.hidden = !isAvailable();
-      unreadToggle.hidden = !separateUnread || !isAvailable();
+      unreadToggle.hidden = !separateUnread || !isAvailable() || (sidebarUnread && !unreadConversations);
       setOpen(open);
       setUnreadOpen(unreadOpen);
       window.dispatchEvent(new Event('ftux-index-change'));
@@ -399,6 +436,11 @@
         scheduleSync();
       }
     });
+    window.addEventListener('resize', positionUnreadPanel);
+    document.getElementById('sidebar')?.addEventListener('transitionend', positionUnreadPanel);
+    const sidebarResize = new ResizeObserver(positionUnreadPanel);
+    sidebarResize.observe(document.getElementById('sidebar'));
+    sidebarResize.observe(owlsRow);
     window.addEventListener('ftux-state-change', scheduleSync);
     window.addEventListener('indexing-ready', scheduleSync);
     new MutationObserver(scheduleSync).observe(messages, {childList:true, subtree:true, attributes:true, attributeFilter:['hidden']});
