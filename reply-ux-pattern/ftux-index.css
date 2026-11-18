@@ -172,10 +172,6 @@ body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"],
   --reply-unread-neutral:#626268;
   --indexing-nav-unread-color:var(--reply-unread-neutral);
 }
-body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-nav-unread {
-  color:var(--reply-unread-neutral);
-  background:#eeeff1;
-}
 body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-menu-toggle.has-unread::after {
   background:var(--reply-unread-neutral);
 }

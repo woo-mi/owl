@@ -133,8 +133,6 @@ body.ftux-prototype[data-reply-theme="dark"]:is([data-reply-version="timeline"],
   --reply-unread-neutral:var(--dark-muted);
   --indexing-nav-unread-color:var(--reply-unread-neutral);
 }
-body.ftux-prototype[data-reply-theme="dark"]:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-nav-unread { color:var(--reply-unread-neutral); }
-body.ftux-prototype[data-reply-theme="dark"]:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-nav-unread { background:var(--dark-unread-bg); }
 body.ftux-prototype[data-reply-theme="dark"]:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-menu-toggle.has-unread::after { background:var(--reply-unread-neutral); }
 body.ftux-prototype[data-reply-theme="dark"]:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .owls-unread-trigger {
   background:var(--dark-unread-bg);
