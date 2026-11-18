@@ -167,15 +167,15 @@ body[data-reply-experience="unread"] .sidebar [data-nav="Owls"].is-active {
   }
 }
 
-/* The light Unread prototype uses neutral notification accents. */
+/* The light Unread conversation and index use neutral accents. */
 body[data-reply-version="timeline-unread"] {
   --reply-unread-neutral:#626268;
   --indexing-nav-unread-color:var(--reply-unread-neutral);
 }
-body[data-reply-version="timeline-unread"] :is(.timeline-unread, .indexing-menu-unread-dot) {
+body[data-reply-version="timeline-unread"] .timeline-unread {
   color:var(--reply-unread-neutral);
 }
-body[data-reply-version="timeline-unread"] :is(.indexing-menu-unread-count, .indexing-nav-unread, .owls-unread-count) {
+body[data-reply-version="timeline-unread"] .indexing-nav-unread {
   color:var(--reply-unread-neutral);
   background:#eeeff1;
 }
@@ -209,8 +209,8 @@ body[data-reply-version="timeline-unread"] .owls-unread-trigger {
   padding:0;
   border:0;
   border-radius:16px;
-  background:#eeeff1;
-  color:var(--reply-unread-neutral);
+  background:#ffebeb;
+  color:#ff0000;
   font:600 10px/1.45 Inter,system-ui,sans-serif;
   cursor:pointer;
 }
@@ -221,8 +221,8 @@ body[data-reply-version="timeline-unread"] .owls-unread-trigger::before {
   inset:-8px;
 }
 body[data-reply-version="timeline-unread"] .owls-unread-trigger::after { display:none; }
-body[data-reply-version="timeline-unread"] .owls-unread-trigger:is(:hover, [aria-expanded="true"]) { background:#e0e2e6; }
-body[data-reply-version="timeline-unread"] .owls-unread-trigger:focus-visible { outline:2px solid var(--reply-unread-neutral); outline-offset:3px; }
+body[data-reply-version="timeline-unread"] .owls-unread-trigger:is(:hover, [aria-expanded="true"]) { background:#ffe2e2; }
+body[data-reply-version="timeline-unread"] .owls-unread-trigger:focus-visible { outline:2px solid #ff0000; outline-offset:3px; }
 body[data-reply-version="timeline-unread"] .owls-unread-trigger[hidden] { display:none !important; }
 body[data-reply-version="timeline-unread"] .sidebar.is-compact .owls-unread-row { width:40px; }
 body[data-reply-version="timeline-unread"] .sidebar.is-compact .owls-unread-trigger {
