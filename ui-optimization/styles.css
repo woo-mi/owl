@@ -79,6 +79,7 @@ img { display: block; flex-shrink: 0; }
 .clarification-option-description { color: #24242a99; }
 .clarification-recommended { flex-shrink: 0; color: #0069e0; font-weight: 500; }
 .clarification-custom { appearance: none; width: 100%; min-width: 0; padding: 12px 14px; border: 1px solid #e8e8ea; border-radius: 16px; background: #fff; color: #24242a; font: 500 14px/21px Inter, system-ui, sans-serif; }
+.clarification-custom:focus, .clarification-custom:not(:placeholder-shown) { background: #f0f0f0; border-color: #f0f0f0; }
 .clarification-custom::placeholder { color: #24242a99; font-weight: 400; opacity: 1; }
 .clarification-actions { margin-top: 4px; }
 .multi-select-form { display: flex; flex-direction: column; gap: 16px; padding: 14px; }
