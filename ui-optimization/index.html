@@ -8,8 +8,9 @@
     <title>UI optimization</title>
     <link rel="icon" href="assets/owl.svg" type="image/svg+xml">
     <link rel="preload" href="../reply-ux-pattern/assets/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=approval-transition-1">
+    <link rel="stylesheet" href="styles.css?v=third-party-selector-1">
     <script src="prototype.js?v=approval-transition-1" defer></script>
+    <script src="version-picker.js?v=third-party-selector-1" defer></script>
   </head>
   <body>
     <aside id="sidebar" class="sidebar" aria-label="Workspace navigation preview">
@@ -227,6 +228,15 @@
             </div>
           </template>
         </div>
+        <div class="conversation-footer">
+          <nav class="prototype-versions" id="ui-version-picker" aria-label="Prototype version">
+            <button class="prototype-version-trigger" type="button" aria-label="Prototype version, third-party" aria-haspopup="menu" aria-expanded="false" aria-controls="ui-version-menu">
+              <span>third-party</span><svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
+            </button>
+            <ul class="prototype-version-menu" id="ui-version-menu" role="menu" aria-label="Prototype versions" hidden>
+              <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" aria-checked="true" tabindex="-1">third-party</button></li>
+            </ul>
+          </nav>
         <div class="composer" aria-label="Message composer preview">
           <span class="composer-placeholder">What can I help you with today?</span>
           <div class="composer-icons" aria-hidden="true">
@@ -234,6 +244,7 @@
             <img src="assets/mic.svg" width="18" height="18" alt="">
             <span class="send-icon"><img src="assets/arrow-up.svg" width="16" height="16" alt=""></span>
           </div>
+        </div>
         </div>
       </div>
     </main>

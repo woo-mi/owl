@@ -17,5 +17,9 @@ resizing safely completes the animation, and keyboard focus follows the result.
 Reloading resets the prototype. The approval is simulated locally; it does not
 call Claude or Linear. Deny, navigation, and the composer remain static.
 
+The Links-style version selector is labeled **third-party**. Its menu contains
+the single current version; selecting it preserves the approval state. On narrow
+screens the selector occupies a row above the composer to avoid overlapping it.
+
 Main-screen SVG artwork comes from the Pen frame; navigation artwork and Inter
 are shared with the existing Reply UX Pattern prototype.
