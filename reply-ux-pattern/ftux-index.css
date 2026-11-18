@@ -167,37 +167,37 @@ body[data-reply-experience="unread"] .sidebar [data-nav="Owls"].is-active {
   }
 }
 
-/* The light Unread conversation and index use neutral accents. */
-body[data-reply-version="timeline-unread"] {
+/* Timeline conversations and their index use neutral unread accents. */
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) {
   --reply-unread-neutral:#626268;
   --indexing-nav-unread-color:var(--reply-unread-neutral);
 }
-body[data-reply-version="timeline-unread"] .timeline-unread {
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .timeline-unread {
   color:var(--reply-unread-neutral);
 }
-body[data-reply-version="timeline-unread"] .indexing-nav-unread {
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-nav-unread {
   color:var(--reply-unread-neutral);
   background:#eeeff1;
 }
-body[data-reply-version="timeline-unread"] .indexing-menu-toggle.has-unread::after {
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-menu-toggle.has-unread::after {
   background:var(--reply-unread-neutral);
 }
-body[data-reply-version="timeline-unread"] [data-nav="Notifications"] [data-pencil-id="l711QN"] {
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) [data-nav="Notifications"] [data-pencil-id="l711QN"] {
   /* Override the badge color embedded in the exported sidebar artwork. */
   background-color:var(--reply-unread-neutral) !important;
 }
 
-/* Only Unread anchors its notification list to the Owls navigation badge. */
+/* Timeline prototypes anchor their notification list to the Owls navigation badge. */
 .owls-unread-row { display:contents; }
-body[data-reply-version="timeline-unread"] .owls-unread-row {
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .owls-unread-row {
   display:block;
   position:relative;
   flex-shrink:0;
   width:248px;
   height:36px;
 }
-body[data-reply-version="timeline-unread"] .owls-unread-row .owls-unread-count { display:none; }
-body[data-reply-version="timeline-unread"] .owls-unread-trigger {
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .owls-unread-row .owls-unread-count { display:none; }
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .owls-unread-trigger {
   position:absolute;
   top:8px;
   right:8px;
@@ -214,18 +214,18 @@ body[data-reply-version="timeline-unread"] .owls-unread-trigger {
   font:600 10px/1.45 Inter,system-ui,sans-serif;
   cursor:pointer;
 }
-body[data-reply-version="timeline-unread"] .owls-unread-trigger::before {
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .owls-unread-trigger::before {
   /* Expand the clickable area without changing the visible badge. */
   content:"";
   position:absolute;
   inset:-8px;
 }
-body[data-reply-version="timeline-unread"] .owls-unread-trigger::after { display:none; }
-body[data-reply-version="timeline-unread"] .owls-unread-trigger:is(:hover, [aria-expanded="true"]) { background:#ffe2e2; }
-body[data-reply-version="timeline-unread"] .owls-unread-trigger:focus-visible { outline:2px solid #ff0000; outline-offset:3px; }
-body[data-reply-version="timeline-unread"] .owls-unread-trigger[hidden] { display:none !important; }
-body[data-reply-version="timeline-unread"] .sidebar.is-compact .owls-unread-row { width:40px; }
-body[data-reply-version="timeline-unread"] .sidebar.is-compact .owls-unread-trigger {
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .owls-unread-trigger::after { display:none; }
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .owls-unread-trigger:is(:hover, [aria-expanded="true"]) { background:#ffe2e2; }
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .owls-unread-trigger:focus-visible { outline:2px solid #ff0000; outline-offset:3px; }
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .owls-unread-trigger[hidden] { display:none !important; }
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .sidebar.is-compact .owls-unread-row { width:40px; }
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .sidebar.is-compact .owls-unread-trigger {
   top:1px;
   right:1px;
   width:14px;
@@ -233,8 +233,8 @@ body[data-reply-version="timeline-unread"] .sidebar.is-compact .owls-unread-trig
   font-size:8px;
   line-height:14px;
 }
-body[data-reply-version="timeline-unread"] .sidebar.is-compact .owls-unread-trigger::before { inset:-1px -3px -9px -7px; }
-body.ftux-prototype[data-reply-version="timeline-unread"] .indexing-menu.sidebar-unread-menu {
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .sidebar.is-compact .owls-unread-trigger::before { inset:-1px -3px -9px -7px; }
+body.ftux-prototype:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-menu.sidebar-unread-menu {
   position:fixed;
   right:auto;
   max-width:calc(100vw - 24px);
@@ -242,11 +242,11 @@ body.ftux-prototype[data-reply-version="timeline-unread"] .indexing-menu.sidebar
   z-index:151;
 }
 
-body[data-reply-version="timeline-unread"] .sidebar-unread-menu .indexing-menu-unread-count {
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .sidebar-unread-menu .indexing-menu-unread-count {
   height:20px;
   font-size:10px;
 }
 
-body[data-reply-version="timeline-unread"] .sidebar-unread-menu #indexing-unread-heading {
+body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .sidebar-unread-menu #indexing-unread-heading {
   display:none;
 }

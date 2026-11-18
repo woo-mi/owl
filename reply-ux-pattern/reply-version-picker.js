@@ -89,7 +89,7 @@
       option.setAttribute('aria-checked', String(option.dataset.replyVersion === selected));
       option.parentElement.hidden = !displayedVersions.includes(option.dataset.replyVersion);
     });
-    const unread = links || ['timeline-unread', 'timeline-unread-dark'].includes(selected);
+    const unread = links || ['timeline', 'timeline-unread', 'timeline-unread-dark'].includes(selected);
     if (links) {
       const url = new URL(location.href);
       if (url.searchParams.has('timeline-thread') || url.searchParams.has('timeline-mode')) {
