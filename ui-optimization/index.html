@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light">
-    <meta name="description" content="UI optimization — a responsive third-party request and selected-state prototype.">
+    <meta name="description" content="UI optimization — responsive third-party approval and clarification prototypes.">
     <title>UI optimization</title>
     <link rel="icon" href="assets/owl.svg" type="image/svg+xml">
     <link rel="preload" href="../reply-ux-pattern/assets/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=third-party-selector-1">
-    <script src="prototype.js?v=approval-transition-1" defer></script>
-    <script src="version-picker.js?v=third-party-selector-1" defer></script>
+    <link rel="stylesheet" href="styles.css?v=clarification-1">
+    <script src="prototype.js?v=clarification-1" defer></script>
+    <script src="version-picker.js?v=clarification-1" defer></script>
   </head>
   <body>
     <aside id="sidebar" class="sidebar" aria-label="Workspace navigation preview">
@@ -201,12 +201,13 @@
       <div class="conversation">
         <div class="thread">
           <p class="timestamp">Today, Mon, Oct 13 7:02 AM</p>
+          <section class="prototype-screen" data-prototype-screen="third-party" aria-label="Third-party approval">
           <article class="request-card" id="approval-card" aria-labelledby="request-title" data-stage="0">
             <div class="request-pending">
             <header class="request-source"><img src="assets/claude.svg" width="16" height="16" alt=""><span>Claude</span></header>
             <div class="request-body">
               <dl class="request-fields">
-                <div class="request-field"><dt>Request</dt><dd><h2 id="request-title">Allow Claude to use Save issue (Linear)?</h2></dd></div>
+                <div class="request-field"><dt>Request</dt><dd><h2 id="request-title" tabindex="-1">Allow Claude to use Save issue (Linear)?</h2></dd></div>
                 <div class="request-field"><dt>Team</dt><dd>Engineering</dd></div>
                 <div class="request-field"><dt>Title</dt><dd>Improve documentation workflows in Owl</dd></div>
                 <div class="request-field"><dt>Description</dt><dd>Let an Owl produce shareable documents: write Markdown with its tables, charts and images, and have Wisdom render it to PDF or DOCX and attach the file to the conversation, in place of drawing pages by hand in its sandbox. Covers the renderer, the expeort job, the Owl tool and a documents skill.</dd></div>
@@ -221,20 +222,46 @@
           <template id="selected-approval-template">
             <div class="request-selected">
               <div class="selected-context">
-                <h2 class="selected-question" id="selected-request-title"><img src="assets/claude.svg" width="16" height="16" alt=""><span>Allow Claude to use Save issue (Linear)?</span></h2>
+                <h2 class="selected-question" id="selected-request-title" tabindex="-1"><img src="assets/claude.svg" width="16" height="16" alt=""><span>Allow Claude to use Save issue (Linear)?</span></h2>
                 <p>Engineering · Improve documentation workflows in Owl</p>
               </div>
-              <p class="selected-answer" id="selected-answer">Allow once</p>
+              <p class="selected-answer" id="selected-answer" data-selected-answer>Allow once</p>
             </div>
           </template>
+          </section>
+          <section class="prototype-screen" data-prototype-screen="clarification" aria-label="Clarification" hidden>
+            <article class="request-card clarification-card" id="clarification-card" aria-labelledby="clarification-question" data-stage="0">
+              <div class="request-pending">
+                <form class="clarification-form" id="clarification-form">
+                  <h2 class="clarification-question" id="clarification-question" tabindex="-1">Do you mean the pop-up/card types I can show in this chat, or a list of pop-ups across WisdomAI</h2>
+                  <button class="clarification-option" type="button" data-answer="This chat">
+                    <span class="clarification-option-copy"><span class="clarification-option-label">This chat</span><span class="clarification-option-description">Demo the cards I can send you here.</span></span>
+                    <span class="clarification-recommended">Recommended</span>
+                  </button>
+                  <button class="clarification-option" type="button" data-answer="Across WisdomAI">
+                    <span class="clarification-option-copy"><span class="clarification-option-label">Across WisdomAI</span><span class="clarification-option-description">List product pop-ups and where they appear.</span></span>
+                  </button>
+                  <input class="clarification-custom" id="clarification-custom" type="text" name="answer" placeholder="Type your own answer" aria-label="Type your own answer" autocomplete="off">
+                  <div class="request-actions clarification-actions" hidden><button class="action primary" type="submit" disabled>Submit</button></div>
+                </form>
+              </div>
+            </article>
+            <template id="selected-clarification-template">
+              <div class="request-selected">
+                <h2 class="selected-question" id="selected-clarification-question" tabindex="-1">Do you mean the pop-up/card types I can show in this chat, or a list of pop-ups across WisdomAI</h2>
+                <p class="selected-answer" id="selected-clarification-answer" data-selected-answer></p>
+              </div>
+            </template>
+          </section>
         </div>
         <div class="conversation-footer">
           <nav class="prototype-versions" id="ui-version-picker" aria-label="Prototype version">
             <button class="prototype-version-trigger" type="button" aria-label="Prototype version, third-party" aria-haspopup="menu" aria-expanded="false" aria-controls="ui-version-menu">
-              <span>third-party</span><svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
+              <span class="prototype-version-label">third-party</span><svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
             </button>
             <ul class="prototype-version-menu" id="ui-version-menu" role="menu" aria-label="Prototype versions" hidden>
-              <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" aria-checked="true" tabindex="-1">third-party</button></li>
+              <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="third-party" aria-checked="true" tabindex="-1">third-party</button></li>
+              <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="clarification" aria-checked="false" tabindex="-1">Clarification</button></li>
             </ul>
           </nav>
         <div class="composer" aria-label="Message composer preview">

@@ -7,6 +7,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { background: #fff; color: #24242a; }
 body { margin: 0; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
 img { display: block; flex-shrink: 0; }
@@ -65,7 +66,20 @@ img { display: block; flex-shrink: 0; }
 .selected-question { display: flex; align-items: center; gap: 7px; margin: 0; color: #73767e; font-size: 14px; font-weight: 500; line-height: 1.4; }
 .selected-question span { min-width: 0; overflow-wrap: anywhere; }
 .selected-context p { margin: 0; color: #8e8e8e; font-size: 12px; line-height: 1.4; }
-.selected-answer { margin: 0; color: #24242a; font-size: 14px; font-weight: 500; line-height: 1.4; }
+.selected-answer { margin: 0; color: #24242a; font-size: 14px; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; }
+.prototype-screen h2:focus { outline: none; }
+.clarification-form { display: flex; flex-direction: column; gap: 12px; padding: 14px; }
+.clarification-question { margin: 0; font-size: 14px; font-weight: 600; line-height: 21px; }
+.clarification-option { appearance: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 1px solid #e8e8ea; border-radius: 16px; background: #fff; color: #24242a; font: 400 14px/21px Inter, system-ui, sans-serif; text-align: left; cursor: pointer; }
+.clarification-option:hover { background: #fafafa; border-color: #cbd0d8; }
+.clarification-option:focus-visible, .clarification-custom:focus-visible { outline: 2px solid #0069e0; outline-offset: 2px; }
+.clarification-option-copy { display: flex; flex-direction: column; min-width: 0; }
+.clarification-option-label { font-weight: 500; }
+.clarification-option-description { color: #24242a99; }
+.clarification-recommended { flex-shrink: 0; color: #0069e0; font-weight: 500; }
+.clarification-custom { appearance: none; width: 100%; min-width: 0; padding: 12px 14px; border: 1px solid #e8e8ea; border-radius: 16px; background: #fff; color: #24242a; font: 500 14px/21px Inter, system-ui, sans-serif; }
+.clarification-custom::placeholder { color: #24242a99; font-weight: 400; opacity: 1; }
+.clarification-actions { margin-top: 4px; }
 .composer { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 13px 13px 13px 18px; border: 1px solid #f0f0f0; border-radius: 100px; background: #fff; box-shadow: 0 2px 8px #14181f0f; }
 .composer-placeholder { min-width: 0; color: #00000061; line-height: 17px; }
 .composer-icons { flex-shrink: 0; display: flex; align-items: center; gap: 14px; }
@@ -112,6 +126,8 @@ img { display: block; flex-shrink: 0; }
 }
 
 @media (max-width: 540px) {
+  .clarification-option { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .clarification-custom { font-size: 16px; }
   .workspace { margin-left: 48px; padding: 126px 16px 20px; }
   .conversation { min-height: calc(100svh - 146px); gap: 48px; }
   .request-field { flex-direction: column; gap: 4px; }
