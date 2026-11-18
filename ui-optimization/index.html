@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light">
-    <meta name="description" content="UI optimization — a responsive prototype of the third-party request screen.">
+    <meta name="description" content="UI optimization — a responsive third-party request and selected-state prototype.">
     <title>UI optimization</title>
     <link rel="icon" href="assets/owl.svg" type="image/svg+xml">
     <link rel="preload" href="../reply-ux-pattern/assets/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=approval-transition-1">
+    <script src="prototype.js?v=approval-transition-1" defer></script>
   </head>
   <body>
     <aside id="sidebar" class="sidebar" aria-label="Workspace navigation preview">
@@ -199,7 +200,8 @@
       <div class="conversation">
         <div class="thread">
           <p class="timestamp">Today, Mon, Oct 13 7:02 AM</p>
-          <article class="request-card" aria-labelledby="request-title">
+          <article class="request-card" id="approval-card" aria-labelledby="request-title" data-stage="0">
+            <div class="request-pending">
             <header class="request-source"><img src="assets/claude.svg" width="16" height="16" alt=""><span>Claude</span></header>
             <div class="request-body">
               <dl class="request-fields">
@@ -208,12 +210,22 @@
                 <div class="request-field"><dt>Title</dt><dd>Improve documentation workflows in Owl</dd></div>
                 <div class="request-field"><dt>Description</dt><dd>Let an Owl produce shareable documents: write Markdown with its tables, charts and images, and have Wisdom render it to PDF or DOCX and attach the file to the conversation, in place of drawing pages by hand in its sandbox. Covers the renderer, the expeort job, the Owl tool and a documents skill.</dd></div>
               </dl>
-              <div class="request-actions" aria-label="Approval controls preview">
+              <div class="request-actions" aria-label="Approval controls">
                 <button class="action secondary" type="button" disabled>Deny</button>
-                <button class="action primary" type="button" disabled>Allow once</button>
+                <button class="action primary" id="allow-once" type="button">Allow once</button>
               </div>
             </div>
+            </div>
           </article>
+          <template id="selected-approval-template">
+            <div class="request-selected">
+              <div class="selected-context">
+                <h2 class="selected-question" id="selected-request-title"><img src="assets/claude.svg" width="16" height="16" alt=""><span>Allow Claude to use Save issue (Linear)?</span></h2>
+                <p>Engineering · Improve documentation workflows in Owl</p>
+              </div>
+              <p class="selected-answer" id="selected-answer">Allow once</p>
+            </div>
+          </template>
         </div>
         <div class="composer" aria-label="Message composer preview">
           <span class="composer-placeholder">What can I help you with today?</span>
