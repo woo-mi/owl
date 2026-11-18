@@ -49,7 +49,8 @@
       card.setAttribute('aria-labelledby', headingId);
       card.setAttribute('aria-describedby', answerId);
       card.tabIndex = -1;
-      if (restoreFocus && !card.closest('[hidden]')) card.focus({ preventScroll: true });
+      const focusStayedInCard = card.contains(document.activeElement) || document.activeElement === document.body;
+      if (restoreFocus && focusStayedInCard && !card.closest('[hidden]')) card.focus({ preventScroll: true });
       window.removeEventListener('resize', onResize);
       reducedMotion.removeEventListener('change', onMotionChange);
     }
