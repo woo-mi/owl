@@ -166,10 +166,10 @@ body.ftux-prototype.has-mvp-versions.indexing-nav-ready[data-prototype-view="lat
   display:flex;
   flex:1;
   flex-direction:column;
-  justify-content:space-between;
+  justify-content:center;
   gap:10px;
   min-width:0;
-  padding:12px;
+  padding:16px;
 }
 .reply-timeline .timeline-card-copy { display:flex; flex-direction:column; gap:6px; }
 .reply-timeline .timeline-card-copy strong { font-size:14px; line-height:20px; font-weight:700; }
