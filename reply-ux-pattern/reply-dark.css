@@ -128,12 +128,12 @@ body.ftux-prototype[data-reply-theme="dark"] .prototype-versions { color:var(--d
 body.ftux-prototype[data-reply-theme="dark"] .prototype-version-trigger { background:#353941; border-color:#505560; color:var(--dark-text); }
 body.ftux-prototype[data-reply-theme="dark"] :is(.prototype-version-trigger:hover,.prototype-version-option:hover,.prototype-version-option:focus-visible) { background:var(--dark-hover); }
 
-/* The timeline variants share neutral chat/index indicators and red sidebar counts. */
+/* The timeline variants share neutral index indicators and red unread labels/counts. */
 body.ftux-prototype[data-reply-theme="dark"]:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) {
   --reply-unread-neutral:var(--dark-muted);
   --indexing-nav-unread-color:var(--reply-unread-neutral);
 }
-body.ftux-prototype[data-reply-theme="dark"]:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) :is(.timeline-unread, .indexing-nav-unread) { color:var(--reply-unread-neutral); }
+body.ftux-prototype[data-reply-theme="dark"]:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-nav-unread { color:var(--reply-unread-neutral); }
 body.ftux-prototype[data-reply-theme="dark"]:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-nav-unread { background:var(--dark-unread-bg); }
 body.ftux-prototype[data-reply-theme="dark"]:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-menu-toggle.has-unread::after { background:var(--reply-unread-neutral); }
 body.ftux-prototype[data-reply-theme="dark"]:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .owls-unread-trigger {
