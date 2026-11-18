@@ -23,7 +23,7 @@
   const conversation = document.querySelector('.conversation');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  function createTransition(card, template, headingId, answerId) {
+  function createTransition(card, template, headingId, answerId, renderAnswer = (target, answer) => { target.textContent = answer; }) {
     const pending = card.querySelector('.request-pending');
     let stage = 0;
     let selected;
@@ -90,7 +90,7 @@
       card.setAttribute('aria-busy', 'true');
       pending.inert = true;
       selected = template.content.firstElementChild.cloneNode(true);
-      selected.querySelector('[data-selected-answer]').textContent = answer;
+      renderAnswer(selected.querySelector('[data-selected-answer]'), answer);
       selected.setAttribute('aria-hidden', 'true');
       card.append(selected);
 
@@ -166,5 +166,81 @@
   form.addEventListener('submit', event => {
     event.preventDefault();
     clarify(custom.value.trim());
+  });
+
+  const multiForm = document.querySelector('#multi-select-form');
+  const choices = [...multiForm.querySelectorAll('[data-multi-choice]')];
+  const multiCustom = multiForm.querySelector('#multi-custom');
+  const customToggle = multiForm.querySelector('.multi-custom-toggle');
+  const customRow = multiForm.querySelector('.multi-custom-row');
+  const multiActions = multiForm.querySelector('.multi-actions');
+  const multiSubmit = multiActions.querySelector('button');
+
+  const selectMultiple = createTransition(
+    document.querySelector('#multi-select-card'),
+    document.querySelector('#selected-multi-template'),
+    'selected-multi-question', 'selected-multi-answers',
+    (target, answers) => {
+      answers.forEach(answer => {
+        const item = document.createElement('div');
+        item.className = 'multi-selected-answer';
+        const letter = document.createElement('span');
+        letter.className = 'multi-letter';
+        letter.textContent = answer.letter;
+        const copy = document.createElement('div');
+        copy.className = 'multi-selected-copy';
+        const label = document.createElement('span');
+        label.textContent = answer.label;
+        copy.append(label);
+        if (answer.custom) {
+          const cue = document.createElement('span');
+          cue.className = 'multi-custom-cue';
+          cue.textContent = 'Custom answer';
+          copy.append(cue);
+        }
+        item.append(letter, copy);
+        target.append(item);
+      });
+    }
+  );
+
+  function selectedAnswers() {
+    const answers = choices.filter(choice => choice.getAttribute('aria-pressed') === 'true')
+      .map(choice => ({ letter: choice.dataset.multiChoice, label: choice.dataset.answer }));
+    const customText = multiCustom.value.trim();
+    if (customText && customToggle.getAttribute('aria-pressed') === 'true') {
+      answers.push({ letter: 'E', label: customText, custom: true });
+    }
+    return answers;
+  }
+
+  function updateMultiForm() {
+    customRow.classList.toggle('has-value', Boolean(multiCustom.value.trim()));
+    multiActions.hidden = selectedAnswers().length === 0;
+    multiSubmit.disabled = multiActions.hidden;
+  }
+
+  choices.forEach(choice => {
+    choice.addEventListener('click', () => {
+      choice.setAttribute('aria-pressed', String(choice.getAttribute('aria-pressed') !== 'true'));
+      updateMultiForm();
+    });
+  });
+  customToggle.addEventListener('click', () => {
+    if (!multiCustom.value.trim()) {
+      multiCustom.focus();
+      return;
+    }
+    customToggle.setAttribute('aria-pressed', String(customToggle.getAttribute('aria-pressed') !== 'true'));
+    updateMultiForm();
+  });
+  multiCustom.addEventListener('input', () => {
+    customToggle.setAttribute('aria-pressed', String(Boolean(multiCustom.value.trim())));
+    updateMultiForm();
+  });
+  multiForm.addEventListener('submit', event => {
+    event.preventDefault();
+    const answers = selectedAnswers();
+    if (answers.length) selectMultiple(answers);
   });
 })();

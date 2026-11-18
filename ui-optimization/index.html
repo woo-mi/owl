@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light">
-    <meta name="description" content="UI optimization — responsive third-party approval and clarification prototypes.">
+    <meta name="description" content="UI optimization — responsive third-party approval, clarification, and multi-select question prototypes.">
     <title>UI optimization</title>
     <link rel="icon" href="assets/owl.svg" type="image/svg+xml">
     <link rel="preload" href="../reply-ux-pattern/assets/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css?v=clarification-2">
-    <script src="prototype.js?v=clarification-2" defer></script>
-    <script src="version-picker.js?v=clarification-1" defer></script>
+    <link rel="stylesheet" href="styles.css?v=multi-select-1">
+    <script src="prototype.js?v=multi-select-1" defer></script>
+    <script src="version-picker.js?v=multi-select-1" defer></script>
   </head>
   <body>
     <aside id="sidebar" class="sidebar" aria-label="Workspace navigation preview">
@@ -253,6 +253,35 @@
               </div>
             </template>
           </section>
+          <section class="prototype-screen" data-prototype-screen="multi-select-q" aria-label="Multi-select question" hidden>
+            <article class="request-card" id="multi-select-card" aria-labelledby="multi-select-question" data-stage="0">
+              <div class="request-pending">
+                <form class="multi-select-form" id="multi-select-form">
+                  <header class="multi-select-heading">
+                    <h2 class="clarification-question" id="multi-select-question" tabindex="-1">What kinds of question do you most want me to answer?</h2>
+                    <p id="multi-select-hint">Choose all that apply</p>
+                  </header>
+                  <div class="multi-options" role="group" aria-labelledby="multi-select-question" aria-describedby="multi-select-hint">
+                    <button class="multi-option" type="button" data-multi-choice="A" data-answer="Product" aria-pressed="false"><span class="multi-letter" aria-hidden="true">A</span><span>Product</span></button>
+                    <button class="multi-option" type="button" data-multi-choice="B" data-answer="Across WisdomAI" aria-pressed="false"><span class="multi-letter" aria-hidden="true">B</span><span>Across WisdomAI</span></button>
+                    <button class="multi-option" type="button" data-multi-choice="C" data-answer="Customer health" aria-pressed="false"><span class="multi-letter" aria-hidden="true">C</span><span>Customer health</span></button>
+                    <button class="multi-option" type="button" data-multi-choice="D" data-answer="I'll ask a data person" aria-pressed="false"><span class="multi-letter" aria-hidden="true">D</span><span>I'll ask a data person</span></button>
+                    <div class="multi-custom-row">
+                      <button class="multi-letter multi-custom-toggle" type="button" aria-label="Include custom answer" aria-pressed="false" aria-controls="multi-custom">E</button>
+                      <input class="multi-custom" id="multi-custom" type="text" placeholder="Something else" aria-label="Something else, custom answer" autocomplete="off">
+                    </div>
+                  </div>
+                  <div class="request-actions multi-actions" hidden><button class="action primary" type="submit" disabled>Submit</button></div>
+                </form>
+              </div>
+            </article>
+            <template id="selected-multi-template">
+              <div class="request-selected">
+                <h2 class="selected-question" id="selected-multi-question" tabindex="-1">What kinds of question do you most want me to answer?</h2>
+                <div class="multi-selected-answers" id="selected-multi-answers" data-selected-answer></div>
+              </div>
+            </template>
+          </section>
         </div>
         <div class="conversation-footer">
           <nav class="prototype-versions" id="ui-version-picker" aria-label="Prototype version">
@@ -262,6 +291,7 @@
             <ul class="prototype-version-menu" id="ui-version-menu" role="menu" aria-label="Prototype versions" hidden>
               <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="third-party" aria-checked="true" tabindex="-1">third-party</button></li>
               <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="clarification" aria-checked="false" tabindex="-1">Clarification</button></li>
+              <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="multi-select-q" aria-checked="false" tabindex="-1">multi-select Q</button></li>
             </ul>
           </nav>
         <div class="composer" aria-label="Message composer preview">

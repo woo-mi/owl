@@ -7,7 +7,7 @@
   const options = [...menu.querySelectorAll('[role="menuitemradio"][data-version]')];
   const screens = [...document.querySelectorAll('[data-prototype-screen]')];
   const composer = document.querySelector('.composer');
-  const labels = { 'third-party': 'third-party', clarification: 'Clarification' };
+  const labels = { 'third-party': 'third-party', clarification: 'Clarification', 'multi-select-q': 'multi-select Q' };
   let currentVersion;
   let positionFrame;
 
