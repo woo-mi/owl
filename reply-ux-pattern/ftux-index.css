@@ -170,7 +170,6 @@ body[data-reply-experience="unread"] .sidebar [data-nav="Owls"].is-active {
 /* Timeline index indicators use neutral unread accents. */
 body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) {
   --reply-unread-neutral:#626268;
-  --indexing-nav-unread-color:var(--reply-unread-neutral);
 }
 body:is([data-reply-version="timeline"], [data-reply-version="timeline-unread"], [data-reply-version="timeline-unread-dark"]) .indexing-menu-toggle.has-unread::after {
   background:var(--reply-unread-neutral);

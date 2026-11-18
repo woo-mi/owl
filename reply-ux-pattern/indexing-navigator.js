@@ -53,9 +53,7 @@
         const active = hovered >= 0 ? hovered === index : selected === index;
         const width = hovered >= 0 ? ([30, 23, 16, 11, 8][distance] || 6) : active ? 18 : 6;
         const topicColor = coloredTicks ? topicColors[entries[index]?.id] : undefined;
-        const tickColor = entries[index]?.unread?.count > 0
-          ? 'var(--indexing-nav-unread-color, #ff0000)'
-          : topicColor || (active ? 'var(--indexing-nav-active-color, #202123)' : 'var(--indexing-nav-inactive-color, #d1d3d4)');
+        const tickColor = topicColor || (active ? 'var(--indexing-nav-active-color, #202123)' : 'var(--indexing-nav-inactive-color, #d1d3d4)');
         button.style.setProperty('--indexing-nav-tick-width', `${width}px`);
         button.style.setProperty('--indexing-nav-tick-color', tickColor);
         if (index === selected) button.setAttribute('aria-current', 'location');
