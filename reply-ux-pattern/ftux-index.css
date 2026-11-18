@@ -241,3 +241,8 @@ body.ftux-prototype[data-reply-version="timeline-unread"] .indexing-menu.sidebar
   max-height:calc(100dvh - 24px);
   z-index:151;
 }
+
+body[data-reply-version="timeline-unread"] .sidebar-unread-menu .indexing-menu-unread-count {
+  height:20px;
+  font-size:10px;
+}
