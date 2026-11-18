@@ -1,8 +1,5 @@
 /* All four Links cases share the Unread dark palette and original artwork. */
 body[data-reply-theme="dark"] .reply-links a.links-inline { color:var(--dark-link, #79b4ff); }
-body[data-reply-theme="dark"] .reply-links .links-inline-label {
-  background-image:repeating-linear-gradient(to right, currentColor 0 1.25px, transparent 1.25px 2.5px);
-}
 
 /* Recolor the exact exported link silhouette without changing its geometry. */
 body[data-reply-theme="dark"] .reply-links .links-inline-icon img { display:none; }

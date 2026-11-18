@@ -1,4 +1,4 @@
-/* “dot style” uses compact bubbles, dotted inline links, and an app card. */
+/* Links use compact bubbles, colored inline links, and preview cards. */
 @font-face { font-family:Lato; src:url('assets/Lato-Bold.ttf') format('truetype'); font-weight:700; font-display:swap; }
 .reply-links { line-height:1.4; }
 .reply-links .ftux-turns,
@@ -10,7 +10,7 @@
 .reply-links a.links-inline { display:inline-flex; align-items:center; gap:2px; max-width:100%; color:#0069e0; text-decoration:none; vertical-align:bottom; }
 .reply-links .links-inline-icon { display:inline-flex; align-items:center; justify-content:center; flex:none; width:14px; height:14px; }
 .reply-links .links-inline-icon img { display:block; }
-.reply-links .links-inline-label { background:repeating-linear-gradient(to right,#0069e0 0 1.25px,transparent 1.25px 2.5px) left bottom 2.25px / 100% .5px no-repeat; }
+.reply-links a.links-inline:hover .links-inline-label { text-decoration:underline solid currentColor; text-underline-offset:3px; }
 .reply-links .links-app-card { min-height:125px; border-color:#eee; border-radius:14px; font-family:Lato,Inter,system-ui,sans-serif; }
 .reply-links .timeline-card-details { justify-content:center; padding:14px 16px; gap:10px; }
 .reply-links .timeline-card-copy { gap:10px; }
