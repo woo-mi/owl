@@ -8,6 +8,7 @@
   const sidebarUnreadVersions = ['timeline', 'timeline-unread', 'timeline-unread-dark'];
   const usesUnreadMenu = () => [...sidebarUnreadVersions, 'links-5', ...linksVersions].includes(currentVersion());
   const usesSidebarUnread = () => sidebarUnreadVersions.includes(currentVersion());
+  const showsUnreadControl = () => usesUnreadMenu() && !['links-5', ...linksVersions].includes(currentVersion());
   const readThreads = new Set();
   const linkIcon = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6.25 9.75 3.5-3.5m-4.5 1-1 1a2.475 2.475 0 0 0 3.5 3.5l1-1m-1.5-5.5 1-1a2.475 2.475 0 0 1 3.5 3.5l-1 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -254,7 +255,7 @@
     }
     function setUnreadOpen(next, {restoreFocus = false, focusFirst = false} = {}) {
       const wasOpen = unreadOpen;
-      unreadOpen = next && usesUnreadMenu() && isAvailable();
+      unreadOpen = next && showsUnreadControl() && isAvailable();
       if (unreadOpen) setOpen(false);
       unreadPanel.hidden = !unreadOpen;
       unreadToggle.setAttribute('aria-expanded', String(unreadOpen));
@@ -373,7 +374,7 @@
         unreadKey = nextUnreadKey;
       }
       toggle.hidden = !isAvailable();
-      unreadToggle.hidden = !separateUnread || !isAvailable() || (sidebarUnread && !unreadConversations);
+      unreadToggle.hidden = !showsUnreadControl() || !isAvailable() || (sidebarUnread && !unreadConversations);
       setOpen(open);
       setUnreadOpen(unreadOpen);
       window.dispatchEvent(new Event('ftux-index-change'));
