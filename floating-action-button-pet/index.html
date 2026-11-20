@@ -6,7 +6,7 @@
     <title>Floating Action Button (pet)</title>
     <meta name="description" content="Floating Action Button (pet): an Owl interaction prototype.">
     <link rel="canonical" href="https://woo-mi.github.io/owl/floating-action-button-pet/">
-    <link rel="stylesheet" href="prototype.css?v=pet-interactions-1">
+    <link rel="stylesheet" href="prototype.css?v=pet-interactions-2">
     <style>
       *, ::before, ::after {
         box-sizing: border-box;
@@ -1254,6 +1254,12 @@
           <button class="pet-voice" type="button" aria-label="Voice input, coming soon" title="Voice input is coming soon" disabled>
             <svg viewBox="0 0 20 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 10v4m4-7v10m4-14v18m4-14v10m4-7v4"/></svg>
           </button>
+          <span class="pet-toolbar-divider pet-notice-divider" aria-hidden="true"></span>
+          <button class="pet-notice-toggle" type="button" aria-label="Open completed result" aria-expanded="false" aria-controls="pet-activity" title="Notifications" aria-hidden="true" inert>
+            <svg class="pet-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+            <svg class="pet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+            <span class="pet-unread" aria-hidden="true">1</span>
+          </button>
         </div>
         <form class="pet-composer" aria-label="Message your Owl" aria-hidden="true" inert>
           <button class="pet-attach" type="button" aria-label="Add attachment, coming soon" title="Attachments are coming soon" disabled>
@@ -1265,13 +1271,29 @@
           </button>
         </form>
       </div>
-      <div class="pet-working" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true" inert>
-        <div class="pet-working-title"></div>
-        <div class="pet-working-label">Thinking<span class="pet-thinking-dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span></div>
+      <button class="pet-done-indicator" type="button" aria-label="Open completed result" aria-controls="pet-activity" aria-hidden="true" inert></button>
+      <div class="pet-working" id="pet-activity" role="region" aria-label="Owl activity" aria-hidden="true" inert>
+        <div class="pet-status-copy">
+          <span class="pet-completion-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+          <div class="pet-working-title"></div>
+          <div class="pet-working-label"><span class="pet-status-text">Thinking</span><span class="pet-thinking-dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span></div>
+        </div>
+        <button class="pet-status-dismiss" type="button" aria-label="Dismiss activity" title="Dismiss" aria-hidden="true" inert>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+        <div class="pet-status-actions" aria-hidden="true" inert>
+          <button class="pet-status-return" type="button" aria-label="Return to message" title="Return to message"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 4v7a4 4 0 0 1-4 4H4m5-5-5 5 5 5"/></svg></button>
+          <button class="pet-stop" type="button" aria-label="Stop response" title="Stop response"><span aria-hidden="true"></span></button>
+        </div>
+        <form class="pet-followup" aria-label="Reply to your Owl" data-has-value="false" aria-hidden="true" inert>
+          <input id="pet-followup" type="text" name="followup" aria-label="Follow up" placeholder="Follow up" autocomplete="off" maxlength="500">
+          <button class="pet-followup-send" type="submit" aria-label="Send follow-up" title="Send follow-up" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg></button>
+        </form>
       </div>
+      <div class="pet-announcement" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
     <script src="prototype.js?v=owl-affordance-new-nov-9"></script>
     <script src="pet-drag.js?v=3"></script>
-    <script src="pet-interactions.js?v=1"></script>
+    <script src="pet-interactions.js?v=2"></script>
   </body>
 </html>

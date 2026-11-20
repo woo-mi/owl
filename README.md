@@ -10,7 +10,10 @@ step is required.
   copy of Owl affordance with the Pen **Default** blue Owl initially at the bottom-right.
   Drag it or use arrow keys while focused to move it; refreshing restores its default position.
   Hover or tap the Owl for actions, choose edit to type, then send to preview the
-  **working** state. Escape dismisses the controls. Voice and attachments are visual placeholders.
+  **working** state, which completes after a short simulated delay. Hover the activity
+  for return, stop, and dismiss controls. The green done marker leads to a notification
+  and an inline follow-up reply. Escape collapses the controls; no messages leave this
+  prototype. Voice and attachments are visual placeholders.
   Published at https://woo-mi.github.io/owl/floating-action-button-pet/.
 - `ui-optimization/` is **UI optimization**, a responsive copy of the Pen
   **third-party** and **third-party selected** screens, with an animated approval transition. Published at https://woo-mi.github.io/owl/ui-optimization/.

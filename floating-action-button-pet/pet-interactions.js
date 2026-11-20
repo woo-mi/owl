@@ -3,147 +3,289 @@
 
   const dock = document.querySelector('.pet-dock');
   if (!dock) return;
-  const fab = dock.querySelector('.pet-fab');
-  const surface = dock.querySelector('.pet-surface');
-  const toolbar = dock.querySelector('.pet-toolbar');
-  const edit = dock.querySelector('.pet-edit');
-  const composer = dock.querySelector('.pet-composer');
-  const input = dock.querySelector('#pet-message');
-  const send = dock.querySelector('.pet-send');
-  const working = dock.querySelector('.pet-working');
-  const workingTitle = dock.querySelector('.pet-working-title');
-  if (![fab, surface, toolbar, edit, composer, input, send, working, workingTitle].every(Boolean)) return;
+  const find = selector => dock.querySelector(selector);
+  const fab = find('.pet-fab');
+  const toolbar = find('.pet-toolbar');
+  const edit = find('.pet-edit');
+  const composer = find('.pet-composer');
+  const input = find('#pet-message');
+  const send = find('.pet-send');
+  const noticeToggle = find('.pet-notice-toggle');
+  const unreadBadge = find('.pet-unread');
+  const indicator = find('.pet-done-indicator');
+  const card = find('.pet-working');
+  const title = find('.pet-working-title');
+  const statusText = find('.pet-status-text');
+  const statusActions = find('.pet-status-actions');
+  const dismiss = find('.pet-status-dismiss');
+  const statusReturn = find('.pet-status-return');
+  const stop = find('.pet-stop');
+  const followup = find('.pet-followup');
+  const followupInput = find('#pet-followup');
+  const followupSend = find('.pet-followup-send');
+  const announcement = find('.pet-announcement');
+  if (![fab, toolbar, edit, composer, input, send, noticeToggle, unreadBadge,
+    indicator, card, title, statusText, statusActions, dismiss, statusReturn,
+    stop, followup, followupInput, followupSend, announcement].every(Boolean)) return;
 
   const HOVER_CLOSE_DELAY = 200;
-  const VIEWPORT_MARGIN = 12;
+  const SIMULATED_WORK_DURATION = 6000;
+  const HORIZONTAL_MARGIN = 12;
   const VERTICAL_MARGIN = 8;
   const PANEL_GAP = 8;
+  const STATUS_GAP = 16;
   const TOOLBAR_WIDTH = 95.205;
+  const NOTICE_TOOLBAR_WIDTH = 144;
   const MESSAGE_WIDTH = 380;
-  const COMPOSER_RIGHT_OVERHANG = 24;
-  const WORKING_RIGHT_OVERHANG = 3;
-  const WORKING_TOP_OFFSET = 86;
+  const PANEL_HEIGHT = 47;
+  const STATUS_HEIGHT = 65;
+  const REPLY_HEIGHT = 117;
+  const INDICATOR_HEIGHT = 8;
   const clamp = (value, min, max) => Math.min(Math.max(min, max), Math.max(min, value));
+  const toolbarStages = new Set(['hover', 'working', 'done-hover', 'notice', 'reply']);
+  const noticeStages = new Set(['done-hover', 'notice', 'reply']);
+  const cardStages = new Set(['working', 'notice', 'reply']);
 
-  // Storyboard: approach the Owl -> reveal the compact action pill; Edit ->
-  // expand the same pill into a composer; Send -> show Thinking above the Owl
-  // and return the pill to actions. A new Edit starts another draft. Dragging
-  // keeps the Owl stable and temporarily conceals the surrounding panels.
+  // Storyboard: approach -> actions; Edit -> type; Send -> working; completion
+  // folds the panels into a green marker. Hover reveals the bell, which opens
+  // the completed preview. Reply expands upward and submits another task.
+  // Task progress lives separately from the view so typing and dragging are
+  // never interrupted by the six-second prototype completion.
   let stage = 'default';
+  let task = null;
+  let taskSequence = 0;
+  let workTimer = null;
   let closeTimer = null;
   let dragging = false;
+  let pendingCompletion = false;
   let pointerInside = false;
   let pointerFocusPending = false;
   let keyboardInteraction = false;
   let suppressHoverUntilLeave = false;
   let restoringFocus = false;
   let lastPointerType = '';
+  let statusPointerInside = false;
+  let statusTouchOpen = false;
 
-  function cancelClose() {
-    window.clearTimeout(closeTimer);
-    closeTimer = null;
-  }
-
+  const idleStage = () => task && task.status === 'done' ? 'done' : 'default';
   function setAccessible(element, active) {
     element.inert = !active;
     element.setAttribute('aria-hidden', String(!active));
   }
-
+  function cancelClose() {
+    window.clearTimeout(closeTimer);
+    closeTimer = null;
+  }
+  function announce(message) {
+    announcement.textContent = message;
+  }
+  function updateStatusAccess() {
+    const visible = cardStages.has(stage) && !dragging;
+    const focused = card.contains(document.activeElement);
+    const hot = visible && (statusPointerInside || focused || statusTouchOpen);
+    const controlsVisible = hot || (visible && stage === 'reply');
+    dock.dataset.statusHover = String(hot);
+    setAccessible(statusActions, controlsVisible);
+    setAccessible(statusReturn, controlsVisible);
+    setAccessible(stop, controlsVisible && stage === 'working');
+    stop.disabled = stage !== 'working' || !task || task.status !== 'working';
+    setAccessible(dismiss, controlsVisible);
+    statusReturn.setAttribute('aria-label', stage === 'working' ? 'Return to message' : 'Reply to result');
+    statusReturn.title = stage === 'working' ? 'Return to message' : 'Reply to result';
+    dismiss.setAttribute('aria-label', stage === 'working' ? 'Hide running activity' : 'Dismiss completed result');
+  }
+  function syncAccess() {
+    const available = !dragging;
+    const cardVisible = available && cardStages.has(stage);
+    setAccessible(toolbar, available && toolbarStages.has(stage));
+    setAccessible(composer, available && stage === 'compose');
+    setAccessible(noticeToggle, available && noticeStages.has(stage));
+    setAccessible(indicator, available && stage === 'done');
+    setAccessible(card, cardVisible);
+    card.tabIndex = cardVisible ? 0 : -1;
+    setAccessible(followup, available && stage === 'reply');
+    noticeToggle.setAttribute('aria-expanded', String(stage === 'notice' || stage === 'reply'));
+    fab.setAttribute('aria-expanded', String(!['default', 'done'].includes(stage)));
+    const unread = Boolean(task && task.status === 'done' && task.unread);
+    unreadBadge.textContent = unread ? '1' : '';
+    unreadBadge.hidden = !unread;
+    noticeToggle.setAttribute('aria-label', stage === 'notice' || stage === 'reply'
+      ? 'Collapse completed result' : unread ? 'Open completed result, 1 unread' : 'Open completed result');
+    updateStatusAccess();
+  }
+  function renderStatus() {
+    if (!task) return;
+    title.textContent = task.title;
+    statusText.textContent = task.status === 'working' ? 'Thinking' : task.preview;
+  }
   function reposition() {
     const viewportWidth = document.documentElement.clientWidth;
     const viewportHeight = document.documentElement.clientHeight;
     const dockRect = dock.getBoundingClientRect();
-    const fabRect = fab.getBoundingClientRect();
-    const availableWidth = Math.max(1, viewportWidth - VIEWPORT_MARGIN * 2);
-    const panelWidth = Math.min(stage === 'compose' ? MESSAGE_WIDTH : TOOLBAR_WIDTH, availableWidth);
-    const workingWidth = Math.min(MESSAGE_WIDTH, availableWidth);
-    const panelHeight = surface.offsetHeight || 47;
-    const workingHeight = working.offsetHeight || 64.485;
-    const panelBelow = fabRect.bottom + PANEL_GAP;
-    const panelAbove = fabRect.top - panelHeight - PANEL_GAP;
-    const statusAbove = fabRect.top - WORKING_TOP_OFFSET;
-    const statusBelow = fabRect.bottom + PANEL_GAP;
+    const owl = fab.getBoundingClientRect();
+    const availableWidth = Math.max(1, viewportWidth - HORIZONTAL_MARGIN * 2);
+    const targetPanelWidth = stage === 'compose' ? MESSAGE_WIDTH
+      : noticeStages.has(stage) ? NOTICE_TOOLBAR_WIDTH : TOOLBAR_WIDTH;
+    const panelWidth = Math.min(targetPanelWidth, availableWidth);
+    const statusWidth = Math.min(MESSAGE_WIDTH, availableWidth);
+    // Use target dimensions, not the interpolated size during CSS transitions.
+    const statusHeight = stage === 'reply' ? REPLY_HEIGHT : STATUS_HEIGHT;
+    const panelBelow = owl.bottom + PANEL_GAP;
+    const panelAbove = owl.top - PANEL_GAP - PANEL_HEIGHT;
+    const statusAbove = owl.top - STATUS_GAP - statusHeight;
+    const statusBelow = owl.bottom + STATUS_GAP;
     const fits = (top, height) => top >= VERTICAL_MARGIN && top + height <= viewportHeight - VERTICAL_MARGIN;
-    let panelTop = fits(panelBelow, panelHeight) ? panelBelow : panelAbove;
-    let workingTop = fits(statusAbove, workingHeight) ? statusAbove : statusBelow;
-
-    if (stage === 'working') {
-      // Prefer opposite sides. At an edge, stack both panels on the available
-      // side so a dragged Owl never puts its toolbar over its status text.
+    let panelTop = fits(panelBelow, PANEL_HEIGHT) ? panelBelow : panelAbove;
+    let statusTop = fits(statusAbove, statusHeight) ? statusAbove : statusBelow;
+    if (cardStages.has(stage)) {
       const placements = [
         [panelBelow, statusAbove],
         [panelAbove, statusBelow],
-        [panelAbove, panelAbove - PANEL_GAP - workingHeight],
-        [panelBelow, panelBelow + panelHeight + PANEL_GAP],
+        [panelAbove, panelAbove - PANEL_GAP - statusHeight],
+        [panelBelow, panelBelow + PANEL_HEIGHT + PANEL_GAP],
       ];
-      const placement = placements.find(([panelY, statusY]) => fits(panelY, panelHeight) && fits(statusY, workingHeight));
-      if (placement) [panelTop, workingTop] = placement;
+      const placement = placements.find(([panelY, statusY]) => fits(panelY, PANEL_HEIGHT) && fits(statusY, statusHeight));
+      if (placement) [panelTop, statusTop] = placement;
     }
-
-    const panelLeft = stage === 'compose'
-      ? fabRect.right + COMPOSER_RIGHT_OVERHANG - panelWidth
-      : fabRect.left + (fabRect.width - panelWidth) / 2;
-    const workingLeft = fabRect.right + WORKING_RIGHT_OVERHANG - workingWidth;
-    const constrainX = (left, width) => clamp(left, VIEWPORT_MARGIN, viewportWidth - width - VIEWPORT_MARGIN);
+    const panelLeft = stage === 'compose' ? owl.right + 24 - panelWidth
+      : owl.left + (owl.width - panelWidth) / 2;
+    const statusLeft = owl.right + (stage === 'notice' || stage === 'reply' ? 28 : 3) - statusWidth;
+    const constrainX = (left, width) => clamp(left, HORIZONTAL_MARGIN, viewportWidth - width - HORIZONTAL_MARGIN);
     const constrainY = (top, height) => clamp(top, VERTICAL_MARGIN, viewportHeight - height - VERTICAL_MARGIN);
     const finalPanelLeft = constrainX(panelLeft, panelWidth);
+    const indicatorBelow = owl.bottom + 9;
+    const indicatorTop = fits(indicatorBelow, INDICATOR_HEIGHT) ? indicatorBelow : owl.top - 9 - INDICATOR_HEIGHT;
     dock.style.setProperty('--panel-width', `${panelWidth}px`);
     dock.style.setProperty('--panel-x', `${finalPanelLeft - dockRect.left}px`);
-    dock.style.setProperty('--panel-y', `${constrainY(panelTop, panelHeight) - dockRect.top}px`);
-    dock.style.setProperty('--panel-origin', `${clamp(fabRect.left + fabRect.width / 2 - finalPanelLeft, 0, panelWidth)}px`);
-    dock.style.setProperty('--working-width', `${workingWidth}px`);
-    dock.style.setProperty('--working-x', `${constrainX(workingLeft, workingWidth) - dockRect.left}px`);
-    dock.style.setProperty('--working-y', `${constrainY(workingTop, workingHeight) - dockRect.top}px`);
+    dock.style.setProperty('--panel-y', `${constrainY(panelTop, PANEL_HEIGHT) - dockRect.top}px`);
+    dock.style.setProperty('--panel-origin', `${clamp(owl.left + owl.width / 2 - finalPanelLeft, 0, panelWidth)}px`);
+    dock.style.setProperty('--working-width', `${statusWidth}px`);
+    dock.style.setProperty('--working-x', `${constrainX(statusLeft, statusWidth) - dockRect.left}px`);
+    dock.style.setProperty('--working-y', `${constrainY(statusTop, statusHeight) - dockRect.top}px`);
+    dock.style.setProperty('--status-height', `${statusHeight}px`);
+    dock.style.setProperty('--indicator-y', `${constrainY(indicatorTop, INDICATOR_HEIGHT) - dockRect.top}px`);
   }
-
   function setStage(next) {
     cancelClose();
+    if (stage !== next) {
+      statusPointerInside = false;
+      statusTouchOpen = false;
+    }
     stage = next;
     dock.dataset.stage = next;
-    fab.setAttribute('aria-expanded', String(next !== 'default'));
-    setAccessible(toolbar, next === 'hover' || next === 'working');
-    setAccessible(composer, next === 'compose');
-    setAccessible(working, next === 'working');
+    renderStatus();
+    syncAccess();
     reposition();
   }
-
   function returnFocus() {
     restoringFocus = true;
     fab.focus({ preventScroll: true });
     restoringFocus = false;
   }
-
-  function closeToDefault(restoreFocus = false) {
+  function collapse(restoreFocus = false) {
     suppressHoverUntilLeave = pointerInside;
-    setStage('default');
+    setStage(idleStage());
     if (restoreFocus) returnFocus();
   }
-
   function scheduleClose() {
     cancelClose();
-    if (stage !== 'hover') return;
+    if (stage !== 'hover' && stage !== 'done-hover') return;
     closeTimer = window.setTimeout(() => {
       closeTimer = null;
       const keyboardFocusInside = keyboardInteraction && dock.contains(document.activeElement);
-      if (stage === 'hover' && !pointerInside && !keyboardFocusInside) setStage('default');
+      if (['hover', 'done-hover'].includes(stage) && !pointerInside && !keyboardFocusInside) setStage(idleStage());
     }, HOVER_CLOSE_DELAY);
   }
-
-  function updateSend() {
+  function revealActions() {
+    if (dragging || suppressHoverUntilLeave) return;
+    if (stage === 'default') setStage('hover');
+    else if (stage === 'done') setStage('done-hover');
+  }
+  function updateInputs() {
     send.disabled = !input.value.trim();
+    const hasFollowup = Boolean(followupInput.value.trim());
+    followupSend.disabled = !hasFollowup;
+    followup.dataset.hasValue = String(hasFollowup);
+  }
+  function showCompletion() {
+    const hadControlFocus = dock.contains(document.activeElement) && document.activeElement !== fab;
+    suppressHoverUntilLeave = false;
+    setStage('done');
+    if (hadControlFocus) returnFocus();
+  }
+  function startTask(message) {
+    window.clearTimeout(workTimer);
+    announcement.textContent = '';
+    pendingCompletion = false;
+    const greeting = /^(hi|hello)[\s!.,?]*$/i.test(message);
+    const priority = /\bpriorit(?:y|ies)\b/i.test(message);
+    task = {
+      id: ++taskSequence,
+      status: 'working',
+      message,
+      title: greeting ? 'Respond to greeting' : priority ? 'Find today’s priority' : message,
+      preview: greeting ? 'Hi! What can I help you with?' : priority
+        ? 'Your top work priority today: close the remaining launch review action items.'
+        : 'Your request is ready to review. Add a follow-up to continue.',
+      unread: false,
+    };
+    const taskId = task.id;
+    input.value = '';
+    followupInput.value = '';
+    updateInputs();
+    setStage('working');
+    returnFocus();
+    workTimer = window.setTimeout(() => {
+      if (!task || task.id !== taskId || task.status !== 'working') return;
+      workTimer = null;
+      task.status = 'done';
+      task.unread = true;
+      announce(`Completed: ${task.title}`);
+      if (dragging) pendingCompletion = true;
+      else if (stage !== 'compose' && stage !== 'reply') showCompletion();
+      else syncAccess();
+    }, SIMULATED_WORK_DURATION);
+  }
+  function clearTask() {
+    window.clearTimeout(workTimer);
+    workTimer = null;
+    taskSequence += 1;
+    task = null;
+    pendingCompletion = false;
+    followupInput.value = '';
+    updateInputs();
+  }
+  function openNotice(fromKeyboard = false) {
+    if (!task || task.status !== 'done') return;
+    task.unread = false;
+    setStage('notice');
+    if (fromKeyboard) card.focus({ preventScroll: true });
+  }
+  function openComposer(prefill) {
+    if (typeof prefill === 'string') input.value = prefill;
+    updateInputs();
+    setStage('compose');
+    input.focus({ preventScroll: true });
   }
 
   dock.addEventListener('pointerenter', event => {
     if (event.pointerType === 'touch') return;
     pointerInside = true;
     cancelClose();
-    if (stage === 'default' && !dragging && !suppressHoverUntilLeave) setStage('hover');
   });
   dock.addEventListener('pointerleave', event => {
     if (event.pointerType === 'touch') return;
     pointerInside = false;
     suppressHoverUntilLeave = false;
     scheduleClose();
+  });
+  fab.addEventListener('pointerenter', event => {
+    if (event.pointerType !== 'touch') revealActions();
+  });
+  fab.addEventListener('pointermove', event => {
+    // A completion still shows its marker when the cursor is already over the
+    // Owl; the next deliberate movement reveals the completed action pill.
+    if (event.pointerType !== 'touch' && stage === 'done') revealActions();
   });
   fab.addEventListener('pointerdown', event => {
     lastPointerType = event.pointerType;
@@ -152,77 +294,120 @@
   fab.addEventListener('pointerup', () => { pointerFocusPending = false; });
   fab.addEventListener('pointercancel', () => { pointerFocusPending = false; });
   fab.addEventListener('click', event => {
-    // pet-drag suppresses the click emitted by a drop in its capture listener.
+    // The drag controller suppresses a drop's click in its capture listener.
     if (event.defaultPrevented || dragging) return;
-    if (stage === 'default') {
+    if (stage === 'default' || stage === 'done') {
       suppressHoverUntilLeave = false;
-      setStage('hover');
-    } else if (stage === 'hover' && lastPointerType === 'touch' && event.detail !== 0) {
-      closeToDefault();
-    }
+      revealActions();
+    } else if (['hover', 'done-hover'].includes(stage) && lastPointerType === 'touch' && event.detail !== 0) collapse();
   });
-
   dock.addEventListener('focusin', event => {
     cancelClose();
-    if (event.target === fab && stage === 'default' && !restoringFocus && !pointerFocusPending && !dragging) {
-      setStage('hover');
+    if (event.target === fab && !restoringFocus && !pointerFocusPending && !dragging) {
+      if (stage === 'default') setStage('hover');
+      else if (stage === 'done') setStage('done-hover');
     }
   });
   dock.addEventListener('focusout', event => {
     if (!dock.contains(event.relatedTarget)) scheduleClose();
   });
-
-  edit.addEventListener('click', () => {
-    if (stage === 'working') input.value = '';
-    updateSend();
-    setStage('compose');
-    input.focus({ preventScroll: true });
+  card.addEventListener('pointerenter', event => {
+    if (event.pointerType === 'touch') return;
+    statusPointerInside = true;
+    updateStatusAccess();
   });
-  input.addEventListener('input', updateSend);
+  card.addEventListener('pointerleave', () => {
+    statusPointerInside = false;
+    updateStatusAccess();
+  });
+  card.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'touch') {
+      statusTouchOpen = true;
+      updateStatusAccess();
+    }
+  });
+  card.addEventListener('focusin', updateStatusAccess);
+  card.addEventListener('focusout', () => queueMicrotask(updateStatusAccess));
+
+  edit.addEventListener('click', () => openComposer());
+  input.addEventListener('input', updateInputs);
+  followupInput.addEventListener('input', updateInputs);
   composer.addEventListener('submit', event => {
     event.preventDefault();
     const message = input.value.trim();
-    if (!message || stage !== 'compose') return;
-    workingTitle.textContent = /^(hi|hello)[\s!.,?]*$/i.test(message) ? 'Respond to greeting' : message;
-    setStage('working');
-    returnFocus();
+    if (message && stage === 'compose') startTask(message);
+  });
+  followup.addEventListener('submit', event => {
+    event.preventDefault();
+    const message = followupInput.value.trim();
+    if (message && stage === 'reply') startTask(message);
+  });
+  indicator.addEventListener('click', event => openNotice(event.detail === 0));
+  noticeToggle.addEventListener('click', event => {
+    if (stage === 'notice' || stage === 'reply') collapse(event.detail === 0);
+    else openNotice(event.detail === 0);
+  });
+  statusReturn.addEventListener('click', () => {
+    if (!task) return;
+    if (stage === 'working') openComposer(task.message);
+    else if (stage === 'notice' || stage === 'reply') {
+      setStage('reply');
+      followupInput.focus({ preventScroll: true });
+    }
+  });
+  stop.addEventListener('click', () => {
+    if (!task || task.status !== 'working') return;
+    clearTask();
+    collapse(true);
+    announce('Task stopped.');
+  });
+  dismiss.addEventListener('click', () => {
+    if (stage === 'notice' || stage === 'reply') clearTask();
+    // Dismissing a running card only hides it; its task can still complete.
+    collapse(true);
   });
 
   document.addEventListener('pointerdown', event => {
     keyboardInteraction = false;
-    if (!dock.contains(event.target) && (stage === 'compose' || stage === 'hover')) closeToDefault();
+    if (dock.contains(event.target)) return;
+    statusTouchOpen = false;
+    updateStatusAccess();
+    if (['compose', 'hover', 'done-hover', 'notice', 'reply'].includes(stage)) collapse();
   }, true);
   document.addEventListener('keydown', event => {
     if (event.key === 'Tab') keyboardInteraction = true;
-    if (event.key !== 'Escape' || event.defaultPrevented || stage === 'default' || dragging) return;
+    if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing || dragging || ['default', 'done'].includes(stage)) return;
     event.preventDefault();
-    closeToDefault(true);
+    collapse(true);
   });
-
   dock.addEventListener('pet:dragstart', () => {
     dragging = true;
     suppressHoverUntilLeave = true;
     cancelClose();
-    if (stage === 'hover' || stage === 'compose') setStage('default');
-    setAccessible(toolbar, false);
-    setAccessible(composer, false);
-    setAccessible(working, false);
+    if (stage !== 'working') setStage(idleStage());
+    syncAccess();
   });
   dock.addEventListener('pet:dragend', event => {
     dragging = false;
     pointerFocusPending = false;
     if (event.detail && event.detail.moved) suppressHoverUntilLeave = true;
-    setStage(stage);
+    if (pendingCompletion && task && task.status === 'done') {
+      pendingCompletion = false;
+      setStage('done');
+    } else setStage(stage);
   });
   dock.addEventListener('pet:move', reposition);
   window.addEventListener('resize', reposition);
   window.addEventListener('blur', () => {
     pointerInside = false;
     pointerFocusPending = false;
-    if (stage === 'hover') closeToDefault();
+    statusPointerInside = false;
+    statusTouchOpen = false;
+    if (stage === 'hover' || stage === 'done-hover') collapse();
+    else updateStatusAccess();
   });
 
   input.placeholder = 'give me more info';
-  updateSend();
+  updateInputs();
   setStage('default');
 })();
