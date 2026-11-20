@@ -6,7 +6,7 @@
     {id:'missed-follow-ups', title:'Catch missed follow-ups', description:'Commitments and action items worth revisiting.', metadata:'Routine · Weekdays · 4 PM IST · Last 7 days', kind:'routine'},
     {id:'weekly-review', title:'Weekly review', description:'Decisions, open to-dos and next week’s work.', metadata:'Routine · Friday · 4 PM IST · Last 7 days', kind:'routine'},
     {id:'launch-review', title:'Get the launch review ready', description:'Bring positioning, demo readiness and owners together.', metadata:'Goal · First step · Prepare a short review note', kind:'goal'},
-    {id:'customer-feedback', title:'Close the loop on customer feedback', description:'Turn review feedback into a clear pilot plan.', metadata:'First step · Gather decisions and next owners', kind:'goal'}
+    {id:'customer-feedback', title:'Close the loop on customer feedback', description:'Turn review feedback into a clear pilot plan.', metadata:'First step · Gather decisions and next owners', metadataV2:'Goal · First step · Gather decisions and next owners', kind:'goal'}
   ];
   const state = {
     name:"Ayush's Owl", studio:null, color:'#FA70AB',
@@ -21,12 +21,28 @@
   let host;
   let dialog;
   let restoreDialogFocus = true;
+  let readyVersion = 'v1';
 
   const snapshot = () => ({
     name:state.name, studio:state.studio ? {...state.studio} : {...window.OwlStudioArtwork.defaults}, color:state.color,
     preferences:{...state.preferences}, identity:{...state.identity}, selection:[...selected]
   });
   const icon = kind => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${kind === 'routine' ? '<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 11h16"/>' : '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'}</svg>`;
+  const leadingIcon = kind => kind === 'routine' ? icon(kind) : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25M12 6.75a5.25 5.25 0 1 0 5.25 5.25M12 12l7.5-7.5M14.25 5.25V2.75l4.5 2.5 2.5 4.5h-2.5"/></svg>';
+
+  function renderVersion() {
+    host.dataset.readyVersion = readyVersion;
+    host.querySelector('#ready-suggestions-title').textContent = readyVersion === 'v2' ? 'Useful starts here' : 'Useful start with Goal and Routine';
+    cards.forEach(card => {
+      host.querySelector(`[data-ready-metadata="${card.id}"]`).textContent = readyVersion === 'v2' ? card.metadataV2 || card.metadata : card.metadata;
+    });
+  }
+
+  function setVersion(version) {
+    readyVersion = version === 'v2' ? 'v2' : 'v1';
+    if (host?.isConnected) renderVersion();
+    return readyVersion;
+  }
 
   function renderIdentity() {
     host.querySelector('#ready-role').textContent = state.identity.role;
@@ -62,7 +78,7 @@
       </section>
       <section class="owl-ready-priority" aria-labelledby="ready-priority-label"><h2 id="ready-priority-label" class="ready-section-label">What matters now</h2><p id="ready-current-priority"></p></section>
       <section class="owl-ready-suggestions" aria-labelledby="ready-suggestions-title"><h2 id="ready-suggestions-title">Useful start with Goal and Routine</h2><div class="ready-card-grid">
-        ${cards.map(card => `<article class="ready-card" aria-labelledby="ready-card-title-${card.id}"><div class="ready-card-heading"><h3 id="ready-card-title-${card.id}">${card.title}</h3><button class="ready-use" type="button" data-ready-card="${card.id}" aria-pressed="false" aria-label="Use ${card.title}">Use</button></div><p class="ready-card-description">${card.description}</p><p class="ready-card-metadata">${icon(card.kind)}<span>${card.metadata}</span></p></article>`).join('')}
+        ${cards.map(card => `<article class="ready-card" aria-labelledby="ready-card-title-${card.id}"><div class="ready-card-leading-icon" aria-hidden="true">${leadingIcon(card.kind)}</div><div class="ready-card-heading"><h3 id="ready-card-title-${card.id}">${card.title}</h3><button class="ready-use" type="button" data-ready-card="${card.id}" aria-pressed="false" aria-label="Use ${card.title}">Use</button></div><p class="ready-card-description">${card.description}</p><p class="ready-card-metadata">${icon(card.kind)}<span data-ready-metadata="${card.id}">${card.metadata}</span></p></article>`).join('')}
       </div></section>
       <div class="footer-spacer"></div>
       <footer class="flow-footer ready-footer"><button id="ready-skip" class="footer-action secondary" type="button">Skip for now</button><ol class="progress" aria-label="Setup complete"><li aria-label="Step 1 completed"></li><li aria-label="Step 2 completed"></li><li class="is-current" aria-label="Step 3 completed"></li></ol><button id="ready-save" class="footer-action primary" type="button">Save</button></footer>
@@ -131,8 +147,9 @@
     host.querySelector('#ready-owl-preview').innerHTML = window.OwlStudioArtwork.render(state.studio || window.OwlStudioArtwork.defaults,state.color);
     renderIdentity();
     renderSelections();
+    renderVersion();
   }
 
   function close() { dismissEditor(false); }
-  window.OwlReady = Object.freeze({open, close, snapshot});
+  window.OwlReady = Object.freeze({open, close, snapshot, setVersion});
 })();

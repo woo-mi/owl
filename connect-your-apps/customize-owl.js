@@ -84,11 +84,13 @@
         window.OwlReady.open({...savedOwl,name:nameInput.value,preferences:savedPreferences});
       }
     }
+    if (step === 'ready') window.OwlReady.setVersion(new URL(location.href).searchParams.get('readyVersion'));
     eggStage.hidden = !!savedOwl;
     hatchedStage.hidden = !savedOwl;
     if (savedOwl) hatchedStage.innerHTML = window.OwlStudioArtwork.render(savedOwl.studio,savedOwl.color);
     hatchButton.innerHTML = `${savedOwl ? 'Customize your Owl' : 'Hatch your Owl'}<span aria-hidden="true">→</span>`;
     currentStep = step;
+    window.dispatchEvent(new CustomEvent('owl-flow:change', {detail:{step}}));
     if (focusHeading) {
       document.getElementById(titleId).focus({preventScroll:true});
       window.scrollTo({top:0,behavior:'instant'});
@@ -115,6 +117,7 @@
     if (event.persisted && currentStep === 'customize' && !savedOwl) window.OwlEgg?.start();
   });
   window.addEventListener('connections:version-change', () => renderRoute());
+  window.addEventListener('owl-ready:version-change', () => renderRoute());
   window.OwlFlow = {connections:() => navigate('connections')};
 
   function sizeName() { nameInput.size = Math.min(24, Math.max(8, nameInput.value.length)); }
