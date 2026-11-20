@@ -72,7 +72,7 @@
     hatchAngles:[0,-1.3,.8,-2,1.8,-.9,.3,0],
     pushIn:.045,
   };
-  const OWL = {x:97,y:157,size:216,rise:43,startScale:.91,overshoot:1.014};
+  const OWL = {x:107.8,y:167.8,size:194.4,rise:43,startScale:.91,overshoot:1.014};
   const SHELL = {
     sections:[
       {id:'cap',origin:[116,300],dx:-55,dy:-55,lift:13,turn:-29,
