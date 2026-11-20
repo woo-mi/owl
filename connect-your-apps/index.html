@@ -12,12 +12,13 @@
   <link rel="preload" href="assets/egg-white-render.png" as="image">
   <link rel="stylesheet" href="styles.css?v=customize-1">
   <link rel="stylesheet" href="sidebar.css">
-  <link rel="stylesheet" href="version-picker.css?v=ready-versions-1">
+  <link rel="stylesheet" href="version-picker.css?v=chat-1">
   <link rel="stylesheet" href="customize-owl.css?v=hatch-reveal-1">
   <link rel="stylesheet" href="owl-appearance.css?v=appearance-3">
   <link rel="stylesheet" href="owl-personality.css?v=appearance-3">
   <link rel="stylesheet" href="owl-ready.css?v=ready-no-badge-1">
   <link rel="stylesheet" href="owl-home.css?v=home-1">
+  <link rel="stylesheet" href="owl-chat.css?v=chat-1">
   <link rel="stylesheet" href="egg-animation.css?v=egg-shaded-1">
   <script src="sidebar.js" defer></script>
   <script src="egg-animation.js?v=egg-shaded-1" defer></script>
@@ -26,10 +27,12 @@
   <script src="owl-appearance.js?v=appearance-3" defer></script>
   <script src="owl-personality.js?v=appearance-3" defer></script>
   <script src="owl-ready.js?v=ready-no-badge-1" defer></script>
-  <script src="owl-home.js?v=home-1" defer></script>
-  <script src="customize-owl.js?v=hatch-reveal-1" defer></script>
+  <script src="owl-home.js?v=chat-1" defer></script>
+  <script src="owl-chat.js?v=chat-1" defer></script>
+  <script src="customize-owl.js?v=chat-1" defer></script>
   <script src="version-picker.js?v=customize-1" defer></script>
   <script src="ready-version-picker.js?v=ready-versions-1" defer></script>
+  <script src="chat-version-picker.js?v=chat-1" defer></script>
 </head>
 <body class="sidebar-collapsed">
   <a class="skip-link" href="#main">Skip to connections</a>
@@ -296,6 +299,7 @@
     <section id="personality-view" class="onboarding owl-personality-onboarding" aria-labelledby="personality-title" hidden></section>
     <section id="ready-view" class="onboarding owl-ready-onboarding" aria-labelledby="ready-title" hidden></section>
     <section id="home-view" class="owl-home" aria-labelledby="home-title" hidden></section>
+    <section id="chat-view" class="owl-chat" aria-labelledby="chat-title" hidden></section>
   </main>
   <p id="hatch-status" class="sr-only" role="status" aria-live="polite"></p>
   <dialog id="connect-dialog" aria-labelledby="connect-title" aria-describedby="connect-description">

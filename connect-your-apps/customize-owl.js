@@ -7,6 +7,7 @@
   const personalityView = document.querySelector('#personality-view');
   const readyView = document.querySelector('#ready-view');
   const homeView = document.querySelector('#home-view');
+  const chatView = document.querySelector('#chat-view');
   const advanceLinks = [...document.querySelectorAll('[data-customize-link]')];
   const nameInput = document.querySelector('#owl-name');
   const status = document.querySelector('#hatch-status');
@@ -102,10 +103,10 @@
   function renderRoute(focusHeading = false) {
     const url = new URL(location.href);
     const requestedStep = url.searchParams.get('step');
-    const step = ['customize','appearance','personality','ready','00'].includes(requestedStep) ? requestedStep : 'connections';
+    const step = ['customize','appearance','personality','ready','00','chat'].includes(requestedStep) ? requestedStep : 'connections';
     const isCustomize = step === 'customize';
     const changed = currentStep !== step;
-    if (changed) { clearTransition();window.OwlReady.close(); }
+    if (changed) { clearTransition();window.OwlReady.close();window.OwlChat.close(); }
     if (changed && step !== 'connections') window.dispatchEvent(new CustomEvent('connections:leave'));
     connectionsView.hidden = step !== 'connections';
     customizeView.hidden = !isCustomize;
@@ -113,10 +114,11 @@
     personalityView.hidden = step !== 'personality';
     readyView.hidden = step !== 'ready';
     homeView.hidden = step !== '00';
+    chatView.hidden = step !== 'chat';
     document.body.dataset.flowStep = step;
-    const titleId = {connections:'page-title',customize:'customize-title',appearance:'appearance-title',personality:'personality-title',ready:'ready-title','00':'home-title'}[step];
+    const titleId = {connections:'page-title',customize:'customize-title',appearance:'appearance-title',personality:'personality-title',ready:'ready-title','00':'home-title',chat:'chat-title'}[step];
     main.setAttribute('aria-labelledby',titleId);
-    document.title = (isCustomize ? 'Meet your Owl' : step === 'connections' ? 'Connect your apps' : step === 'ready' ? 'Your Owl is ready' : step === '00' ? savedSetup?.name || nameInput.value : 'Make your Owl') + ' · Owl';
+    document.title = (isCustomize ? 'Meet your Owl' : step === 'connections' ? 'Connect your apps' : step === 'ready' ? 'Your Owl is ready' : step === 'chat' ? 'Chat' : step === '00' ? savedSetup?.name || nameInput.value : 'Make your Owl') + ' · Owl';
     url.searchParams.set('step', 'customize');
     advanceLinks.forEach(link => { link.href = url.pathname + url.search; });
     if (changed) {
@@ -132,8 +134,10 @@
         window.OwlReady.open({...savedOwl,name:nameInput.value,preferences:savedPreferences});
       }
       if (step === '00') window.OwlHome.open({name:savedSetup?.name || nameInput.value});
+      if (step === 'chat') window.OwlChat.open(savedSetup || {...savedOwl,name:nameInput.value,preferences:savedPreferences});
     }
     if (step === 'ready') window.OwlReady.setVersion(new URL(location.href).searchParams.get('readyVersion'));
+    if (step === 'chat') window.OwlChat.setVersion(new URL(location.href).searchParams.get('chatVersion') === 'no-work' ? 'no-work' : 'live');
     eggStage.hidden = !!savedOwl;
     hatchedStage.hidden = !savedOwl;
     if (savedOwl) hatchedStage.innerHTML = window.OwlStudioArtwork.render(savedOwl.studio,savedOwl.color);
@@ -146,11 +150,12 @@
     }
   }
 
-  function navigate(step, {shrinkOwl = false, hatchBounds = null} = {}) {
+  function navigate(step, {shrinkOwl = false, hatchBounds = null, chatVersion = null} = {}) {
     const sourceBounds = shrinkOwl ? appearanceView.querySelector('.owl-appearance-preview').getBoundingClientRect() : null;
     const url = new URL(location.href);
     if (step !== 'connections') url.searchParams.set('step', step);
     else url.searchParams.delete('step');
+    if (chatVersion) url.searchParams.set('chatVersion', chatVersion);
     if (url.href !== location.href) history.pushState(history.state, '', url.pathname + url.search + url.hash);
     renderRoute(true);
     if (shrinkOwl) animatePersonality(sourceBounds);
@@ -168,6 +173,8 @@
   });
   window.addEventListener('connections:version-change', () => renderRoute());
   window.addEventListener('owl-ready:version-change', () => renderRoute());
+  window.addEventListener('owl-chat:version-change', () => renderRoute());
+  window.addEventListener('owl-home:start-chat', () => navigate('chat', {chatVersion:'live'}));
   window.OwlFlow = {connections:() => navigate('connections')};
 
   function sizeName() { nameInput.size = Math.min(24, Math.max(8, nameInput.value.length)); }

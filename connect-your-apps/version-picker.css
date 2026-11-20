@@ -1,5 +1,6 @@
 #connections-version-picker,
-#ready-version-picker {
+#ready-version-picker,
+#chat-version-picker {
   position:fixed;
   top:calc(16px + env(safe-area-inset-top));
   right:calc(16px + env(safe-area-inset-right));
@@ -73,6 +74,9 @@ body.sidebar-open #connections-version-picker,
 body:not([data-flow-step="connections"]) #connections-version-picker { display:none; }
 body.sidebar-open #ready-version-picker,
 body:not([data-flow-step="ready"]) #ready-version-picker { display:none; }
+body.sidebar-open #chat-version-picker,
+body:not([data-flow-step="chat"]) #chat-version-picker { display:none; }
+#chat-version-menu { width:248px; }
 @media(prefers-reduced-motion:reduce) {
   .connections-version-trigger svg { transition:none; }
 }
