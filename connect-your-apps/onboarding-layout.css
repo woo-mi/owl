@@ -5,6 +5,7 @@
   align-self:flex-start;
   margin-block:auto;
 }
+.connections-main > .onboarding > .heading { text-align:center; }
 :is(#connections-view,#customize-view,#appearance-view,#personality-view) .heading h1 {
   font-size:28px;
   font-weight:500;
