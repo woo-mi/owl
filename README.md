@@ -7,7 +7,8 @@ step is required.
 
 - `index.html` and `owl-mark.svg` provide the overview page.
 - `floating-action-button-pet/` is **Floating Action Button (pet)**, an independent
-  copy of Owl affordance with the Pen **Default** blue Owl fixed at the bottom-right.
+  copy of Owl affordance with the Pen **Default** blue Owl initially at the bottom-right.
+  Drag it or use arrow keys while focused to move it; its position is remembered locally.
   Published at https://woo-mi.github.io/owl/floating-action-button-pet/.
 - `ui-optimization/` is **UI optimization**, a responsive copy of the Pen
   **third-party** and **third-party selected** screens, with an animated approval transition. Published at https://woo-mi.github.io/owl/ui-optimization/.
