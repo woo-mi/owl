@@ -75,8 +75,29 @@ button:focus-visible, a:focus-visible {
 [data-pencil-name="Got it — outlined button"]:hover { background-color: #f5f5f7; }
 [data-pencil-name="Owls navigation target"]:hover { background-color: #ddd !important; }
 
+.pet-fab {
+  position: fixed;
+  right: calc(24px + env(safe-area-inset-right, 0px));
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  z-index: 20;
+  display: block;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+}
+.pet-fab img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 @media (max-width: 700px) {
-  [data-pencil-name="Owl affordance new"] { padding: 270px 16px 48px 64px; }
+  [data-pencil-name="Owl affordance new"] { padding: 270px 16px 128px 64px; }
+  .pet-fab {
+    right: calc(16px + env(safe-area-inset-right, 0px));
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
   [data-pencil-name="Personalized greeting"] { margin-bottom: 28px; }
   [data-pencil-name="Editable question placeholder"] { width: calc(100% - 40.8px); white-space: normal !important; }
   [data-pencil-name="Starter questions"] { width: 100% !important; }
