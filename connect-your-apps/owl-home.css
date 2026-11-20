@@ -21,6 +21,7 @@ body[data-flow-step="00"] #main.connections-main {
   height:auto;
   aspect-ratio:1;
   object-fit:contain;
+  transform-origin:50% 60%;
 }
 #home-title {
   position:relative;

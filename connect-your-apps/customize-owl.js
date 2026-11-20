@@ -106,7 +106,7 @@
     const step = ['customize','appearance','personality','ready','00','chat'].includes(requestedStep) ? requestedStep : 'connections';
     const isCustomize = step === 'customize';
     const changed = currentStep !== step;
-    if (changed) { clearTransition();window.OwlReady.close();window.OwlChat.close(); }
+    if (changed) { clearTransition();window.OwlReady.close();window.OwlChat.close();window.OwlHome.close(); }
     if (changed && step !== 'connections') window.dispatchEvent(new CustomEvent('connections:leave'));
     connectionsView.hidden = step !== 'connections';
     customizeView.hidden = !isCustomize;
