@@ -10,6 +10,7 @@
  *  180ms   existing fractures extend around the softly shaded shell
  *  620ms   two textured halves part: the cap lifts and the cup settles
  *  660ms   the supplied Owl emerges; the scene pushes in slightly
+ * 1250ms   the foreground shell fades to uncover the Owl before handoff
  * 1550ms   pieces settle → resolve with the Owl's exact bounds
  *
  * One RAF clock owns every pose, including paused visibility.
@@ -33,9 +34,11 @@
     hatchChip:560,        // tiny fragments leave before the sections
     hatchChipFall:670,    // slower chips accompany the opening
     hatchChipStagger:45,  // uneven chip release
-    hatchOwl:660,         // Owl emerges in front of the opening
+    hatchOwl:660,         // Owl emerges behind the shell rim
     hatchOwlRise:470,     // rise into the final pose
     hatchShellFall:770,   // shell halves open and settle
+    hatchShellFade:1250,  // clear the foreground shell before the page handoff
+    hatchShellFadeOut:300,
     hatchFinish:1550,     // hold the reveal for the page handoff
   };
   const IMAGE = {
@@ -206,6 +209,7 @@
       drawCrack(node,mix(seedCracks[index],1,grown));
     });
     const opening=progress(time,TIMING.hatchOpen,TIMING.hatchShellFall);
+    svg.style.opacity=String(1-smooth(progress(time,TIMING.hatchShellFade,TIMING.hatchShellFadeOut)));
     closedShell.style.opacity=time<TIMING.hatchOpen?'1':'0';
     openShell.style.opacity=time<TIMING.hatchOpen?'0':'1';
     shellNodes.forEach((node,index)=>renderSection(node,SHELL.sections[index],index,opening));
@@ -265,6 +269,7 @@
     host.dataset.playing='false';
     host.dataset.mode='stopped';
     scene.style.transform='';
+    svg.style.opacity='1';
     svg.querySelector('title').textContent='An egg beginning to hatch';
     svg.querySelector('desc').textContent='Fine organic cracks form in a softly shaded white egg. The Owl stays hidden until Hatch is pressed.';
     reveal.style.opacity='0';

@@ -18,13 +18,13 @@
 }
 .owl-egg-reveal {
   position:absolute;
-  z-index:2;
+  z-index:0;
   aspect-ratio:1;
   opacity:0;
   transform-origin:center bottom;
   pointer-events:none;
 }
-/* As it emerges, the Owl moves in front of the shell for a clear handoff. */
+/* The shell's rim stays in front while the Owl emerges from inside it. */
 .owl-egg-reveal > svg { display:block;width:100%;height:100%; }
 .owl-egg-open-shell,.owl-egg-chip { opacity:0; }
 .owl-egg-crack { stroke-dasharray:1;stroke-dashoffset:1;opacity:0; }
