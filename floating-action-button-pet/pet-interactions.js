@@ -58,6 +58,8 @@
   let taskSequence = 0;
   let workTimer = null;
   let closeTimer = null;
+  let hideTimer = null;
+  let petVisible = true;
   let dragging = false;
   let pendingCompletion = false;
   let pointerInside = false;
@@ -277,6 +279,38 @@
     followupInput.value = '';
     updateInputs();
   }
+  function setPetVisibility(visible) {
+    if (visible === petVisible) return;
+    petVisible = visible;
+    window.clearTimeout(hideTimer);
+    hideTimer = null;
+    dock.dataset.visible = String(visible);
+    pointerInside = false;
+    actionPointerInside = false;
+    pointerFocusPending = false;
+    suppressHoverUntilLeave = false;
+    if (visible) {
+      dock.hidden = false;
+      dock.inert = false;
+      dock.removeAttribute('aria-hidden');
+      setStage('default');
+      dock.classList.remove('is-hiding');
+    } else {
+      clearTask();
+      setStage('default');
+      announcement.textContent = '';
+      if (dock.contains(document.activeElement)) document.activeElement.blur();
+      dock.inert = true;
+      dock.setAttribute('aria-hidden', 'true');
+      dock.classList.add('is-hiding');
+      const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 180;
+      hideTimer = window.setTimeout(() => {
+        dock.hidden = true;
+        hideTimer = null;
+      }, delay);
+    }
+    document.dispatchEvent(new CustomEvent('pet:visibilitychange', { detail: { visible } }));
+  }
   function openNotice(fromKeyboard = false) {
     if (!task || task.status !== 'done') return;
     task.unread = false;
@@ -372,16 +406,9 @@
   card.addEventListener('focusout', () => queueMicrotask(updateStatusAccess));
 
   edit.addEventListener('click', () => openComposer());
-  hide.addEventListener('click', () => {
-    clearTask();
-    setStage('default');
-    announcement.textContent = '';
-    if (dock.contains(document.activeElement)) document.activeElement.blur();
-    dock.inert = true;
-    dock.setAttribute('aria-hidden', 'true');
-    dock.classList.add('is-hiding');
-    const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 180;
-    window.setTimeout(() => { dock.hidden = true; }, delay);
+  hide.addEventListener('click', () => setPetVisibility(false));
+  document.addEventListener('pet:visibility-request', event => {
+    if (typeof event.detail?.visible === 'boolean') setPetVisibility(event.detail.visible);
   });
   input.addEventListener('input', updateInputs);
   followupInput.addEventListener('input', updateInputs);
@@ -476,6 +503,7 @@
   });
 
   input.placeholder = 'give me more info';
+  dock.dataset.visible = 'true';
   updateInputs();
   setStage('default');
 })();
