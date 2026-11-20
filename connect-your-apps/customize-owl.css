@@ -1,4 +1,4 @@
-/* Pen uLe8O: 728px content, header at 60px, stage at 180px. */
+/* Pen uLe8O: 728px content, with the egg group moved up 24px. */
 body[data-flow-step="customize"] #main.connections-main {
   margin-left:var(--sidebar-width,48px)!important;
   margin-right:0!important;
@@ -13,7 +13,7 @@ body[data-flow-step="customize"] #main.connections-main {
   place-items:center;
   width:100%;
   aspect-ratio:728 / 491;
-  margin-top:57px;
+  margin-top:33px;
   background:transparent;
 }
 .hatched-owl-stage svg { width:240px;max-width:100%;height:auto; }
@@ -93,7 +93,7 @@ body[data-flow-step="customize"] #main.connections-main {
 .start-chatting:hover { text-decoration:underline;text-underline-offset:3px; }
 @media(max-width:700px) {
   .onboarding.customize-onboarding { padding:80px 16px 32px; }
-  .egg-stage { aspect-ratio:auto;min-height:320px;margin-top:24px; }
+  .egg-stage { aspect-ratio:auto;min-height:320px;margin-top:0; }
   .owl-personalization { margin-top:16px; }
   .owl-name { font-size:24px;line-height:34px; }
 }
