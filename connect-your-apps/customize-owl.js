@@ -43,6 +43,7 @@
     easing:'cubic-bezier(.22,1,.36,1)', // smooth arrival without bouncing
   };
   function clearTransition() {
+    window.OwlChatTransition?.cancel();
     hatchRequest++;
     hatchButton.disabled = false;
     customizeView.inert = false;
@@ -150,7 +151,7 @@
     }
   }
 
-  function navigate(step, {shrinkOwl = false, hatchBounds = null, chatVersion = null} = {}) {
+  function navigate(step, {shrinkOwl = false, hatchBounds = null, chatVersion = null, chatEntry = null} = {}) {
     const sourceBounds = shrinkOwl ? appearanceView.querySelector('.owl-appearance-preview').getBoundingClientRect() : null;
     const url = new URL(location.href);
     if (step !== 'connections') url.searchParams.set('step', step);
@@ -160,6 +161,7 @@
     renderRoute(true);
     if (shrinkOwl) animatePersonality(sourceBounds);
     if (hatchBounds) animateHatchHandoff(hatchBounds);
+    if (chatEntry) window.OwlChatTransition?.start(chatEntry, chatView);
   }
 
   advanceLinks.forEach(link => link.addEventListener('click', event => {
@@ -174,7 +176,11 @@
   window.addEventListener('connections:version-change', () => renderRoute());
   window.addEventListener('owl-ready:version-change', () => renderRoute());
   window.addEventListener('owl-chat:version-change', () => renderRoute());
-  window.addEventListener('owl-home:start-chat', () => navigate('chat', {chatVersion:'live'}));
+  window.addEventListener('owl-home:start-chat', () => {
+    if (currentStep !== '00') return;
+    const chatEntry = window.OwlChatTransition?.capture(homeView);
+    navigate('chat', {chatVersion:'live',chatEntry});
+  });
   window.OwlFlow = {connections:() => navigate('connections')};
 
   function sizeName() { nameInput.size = Math.min(24, Math.max(8, nameInput.value.length)); }

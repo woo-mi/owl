@@ -12,20 +12,20 @@
 }
 :is(#connections-view,#appearance-view,#personality-view) .flow-footer {
   min-height:62px;
-  padding:16px 20px;
+  padding:11px 20px;
   border:0;
   box-shadow:none;
 }
 :is(#connections-view,#appearance-view,#personality-view) .footer-action {
-  height:30px;
-  border-radius:6.66667px;
-  padding:0 10px;
-  font-size:10.83333px;
-  line-height:16.25px;
+  height:40px;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:14px;
+  line-height:20px;
 }
-:is(#connections-view,#appearance-view,#personality-view) .footer-action.secondary { min-width:94.16667px; }
-:is(#connections-view,#appearance-view,#personality-view) .footer-action.primary { min-width:96.66667px; }
-:is(#connections-view,#appearance-view,#personality-view) .progress { gap:3.66667px; }
+:is(#connections-view,#appearance-view,#personality-view) .footer-action.secondary,
+:is(#connections-view,#appearance-view,#personality-view) .footer-action.primary { min-width:112px; }
+:is(#connections-view,#appearance-view,#personality-view) .progress { gap:4px; }
 
 #connections-view {
   width:728px;
@@ -67,7 +67,7 @@ body[data-connections-version="no"] #connections-view .integration-section.sugge
   #connections-view .integration-card { min-height:64px;padding:11px 12px; }
   #connections-view .browse-all { gap:12px;padding:12px;margin-top:24px; }
   :is(#connections-view,#appearance-view,#personality-view) .flow-footer { min-height:72px;padding:16px 0;column-gap:4px; }
-  :is(#connections-view,#appearance-view,#personality-view) .footer-action { height:40px;padding:0 8px;font-size:12px;line-height:18px; }
+  :is(#connections-view,#appearance-view,#personality-view) .footer-action { width:100%;max-width:112px;height:40px;padding:0 8px;font-size:14px;line-height:20px; }
   :is(#connections-view,#appearance-view,#personality-view) .footer-action.secondary,
   :is(#connections-view,#appearance-view,#personality-view) .footer-action.primary { min-width:0; }
 }
