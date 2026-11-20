@@ -1,4 +1,9 @@
 /* Latest onboarding headers and footer areas from the 1440 × 958 Pen frames. */
+/* Keep the footer within the design's stage on tall displays; content may grow. */
+.connections-main > .onboarding {
+  min-height:min(100dvh,960px);
+  align-self:flex-start;
+}
 :is(#connections-view,#customize-view,#appearance-view,#personality-view) .heading h1 {
   font-size:28px;
   font-weight:500;
@@ -47,7 +52,7 @@
 #connections-view .integration-section h2 { margin-bottom:4px;line-height:20px; }
 #connections-view .integration-grid { gap:10px; }
 #connections-view .integration-card { min-height:54px;padding:9px 14px 9px 10px;gap:10px; }
-#connections-view .integration-card .app-icon { width:18px;height:18px;margin:0 7.66667px; }
+#connections-view .integration-card .app-icon { width:20px;height:20px;margin:0 6.66667px; }
 #connections-view .integration-section.suggested { margin-top:32px; }
 body[data-connections-version="no"] #connections-view .integration-section.suggested { margin-top:39px; }
 #connections-view .browse-all { min-height:56px;margin-top:21px;padding:8px 10.83333px;gap:14.16667px; }
