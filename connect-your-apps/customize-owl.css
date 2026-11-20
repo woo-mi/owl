@@ -21,7 +21,7 @@ body[data-flow-step="customize"] #main.connections-main {
   display:flex;
   flex-direction:column;
   align-items:center;
-  margin-top:22px;
+  margin-top:-2px;
 }
 .owl-name-field {
   position:relative;
@@ -94,6 +94,6 @@ body[data-flow-step="customize"] #main.connections-main {
 @media(max-width:700px) {
   .onboarding.customize-onboarding { padding:80px 16px 32px; }
   .egg-stage { aspect-ratio:auto;min-height:320px;margin-top:0; }
-  .owl-personalization { margin-top:16px; }
+  .owl-personalization { margin-top:-8px; }
   .owl-name { font-size:24px;line-height:34px; }
 }
