@@ -1,8 +1,9 @@
 /* Latest onboarding headers and footer areas from the 1440 × 958 Pen frames. */
-/* Keep the footer within the design's stage on tall displays; content may grow. */
+/* Center the bounded stage on tall displays; longer content may still grow. */
 .connections-main > .onboarding {
   min-height:min(100dvh,960px);
   align-self:flex-start;
+  margin-block:auto;
 }
 :is(#connections-view,#customize-view,#appearance-view,#personality-view) .heading h1 {
   font-size:28px;
