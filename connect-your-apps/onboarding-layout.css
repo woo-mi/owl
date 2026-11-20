@@ -5,13 +5,6 @@
   line-height:34px;
   letter-spacing:-.41667px;
 }
-/* Frontend Typography h1: 2rem at its 16px root, independent of this prototype's 14px root. */
-#connections-view .heading h1 {
-  font-size:32px;
-  font-weight:600;
-  line-height:1.2;
-  letter-spacing:.5px;
-}
 :is(#connections-view,#customize-view,#appearance-view,#personality-view) .heading p {
   margin-top:8px;
   font-size:14px;
