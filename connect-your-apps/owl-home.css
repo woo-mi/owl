@@ -49,6 +49,12 @@ body[data-flow-step="00"] #main.connections-main {
   text-align:center;
 }
 .owl-home-chat:hover { background:#3b3b3b; }
+@media(min-width:1101px) {
+  .owl-home { justify-content:center;padding-block:72px; }
+  .owl-home-image { width:540px; }
+  #home-title { margin-top:-65.7px;font-size:108px;line-height:130.5px; }
+  .owl-home-chat { padding:12.6px 18px;border-radius:14.4px;font-size:21.6px;line-height:26.1px; }
+}
 @media(min-width:901px) {
   body.sidebar-expanded[data-flow-step="00"] #main.connections-main { margin-left:260px!important; }
 }
