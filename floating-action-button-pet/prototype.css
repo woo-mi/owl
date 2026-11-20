@@ -247,7 +247,7 @@ button:focus-visible, a:focus-visible {
   height: var(--status-height);
   padding: 11.5px 19.58px;
   border-radius: 32.24px;
-  background: #bdbdbd;
+  background: #eeeeee;
   font: 400 16.12px/20.73px Inter, system-ui, sans-serif;
   opacity: 0;
   visibility: hidden;
@@ -267,7 +267,7 @@ button:focus-visible, a:focus-visible {
 .pet-working-label { color: #626262; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pet-status-copy { transition: padding-right var(--motion-reveal) ease; }
 .pet-dock[data-status-hover="true"][data-stage="working"] .pet-status-copy { padding-right: 90px; }
-.pet-dock:is([data-stage="notice"], [data-stage="reply"]) .pet-working { background: #bebebe; border: 1.145px solid #d3d3d3; border-radius: 32.62px; }
+.pet-dock:is([data-stage="notice"], [data-stage="reply"]) .pet-working { background: #eeeeee; border: 1.145px solid #dedede; border-radius: 32.62px; }
 .pet-dock:is([data-stage="notice"], [data-stage="reply"]) .pet-working-title { margin-left: 21.6px; color: #333; font-size: 15.45px; font-weight: 700; }
 .pet-dock:is([data-stage="notice"], [data-stage="reply"]) .pet-working-label { color: #686868; font-size: 14.88px; }
 .pet-dock:is([data-stage="notice"], [data-stage="reply"])[data-status-hover="true"] .pet-status-copy,
