@@ -1,4 +1,4 @@
-/* The SVG viewport and stage have no background; only the shell is filled. */
+/* Transparent stage; the grounded shell and its fragments are the only fills. */
 #egg-stage {
   background:transparent;
   isolation:isolate;
@@ -18,17 +18,25 @@
   transform-box:fill-box;
   transform-origin:center;
 }
-.owl-egg-chip { opacity:0;transform-box:fill-box;transform-origin:center; }
-.owl-egg-central-crack,
-.owl-egg-branch-cracks path {
+.owl-egg-piece {
+  opacity:0;
+  transform-box:fill-box;
+  transform-origin:center;
+}
+.owl-egg-panel-gap { opacity:0; }
+.owl-egg-crack {
   stroke-dasharray:1;
   stroke-dashoffset:1;
   opacity:0;
 }
-.owl-egg-static .owl-egg-central-crack,
-.owl-egg-static .owl-egg-branch-cracks path {
+.owl-egg-static .owl-egg-crack {
   stroke-dashoffset:0;
   opacity:1;
+}
+.owl-egg-static .owl-egg-panel-gap { opacity:1; }
+.owl-egg-static .owl-egg-piece {
+  opacity:1;
+  transform:var(--piece-rest);
 }
 @media(max-width:700px) {
   .owl-egg-art { width:230px; }
