@@ -70,8 +70,7 @@
     host = document.getElementById('ready-view');
     if (!host) return false;
     host.setAttribute('aria-labelledby','ready-title');
-    host.innerHTML = `<div class="owl-ready-name-pill"><span id="ready-owl-preview" class="owl-ready-preview" aria-hidden="true"></span><span id="ready-owl-name"></span></div>
-      <header class="heading"><h1 id="ready-title" tabindex="-1">Your Owl is ready</h1><p>Here’s a first look at your work, and a few useful ways to start.</p></header>
+    host.innerHTML = `<header class="heading"><h1 id="ready-title" tabindex="-1">Your Owl is ready</h1><p>Here’s a first look at your work, and a few useful ways to start.</p></header>
       <section class="owl-ready-identity" aria-labelledby="ready-identity-label">
         <h2 id="ready-identity-label" class="ready-section-label">Personal Identity</h2>
         <div class="ready-identity-row"><div class="ready-identity-copy"><p id="ready-role"></p><p id="ready-work-summary" class="ready-secondary"></p></div><button id="ready-edit" class="ready-edit" type="button" aria-haspopup="dialog">Review and edit ↗</button></div>
@@ -143,8 +142,6 @@
     if (studio) state.studio = window.OwlStudioArtwork.normalize(studio);
     if (typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color)) state.color = color;
     if (preferences && typeof preferences === 'object') state.preferences = {...state.preferences,...preferences};
-    host.querySelector('#ready-owl-name').textContent = state.name;
-    host.querySelector('#ready-owl-preview').innerHTML = window.OwlStudioArtwork.render(state.studio || window.OwlStudioArtwork.defaults,state.color);
     renderIdentity();
     renderSelections();
     renderVersion();
