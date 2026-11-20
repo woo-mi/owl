@@ -11,13 +11,18 @@
   <link rel="preload" href="assets/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css?v=customize-1">
   <link rel="stylesheet" href="sidebar.css">
-  <link rel="stylesheet" href="version-picker.css?v=connections-only-1">
-  <link rel="stylesheet" href="customize-owl.css?v=customize-1">
+  <link rel="stylesheet" href="version-picker.css?v=appearance-3">
+  <link rel="stylesheet" href="customize-owl.css?v=appearance-3">
+  <link rel="stylesheet" href="owl-appearance.css?v=appearance-3">
+  <link rel="stylesheet" href="owl-personality.css?v=appearance-3">
   <link rel="stylesheet" href="egg-animation.css?v=egg-video-4">
   <script src="sidebar.js" defer></script>
   <script src="egg-animation.js?v=egg-video-4" defer></script>
   <script src="app.js?v=customize-1" defer></script>
-  <script src="customize-owl.js?v=customize-1" defer></script>
+  <script src="assets/owl-studio-artwork.js?v=appearance-3" defer></script>
+  <script src="owl-appearance.js?v=appearance-3" defer></script>
+  <script src="owl-personality.js?v=appearance-3" defer></script>
+  <script src="customize-owl.js?v=appearance-3" defer></script>
   <script src="version-picker.js?v=customize-1" defer></script>
 </head>
 <body class="sidebar-collapsed">
@@ -241,6 +246,7 @@
         <p>Name it, connect your apps, and choose what it can help with.</p>
       </header>
       <div id="egg-stage" class="egg-stage" role="img" aria-label="A line-drawn egg beginning to crack"></div>
+      <div id="hatched-owl-stage" class="egg-stage hatched-owl-stage" role="img" aria-label="Your customized Owl" hidden></div>
       <div class="owl-personalization">
         <div class="owl-name-field">
           <label class="sr-only" for="owl-name">Owl name</label>
@@ -252,6 +258,37 @@
         <p id="hatch-status" class="sr-only" role="status" aria-live="polite"></p>
       </div>
     </section>
+    <section id="appearance-view" class="onboarding owl-appearance-onboarding" aria-labelledby="appearance-title" hidden>
+      <header class="heading">
+        <h1 id="appearance-title" tabindex="-1">Make your Owl</h1>
+        <p>It starts with your Wisdom work and the apps you connected</p>
+      </header>
+      <div class="owl-appearance-identity">
+        <div class="owl-appearance-name-row">
+          <button id="appearance-edit-name" class="owl-appearance-name-pill" type="button" aria-label="Edit Owl name">Ayush's Owl</button>
+          <input id="appearance-name" type="text" aria-label="Owl name" maxlength="32" autocomplete="off" spellcheck="false" hidden>
+          <p id="appearance-name-error" role="alert" hidden>Enter an owl name.</p>
+        </div>
+        <div class="owl-appearance-preview" role="img" aria-label="Your Owl preview"></div>
+      </div>
+      <div class="owl-appearance-controls">
+        <div class="owl-appearance-tabs" role="tablist" aria-label="Customize owl features"></div>
+        <p id="appearance-guidance" class="sr-only"></p>
+        <div id="appearance-options" class="owl-appearance-options" role="tabpanel" aria-describedby="appearance-guidance"></div>
+        <div class="owl-appearance-palette" role="group" aria-label="Owl color"></div>
+      </div>
+      <div class="footer-spacer"></div>
+      <footer class="flow-footer">
+        <button id="appearance-skip" class="footer-action secondary" type="button">Skip for now</button>
+        <ol class="progress" aria-label="Setup progress: step 2 of 3">
+          <li aria-label="Step 1: Connect your apps"></li>
+          <li class="is-current" aria-current="step" aria-label="Step 2: Customize Owl"></li>
+          <li aria-label="Step 3"></li>
+        </ol>
+        <button id="appearance-continue" class="footer-action primary" type="button">Continue</button>
+      </footer>
+    </section>
+    <section id="personality-view" class="onboarding owl-personality-onboarding" aria-labelledby="personality-title" hidden></section>
   </main>
   <dialog id="connect-dialog" aria-labelledby="connect-title" aria-describedby="connect-description">
     <button class="dialog-close" type="button" data-close-dialog aria-label="Close connection dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
