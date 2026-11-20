@@ -1,4 +1,4 @@
-/* Transparent stage; only the egg, Owl, and grounded pieces have fills. */
+/* Transparent stage; the shell uses its original softly shaded alpha texture. */
 #egg-stage { background:transparent;isolation:isolate; }
 .owl-egg-scene {
   position:relative;
@@ -18,12 +18,13 @@
 }
 .owl-egg-reveal {
   position:absolute;
-  z-index:0;
+  z-index:2;
   aspect-ratio:1;
   opacity:0;
   transform-origin:center bottom;
   pointer-events:none;
 }
+/* As it emerges, the Owl moves in front of the shell for a clear handoff. */
 .owl-egg-reveal > svg { display:block;width:100%;height:100%; }
 .owl-egg-open-shell,.owl-egg-chip { opacity:0; }
 .owl-egg-crack { stroke-dasharray:1;stroke-dashoffset:1;opacity:0; }

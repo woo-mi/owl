@@ -7,8 +7,8 @@
  *
  * Hatch, measured from the click:
  *    0ms   a small anticipation → a brief, planted shiver
- *  180ms   existing fractures extend into three shell sections
- *  620ms   the sections lift apart and fall to either side
+ *  180ms   existing fractures extend around the softly shaded shell
+ *  620ms   two textured halves part: the cap lifts and the cup settles
  *  660ms   the supplied Owl emerges; the scene pushes in slightly
  * 1550ms   pieces settle → resolve with the Owl's exact bounds
  *
@@ -29,55 +29,62 @@
     hatchCrack:180,       // extend the cracks after anticipation
     hatchReveal:340,      // finish drawing a fracture
     hatchShiver:590,      // settle the shell before splitting
-    hatchOpen:620,        // replace closed shell with matching sections
+    hatchOpen:620,        // replace closed shell with matching textured halves
     hatchChip:560,        // tiny fragments leave before the sections
     hatchChipFall:670,    // slower chips accompany the opening
     hatchChipStagger:45,  // uneven chip release
-    hatchOwl:660,         // Owl becomes visible behind the shell
+    hatchOwl:660,         // Owl emerges in front of the opening
     hatchOwlRise:470,     // rise into the final pose
-    hatchShellFall:770,   // larger sections fall and settle
+    hatchShellFall:770,   // shell halves open and settle
     hatchFinish:1550,     // hold the reveal for the page handoff
   };
-  const EGG = {
-    outline:'#1c1c1c', crack:'#747474', shadow:'#f1f1f1',
-    stroke:5, crackStroke:2.35, splitStroke:3,
-    centerX:205, groundY:449, shadowCompression:.012,
-    silhouette:'M205 112C153 112 82 211 82 309C82 393 133 449 205 449C278 449 331 393 331 309C331 214 264 112 205 112Z',
-    // Unequal lengths and branching joints replace repeated sawteeth.
-    cracks:[
-      {d:'M129 236L147 227L150 214L166 210L177 191',idle:0,hatch:0},
-      {d:'M150 214L170 225L190 220L201 230',idle:110,hatch:40},
-      {d:'M155 264L171 267L184 290L209 281L237 283L249 264',idle:220,hatch:80},
-      {d:'M209 281L214 313L205 330',idle:330,hatch:120},
-      {d:'M155 264L137 282L115 277L83 287',hatch:60},
-      {d:'M249 264L281 270L298 259L330 291',hatch:100},
-      {d:'M177 191L184 180M190 220L196 201',hatch:20},
-      {d:'M205 330L218 354L208 379L217 402L205 449',hatch:180},
-      {d:'M218 354L241 345L255 350',hatch:220},
-    ],
-    idleAngles:[0,-1.65,1.4,-.8,.25,0],
-    hatchAngles:[0,-1.5,.9,-2.3,2.1,-1.15,.35,0],
-    pushIn:.055,
+  const IMAGE = {
+    url:'assets/egg-white-render.png',
+    width:1254,height:1254,
+    alphaBounds:{x:254,y:126,width:728,height:1061},
+    placement:{x:90,y:112,height:337},
   };
-  const OWL = {x:80,y:199,size:250,rise:27,startScale:.91,overshoot:1.014};
+  const imageScale=IMAGE.placement.height/IMAGE.alphaBounds.height;
+  const imagePlacement={
+    x:IMAGE.placement.x-IMAGE.alphaBounds.x*imageScale,
+    y:IMAGE.placement.y-IMAGE.alphaBounds.y*imageScale,
+    width:IMAGE.width*imageScale,height:IMAGE.height*imageScale,
+  };
+  // The same gently irregular seam clips both halves; image alpha supplies
+  // their outside contours. No geometric outline is painted over the egg.
+  const SEAM='M-50 296C8 294 67 295 96 300L111 295Q115 291 119 292L134 286Q138 285 142 291L147 298L161 294Q168 292 173 298L182 302Q196 299 209 296L222 289Q228 285 234 290L241 296Q251 297 260 299L278 300Q288 303 297 309L310 316Q323 313 340 308L470 307';
+  const EGG = {
+    crack:'#827d75',shadow:'#bbb6ae',crackStroke:1.15,
+    centerX:205.5,groundY:449,shadowCompression:.012,
+    cracks:[
+      {d:SEAM,idle:0,hatch:0,width:1.35},
+      {d:'M278 179Q272 190 263 196L255 208Q249 219 233 222L224 225',idle:180,hatch:40,width:1.05},
+      {d:'M255 208Q256 223 250 233L251 245Q248 254 238 260L232 269Q228 278 222 289',idle:280,hatch:70},
+      {d:'M222 289Q223 307 216 321L217 336Q214 346 204 352L198 365',idle:340,hatch:110,width:.95},
+      {d:'M255 208L239 204Q233 206 228 200L218 196Q207 194 200 199',hatch:130,width:.9},
+      {d:'M310 316Q302 330 297 347L290 358Q278 367 265 367L257 373',hatch:170,width:1},
+      {d:'M184 301Q171 307 159 304L149 310Q141 319 130 319',hatch:200,width:.85},
+    ],
+    idleAngles:[0,-1.35,1.15,-.6,.2,0],
+    hatchAngles:[0,-1.3,.8,-2,1.8,-.9,.3,0],
+    pushIn:.045,
+  };
+  const OWL = {x:85,y:145,size:240,rise:43,startScale:.91,overshoot:1.014};
   const SHELL = {
-    airFraction:.82,bounceHeight:3,samples:96,
     sections:[
-      {origin:[205,218],dx:-164,lift:42,turn:-72,flatten:.29,groundOffset:2,
-        d:'M83 287C89 202 153 112 205 112C264 112 324 214 330 291L298 259L281 270L249 264L237 283L209 281L184 290L171 267L155 264L137 282L115 277Z'},
-      {origin:[145,365],dx:-54,lift:10,turn:-31,flatten:.38,groundOffset:7,
-        d:'M83 287L115 277L137 282L155 264L171 267L184 290L209 281L214 313L205 330L218 354L208 379L217 402L205 449C133 449 82 393 82 309Z'},
-      {origin:[267,365],dx:86,lift:15,turn:37,flatten:.34,groundOffset:5,
-        d:'M209 281L237 283L249 264L281 270L298 259L330 291L331 309C331 393 278 449 205 449L217 402L208 379L218 354L205 330L214 313Z'},
+      {id:'cap',origin:[116,300],dx:-55,dy:-55,lift:13,turn:-29,
+        clip:SEAM+'L470 -100L-50 -100Z',rim:'#e5dfd5'},
+      {id:'cup',origin:[205.5,449],dx:5,dy:13,lift:2.5,turn:2.5,
+        clip:SEAM+'L470 630L-50 630Z',rim:'#cfc7bb'},
     ],
   };
   const CHIPS = {
-    stroke:2.2,airFraction:.82,bounceHeight:2.5,flatten:.42,
+    airFraction:.82,bounceHeight:2,flatten:.62,
     items:[
-      {x:133,y:278,dx:-66,lift:14,turn:-34,groundOffset:7,shape:'M-10-4L1-8L10 0L4 7L-7 4Z'},
-      {x:145,y:283,dx:-19,lift:8,turn:22,groundOffset:16,shape:'M-4-3L2-4L5 1L0 4Z'},
-      {x:280,y:271,dx:34,lift:10,turn:-18,groundOffset:15,shape:'M-7-5L3-7L8 1L1 6L-6 3Z'},
-      {x:298,y:275,dx:55,lift:15,turn:32,groundOffset:9,shape:'M-12-6L1-10L13-2L7 9L-9 7Z'},
+      {x:133,y:295,dx:-58,lift:12,turn:-34,groundOffset:7,shape:'M-10-4L1-8L10 0L4 7L-7 4Z'},
+      {x:151,y:298,dx:-16,lift:7,turn:22,groundOffset:13,shape:'M-4-3L2-4L5 1L0 4Z'},
+      {x:278,y:300,dx:25,lift:9,turn:-18,groundOffset:12,shape:'M-7-5L3-7L8 1L1 6L-6 3Z'},
+      {x:301,y:310,dx:48,lift:13,turn:32,groundOffset:6,shape:'M-12-6L1-10L13-2L7 9L-9 7Z'},
     ],
   };
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -89,7 +96,6 @@
   let host,scene,svg,body,closedShell,openShell,shadow,reveal,crackNodes,chipNodes,shellNodes;
   let mode='stopped',stage=0,elapsed=0,lastTick=null,frame=0;
   let hatchPromise=null,resolveHatch=null,seedCracks=[],seedChips=[],seedAngle=0;
-  let shellLandings=[];
 
   function poseAngle(values,amount) {
     const position=clamp(amount)*(values.length-1);
@@ -116,17 +122,6 @@
     const {left,top,width,height}=reveal.getBoundingClientRect();
     return {left,top,width,height};
   }
-  function landingOffset(node,section) {
-    const length=node.getTotalLength();
-    const angle=section.turn*Math.PI/180;
-    let bottom=-Infinity;
-    for(let index=0;index<=SHELL.samples;index++) {
-      const point=node.getPointAtLength(length*index/SHELL.samples);
-      const y=(point.x-section.origin[0])*Math.sin(angle)+(point.y-section.origin[1])*Math.cos(angle);
-      bottom=Math.max(bottom,section.origin[1]+y*section.flatten);
-    }
-    return EGG.groundY+section.groundOffset-bottom;
-  }
   function mount() {
     if(host?.isConnected)return true;
     host=document.getElementById('egg-stage');
@@ -135,16 +130,31 @@
       <div id="owl-egg-reveal" class="owl-egg-reveal" aria-hidden="true" style="left:${OWL.x/420*100}%;top:${OWL.y/530*100}%;width:${OWL.size/420*100}%"></div>
       <svg class="owl-egg-art" viewBox="0 0 420 530" fill="none" role="img" aria-labelledby="owl-egg-title owl-egg-description" xmlns="http://www.w3.org/2000/svg">
         <title id="owl-egg-title">An egg beginning to hatch</title>
-        <desc id="owl-egg-description">Small irregular cracks branch across a black outlined egg. The Owl stays hidden until Hatch is pressed.</desc>
-        <ellipse class="owl-egg-shadow" cx="205" cy="449" rx="88" ry="8" fill="${EGG.shadow}"/>
+        <desc id="owl-egg-description">Fine organic cracks form in a softly shaded white egg. The Owl stays hidden until Hatch is pressed.</desc>
+        <defs>
+          <image id="owl-egg-texture" href="${IMAGE.url}" x="${imagePlacement.x}" y="${imagePlacement.y}" width="${imagePlacement.width}" height="${imagePlacement.height}"/>
+          <mask id="owl-egg-alpha" maskUnits="userSpaceOnUse" x="-50" y="-100" width="520" height="730" style="mask-type:alpha"><use href="#owl-egg-texture"/></mask>
+          <filter id="owl-egg-ground-soft" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="3"/></filter>
+          <filter id="owl-egg-fragment-soft" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.2" stdDeviation=".8" flood-color="#6e6454" flood-opacity=".15"/></filter>
+          ${SHELL.sections.map(section=>`<clipPath id="owl-egg-${section.id}-clip" clipPathUnits="userSpaceOnUse"><path d="${section.clip}"/></clipPath>`).join('')}
+          ${CHIPS.items.map((chip,index)=>`<clipPath id="owl-egg-chip-clip-${index}" clipPathUnits="userSpaceOnUse"><path d="${chip.shape}"/></clipPath>`).join('')}
+        </defs>
+        <ellipse class="owl-egg-shadow" cx="205.5" cy="451" rx="76" ry="5.5" fill="${EGG.shadow}" opacity=".22" filter="url(#owl-egg-ground-soft)"/>
         <g class="owl-egg-body" stroke-linecap="round" stroke-linejoin="round">
           <g class="owl-egg-closed-shell">
-            <path d="${EGG.silhouette}" fill="white" stroke="${EGG.outline}" stroke-width="${EGG.stroke}"/>
-            <g fill="none" stroke="${EGG.crack}" stroke-width="${EGG.crackStroke}">${EGG.cracks.map(crack=>`<path class="owl-egg-crack" pathLength="1" d="${crack.d}"/>`).join('')}</g>
+            <use href="#owl-egg-texture"/>
+            <g mask="url(#owl-egg-alpha)" fill="none" stroke="${EGG.crack}">${EGG.cracks.map(crack=>`<path class="owl-egg-crack" pathLength="1" stroke-width="${crack.width||EGG.crackStroke}" d="${crack.d}"/>`).join('')}</g>
           </g>
-          <g class="owl-egg-open-shell" fill="white" stroke="${EGG.outline}" stroke-width="${EGG.splitStroke}">${SHELL.sections.map(section=>`<path class="owl-egg-shell-section" d="${section.d}"/>`).join('')}</g>
+          <g class="owl-egg-open-shell">${SHELL.sections.map(section=>`<g class="owl-egg-shell-section" data-shell="${section.id}"><g clip-path="url(#owl-egg-${section.id}-clip)">
+            <use href="#owl-egg-texture"/>
+            <g mask="url(#owl-egg-alpha)" fill="none" stroke="#999188" stroke-width=".85" opacity=".52">${EGG.cracks.slice(1).map(crack=>`<path d="${crack.d}"/>`).join('')}</g>
+            <g mask="url(#owl-egg-alpha)"><path d="${SEAM}" fill="none" stroke="${section.rim}" stroke-width="2.4"/><path d="${SEAM}" transform="translate(0 1)" fill="none" stroke="#fffdf8" stroke-width=".8" opacity=".8"/></g>
+          </g></g>`).join('')}</g>
         </g>
-        <g aria-hidden="true" fill="white" stroke="${EGG.outline}" stroke-width="${CHIPS.stroke}" stroke-linecap="round" stroke-linejoin="round">${CHIPS.items.map(chip=>`<g transform="translate(${chip.x} ${chip.y})"><path class="owl-egg-chip" d="${chip.shape}"/></g>`).join('')}</g>
+        <g aria-hidden="true">${CHIPS.items.map((chip,index)=>`<g transform="translate(${chip.x} ${chip.y})"><g class="owl-egg-chip" filter="url(#owl-egg-fragment-soft)">
+          <path d="${chip.shape}" transform="translate(.3 .8)" fill="#ddd6cb"/>
+          <g clip-path="url(#owl-egg-chip-clip-${index})"><use href="#owl-egg-texture" transform="translate(${-chip.x} ${-chip.y})"/></g>
+        </g></g>`).join('')}</g>
       </svg>
     </div>`;
     scene=host.querySelector('.owl-egg-scene');
@@ -157,7 +167,6 @@
     crackNodes=[...host.querySelectorAll('.owl-egg-crack')];
     chipNodes=[...host.querySelectorAll('.owl-egg-chip')];
     shellNodes=[...host.querySelectorAll('.owl-egg-shell-section')];
-    shellLandings=shellNodes.map((node,index)=>landingOffset(node,SHELL.sections[index]));
     resetPose();
     return true;
   }
@@ -177,14 +186,10 @@
     node.setAttribute('transform',`translate(${chip.dx*easeOut(air)} ${y}) scale(1 ${flatten}) rotate(${chip.turn*air})`);
   }
   function renderSection(node,section,index,amount) {
-    const air=clamp(amount/SHELL.airFraction);
-    const landing=progress(amount,SHELL.airFraction,1-SHELL.airFraction);
-    let y=shellLandings[index]*air*air-section.lift*4*air*(1-air);
-    if(landing>0)y=shellLandings[index]-Math.sin(landing*Math.PI)*SHELL.bounceHeight;
-    const flatten=mix(1,section.flatten,smooth(progress(amount,.55,.45)));
-    const angle=section.turn*smooth(air);
+    const opening=easeOut(amount);
+    const rise=Math.sin(amount*Math.PI)*section.lift;
     const [xOrigin,yOrigin]=section.origin;
-    node.setAttribute('transform',`translate(${section.dx*easeOut(air)} ${y}) translate(${xOrigin} ${yOrigin}) scale(1 ${flatten}) rotate(${angle}) translate(${-xOrigin} ${-yOrigin})`);
+    node.setAttribute('transform',`translate(${section.dx*opening} ${section.dy*opening-rise}) rotate(${section.turn*opening} ${xOrigin} ${yOrigin})`);
   }
   function renderIdle(time) {
     setStage(time<TIMING.idleCrack?1:time<TIMING.idleBranch?2:time<TIMING.idleChip?3:4);
@@ -226,7 +231,7 @@
       mode='hatched';
       host.dataset.mode=mode;
       svg.querySelector('title').textContent='Your Owl has hatched';
-      svg.querySelector('desc').textContent='The shell has opened, revealing your Owl between the fallen pieces.';
+      svg.querySelector('desc').textContent='Two softly shaded shell halves have opened, revealing your Owl.';
       const result={completed:true,bounds:readBounds()};
       const resolve=resolveHatch;
       resolveHatch=null;
@@ -261,7 +266,7 @@
     host.dataset.mode='stopped';
     scene.style.transform='';
     svg.querySelector('title').textContent='An egg beginning to hatch';
-    svg.querySelector('desc').textContent='Small irregular cracks branch across a black outlined egg. The Owl stays hidden until Hatch is pressed.';
+    svg.querySelector('desc').textContent='Fine organic cracks form in a softly shaded white egg. The Owl stays hidden until Hatch is pressed.';
     reveal.style.opacity='0';
     reveal.style.transform='';
     reveal.replaceChildren();
