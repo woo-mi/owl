@@ -23,7 +23,6 @@
   transform-box:fill-box;
   transform-origin:center;
 }
-.owl-egg-panel-gap { opacity:0; }
 .owl-egg-crack {
   stroke-dasharray:1;
   stroke-dashoffset:1;
@@ -33,7 +32,6 @@
   stroke-dashoffset:0;
   opacity:1;
 }
-.owl-egg-static .owl-egg-panel-gap { opacity:1; }
 .owl-egg-static .owl-egg-piece {
   opacity:1;
   transform:var(--piece-rest);
