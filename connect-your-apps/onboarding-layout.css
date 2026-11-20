@@ -6,14 +6,13 @@
   margin-block:auto;
 }
 .connections-main > .onboarding > .heading { text-align:center; }
-:is(#connections-view,#customize-view,#appearance-view,#personality-view) .heading h1 {
-  font-size:28px;
+.connections-main > .onboarding > .heading h1 {
+  font-size:22px;
   font-weight:500;
-  line-height:34px;
-  letter-spacing:-.41667px;
+  line-height:28px;
+  letter-spacing:-.4px;
 }
-#connections-view .heading h1 { font-size:24px; }
-:is(#connections-view,#customize-view,#appearance-view,#personality-view) .heading p {
+.connections-main > .onboarding > .heading p {
   margin-top:8px;
   font-size:14px;
   line-height:21px;
