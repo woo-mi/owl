@@ -5,6 +5,7 @@
   const customizeView = document.querySelector('#customize-view');
   const appearanceView = document.querySelector('#appearance-view');
   const personalityView = document.querySelector('#personality-view');
+  const readyView = document.querySelector('#ready-view');
   const advanceLinks = [...document.querySelectorAll('[data-customize-link]')];
   const nameInput = document.querySelector('#owl-name');
   const status = document.querySelector('#hatch-status');
@@ -14,6 +15,7 @@
   const hatchedStage = document.querySelector('#hatched-owl-stage');
   let currentStep;
   let savedOwl;
+  let savedPreferences = window.OwlPersonality.snapshot();
   const routeAnimations = new Set();
   /* TRANSITION STORYBOARD
    *   0ms   the selected Owl moves from its 175px preview toward the 90px slot
@@ -53,19 +55,20 @@
   function renderRoute(focusHeading = false) {
     const url = new URL(location.href);
     const requestedStep = url.searchParams.get('step');
-    const step = ['customize','appearance','personality'].includes(requestedStep) ? requestedStep : 'connections';
+    const step = ['customize','appearance','personality','ready'].includes(requestedStep) ? requestedStep : 'connections';
     const isCustomize = step === 'customize';
     const changed = currentStep !== step;
-    if (changed) clearTransition();
+    if (changed) { clearTransition();window.OwlReady.close(); }
     if (changed && step !== 'connections') window.dispatchEvent(new CustomEvent('connections:leave'));
     connectionsView.hidden = step !== 'connections';
     customizeView.hidden = !isCustomize;
     appearanceView.hidden = step !== 'appearance';
     personalityView.hidden = step !== 'personality';
+    readyView.hidden = step !== 'ready';
     document.body.dataset.flowStep = step;
-    const titleId = {connections:'page-title',customize:'customize-title',appearance:'appearance-title',personality:'personality-title'}[step];
+    const titleId = {connections:'page-title',customize:'customize-title',appearance:'appearance-title',personality:'personality-title',ready:'ready-title'}[step];
     main.setAttribute('aria-labelledby',titleId);
-    document.title = (isCustomize ? 'Meet your Owl' : step === 'connections' ? 'Connect your apps' : 'Make your Owl') + ' · Owl';
+    document.title = (isCustomize ? 'Meet your Owl' : step === 'connections' ? 'Connect your apps' : step === 'ready' ? 'Your Owl is ready' : 'Make your Owl') + ' · Owl';
     url.searchParams.set('step', 'customize');
     advanceLinks.forEach(link => { link.href = url.pathname + url.search; });
     if (changed) {
@@ -75,6 +78,10 @@
       if (step === 'personality') {
         savedOwl ||= {name:nameInput.value,color:'#FA70AB',studio:{...window.OwlStudioArtwork.defaults}};
         window.OwlPersonality.open({...savedOwl,name:nameInput.value});
+      }
+      if (step === 'ready') {
+        savedOwl ||= {name:nameInput.value,color:'#FA70AB',studio:{...window.OwlStudioArtwork.defaults}};
+        window.OwlReady.open({...savedOwl,name:nameInput.value,preferences:savedPreferences});
       }
     }
     eggStage.hidden = !!savedOwl;
@@ -127,8 +134,13 @@
     sizeName();
     navigate('personality',{shrinkOwl:true});
   });
-  window.addEventListener('owl-personality:save',() => { status.textContent = 'Your Owl is ready.';navigate('customize'); });
+  window.addEventListener('owl-personality:save',event => {
+    savedPreferences = {...event.detail};
+    navigate('ready');
+  });
   window.addEventListener('owl-personality:skip',() => navigate('customize'));
+  window.addEventListener('owl-ready:save',() => { window.location.href = '../reply-ux-pattern/'; });
+  window.addEventListener('owl-ready:skip',() => { window.location.href = '../reply-ux-pattern/'; });
   window.addEventListener('pagehide',clearTransition);
   window.addEventListener('owl-egg:complete', () => { status.textContent = 'The egg has a new crack.'; });
   sizeName();
