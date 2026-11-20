@@ -68,7 +68,8 @@
   border-width:0 1.5px 1.5px 0;
   transform:translateY(-2px) rotate(45deg);
 }
-body.sidebar-open #connections-version-picker { display:none; }
+body.sidebar-open #connections-version-picker,
+body[data-flow-step="customize"] #connections-version-picker { display:none; }
 @media(prefers-reduced-motion:reduce) {
   .connections-version-trigger svg { transition:none; }
 }
