@@ -89,18 +89,22 @@
   }));
   window.addEventListener('prototype:nav', event => {
     const name = event.detail?.name;
-    if (name === 'Connections') { document.querySelector('#page-title').focus(); window.scrollTo({top:0,behavior:'smooth'}); }
+    if (name === 'Connections') { window.OwlFlow?.connections(); }
     else if (name === 'Owls' || name === 'New Chat' || name === 'Chat') window.location.href = '../reply-ux-pattern/';
     else notice(`${name} is available in the Owl workspace`);
   });
-  function applyVersion(version) {
-    const selected = version === 'no' ? 'no' : 'connected';
+  function dismissConnectionDialogs() {
     returnToCatalog = false;
     pendingApp = null;
     connectDialog.close();
     catalogDialog.close();
     clearTimeout(noticeTimer);
     document.querySelector('#notice').hidden = true;
+  }
+  window.addEventListener('connections:leave', dismissConnectionDialogs);
+  function applyVersion(version) {
+    const selected = version === 'no' ? 'no' : 'connected';
+    dismissConnectionDialogs();
     search.value = '';
     account.hidden = selected === 'no';
     document.body.dataset.connectionsVersion = selected;

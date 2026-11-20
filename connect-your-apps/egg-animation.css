@@ -1,0 +1,39 @@
+/* The SVG viewport and stage have no background; only the shell is filled. */
+#egg-stage {
+  background:transparent;
+  isolation:isolate;
+}
+.owl-egg-art {
+  display:block;
+  width:320px;
+  max-width:100%;
+  height:auto;
+  overflow:visible;
+}
+.owl-egg-body {
+  transform-box:view-box;
+  transform-origin:204px 448px;
+}
+.owl-egg-shadow {
+  transform-box:fill-box;
+  transform-origin:center;
+}
+.owl-egg-chip { opacity:0;transform-box:fill-box;transform-origin:center; }
+.owl-egg-central-crack,
+.owl-egg-branch-cracks path {
+  stroke-dasharray:1;
+  stroke-dashoffset:1;
+  opacity:0;
+}
+.owl-egg-static .owl-egg-central-crack,
+.owl-egg-static .owl-egg-branch-cracks path {
+  stroke-dashoffset:0;
+  opacity:1;
+}
+@media(max-width:700px) {
+  .owl-egg-art { width:230px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .owl-egg-body,
+  .owl-egg-shadow { transform:none!important; }
+}

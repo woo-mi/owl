@@ -34,10 +34,11 @@
     window.dispatchEvent(new CustomEvent('connections:version-change', {detail:{version:selected}}));
   }
   function select(version) {
-    const changed = selected !== version;
-    selected = version;
     const url = new URL(location.href);
-    if (url.searchParams.get('version') !== selected) {
+    const changed = selected !== version || url.searchParams.has('step');
+    selected = version;
+    if (url.searchParams.get('version') !== selected || url.searchParams.has('step')) {
+      url.searchParams.delete('step');
       url.searchParams.set('version', selected);
       history.pushState(history.state, '', url.pathname + url.search + url.hash);
     }

@@ -9,12 +9,16 @@
   <link rel="canonical" href="https://woo-mi.github.io/owl/connect-your-apps/">
   <link rel="icon" href="assets/owl-mark.svg" type="image/svg+xml">
   <link rel="preload" href="assets/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=versions-1">
+  <link rel="stylesheet" href="styles.css?v=customize-1">
   <link rel="stylesheet" href="sidebar.css">
   <link rel="stylesheet" href="version-picker.css?v=versions-1">
+  <link rel="stylesheet" href="customize-owl.css?v=customize-1">
+  <link rel="stylesheet" href="egg-animation.css?v=customize-1">
   <script src="sidebar.js" defer></script>
-  <script src="app.js?v=versions-1" defer></script>
-  <script src="version-picker.js?v=versions-1" defer></script>
+  <script src="egg-animation.js?v=customize-1" defer></script>
+  <script src="app.js?v=customize-1" defer></script>
+  <script src="customize-owl.js?v=customize-1" defer></script>
+  <script src="version-picker.js?v=customize-1" defer></script>
 </head>
 <body class="sidebar-collapsed">
   <a class="skip-link" href="#main">Skip to connections</a>
@@ -197,7 +201,7 @@
 </aside>
 
   <main id="main" class="main connections-main" aria-labelledby="page-title">
-    <div class="onboarding">
+    <div id="connections-view" class="onboarding">
       <header class="heading">
         <h1 id="page-title" tabindex="-1">Connect your apps</h1>
         <p>Integrations help your Owl do more work, all optional.</p>
@@ -222,15 +226,32 @@
       </button>
       <div class="footer-spacer"></div>
       <footer class="flow-footer">
-        <a class="footer-action secondary" href="../reply-ux-pattern/">Skip for now</a>
+        <a class="footer-action secondary" data-customize-link href="?version=connected&amp;step=customize">Skip for now</a>
         <ol class="progress" aria-label="Setup progress: step 1 of 3">
           <li class="is-current" aria-current="step" aria-label="Step 1: Connect your apps"></li>
           <li aria-label="Step 2"></li>
           <li aria-label="Step 3"></li>
         </ol>
-        <a class="footer-action primary" href="../reply-ux-pattern/">Continue</a>
+        <a class="footer-action primary" data-customize-link href="?version=connected&amp;step=customize">Continue</a>
       </footer>
     </div>
+    <section id="customize-view" class="onboarding customize-onboarding" aria-labelledby="customize-title" hidden>
+      <header class="heading">
+        <h1 id="customize-title" tabindex="-1">Meet your Owl</h1>
+        <p>Name it, connect your apps, and choose what it can help with.</p>
+      </header>
+      <div id="egg-stage" class="egg-stage" role="img" aria-label="A line-drawn egg beginning to crack"></div>
+      <div class="owl-personalization">
+        <div class="owl-name-field">
+          <label class="sr-only" for="owl-name">Owl name</label>
+          <input id="owl-name" class="owl-name" type="text" value="Ayush's Owl" maxlength="32" size="11" autocomplete="off" spellcheck="false">
+          <button id="edit-owl-name" class="edit-owl-name" type="button" aria-label="Edit Owl name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 3 5 5M3 21l5-1 13-13a2.1 2.1 0 0 0-5-5L3 15v6Z"/></svg></button>
+        </div>
+        <button id="hatch-owl" class="hatch-owl" type="button">Hatch your Owl<span aria-hidden="true">→</span></button>
+        <a class="start-chatting" href="../reply-ux-pattern/">Start chatting</a>
+        <p id="hatch-status" class="sr-only" role="status" aria-live="polite"></p>
+      </div>
+    </section>
   </main>
   <dialog id="connect-dialog" aria-labelledby="connect-title" aria-describedby="connect-description">
     <button class="dialog-close" type="button" data-close-dialog aria-label="Close connection dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
