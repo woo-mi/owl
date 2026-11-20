@@ -39,7 +39,7 @@
 #ready-current-priority { max-width:100%;margin-top:8px;padding-bottom:8px;border-bottom:1px solid #eee;color:#191919;font-size:14px;line-height:20px;white-space:pre-line;overflow-wrap:anywhere; }
 .owl-ready-suggestions { margin-top:63px; }
 #ready-suggestions-title { color:#1a1a16;font-size:22px;font-weight:400;line-height:28px;letter-spacing:-.41667px; }
-.ready-card-grid { display:grid;grid-template-columns:minmax(0,329fr) minmax(0,339fr);gap:16px 10px;margin-top:18px; }
+.ready-card-grid { display:grid;grid-template-columns:minmax(0,329fr) minmax(0,339fr);gap:10px;margin-top:18px; }
 .ready-card { min-width:0;padding:16px;border:1px solid #eee;border-radius:14px;background:#fff; }
 .ready-card-leading-icon { display:none; }
 .ready-card-heading { display:flex;align-items:flex-start;justify-content:space-between;gap:8px; }
@@ -64,7 +64,7 @@
 .owl-ready-onboarding[data-ready-version="v2"] .owl-ready-priority { margin-top:16px; }
 .owl-ready-onboarding[data-ready-version="v2"] #ready-current-priority { white-space:normal; }
 .owl-ready-onboarding[data-ready-version="v2"] .owl-ready-suggestions { margin-top:42px; }
-.owl-ready-onboarding[data-ready-version="v2"] .ready-card-grid { grid-template-columns:minmax(0,329fr) minmax(0,340fr);row-gap:11.25px;margin-top:9px; }
+.owl-ready-onboarding[data-ready-version="v2"] .ready-card-grid { grid-template-columns:minmax(0,329fr) minmax(0,340fr);margin-top:9px; }
 .owl-ready-onboarding[data-ready-version="v2"] .ready-card { position:relative;min-height:150.75px;padding:15px; }
 .owl-ready-onboarding[data-ready-version="v2"] .ready-card-leading-icon { display:block;width:24px;height:24px;margin-bottom:10px;color:#616061; }
 .owl-ready-onboarding[data-ready-version="v2"] .ready-card-leading-icon svg { width:100%;height:100%; }
@@ -89,5 +89,5 @@
   .owl-ready-onboarding[data-ready-version="v2"] #ready-role { flex:auto; }
   .owl-ready-onboarding[data-ready-version="v2"] .ready-edit { padding:6px 0; }
   .owl-ready-onboarding[data-ready-version="v2"] .owl-ready-suggestions { margin-top:40px; }
-  .owl-ready-onboarding[data-ready-version="v2"] .ready-card-grid { grid-template-columns:minmax(0,1fr);row-gap:16px; }
+  .owl-ready-onboarding[data-ready-version="v2"] .ready-card-grid { grid-template-columns:minmax(0,1fr); }
 }
