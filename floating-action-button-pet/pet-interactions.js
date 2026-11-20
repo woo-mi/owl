@@ -7,6 +7,7 @@
   const fab = find('.pet-fab');
   const toolbar = find('.pet-toolbar');
   const edit = find('.pet-edit');
+  const hide = find('.pet-hide');
   const composer = find('.pet-composer');
   const input = find('#pet-message');
   const send = find('.pet-send');
@@ -25,7 +26,7 @@
   const followupInput = find('#pet-followup');
   const followupSend = find('.pet-followup-send');
   const announcement = find('.pet-announcement');
-  if (![fab, toolbar, edit, composer, input, send, noticeToggle, unreadBadge,
+  if (![fab, toolbar, edit, hide, composer, input, send, noticeToggle, unreadBadge,
     indicator, card, resultLink, title, statusText, statusActions, dismiss, statusReturn,
     stop, followup, followupInput, followupSend, announcement].every(Boolean)) return;
 
@@ -371,6 +372,17 @@
   card.addEventListener('focusout', () => queueMicrotask(updateStatusAccess));
 
   edit.addEventListener('click', () => openComposer());
+  hide.addEventListener('click', () => {
+    clearTask();
+    setStage('default');
+    announcement.textContent = '';
+    if (dock.contains(document.activeElement)) document.activeElement.blur();
+    dock.inert = true;
+    dock.setAttribute('aria-hidden', 'true');
+    dock.classList.add('is-hiding');
+    const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 180;
+    window.setTimeout(() => { dock.hidden = true; }, delay);
+  });
   input.addEventListener('input', updateInputs);
   followupInput.addEventListener('input', updateInputs);
   composer.addEventListener('submit', event => {

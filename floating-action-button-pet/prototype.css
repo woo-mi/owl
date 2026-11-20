@@ -96,7 +96,9 @@ button:focus-visible, a:focus-visible {
   display: block;
   width: 88px;
   height: 88px;
+  transition: opacity var(--motion-reveal) ease;
 }
+.pet-dock.is-hiding { opacity: 0; pointer-events: none; }
 .pet-fab {
   display: block;
   padding: 0;
@@ -173,7 +175,10 @@ button:focus-visible, a:focus-visible {
   color: inherit;
 }
 .pet-edit svg { width: 21.09px; height: 21.09px; }
-.pet-voice svg { width: 15.06px; height: 18.08px; }
+.pet-hide svg { grid-area: 1 / 1; width: 21.09px; height: 21.09px; transition: opacity var(--motion-content) ease; }
+.pet-hide .pet-eye-off { opacity: 0; }
+.pet-hide:is(:hover, :focus-visible) .pet-eye-open { opacity: 0; }
+.pet-hide:is(:hover, :focus-visible) .pet-eye-off { opacity: 1; }
 .pet-toolbar-divider { width: .603px; height: 24.1px; background: #d6d6d6; }
 .pet-toolbar .pet-notice-toggle, .pet-notice-divider { display: none; }
 .pet-dock:is([data-stage="done-hover"], [data-stage="notice"], [data-stage="reply"]) .pet-notice-toggle { display: grid; position: relative; }
@@ -200,7 +205,7 @@ button:focus-visible, a:focus-visible {
 .pet-send { background: #3884f5; color: white; transition: background var(--motion-content), transform var(--motion-content); }
 .pet-send svg { width: 14.92px; height: 14.92px; }
 .pet-send:disabled { background: #719bd8; cursor: default; }
-.pet-voice:disabled, .pet-attach:disabled { cursor: default; }
+.pet-attach:disabled { cursor: default; }
 #pet-message {
   width: 100%;
   min-width: 0;
@@ -217,7 +222,7 @@ button:focus-visible, a:focus-visible {
 #pet-message::placeholder { color: #545454; opacity: 1; }
 .pet-surface:focus-within { border-color: #c8c8c8; }
 .pet-surface button:focus-visible { outline-offset: -3px !important; }
-.pet-edit:hover { background: #dedede; }
+.pet-edit:hover, .pet-hide:hover { background: #dedede; }
 .pet-send:not(:disabled):hover { background: #226fdf; }
 .pet-send:not(:disabled):active { transform: scale(.9); }
 .pet-done-indicator {

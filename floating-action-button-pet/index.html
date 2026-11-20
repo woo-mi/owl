@@ -6,7 +6,7 @@
     <title>Floating Action Button (pet)</title>
     <meta name="description" content="Floating Action Button (pet): an Owl interaction prototype.">
     <link rel="canonical" href="https://woo-mi.github.io/owl/floating-action-button-pet/">
-    <link rel="stylesheet" href="prototype.css?v=pet-interactions-5">
+    <link rel="stylesheet" href="prototype.css?v=pet-interactions-6">
     <style>
       *, ::before, ::after {
         box-sizing: border-box;
@@ -1251,8 +1251,9 @@
             <svg viewBox="0 0 21.09 21.09" fill="currentColor" aria-hidden="true"><path d="M16.976 .927q-.273 .041-.603 .19-.324 .15-.576 .319-.191 .145-4.284 4.248-4.088 4.104-4.196 4.269-.191 .278-.299 .571-.103 .294-.458 1.478l-.32 1.159q-.082 .314-.092 .442-.011 .124 .031 .294v.02q.108 .381 .36 .634 .252 .252 .633 .36h.021q.17 .041 .293 .031 .129-.01 .443-.093l1.159-.319q1.184-.355 1.478-.458 .293-.108 .571-.299 .165-.128 4.268-4.217 4.104-4.093 4.248-4.304 .299-.381 .443-.886 .149-.504 .088-.994-.088-.865-.613-1.493-.525-.633-1.37-.885-.231-.088-.654-.088-.422 0-.571 .021zM3.923 1.812q-.762 .129-1.323 .659-.556 .526-.767 1.303-.041 .129-.041 1.076l-.021 5.695 .021 5.695q0 .947 .041 1.076 .211 .736 .705 1.235 .5 .495 1.236 .706 .129 .041 1.076 .041l5.695 .021 5.695-.021q.947 0 1.076-.041 .736-.211 1.23-.706 .5-.499 .711-1.235 .041-.129 .041-.634l.021-6.389-.062-.129q-.149-.252-.422-.402-.088-.041-.15-.062-.061-.02-.231-.02-.17 0-.232 .02-.062 .021-.149 .062-.273 .15-.423 .402l-.061 .129-.021 6.6-.062 .15q-.211 .417-.654 .504-.149 .042-6.307 .042-6.158 0-6.307-.042-.443-.087-.654-.504l-.062-.15v-12.697l.062-.149q.149-.314 .463-.463l.149-.062 6.601-.021 .129-.062q.103-.067 .226-.19 .129-.129 .191-.242 .067-.119 .067-.371 0-.252-.062-.381-.149-.252-.422-.401l-.129-.083h-3.352q-3.352 0-3.522 .041zM17.65 2.657q.211 .041 .402 .19 .191 .15 .283 .34 .098 .185 .098 .443 0 .252-.082 .443-.067 .103-4.119 4.175-4.048 4.068-4.171 4.13-.062 .046-.994 .319-.927 .273-.937 .263-.01-.011 .263-.937 .273-.932 .324-1.015 .057-.082 4.124-4.139 4.073-4.063 4.155-4.104 .088-.046 .222-.088 .139-.041 .201-.041 .067 0 .231 .021z"/></svg>
           </button>
           <span class="pet-toolbar-divider" aria-hidden="true"></span>
-          <button class="pet-voice" type="button" aria-label="Voice input, coming soon" title="Voice input is coming soon" disabled>
-            <svg viewBox="0 0 20 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 10v4m4-7v10m4-14v18m4-14v10m4-7v4"/></svg>
+          <button class="pet-hide" type="button" aria-label="Hide Owl" title="Hide Owl">
+            <svg class="pet-eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12C4 7.5 7.5 5 12 5s8 2.5 10 7c-2 4.5-5.5 7-10 7S4 16.5 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="pet-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><mask id="pet-eye-slash-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="white" stroke="none"/><path d="M3 3l18 18" stroke="black" stroke-width="5"/></mask></defs><g mask="url(#pet-eye-slash-cutout)"><path d="M2 12C4 7.5 7.5 5 12 5s8 2.5 10 7c-2 4.5-5.5 7-10 7S4 16.5 2 12Z"/><circle cx="12" cy="12" r="3"/></g><path d="M3 3l18 18"/></svg>
           </button>
           <span class="pet-toolbar-divider pet-notice-divider" aria-hidden="true"></span>
           <button class="pet-notice-toggle" type="button" aria-label="Open completed result" aria-expanded="false" aria-controls="pet-activity" title="Notifications" aria-hidden="true" inert>
@@ -1294,6 +1295,6 @@
     </div>
     <script src="prototype.js?v=owl-affordance-new-nov-9"></script>
     <script src="pet-drag.js?v=3"></script>
-    <script src="pet-interactions.js?v=5"></script>
+    <script src="pet-interactions.js?v=6"></script>
   </body>
 </html>
