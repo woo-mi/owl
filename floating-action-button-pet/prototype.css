@@ -91,7 +91,7 @@ button:focus-visible, a:focus-visible {
   --indicator-y: 97px;
   position: fixed;
   right: calc(64px + env(safe-area-inset-right, 0px));
-  bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(112px + env(safe-area-inset-bottom, 0px));
   z-index: 20;
   display: block;
   width: 88px;
@@ -124,9 +124,9 @@ button:focus-visible, a:focus-visible {
   width: var(--panel-width);
   height: 47px;
   overflow: hidden;
-  border: 1.2px solid #cbcbcb;
+  border: 1.2px solid #dedede;
   border-radius: 23.5px;
-  background: #adadad;
+  background: #eeeeee;
   color: #292d2d;
   opacity: 0;
   visibility: hidden;
@@ -140,7 +140,7 @@ button:focus-visible, a:focus-visible {
     transform var(--motion-morph) var(--motion-settle),
     visibility 0s var(--motion-reveal);
 }
-.pet-dock:not(:is([data-stage="default"], [data-stage="done"])):not(.is-dragging) .pet-surface {
+.pet-dock:is([data-stage="hover"], [data-stage="compose"], [data-stage="done-hover"], [data-stage="notice"], [data-stage="reply"], [data-stage="working"][data-working-hover="true"]):not(.is-dragging) .pet-surface {
   opacity: 1;
   visibility: visible;
   transform: translateY(0) scale(1);
@@ -158,7 +158,7 @@ button:focus-visible, a:focus-visible {
   transition: opacity var(--motion-content) ease;
 }
 .pet-toolbar { justify-content: space-evenly; }
-.pet-dock:is([data-stage="hover"], [data-stage="working"], [data-stage="done-hover"], [data-stage="notice"], [data-stage="reply"]) .pet-toolbar,
+.pet-dock:is([data-stage="hover"], [data-stage="done-hover"], [data-stage="notice"], [data-stage="reply"], [data-stage="working"][data-working-hover="true"]) .pet-toolbar,
 .pet-dock[data-stage="compose"] .pet-composer {
   opacity: 1;
   pointer-events: auto;
@@ -174,11 +174,11 @@ button:focus-visible, a:focus-visible {
 }
 .pet-edit svg { width: 21.09px; height: 21.09px; }
 .pet-voice svg { width: 15.06px; height: 18.08px; }
-.pet-toolbar-divider { width: .603px; height: 24.1px; background: #9f9f9f; }
+.pet-toolbar-divider { width: .603px; height: 24.1px; background: #d6d6d6; }
 .pet-toolbar .pet-notice-toggle, .pet-notice-divider { display: none; }
 .pet-dock:is([data-stage="done-hover"], [data-stage="notice"], [data-stage="reply"]) .pet-notice-toggle { display: grid; position: relative; }
 .pet-dock:is([data-stage="notice"], [data-stage="reply"]) .pet-notice-divider { display: block; }
-.pet-notice-toggle::before { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: #a4a5a5; }
+.pet-notice-toggle::before { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: #e3e3e3; }
 .pet-notice-toggle svg { position: relative; width: 22px; height: 23px; }
 .pet-notice-toggle .pet-chevron { display: none; width: 18px; height: 18px; }
 .pet-unread { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 14.65px; height: 14.65px; border-radius: 50%; background: #32c85b; color: #fff; font: 600 9.77px/1 Inter, sans-serif; }
@@ -195,7 +195,7 @@ button:focus-visible, a:focus-visible {
   padding: 0;
   border-radius: 50%;
 }
-.pet-attach { background: #a4a5a5; color: #3d3d3d; }
+.pet-attach { background: #e3e3e3; color: #3d3d3d; }
 .pet-attach svg { width: 16.07px; height: 16.07px; }
 .pet-send { background: #3884f5; color: white; transition: background var(--motion-content), transform var(--motion-content); }
 .pet-send svg { width: 14.92px; height: 14.92px; }
@@ -215,9 +215,9 @@ button:focus-visible, a:focus-visible {
   caret-color: #353535;
 }
 #pet-message::placeholder { color: #545454; opacity: 1; }
-.pet-surface:focus-within { border-color: #a0a0a0; }
+.pet-surface:focus-within { border-color: #c8c8c8; }
 .pet-surface button:focus-visible { outline-offset: -3px !important; }
-.pet-edit:hover { background: #ffffff24; }
+.pet-edit:hover { background: #dedede; }
 .pet-send:not(:disabled):hover { background: #226fdf; }
 .pet-send:not(:disabled):active { transform: scale(.9); }
 .pet-done-indicator {
@@ -310,7 +310,7 @@ button:focus-visible, a:focus-visible {
   [data-pencil-name="Owl affordance new"] { padding: 270px 16px calc(144px + env(safe-area-inset-bottom, 0px)) 64px; }
   .pet-dock {
     right: calc(32px + env(safe-area-inset-right, 0px));
-    bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   }
   [data-pencil-name="Personalized greeting"] { margin-bottom: 28px; }
   [data-pencil-name="Editable question placeholder"] { width: calc(100% - 40.8px); white-space: normal !important; }

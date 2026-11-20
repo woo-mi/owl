@@ -42,7 +42,7 @@
   const REPLY_HEIGHT = 117;
   const INDICATOR_HEIGHT = 8;
   const clamp = (value, min, max) => Math.min(Math.max(min, max), Math.max(min, value));
-  const toolbarStages = new Set(['hover', 'working', 'done-hover', 'notice', 'reply']);
+  const toolbarStages = new Set(['hover', 'done-hover', 'notice', 'reply']);
   const noticeStages = new Set(['done-hover', 'notice', 'reply']);
   const cardStages = new Set(['working', 'notice', 'reply']);
 
@@ -66,6 +66,8 @@
   let lastPointerType = '';
   let statusPointerInside = false;
   let statusTouchOpen = false;
+  let workingActionsVisible = false;
+  let actionPointerInside = false;
 
   const idleStage = () => task && task.status === 'done' && task.unread ? 'done' : 'default';
   const actionStage = () => task && task.status === 'done' ? 'done-hover' : 'hover';
@@ -98,7 +100,9 @@
   function syncAccess() {
     const available = !dragging;
     const cardVisible = available && cardStages.has(stage);
-    setAccessible(toolbar, available && toolbarStages.has(stage));
+    const toolbarVisible = available && (toolbarStages.has(stage) || (stage === 'working' && workingActionsVisible));
+    dock.dataset.workingHover = String(available && workingActionsVisible);
+    setAccessible(toolbar, toolbarVisible);
     setAccessible(composer, available && stage === 'compose');
     setAccessible(noticeToggle, available && noticeStages.has(stage));
     setAccessible(indicator, available && stage === 'done');
@@ -106,7 +110,7 @@
     card.tabIndex = cardVisible ? 0 : -1;
     setAccessible(followup, available && stage === 'reply');
     noticeToggle.setAttribute('aria-expanded', String(stage === 'notice' || stage === 'reply'));
-    fab.setAttribute('aria-expanded', String(!['default', 'done'].includes(stage)));
+    fab.setAttribute('aria-expanded', String(toolbarVisible || (available && stage === 'compose')));
     const unread = Boolean(task && task.status === 'done' && task.unread);
     unreadBadge.textContent = unread ? '1' : '';
     unreadBadge.hidden = !unread;
@@ -168,6 +172,7 @@
   }
   function setStage(next) {
     cancelClose();
+    if (stage !== next || next !== 'working') workingActionsVisible = false;
     if (stage !== next) {
       statusPointerInside = false;
       statusTouchOpen = false;
@@ -190,9 +195,17 @@
   }
   function scheduleClose() {
     cancelClose();
-    if (stage !== 'hover' && stage !== 'done-hover') return;
+    if (!['hover', 'done-hover', 'working'].includes(stage)) return;
     closeTimer = window.setTimeout(() => {
       closeTimer = null;
+      if (stage === 'working') {
+        const actionFocus = document.activeElement === fab || toolbar.contains(document.activeElement);
+        if (!actionPointerInside && !(keyboardInteraction && actionFocus)) {
+          workingActionsVisible = false;
+          syncAccess();
+        }
+        return;
+      }
       const keyboardFocusInside = keyboardInteraction && dock.contains(document.activeElement);
       if (['hover', 'done-hover'].includes(stage) && !pointerInside && !keyboardFocusInside) setStage(idleStage());
     }, HOVER_CLOSE_DELAY);
@@ -200,6 +213,10 @@
   function revealActions() {
     if (dragging || suppressHoverUntilLeave) return;
     if (stage === 'default' || stage === 'done') setStage(actionStage());
+    else if (stage === 'working') {
+      workingActionsVisible = true;
+      syncAccess();
+    }
   }
   function updateInputs() {
     send.disabled = !input.value.trim();
@@ -271,7 +288,7 @@
   dock.addEventListener('pointerenter', event => {
     if (event.pointerType === 'touch') return;
     pointerInside = true;
-    cancelClose();
+    if (stage !== 'working' || actionPointerInside) cancelClose();
   });
   dock.addEventListener('pointerleave', event => {
     if (event.pointerType === 'touch') return;
@@ -279,13 +296,24 @@
     suppressHoverUntilLeave = false;
     scheduleClose();
   });
-  fab.addEventListener('pointerenter', event => {
-    if (event.pointerType !== 'touch') revealActions();
+  [fab, toolbar].forEach(element => {
+    element.addEventListener('pointerenter', event => {
+      if (event.pointerType === 'touch') return;
+      actionPointerInside = true;
+      keyboardInteraction = false;
+      cancelClose();
+      if (element === fab) revealActions();
+    });
+    element.addEventListener('pointerleave', event => {
+      if (event.pointerType === 'touch') return;
+      actionPointerInside = false;
+      scheduleClose();
+    });
   });
   fab.addEventListener('pointermove', event => {
     // A completion still shows its marker when the cursor is already over the
     // Owl; the next deliberate movement reveals the completed action pill.
-    if (event.pointerType !== 'touch' && stage === 'done') revealActions();
+    if (event.pointerType !== 'touch' && (stage === 'done' || stage === 'working')) revealActions();
   });
   fab.addEventListener('pointerdown', event => {
     lastPointerType = event.pointerType;
@@ -299,16 +327,26 @@
     if (stage === 'default' || stage === 'done') {
       suppressHoverUntilLeave = false;
       revealActions();
+    } else if (stage === 'working') {
+      if (lastPointerType === 'touch' && event.detail !== 0 && workingActionsVisible) {
+        workingActionsVisible = false;
+        syncAccess();
+      } else {
+        suppressHoverUntilLeave = false;
+        revealActions();
+      }
     } else if (['hover', 'done-hover'].includes(stage) && lastPointerType === 'touch' && event.detail !== 0) collapse();
   });
   dock.addEventListener('focusin', event => {
-    cancelClose();
+    if (stage !== 'working' || event.target === fab || toolbar.contains(event.target)) cancelClose();
+    else scheduleClose();
     if (event.target === fab && !restoringFocus && !pointerFocusPending && !dragging) {
       if (stage === 'default' || stage === 'done') setStage(actionStage());
+      else if (stage === 'working') revealActions();
     }
   });
   dock.addEventListener('focusout', event => {
-    if (!dock.contains(event.relatedTarget)) scheduleClose();
+    if (stage === 'working' || !dock.contains(event.relatedTarget)) scheduleClose();
   });
   card.addEventListener('pointerenter', event => {
     if (event.pointerType === 'touch') return;
@@ -369,6 +407,10 @@
   document.addEventListener('pointerdown', event => {
     keyboardInteraction = false;
     if (dock.contains(event.target)) return;
+    if (stage === 'working') {
+      workingActionsVisible = false;
+      syncAccess();
+    }
     statusTouchOpen = false;
     updateStatusAccess();
     if (['compose', 'hover', 'done-hover', 'notice', 'reply'].includes(stage)) collapse();
@@ -377,10 +419,19 @@
     if (event.key === 'Tab') keyboardInteraction = true;
     if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing || dragging || ['default', 'done'].includes(stage)) return;
     event.preventDefault();
+    if (stage === 'working' && workingActionsVisible) {
+      workingActionsVisible = false;
+      suppressHoverUntilLeave = pointerInside;
+      syncAccess();
+      returnFocus();
+      return;
+    }
     collapse(true);
   });
   dock.addEventListener('pet:dragstart', () => {
     dragging = true;
+    workingActionsVisible = false;
+    actionPointerInside = false;
     suppressHoverUntilLeave = true;
     cancelClose();
     if (stage !== 'working') setStage(idleStage());
@@ -399,11 +450,13 @@
   window.addEventListener('resize', reposition);
   window.addEventListener('blur', () => {
     pointerInside = false;
+    actionPointerInside = false;
+    workingActionsVisible = false;
     pointerFocusPending = false;
     statusPointerInside = false;
     statusTouchOpen = false;
     if (stage === 'hover' || stage === 'done-hover') collapse();
-    else updateStatusAccess();
+    else syncAccess();
   });
 
   input.placeholder = 'give me more info';
