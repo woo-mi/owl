@@ -67,7 +67,8 @@
   let statusPointerInside = false;
   let statusTouchOpen = false;
 
-  const idleStage = () => task && task.status === 'done' ? 'done' : 'default';
+  const idleStage = () => task && task.status === 'done' && task.unread ? 'done' : 'default';
+  const actionStage = () => task && task.status === 'done' ? 'done-hover' : 'hover';
   function setAccessible(element, active) {
     element.inert = !active;
     element.setAttribute('aria-hidden', String(!active));
@@ -198,8 +199,7 @@
   }
   function revealActions() {
     if (dragging || suppressHoverUntilLeave) return;
-    if (stage === 'default') setStage('hover');
-    else if (stage === 'done') setStage('done-hover');
+    if (stage === 'default' || stage === 'done') setStage(actionStage());
   }
   function updateInputs() {
     send.disabled = !input.value.trim();
@@ -210,7 +210,7 @@
   function showCompletion() {
     const hadControlFocus = dock.contains(document.activeElement) && document.activeElement !== fab;
     suppressHoverUntilLeave = false;
-    setStage('done');
+    setStage(idleStage());
     if (hadControlFocus) returnFocus();
   }
   function startTask(message) {
@@ -304,8 +304,7 @@
   dock.addEventListener('focusin', event => {
     cancelClose();
     if (event.target === fab && !restoringFocus && !pointerFocusPending && !dragging) {
-      if (stage === 'default') setStage('hover');
-      else if (stage === 'done') setStage('done-hover');
+      if (stage === 'default' || stage === 'done') setStage(actionStage());
     }
   });
   dock.addEventListener('focusout', event => {
@@ -393,7 +392,7 @@
     if (event.detail && event.detail.moved) suppressHoverUntilLeave = true;
     if (pendingCompletion && task && task.status === 'done') {
       pendingCompletion = false;
-      setStage('done');
+      setStage(idleStage());
     } else setStage(stage);
   });
   dock.addEventListener('pet:move', reposition);
