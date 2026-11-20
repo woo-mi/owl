@@ -4,7 +4,7 @@
   const cards = [
     {id:'morning-brief', title:'Morning brief', description:'Today’s commitments, priorities and follow-ups.', metadata:'Routine · Weekdays · 9 AM IST · Only you', kind:'routine'},
     {id:'missed-follow-ups', title:'Catch missed follow-ups', description:'Commitments and action items worth revisiting.', metadata:'Routine · Weekdays · 4 PM IST · Last 7 days', kind:'routine'},
-    {id:'customer-feedback', title:'Close the loop on customer feedback', description:'Turn review feedback into a clear pilot plan.', metadata:'First step · Gather decisions and next owners', metadataV2:'Goal · First step · Gather decisions and next owners', kind:'goal'},
+    {id:'customer-feedback', title:'Close the loop on customer feedback', description:'Turn review feedback into a clear pilot plan.', metadata:'Goal · First step · Gather decisions and next owners', kind:'goal'},
     {id:'launch-review', title:'Get the launch review ready', description:'Bring positioning, demo readiness and owners together.', metadata:'Goal · First step · Prepare a short review note', kind:'goal'}
   ];
   const state = {
@@ -20,7 +20,6 @@
   let host;
   let dialog;
   let restoreDialogFocus = true;
-  let readyVersion = 'v1';
 
   const snapshot = () => ({
     name:state.name, studio:state.studio ? {...state.studio} : {...window.OwlStudioArtwork.defaults}, color:state.color,
@@ -28,19 +27,6 @@
   });
   const icon = kind => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${kind === 'routine' ? '<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 11h16"/>' : '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'}</svg>`;
   const leadingIcon = kind => kind === 'routine' ? icon(kind) : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25M12 6.75a5.25 5.25 0 1 0 5.25 5.25M12 12l7.5-7.5M14.25 5.25V2.75l4.5 2.5 2.5 4.5h-2.5"/></svg>';
-
-  function renderVersion() {
-    host.dataset.readyVersion = readyVersion;
-    cards.forEach(card => {
-      host.querySelector(`[data-ready-metadata="${card.id}"]`).textContent = readyVersion === 'v2' ? card.metadataV2 || card.metadata : card.metadata;
-    });
-  }
-
-  function setVersion(version) {
-    readyVersion = version === 'v2' ? 'v2' : 'v1';
-    if (host?.isConnected) renderVersion();
-    return readyVersion;
-  }
 
   function renderIdentity() {
     host.querySelector('#ready-role').textContent = state.identity.role;
@@ -67,6 +53,7 @@
   function build() {
     host = document.getElementById('ready-view');
     if (!host) return false;
+    host.dataset.readyVersion = 'v2';
     host.setAttribute('aria-labelledby','ready-title');
     host.innerHTML = `<header class="heading"><h1 id="ready-title" tabindex="-1">Your Owl is ready</h1><p>Here’s a first look at your work, and a few useful ways to start.</p></header>
       <section class="owl-ready-identity" aria-labelledby="ready-identity-label">
@@ -142,9 +129,8 @@
     if (preferences && typeof preferences === 'object') state.preferences = {...state.preferences,...preferences};
     renderIdentity();
     renderSelections();
-    renderVersion();
   }
 
   function close() { dismissEditor(false); }
-  window.OwlReady = Object.freeze({open, close, snapshot, setVersion});
+  window.OwlReady = Object.freeze({open, close, snapshot});
 })();

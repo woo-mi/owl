@@ -137,7 +137,6 @@
       if (step === '00') window.OwlHome.open({name:savedSetup?.name || nameInput.value,color:savedSetup?.color || savedOwl?.color,studio:savedSetup?.studio || savedOwl?.studio});
       if (step === 'chat') window.OwlChat.open(savedSetup || {...savedOwl,name:nameInput.value,preferences:savedPreferences});
     }
-    if (step === 'ready') window.OwlReady.setVersion(new URL(location.href).searchParams.get('readyVersion'));
     if (step === 'chat') window.OwlChat.setVersion(new URL(location.href).searchParams.get('chatVersion') === 'no-work' ? 'no-work' : 'live');
     eggStage.hidden = !!savedOwl;
     hatchedStage.hidden = !savedOwl;
@@ -174,7 +173,6 @@
     if (event.persisted && currentStep === 'customize' && !savedOwl) window.OwlEgg?.start();
   });
   window.addEventListener('connections:version-change', () => renderRoute());
-  window.addEventListener('owl-ready:version-change', () => renderRoute());
   window.addEventListener('owl-chat:version-change', () => renderRoute());
   window.addEventListener('owl-home:start-chat', () => {
     if (currentStep !== '00') return;
