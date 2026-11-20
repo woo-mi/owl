@@ -4,9 +4,9 @@
   const pet = document.querySelector('.pet-fab');
   if (!pet) return;
 
-  const storageKey = 'owl:floating-action-button-pet:position:v1';
   const dragThreshold = 5;
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  // Movement lasts for this page visit; refreshing restores the default corner.
   let position = null;
   let drag = null;
   let suppressClick = false;
@@ -48,24 +48,6 @@
     }
   }
 
-  function remember() {
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(position));
-    } catch (_) {
-      // Moving the pet still works when browser storage is unavailable.
-    }
-  }
-
-  try {
-    const saved = JSON.parse(localStorage.getItem(storageKey));
-    if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
-      position = { x: clamp(saved.x, 0, 1), y: clamp(saved.y, 0, 1) };
-      restore();
-    }
-  } catch (_) {
-    // An absent or invalid saved position uses the design's default corner.
-  }
-
   function move(event) {
     if (!drag || event.pointerId !== drag.pointerId) return;
     const dx = event.clientX - drag.clientX;
@@ -89,8 +71,6 @@
     if (cancelled) {
       position = ended.previousPosition;
       restore();
-    } else if (ended.moved) {
-      remember();
     }
     if (pet.hasPointerCapture(ended.pointerId)) pet.releasePointerCapture(ended.pointerId);
   }
@@ -140,7 +120,6 @@
     const rect = pet.getBoundingClientRect();
     const step = event.shiftKey ? 40 : 10;
     place(rect.left + direction[0] * step, rect.top + direction[1] * step);
-    remember();
   });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && drag) {
