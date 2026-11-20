@@ -18,7 +18,7 @@
 .integration-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .integration-card{min-height:64px;border:1px solid var(--line);border-radius:16px;display:flex;align-items:center;padding:11px 16px 11px 12px;gap:12px;min-width:0}
 .app-icon{width:40px;height:40px;object-fit:contain;flex:none}
-.integration-card.is-current .app-icon{width:24px;height:24px;margin:0 8px}
+.integration-card.is-current .app-icon,.integration-card .app-icon-small{width:24px;height:24px;margin:0 8px}
 .app-name{font-size:14px;line-height:20px;min-width:0;overflow-wrap:anywhere}
 .card-action{margin-left:auto;flex:none;min-width:76px;height:32px;border:1px solid #e6e7e1;border-radius:8px;background:#fff;font-size:12px;line-height:18px;padding:0 12px;display:flex;align-items:center;justify-content:center;gap:4px}
 .card-action:hover{background:#f7f7f7;border-color:#c8c9c3}
@@ -44,11 +44,11 @@
 .progress li.is-current{background:#b6b7ae}
 dialog{border:1px solid #e6e7e1;border-radius:20px;padding:28px;width:min(440px,calc(100vw - 36px));box-shadow:0 24px 80px #15171b24;color:#262720;background:#fff}dialog::backdrop{background:#15171b38;backdrop-filter:blur(3px)}.dialog-close{position:absolute;right:12px;top:12px;width:32px;height:32px;display:grid;place-items:center;border-radius:8px;color:#63666d}.dialog-close:hover{background:#f3f3f3}.dialog-close svg{width:18px;height:18px}.dialog-app-icon{height:44px;width:44px;object-fit:contain;margin-bottom:18px}dialog h2{font-size:20px;line-height:28px;font-weight:500;padding-right:20px}dialog p{font-size:14px;line-height:21px;color:#63666d;margin-top:10px}.permission-note{padding:14px;background:#f7f7f7;border-radius:10px}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}.dialog-button{border:1px solid #e6e7e1;background:#fff;border-radius:8px;height:36px;padding:0 14px;font-size:13px}.dialog-button.primary{background:#262626;border-color:#262626;color:#fff}.catalog-dialog{width:min(760px,calc(100vw - 36px));max-height:80dvh}.catalog-search{width:100%;height:40px;border:1px solid #dedee0;border-radius:9px;padding:0 12px;margin:20px 0 14px;color:#262720;background:#fff}.catalog-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-height:45dvh;overflow:auto;padding:3px}.catalog-list .integration-card{border-radius:12px}.catalog-empty{font-size:14px;color:#63666d;text-align:center;padding:30px}.notice{position:fixed;z-index:90;bottom:30px;left:50%;transform:translateX(-50%);padding:11px 16px;background:#262626;color:#fff;border-radius:10px;box-shadow:0 4px 24px #0002;font-size:12px;line-height:18px;max-width:calc(100vw - 100px);text-align:center}
 
-@media(max-height:900px) and (min-width:701px){.onboarding{padding-top:48px}}
-@media(max-width:900px){.connections-main{margin-right:24px!important}.onboarding{padding-top:48px}}
+@media(max-height:900px) and (min-width:701px){.onboarding{padding-top:72px}}
+@media(max-width:900px){.connections-main{margin-right:24px!important}.onboarding{padding-top:80px}}
 @media(max-width:700px){
   .connections-main{margin-left:48px!important;margin-right:0!important}
-  .onboarding{padding:32px 16px 12px}
+  .onboarding{padding:80px 16px 12px}
   .account{margin-top:24px;padding:12px;flex-wrap:wrap}
   .google-apps{margin-left:52px}
   .integration-grid{grid-template-columns:1fr;gap:12px}

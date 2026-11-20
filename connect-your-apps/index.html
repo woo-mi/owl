@@ -9,10 +9,12 @@
   <link rel="canonical" href="https://woo-mi.github.io/owl/connect-your-apps/">
   <link rel="icon" href="assets/owl-mark.svg" type="image/svg+xml">
   <link rel="preload" href="assets/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=d21c0d9">
+  <link rel="stylesheet" href="styles.css?v=versions-1">
   <link rel="stylesheet" href="sidebar.css">
+  <link rel="stylesheet" href="version-picker.css?v=versions-1">
   <script src="sidebar.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=versions-1" defer></script>
+  <script src="version-picker.js?v=versions-1" defer></script>
 </head>
 <body class="sidebar-collapsed">
   <a class="skip-link" href="#main">Skip to connections</a>
@@ -205,7 +207,7 @@
         <div class="account-copy"><strong>woo-mi@wisdom.ai</strong><p>Primary account</p></div>
         <img class="google-apps" src="assets/google-apps.png" width="105" height="22" alt="Gmail, Calendar, Drive, Docs, Sheets, and Slides">
       </section>
-      <section class="integration-section" aria-labelledby="current-heading">
+      <section id="current-section" class="integration-section" aria-labelledby="current-heading">
         <h2 id="current-heading">Current</h2>
         <div id="current-apps" class="integration-grid"></div>
       </section>

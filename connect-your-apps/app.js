@@ -12,7 +12,11 @@
     {id:'jira',name:'Jira',icon:'jira.png'},
     {id:'asana',name:'Asana',icon:'asana.png'}
   ];
+  const initialConnections = new Set(['google-calendar','notion','slack','gong']);
+  const readVersion = () => new URL(location.href).searchParams.get('version') === 'no' ? 'no' : 'connected';
   const current = document.querySelector('#current-apps');
+  const currentSection = document.querySelector('#current-section');
+  const account = document.querySelector('.account');
   const suggestions = document.querySelector('#suggested-apps');
   const connectDialog = document.querySelector('#connect-dialog');
   const catalogDialog = document.querySelector('#catalog-dialog');
@@ -26,7 +30,7 @@
     article.className = `integration-card${app.connected ? ' is-current' : ''}`;
     article.dataset.app = app.id;
     const icon = document.createElement('img');
-    icon.className = 'app-icon'; icon.src = `assets/${app.icon}`; icon.alt = ''; icon.width = 34; icon.height = 34;
+    icon.className = `app-icon${initialConnections.has(app.id) ? ' app-icon-small' : ''}`; icon.src = `assets/${app.icon}`; icon.alt = ''; icon.width = 34; icon.height = 34;
     const title = document.createElement('span'); title.className = 'app-name'; title.textContent = app.name;
     const action = document.createElement(app.connected ? 'span' : 'button');
     action.className = `card-action${app.connected ? ' is-connected' : ''}`;
@@ -40,7 +44,9 @@
     article.append(icon,title,action); return article;
   }
   function render() {
-    current.replaceChildren(...apps.filter(app => app.connected).map(app => card(app)));
+    const connectedApps = apps.filter(app => app.connected);
+    current.replaceChildren(...connectedApps.map(app => card(app)));
+    currentSection.hidden = connectedApps.length === 0;
     suggestions.replaceChildren(...apps.filter(app => !app.connected).map(app => card(app)));
     document.querySelector('#suggested-section').hidden = apps.every(app => app.connected);
     renderCatalog();
@@ -87,5 +93,23 @@
     else if (name === 'Owls' || name === 'New Chat' || name === 'Chat') window.location.href = '../reply-ux-pattern/';
     else notice(`${name} is available in the Owl workspace`);
   });
-  render();
+  function applyVersion(version) {
+    const selected = version === 'no' ? 'no' : 'connected';
+    returnToCatalog = false;
+    pendingApp = null;
+    connectDialog.close();
+    catalogDialog.close();
+    clearTimeout(noticeTimer);
+    document.querySelector('#notice').hidden = true;
+    search.value = '';
+    account.hidden = selected === 'no';
+    document.body.dataset.connectionsVersion = selected;
+    apps.forEach(app => { app.connected = selected === 'connected' && initialConnections.has(app.id); });
+    render();
+  }
+  window.addEventListener('connections:version-change', event => {
+    applyVersion(event.detail?.version);
+    window.scrollTo({top:0,behavior:'instant'});
+  });
+  applyVersion(readVersion());
 })();
