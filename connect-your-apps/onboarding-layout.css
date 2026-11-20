@@ -5,7 +5,7 @@
   line-height:34px;
   letter-spacing:-.41667px;
 }
-#connections-view .heading h1 { font-size:26px; }
+#connections-view .heading h1 { font-size:24px; }
 :is(#connections-view,#customize-view,#appearance-view,#personality-view) .heading p {
   margin-top:8px;
   font-size:14px;
