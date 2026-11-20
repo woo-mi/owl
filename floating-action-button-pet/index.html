@@ -6,7 +6,7 @@
     <title>Floating Action Button (pet)</title>
     <meta name="description" content="Floating Action Button (pet): an Owl interaction prototype.">
     <link rel="canonical" href="https://woo-mi.github.io/owl/floating-action-button-pet/">
-    <link rel="stylesheet" href="prototype.css?v=draggable-pet-1">
+    <link rel="stylesheet" href="prototype.css?v=pet-interactions-1">
     <style>
       *, ::before, ::after {
         box-sizing: border-box;
@@ -1241,10 +1241,37 @@
         </div>
       </div>
     </div>
-    <a class="pet-fab" href="../ftux/" aria-label="Open Owls" aria-description="Drag to move. When focused, use arrow keys to move." title="Drag to move. Click to open Owls." draggable="false">
-      <img src="assets/default-pet.png" alt="" width="88" height="88" draggable="false">
-    </a>
+    <div class="pet-dock" data-stage="default">
+      <button class="pet-fab" type="button" aria-label="Owl actions" aria-expanded="false" aria-controls="pet-controls" aria-description="Drag or use arrow keys to move. Open actions to write a message." title="Drag to move. Click for actions." draggable="false">
+        <img src="assets/default-pet.png" alt="" width="88" height="88" draggable="false">
+      </button>
+      <div class="pet-surface" id="pet-controls">
+        <div class="pet-toolbar" role="group" aria-label="Owl actions" aria-hidden="true" inert>
+          <button class="pet-edit" type="button" aria-label="Write a message" title="Write a message">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M16 3a2.12 2.12 0 0 1 3 3L9 16l-4 1 1-4Z"/></svg>
+          </button>
+          <span class="pet-toolbar-divider" aria-hidden="true"></span>
+          <button class="pet-voice" type="button" aria-label="Voice input, coming soon" title="Voice input is coming soon" disabled>
+            <svg viewBox="0 0 20 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 10v4m4-7v10m4-14v18m4-14v10m4-7v4"/></svg>
+          </button>
+        </div>
+        <form class="pet-composer" aria-label="Message your Owl" aria-hidden="true" inert>
+          <button class="pet-attach" type="button" aria-label="Add attachment, coming soon" title="Attachments are coming soon" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <input id="pet-message" type="text" name="message" aria-label="Message your Owl" placeholder="give me more info" autocomplete="off" maxlength="500">
+          <button class="pet-send" type="submit" aria-label="Send message" title="Send message" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+          </button>
+        </form>
+      </div>
+      <div class="pet-working" role="status" aria-live="polite" aria-atomic="true" aria-hidden="true" inert>
+        <div class="pet-working-title"></div>
+        <div class="pet-working-label">Thinking<span class="pet-thinking-dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span></div>
+      </div>
+    </div>
     <script src="prototype.js?v=owl-affordance-new-nov-9"></script>
-    <script src="pet-drag.js?v=2"></script>
+    <script src="pet-drag.js?v=3"></script>
+    <script src="pet-interactions.js?v=1"></script>
   </body>
 </html>

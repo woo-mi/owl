@@ -75,12 +75,29 @@ button:focus-visible, a:focus-visible {
 [data-pencil-name="Got it — outlined button"]:hover { background-color: #f5f5f7; }
 [data-pencil-name="Owls navigation target"]:hover { background-color: #ddd !important; }
 
-.pet-fab {
+.pet-dock {
+  /* Hover reveals the pill; edit expands it left; send reveals the status above. */
+  --motion-reveal: 180ms;
+  --motion-morph: 360ms;
+  --motion-content: 120ms;
+  --motion-settle: cubic-bezier(.22, 1, .36, 1);
+  --panel-width: 95.205px;
+  --panel-x: -3.603px;
+  --panel-y: 96px;
+  --working-width: 380px;
+  --working-x: -289px;
+  --working-y: -86px;
   position: fixed;
   right: calc(64px + env(safe-area-inset-right, 0px));
   bottom: calc(64px + env(safe-area-inset-bottom, 0px));
   z-index: 20;
   display: block;
+  width: 88px;
+  height: 88px;
+}
+.pet-fab {
+  display: block;
+  padding: 0;
   width: 88px;
   height: 88px;
   border-radius: 50%;
@@ -97,10 +114,136 @@ button:focus-visible, a:focus-visible {
   object-fit: contain;
   -webkit-user-drag: none;
 }
+.pet-surface {
+  position: absolute;
+  left: var(--panel-x);
+  top: var(--panel-y);
+  width: var(--panel-width);
+  height: 47px;
+  overflow: hidden;
+  border: 1.2px solid #cbcbcb;
+  border-radius: 23.5px;
+  background: #adadad;
+  color: #292d2d;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-5px) scale(.94);
+  transform-origin: var(--panel-origin, 50%) center;
+  pointer-events: none;
+  transition:
+    width var(--motion-morph) var(--motion-settle),
+    left var(--motion-morph) var(--motion-settle),
+    opacity var(--motion-reveal) ease,
+    transform var(--motion-morph) var(--motion-settle),
+    visibility 0s var(--motion-reveal);
+}
+.pet-dock:not([data-stage="default"]):not(.is-dragging) .pet-surface {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+.pet-toolbar, .pet-composer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-content) ease;
+}
+.pet-toolbar { justify-content: space-evenly; }
+.pet-dock:is([data-stage="hover"], [data-stage="working"]) .pet-toolbar,
+.pet-dock[data-stage="compose"] .pet-composer {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: var(--motion-content);
+}
+.pet-toolbar button {
+  display: grid;
+  place-items: center;
+  flex: 1;
+  height: 100%;
+  padding: 0;
+  color: inherit;
+}
+.pet-edit svg { width: 21.09px; height: 21.09px; }
+.pet-voice svg { width: 15.06px; height: 18.08px; }
+.pet-toolbar-divider { width: .603px; height: 24.1px; background: #9f9f9f; }
+.pet-composer { gap: 9.18px; padding: 0 8.56px; }
+.pet-composer button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 27.55px;
+  width: 27.55px;
+  height: 27.55px;
+  padding: 0;
+  border-radius: 50%;
+}
+.pet-attach { background: #a4a5a5; color: #3d3d3d; }
+.pet-attach svg { width: 16.07px; height: 16.07px; }
+.pet-send { background: #3884f5; color: white; transition: background var(--motion-content), transform var(--motion-content); }
+.pet-send svg { width: 14.92px; height: 14.92px; }
+.pet-send:disabled { background: #719bd8; cursor: default; }
+.pet-voice:disabled, .pet-attach:disabled { cursor: default; }
+#pet-message {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #292929;
+  font: 400 14.64px/20px Inter, system-ui, sans-serif;
+  caret-color: #353535;
+}
+#pet-message::placeholder { color: #545454; opacity: 1; }
+.pet-surface:focus-within { border-color: #a0a0a0; }
+.pet-surface button:focus-visible { outline-offset: -3px !important; }
+.pet-edit:hover { background: #ffffff24; }
+.pet-send:not(:disabled):hover { background: #226fdf; }
+.pet-send:not(:disabled):active { transform: scale(.9); }
+.pet-working {
+  position: absolute;
+  top: var(--working-y);
+  left: var(--working-x);
+  width: var(--working-width);
+  height: 64.485px;
+  padding: 11.5px 19.58px;
+  border-radius: 32.24px;
+  background: #bdbdbd;
+  font: 400 16.12px/20.73px Inter, system-ui, sans-serif;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px) scale(.97);
+  transform-origin: right bottom;
+  pointer-events: none;
+  transition: opacity var(--motion-reveal) ease, transform var(--motion-morph) var(--motion-settle), visibility 0s var(--motion-reveal);
+}
+.pet-dock[data-stage="working"]:not(.is-dragging) .pet-working {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transition-delay: 0s;
+}
+.pet-working-title { color: #303030; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pet-working-label { color: #626262; }
+.pet-thinking-dots span { animation: pet-thinking 1200ms ease-in-out infinite; }
+.pet-thinking-dots span:nth-child(2) { animation-delay: 160ms; }
+.pet-thinking-dots span:nth-child(3) { animation-delay: 320ms; }
+@keyframes pet-thinking { 0%, 70%, 100% { opacity: .25; } 35% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .pet-dock { --motion-reveal: 0ms; --motion-morph: 0ms; --motion-content: 0ms; }
+  .pet-thinking-dots span { animation: none; }
+}
 
 @media (max-width: 700px) {
   [data-pencil-name="Owl affordance new"] { padding: 270px 16px calc(144px + env(safe-area-inset-bottom, 0px)) 64px; }
-  .pet-fab {
+  .pet-dock {
     right: calc(32px + env(safe-area-inset-right, 0px));
     bottom: calc(32px + env(safe-area-inset-bottom, 0px));
   }
