@@ -4,9 +4,8 @@
   const cards = [
     {id:'morning-brief', title:'Morning brief', description:'Today’s commitments, priorities and follow-ups.', metadata:'Routine · Weekdays · 9 AM IST · Only you', kind:'routine'},
     {id:'missed-follow-ups', title:'Catch missed follow-ups', description:'Commitments and action items worth revisiting.', metadata:'Routine · Weekdays · 4 PM IST · Last 7 days', kind:'routine'},
-    {id:'weekly-review', title:'Weekly review', description:'Decisions, open to-dos and next week’s work.', metadata:'Routine · Friday · 4 PM IST · Last 7 days', kind:'routine'},
-    {id:'launch-review', title:'Get the launch review ready', description:'Bring positioning, demo readiness and owners together.', metadata:'Goal · First step · Prepare a short review note', kind:'goal'},
-    {id:'customer-feedback', title:'Close the loop on customer feedback', description:'Turn review feedback into a clear pilot plan.', metadata:'First step · Gather decisions and next owners', metadataV2:'Goal · First step · Gather decisions and next owners', kind:'goal'}
+    {id:'customer-feedback', title:'Close the loop on customer feedback', description:'Turn review feedback into a clear pilot plan.', metadata:'First step · Gather decisions and next owners', metadataV2:'Goal · First step · Gather decisions and next owners', kind:'goal'},
+    {id:'launch-review', title:'Get the launch review ready', description:'Bring positioning, demo readiness and owners together.', metadata:'Goal · First step · Prepare a short review note', kind:'goal'}
   ];
   const state = {
     name:"Ayush's Owl", studio:null, color:'#FA70AB',
@@ -32,7 +31,6 @@
 
   function renderVersion() {
     host.dataset.readyVersion = readyVersion;
-    host.querySelector('#ready-suggestions-title').textContent = readyVersion === 'v2' ? 'Useful starts here' : 'Useful start with Goal and Routine';
     cards.forEach(card => {
       host.querySelector(`[data-ready-metadata="${card.id}"]`).textContent = readyVersion === 'v2' ? card.metadataV2 || card.metadata : card.metadata;
     });
@@ -76,8 +74,8 @@
         <div class="ready-identity-row"><div class="ready-identity-copy"><p id="ready-role"></p><p id="ready-work-summary" class="ready-secondary"></p></div><button id="ready-edit" class="ready-edit" type="button" aria-haspopup="dialog">Review and edit ↗</button></div>
       </section>
       <section class="owl-ready-priority" aria-labelledby="ready-priority-label"><h2 id="ready-priority-label" class="ready-section-label">What matters now</h2><p id="ready-current-priority"></p></section>
-      <section class="owl-ready-suggestions" aria-labelledby="ready-suggestions-title"><h2 id="ready-suggestions-title">Useful start with Goal and Routine</h2><div class="ready-card-grid">
-        ${cards.map(card => `<article class="ready-card" aria-labelledby="ready-card-title-${card.id}"><div class="ready-card-leading-icon" aria-hidden="true">${leadingIcon(card.kind)}</div><div class="ready-card-heading"><h3 id="ready-card-title-${card.id}">${card.title}</h3><button class="ready-use" type="button" data-ready-card="${card.id}" aria-pressed="false" aria-label="Use ${card.title}">Use</button></div><p class="ready-card-description">${card.description}</p><p class="ready-card-metadata">${icon(card.kind)}<span data-ready-metadata="${card.id}">${card.metadata}</span></p></article>`).join('')}
+      <section class="owl-ready-suggestions" aria-labelledby="ready-suggestions-title"><h2 id="ready-suggestions-title">Useful start</h2><p class="ready-suggestions-subtitle">Set up the personalized goals and routines</p><div class="ready-card-grid">
+        ${cards.map(card => `<article class="ready-card" aria-labelledby="ready-card-title-${card.id}"><div class="ready-card-leading-icon" aria-hidden="true">${leadingIcon(card.kind)}</div><div class="ready-card-summary"><h3 id="ready-card-title-${card.id}">${card.title}</h3><p class="ready-card-description">${card.description}</p></div><p class="ready-card-metadata">${leadingIcon(card.kind)}<span data-ready-metadata="${card.id}">${card.metadata}</span></p><button class="ready-use" type="button" data-ready-card="${card.id}" aria-pressed="false" aria-label="Use ${card.title}">Use</button></article>`).join('')}
       </div></section>
       <div class="footer-spacer"></div>
       <footer class="flow-footer ready-footer"><button id="ready-skip" class="footer-action secondary" type="button">Skip for now</button><ol class="progress" aria-label="Setup complete"><li aria-label="Step 1 completed"></li><li aria-label="Step 2 completed"></li><li class="is-current" aria-label="Step 3 completed"></li></ol><button id="ready-save" class="footer-action primary" type="button">Save</button></footer>

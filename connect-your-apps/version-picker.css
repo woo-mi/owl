@@ -77,6 +77,7 @@ body:not([data-flow-step="ready"]) #ready-version-picker { display:none; }
 body.sidebar-open #chat-version-picker,
 body:not([data-flow-step="chat"]) #chat-version-picker { display:none; }
 #chat-version-menu { width:248px; }
+#ready-version-menu { width:216px; }
 @media(prefers-reduced-motion:reduce) {
   .connections-version-trigger svg { transition:none; }
 }

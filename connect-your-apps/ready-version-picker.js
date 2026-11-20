@@ -1,6 +1,7 @@
 (() => {
   'use strict';
   const versions = ['v1', 'v2'];
+  const names = {v1:'Your Owl is ready v1',v2:'Your Owl is ready v2'};
   const readVersion = () => new URL(location.href).searchParams.get('readyVersion') === 'v2' ? 'v2' : 'v1';
   let selected = readVersion();
   const control = document.createElement('nav');
@@ -10,7 +11,7 @@
     <span class="connections-version-label"></span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
   </button>
   <ul id="ready-version-menu" class="connections-version-menu" role="menu" aria-label="Owl ready versions" hidden>
-    ${versions.map(version => `<li role="none"><button type="button" role="menuitemradio" aria-checked="false" tabindex="-1" data-ready-version="${version}">${version}</button></li>`).join('')}
+    ${versions.map(version => `<li role="none"><button type="button" role="menuitemradio" aria-checked="false" tabindex="-1" data-ready-version="${version}">${names[version]}</button></li>`).join('')}
   </ul>`;
   document.body.prepend(control);
   const trigger = control.querySelector('.connections-version-trigger');
