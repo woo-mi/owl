@@ -12,21 +12,21 @@
   <link rel="stylesheet" href="styles.css?v=customize-1">
   <link rel="stylesheet" href="sidebar.css">
   <link rel="stylesheet" href="version-picker.css?v=ready-versions-1">
-  <link rel="stylesheet" href="customize-owl.css?v=appearance-3">
+  <link rel="stylesheet" href="customize-owl.css?v=hatch-reveal-1">
   <link rel="stylesheet" href="owl-appearance.css?v=appearance-3">
   <link rel="stylesheet" href="owl-personality.css?v=appearance-3">
   <link rel="stylesheet" href="owl-ready.css?v=ready-versions-1">
   <link rel="stylesheet" href="owl-home.css?v=home-1">
-  <link rel="stylesheet" href="egg-animation.css?v=egg-gentle-1">
+  <link rel="stylesheet" href="egg-animation.css?v=hatch-reveal-1">
   <script src="sidebar.js" defer></script>
-  <script src="egg-animation.js?v=egg-gentle-1" defer></script>
+  <script src="egg-animation.js?v=hatch-reveal-1" defer></script>
   <script src="app.js?v=customize-1" defer></script>
   <script src="assets/owl-studio-artwork.js?v=appearance-3" defer></script>
   <script src="owl-appearance.js?v=appearance-3" defer></script>
   <script src="owl-personality.js?v=appearance-3" defer></script>
   <script src="owl-ready.js?v=ready-versions-1" defer></script>
   <script src="owl-home.js?v=home-1" defer></script>
-  <script src="customize-owl.js?v=home-1" defer></script>
+  <script src="customize-owl.js?v=hatch-reveal-1" defer></script>
   <script src="version-picker.js?v=customize-1" defer></script>
   <script src="ready-version-picker.js?v=ready-versions-1" defer></script>
 </head>
@@ -250,7 +250,7 @@
         <h1 id="customize-title" tabindex="-1">Meet your Owl</h1>
         <p>Name it, connect your apps, and choose what it can help with.</p>
       </header>
-      <div id="egg-stage" class="egg-stage" role="img" aria-label="A line-drawn egg beginning to crack"></div>
+      <div id="egg-stage" class="egg-stage" role="img" aria-label="An egg with fine, uneven cracks, ready to hatch"></div>
       <div id="hatched-owl-stage" class="egg-stage hatched-owl-stage" role="img" aria-label="Your customized Owl" hidden></div>
       <div class="owl-personalization">
         <div class="owl-name-field">
@@ -260,7 +260,6 @@
         </div>
         <button id="hatch-owl" class="hatch-owl" type="button">Hatch your Owl<span aria-hidden="true">→</span></button>
         <a class="start-chatting" href="../reply-ux-pattern/">Start chatting</a>
-        <p id="hatch-status" class="sr-only" role="status" aria-live="polite"></p>
       </div>
     </section>
     <section id="appearance-view" class="onboarding owl-appearance-onboarding" aria-labelledby="appearance-title" hidden>
@@ -297,6 +296,7 @@
     <section id="ready-view" class="onboarding owl-ready-onboarding" aria-labelledby="ready-title" hidden></section>
     <section id="home-view" class="owl-home" aria-labelledby="home-title" hidden></section>
   </main>
+  <p id="hatch-status" class="sr-only" role="status" aria-live="polite"></p>
   <dialog id="connect-dialog" aria-labelledby="connect-title" aria-describedby="connect-description">
     <button class="dialog-close" type="button" data-close-dialog aria-label="Close connection dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     <img id="connect-icon" class="dialog-app-icon" alt="" src="assets/linear.png" width="44" height="44">

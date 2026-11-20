@@ -1,45 +1,30 @@
-/* Transparent stage; the grounded shell and its fragments are the only fills. */
-#egg-stage {
-  background:transparent;
-  isolation:isolate;
-}
-.owl-egg-art {
-  display:block;
+/* Transparent stage; only the egg, Owl, and grounded pieces have fills. */
+#egg-stage { background:transparent;isolation:isolate; }
+.owl-egg-scene {
+  position:relative;
   width:320px;
   max-width:100%;
-  height:auto;
+  aspect-ratio:420 / 530;
+  transform-origin:50% 66%;
+}
+.owl-egg-art {
+  position:relative;
+  z-index:1;
+  display:block;
+  width:100%;
+  height:100%;
   overflow:visible;
+  pointer-events:none;
 }
-.owl-egg-body {
-  transform-box:view-box;
-  transform-origin:204px 448px;
-}
-.owl-egg-shadow {
-  transform-box:fill-box;
-  transform-origin:center;
-}
-.owl-egg-piece {
+.owl-egg-reveal {
+  position:absolute;
+  z-index:0;
+  aspect-ratio:1;
   opacity:0;
-  transform-box:fill-box;
-  transform-origin:center;
+  transform-origin:center bottom;
+  pointer-events:none;
 }
-.owl-egg-crack {
-  stroke-dasharray:1;
-  stroke-dashoffset:1;
-  opacity:0;
-}
-.owl-egg-static .owl-egg-crack {
-  stroke-dashoffset:0;
-  opacity:1;
-}
-.owl-egg-static .owl-egg-piece {
-  opacity:1;
-  transform:var(--piece-rest);
-}
-@media(max-width:700px) {
-  .owl-egg-art { width:230px; }
-}
-@media(prefers-reduced-motion:reduce) {
-  .owl-egg-body,
-  .owl-egg-shadow { transform:none!important; }
-}
+.owl-egg-reveal > svg { display:block;width:100%;height:100%; }
+.owl-egg-open-shell,.owl-egg-chip { opacity:0; }
+.owl-egg-crack { stroke-dasharray:1;stroke-dashoffset:1;opacity:0; }
+@media(max-width:700px) { .owl-egg-scene { width:230px; } }
