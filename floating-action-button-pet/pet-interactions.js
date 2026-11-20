@@ -14,6 +14,7 @@
   const unreadBadge = find('.pet-unread');
   const indicator = find('.pet-done-indicator');
   const card = find('.pet-working');
+  const resultLink = find('.pet-status-copy');
   const title = find('.pet-working-title');
   const statusText = find('.pet-status-text');
   const statusActions = find('.pet-status-actions');
@@ -25,7 +26,7 @@
   const followupSend = find('.pet-followup-send');
   const announcement = find('.pet-announcement');
   if (![fab, toolbar, edit, composer, input, send, noticeToggle, unreadBadge,
-    indicator, card, title, statusText, statusActions, dismiss, statusReturn,
+    indicator, card, resultLink, title, statusText, statusActions, dismiss, statusReturn,
     stop, followup, followupInput, followupSend, announcement].every(Boolean)) return;
 
   const HOVER_CLOSE_DELAY = 200;
@@ -107,7 +108,10 @@
     setAccessible(noticeToggle, available && noticeStages.has(stage));
     setAccessible(indicator, available && stage === 'done');
     setAccessible(card, cardVisible);
-    card.tabIndex = cardVisible ? 0 : -1;
+    if (task && task.status === 'done' && (stage === 'notice' || stage === 'reply')) {
+      resultLink.href = 'https://woo-mi.github.io/owl/for-dev/';
+    } else resultLink.removeAttribute('href');
+    card.tabIndex = cardVisible && stage === 'working' ? 0 : -1;
     setAccessible(followup, available && stage === 'reply');
     noticeToggle.setAttribute('aria-expanded', String(stage === 'notice' || stage === 'reply'));
     fab.setAttribute('aria-expanded', String(toolbarVisible || (available && stage === 'compose')));
@@ -276,7 +280,7 @@
     if (!task || task.status !== 'done') return;
     task.unread = false;
     setStage('notice');
-    if (fromKeyboard) card.focus({ preventScroll: true });
+    if (fromKeyboard) resultLink.focus({ preventScroll: true });
   }
   function openComposer(prefill) {
     if (typeof prefill === 'string') input.value = prefill;
