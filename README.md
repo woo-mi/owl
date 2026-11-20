@@ -6,6 +6,8 @@ This repository publishes its `main` branch root through GitHub Pages. No build
 step is required.
 
 - `index.html` and `owl-mark.svg` provide the overview page.
+- `floating-action-button-pet/` is **Floating Action Button (pet)**, an independent
+  copy of Owl affordance. Published at https://woo-mi.github.io/owl/floating-action-button-pet/.
 - `ui-optimization/` is **UI optimization**, a responsive copy of the Pen
   **third-party** and **third-party selected** screens, with an animated approval transition. Published at https://woo-mi.github.io/owl/ui-optimization/.
 - `reply-ux-pattern/` is **Reply UX Pattern**, an independent static copy of FTUX.
