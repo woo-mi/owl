@@ -28,7 +28,7 @@
     host.setAttribute('aria-labelledby', 'personality-title');
     host.innerHTML = `<header class="heading">
       <h1 id="personality-title" tabindex="-1">Make your Owl</h1>
-      <p>It starts with your Wisdom work and the apps you connected</p>
+      <p>Name it, connect your apps, and choose what it can help with.</p>
     </header>
     <div class="owl-personality-identity">
       <span id="personality-name-pill" class="owl-personality-name-pill"></span>
