@@ -280,7 +280,7 @@ button:focus-visible, a:focus-visible {
 .pet-dock:is([data-stage="notice"], [data-stage="reply"])[data-status-hover="true"] .pet-status-copy,
 .pet-dock[data-stage="reply"] .pet-status-copy { padding-right: 49px; }
 .pet-dock:not([data-stage="working"]) .pet-thinking-dots { display: none; }
-.pet-completion-check { display: none; position: absolute; left: 19px; top: 15px; width: 14.88px; height: 14.88px; border-radius: 50%; background: #00c853; color: #245f37; place-items: center; }
+.pet-completion-check { display: none; position: absolute; left: 19px; top: 15px; width: 14.88px; height: 14.88px; border-radius: 50%; background: #00c853; color: #fff; place-items: center; }
 .pet-completion-check svg { width: 10.3px; height: 10.3px; }
 .pet-dock:is([data-stage="notice"], [data-stage="reply"]) .pet-completion-check { display: grid; }
 .pet-status-dismiss, .pet-status-actions { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity var(--motion-content) ease, visibility 0s var(--motion-content); }

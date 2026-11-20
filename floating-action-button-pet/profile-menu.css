@@ -51,7 +51,7 @@
 .owl-profile-row:disabled { color: #4c4f55; opacity: 1; cursor: default; -webkit-text-fill-color: currentColor; }
 .owl-profile-row:not(:disabled):hover { background: #f2f2f4; }
 .owl-profile-icon { display: block; flex: 0 0 18px; width: 18px; height: 18px; color: #62656b; }
-.owl-profile-pet-toggle .owl-profile-icon { stroke-width: 1.5; }
+.owl-profile-pet-toggle .owl-profile-icon { color: #000; stroke-width: 1.5; }
 .owl-profile-theme-row { display: flex; align-items: center; justify-content: space-between; min-height: 46px; margin-top: 4px; padding: 5px 10px; border-top: 1px solid #ececef; }
 .owl-profile-theme-label { display: flex; align-items: center; gap: 11px; }
 .owl-profile-theme-options { display: flex; gap: 2px; padding: 3px; border: 1px solid #e5e5e8; border-radius: 18px; background: #f5f5f6; }

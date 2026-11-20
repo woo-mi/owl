@@ -26,7 +26,7 @@
     subscriptions: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M7 3v4m10-4v4"/>',
     jobs: '<rect x="5" y="5" width="14" height="14" rx="3"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M8 2v3m8-3v3M8 19v3m8-3v3M2 8h3m-3 8h3m14-8h3m-3 8h3"/>',
     portal: '<path d="M4 14v-3a8 8 0 0 1 16 0v3m0 4v2a2 2 0 0 1-2 2h-4"/><rect x="2" y="11" width="4" height="8" rx="2"/><rect x="18" y="11" width="4" height="8" rx="2"/>',
-    owl: '<path d="M12 4C7 1 2 5 2 12a10 10 0 0 0 20 0c0-7-5-11-10-8Z"/><path d="M2 9c3-4 7-3 10 1 3-4 7-5 10-1"/><circle cx="7.5" cy="12" r="1.5"/><circle cx="16.5" cy="12" r="1.5"/><path d="m10.5 16 1.5 2 1.5-2"/>',
+    owl: "<g fill=\"currentColor\" stroke=\"none\"><path transform=\"translate(2.292 6.167)\" d=\"M-.75 3.833q0-.932 .363-1.785 .35-.823 .987-1.457 .637-.634 1.463-.981 .856-.36 1.791-.36 .936 0 1.791 .36 .826 .347 1.463 .981 .638 .634 .988 1.457 .362 .853 .362 1.785h-1.5q0-.627-.243-1.198-.235-.553-.664-.98-.43-.428-.987-.662-.577-.243-1.21-.243-.633 0-1.209 .243-.557 .234-.987 .662-.43 .427-.665 .98-.243 .571-.243 1.198z\"/><path transform=\"translate(10 6.167)\" d=\"M-.75 3.833q0-.932 .363-1.785 .35-.823 .987-1.457 .637-.634 1.463-.981 .856-.36 1.791-.36 .936 0 1.791 .36 .826 .347 1.463 .981 .638 .634 .988 1.457 .362 .853 .362 1.785h-1.5q0-.627-.243-1.198-.235-.553-.664-.98-.43-.428-.987-.662-.577-.243-1.21-.243-.633 0-1.209 .243-.557 .234-.987 .662-.43 .427-.665 .98-.243 .571-.243 1.198z\"/><circle cx=\"6.2495\" cy=\"9.9995\" r=\"1.0415\"/><circle cx=\"13.7495\" cy=\"9.9995\" r=\"1.0415\"/><path transform=\"translate(10 10)\" d=\"M.75 0v1.875q0 .149-.057 .287-.057 .138-.163 .243-.105 .106-.243 .163-.138 .057-.287 .057-.149 0-.287-.057-.138-.057-.243-.163-.106-.105-.163-.243-.057-.138-.057-.287v-1.875q0-.149 .057-.287 .057-.138 .163-.243 .105-.106 .243-.163 .138-.057 .287-.057 .149 0 .287 .057 .138 .057 .243 .163 .106 .105 .163 .243 .057 .138 .057 .287z\"/></g><circle cx=\"10.0005\" cy=\"10.0005\" r=\"7.7085\" fill=\"none\" stroke-width=\"1.5\"/>",
     sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>',
     system: '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/>',
     moon: '<path d="M20.5 14a8.5 8.5 0 0 1-10.5-10.5A9 9 0 1 0 20.5 14Z"/>',
@@ -34,7 +34,7 @@
     news: '<circle cx="12" cy="12" r="4" fill="#5b5bff" stroke="none"/>',
     signout: '<path d="M9 4H4v16h5m5-12 4 4-4 4m-6-4h10"/>',
   };
-  const icon = name => `<svg class="owl-profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]}</svg>`;
+  const icon = name => `<svg class="owl-profile-icon" viewBox="0 0 ${name === 'owl' ? '20 20' : '24 24'}" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]}</svg>`;
   const inactiveRow = (label, glyph) => `<button class="owl-profile-row" type="button" disabled aria-disabled="true">${icon(glyph)}<span>${label}</span></button>`;
 
   const menu = document.createElement('div');
