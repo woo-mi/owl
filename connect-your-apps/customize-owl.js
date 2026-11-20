@@ -134,7 +134,7 @@
         savedOwl ||= {name:nameInput.value,color:'#FA70AB',studio:{...window.OwlStudioArtwork.defaults}};
         window.OwlReady.open({...savedOwl,name:nameInput.value,preferences:savedPreferences});
       }
-      if (step === '00') window.OwlHome.open({name:savedSetup?.name || nameInput.value});
+      if (step === '00') window.OwlHome.open({name:savedSetup?.name || nameInput.value,color:savedSetup?.color || savedOwl?.color});
       if (step === 'chat') window.OwlChat.open(savedSetup || {...savedOwl,name:nameInput.value,preferences:savedPreferences});
     }
     if (step === 'ready') window.OwlReady.setVersion(new URL(location.href).searchParams.get('readyVersion'));

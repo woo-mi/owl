@@ -44,7 +44,7 @@
       'padding','fontFamily','fontSize','fontWeight','fontStyle','fontStretch',
       'lineHeight','letterSpacing','textAlign','textDecoration','whiteSpace',
       'overflowWrap','wordBreak','boxShadow','objectFit','objectPosition',
-      'alignItems','justifyContent','gap'
+      'alignItems','justifyContent','gap','filter'
     ] // freeze the source appearance before its entrance is canceled
   };
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');

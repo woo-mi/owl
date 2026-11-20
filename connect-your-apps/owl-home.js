@@ -22,6 +22,23 @@
     {selector:'#home-title',offsetY:12,initialScale:1,delay:TIMING.nameAppear,duration:TIMING.nameDuration},
     {selector:'.owl-home-chat',offsetY:10,initialScale:1,delay:TIMING.actionAppear,duration:TIMING.actionDuration}
   ];
+  const PINK = '#FA70AB';
+  const BLUE_IMAGE = 'assets/owl-soft-blue.png';
+  // Hue/saturation/brightness are fitted from the blue palette reference.
+  // No color offset is applied, so black eyes and the plush shading remain intact.
+  const APPEARANCES = {
+    '#000000':{name:'black',filter:'grayscale(1) brightness(.32)'},
+    '#A16C39':{name:'brown',filter:'hue-rotate(178.2deg) saturate(.506) brightness(.956)'},
+    '#FB2C3F':{name:'red',filter:'hue-rotate(136.6deg) saturate(1.908) brightness(1.042)'},
+    '#FE6A10':{name:'orange',filter:'hue-rotate(166.6deg) saturate(.988) brightness(1.102)'},
+    '#F69312':{name:'amber',filter:'hue-rotate(-174.3deg) saturate(.886) brightness(1.304)'},
+    '#13C16F':{name:'green',filter:'hue-rotate(-66.6deg) saturate(.872) brightness(1.172)'},
+    '#15B8A3':{name:'teal',filter:'hue-rotate(-47.1deg) saturate(.858) brightness(1.152)'},
+    '#1E86FC':{name:'blue',filter:'none'},
+    '#905AFA':{name:'purple',filter:'hue-rotate(41.1deg) saturate(1.378) brightness(.982)'},
+    '#FA70AB':{name:'pink',src:'assets/owl-soft-preview.png',filter:'none'},
+    '#959595':{name:'gray',filter:'grayscale(1) brightness(1.2)'}
+  };
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const animations = new Set();
   const pausedAnimations = new Set();
@@ -30,6 +47,7 @@
   let entranceRequest = 0;
   let imagePending = false;
   let owlName = "Ayush's Owl";
+  let owlColor = PINK;
 
   function close() {
     entranceRequest++;
@@ -49,6 +67,10 @@
     animations.forEach(animation => {
       if (animation.effect.target !== illustration) animation.finish();
     });
+  }
+
+  function currentImageReady() {
+    return illustration.complete && illustration.naturalWidth > 0 && illustration.currentSrc === illustration.src;
   }
 
   function reveal(config, request) {
@@ -74,20 +96,35 @@
 
   function enter() {
     close();
-    if (reducedMotion.matches || !illustration.animate) return;
     const request = entranceRequest;
-    host.dataset.homeStage = '1';
-    DETAILS.forEach(config => reveal(config, request));
-    imagePending = true;
+    const appearance = APPEARANCES[owlColor];
+    const src = appearance.src || BLUE_IMAGE;
+    const sourceChanged = illustration.getAttribute('src') !== src;
+    const useMotion = !reducedMotion.matches && Boolean(illustration.animate);
+    // Hide before replacing src: browsers may retain the previous decoded bitmap.
     illustration.style.opacity = '0';
+    illustration.style.filter = appearance.filter;
+    illustration.alt = `Soft ${appearance.name} Owl`;
+    if (sourceChanged) illustration.src = src;
+    if (!useMotion && !sourceChanged && currentImageReady()) {
+      illustration.style.removeProperty('opacity');
+      return;
+    }
+    host.dataset.homeStage = '1';
+    if (useMotion) DETAILS.forEach(config => reveal(config, request));
+    imagePending = true;
     illustration.decode().then(() => {
       if (request !== entranceRequest || host.hidden) return;
       imagePending = false;
-      reveal(OWL, request);
+      if (useMotion) reveal(OWL, request);
+      else {
+        illustration.style.removeProperty('opacity');
+        markSettled();
+      }
     }).catch(() => {
       if (request !== entranceRequest) return;
       imagePending = false;
-      illustration.style.removeProperty('opacity');
+      if (currentImageReady()) illustration.style.removeProperty('opacity');
       markSettled();
     });
   }
@@ -95,7 +132,7 @@
   function build() {
     host = document.getElementById('home-view');
     if (!host) return false;
-    host.innerHTML = `<img class="owl-home-image" src="assets/owl-soft-preview.png" alt="Soft pink Owl" width="600" height="600" draggable="false" decoding="async">
+    host.innerHTML = `<img class="owl-home-image" alt="Soft pink Owl" width="600" height="600" draggable="false" decoding="async">
       <h1 id="home-title" tabindex="-1"></h1>
       <a class="owl-home-chat" href="?step=chat&amp;chatVersion=live">Start chat</a>`;
     host.querySelector('.owl-home-chat').addEventListener('click', event => {
@@ -108,9 +145,11 @@
     return true;
   }
 
-  function open({name} = {}) {
+  function open({name,color} = {}) {
     if (!host?.isConnected && !build()) return;
     if (typeof name === 'string' && name.trim()) owlName = name.trim();
+    const requestedColor = typeof color === 'string' ? color.trim().toUpperCase() : PINK;
+    owlColor = Object.hasOwn(APPEARANCES,requestedColor) ? requestedColor : PINK;
     host.querySelector('#home-title').textContent = owlName;
     const chatUrl = new URL(location.href);
     chatUrl.searchParams.set('step', 'chat');
@@ -137,6 +176,9 @@
       pausedAnimations.clear();
     }
   });
-  reducedMotion.addEventListener('change', event => { if (event.matches) close(); });
+  reducedMotion.addEventListener('change', event => {
+    if (event.matches && host?.isConnected && !host.hidden) enter();
+    else if (event.matches) close();
+  });
   window.OwlHome = Object.freeze({open,close});
 })();
