@@ -43,7 +43,12 @@
     chatHeader, chatThread, chatClose, chatStop].every(Boolean)) return;
 
   const HOVER_CLOSE_DELAY = 200;
-  const SIMULATED_WORK_DURATION = 6000;
+  const WORK_PHASES = [
+    { label: 'Reading WisdomAI Hubspot', duration: 700 },
+    { label: 'Running the query', duration: 700 },
+    { label: 'Writing the answer', duration: 500 },
+  ];
+  const STREAM_DURATION = 700;
   const HORIZONTAL_MARGIN = 12;
   const VERTICAL_MARGIN = 8;
   const PANEL_GAP = 12;
@@ -53,6 +58,7 @@
   const MESSAGE_WIDTH = 480;
   const PANEL_HEIGHT = 42;
   const COMPOSER_HEIGHT = 64;
+  const COMPACT_COMPOSER_HEIGHT = 58;
   const CONVERSATION_HEIGHT = 600;
   const MAX_CONVERSATION_HEIGHT = 600;
   const MIN_CONVERSATION_HEIGHT = 180;
@@ -71,6 +77,7 @@
    * Default  Show the compact 32px Owl and green unread bar.
    *   Hover  Reveal the toolbar and expand the Owl to 56px.
    *   Click  Expand upward into the conversation; mark the notice read.
+   *   Write  Open the compact input; Send expands it upward into the thread.
    * Hover and keyboard focus keep the toolbar available while interacting.
    */
   let stage = 'default';
@@ -94,6 +101,7 @@
   let actionPointerInside = false;
   let conversation = [];
   let hasOpenedConversation = false;
+  let compactCompose = false;
   let optionsOpen = false;
   let dockingFlight = null;
   let sidebarChatOpen = false;
@@ -164,6 +172,8 @@
     sidebarReturn?.setAttribute('aria-label', unread ? 'Open Owl chat, 1 unread' : 'Open Owl chat');
     sidebarReturn?.setAttribute('aria-expanded', String(sidebarChatOpen));
     sidebarChat?.setAttribute('aria-label', unread ? 'Open Owl chat, 1 unread' : 'Open Owl chat');
+    if (sidebarChat) sidebarChat.hidden = !unread;
+    if (sidebarActions) sidebarActions.dataset.unread = String(unread);
     noticeToggle.setAttribute('aria-label', unread ? 'Open conversation, 1 unread' : 'Open conversation');
     updateStatusAccess();
   }
@@ -173,10 +183,12 @@
     statusText.textContent = task.status === 'working' ? 'Thinking' : task.preview;
   }
   function renderConversation(scrollToLatest = true) {
-    const expanded = conversation.length > 0;
+    const expanded = conversation.length > 0 && !compactCompose;
     dock.dataset.conversation = String(expanded);
+    dock.dataset.composeMode = compactCompose ? 'compact' : 'thread';
     chatHeader.hidden = !expanded;
     chatThread.hidden = !expanded;
+    chatThread.setAttribute('aria-busy', String(task?.status === 'working'));
     chatThread.replaceChildren();
     conversation.forEach(entry => {
       if (entry.role === 'date') {
@@ -191,12 +203,27 @@
       row.className = `pet-chat-message pet-chat-message--${fromOwl ? 'owl' : 'user'}`;
       row.setAttribute('role', 'group');
       row.setAttribute('aria-label', fromOwl ? 'Owl' : 'Woo-Mi');
+      if (entry.taskId) row.dataset.taskId = String(entry.taskId);
       const body = document.createElement('div');
       body.className = 'pet-chat-message-body';
-      const text = document.createElement('div');
-      text.className = entry.working ? 'pet-chat-text pet-chat-thinking' : 'pet-chat-text';
-      text.textContent = entry.working ? 'Thinking…' : entry.text;
-      body.append(text);
+      if (entry.working && !entry.streaming) {
+        const loading = document.createElement('div');
+        loading.className = 'pet-chat-loading';
+        const label = document.createElement('div');
+        label.className = 'pet-loading-label';
+        label.textContent = entry.phase || WORK_PHASES[0].label;
+        const skeleton = document.createElement('div');
+        skeleton.className = 'pet-loading-skeleton';
+        skeleton.setAttribute('aria-hidden', 'true');
+        skeleton.append(document.createElement('span'), document.createElement('span'));
+        loading.append(label, skeleton);
+        body.append(loading);
+      } else {
+        const text = document.createElement('div');
+        text.className = 'pet-chat-text';
+        text.textContent = entry.text;
+        body.append(text);
+      }
       row.append(body);
       chatThread.append(row);
     });
@@ -250,11 +277,12 @@
     let preferAbove = false;
     if (stage === 'compose') {
       panelGap = COMPOSER_GAP;
-      const desiredHeight = conversation.length ? conversationHeight(panelWidth) : COMPOSER_HEIGHT;
+      const expanded = conversation.length > 0 && !compactCompose;
+      const desiredHeight = expanded ? conversationHeight(panelWidth) : COMPACT_COMPOSER_HEIGHT;
       const aboveSpace = Math.max(0, owl.top - 16 - panelGap - VERTICAL_MARGIN);
       const belowSpace = Math.max(0, viewportHeight - VERTICAL_MARGIN - owl.bottom - panelGap);
       preferAbove = aboveSpace >= desiredHeight || aboveSpace >= belowSpace;
-      const minimumHeight = conversation.length ? MIN_CONVERSATION_HEIGHT : COMPOSER_HEIGHT;
+      const minimumHeight = expanded ? MIN_CONVERSATION_HEIGHT : COMPACT_COMPOSER_HEIGHT;
       panelHeight = Math.min(desiredHeight, viewportHeight - VERTICAL_MARGIN * 2,
         Math.max(minimumHeight, preferAbove ? aboveSpace : belowSpace));
     }
@@ -378,14 +406,16 @@
       status: 'working',
       message,
       title: greeting ? 'Respond to greeting' : priority ? 'Find today’s priority' : message,
-      preview: greeting ? 'Hi! What can I help you with?' : priority
+      preview: greeting ? 'Hi. Ask me anything about WisdomAI Hubspot and I will look it up.' : priority
         ? 'Your top work priority today: close the remaining launch review action items.'
         : 'Your request is ready to review. Add a follow-up to continue.',
       unread: false,
     };
     const taskId = task.id;
+    compactCompose = false;
+    hasOpenedConversation = true;
     conversation.push({ role: 'user', text: message });
-    const reply = { role: 'owl', text: '', working: true, taskId };
+    const reply = { role: 'owl', text: '', working: true, phase: WORK_PHASES[0].label, taskId };
     conversation.push(reply);
     renderConversation();
     input.value = '';
@@ -394,20 +424,55 @@
     setStage(keepConversationOpen ? 'compose' : 'working');
     if (keepConversationOpen) input.focus({ preventScroll: true });
     else returnFocus();
-    workTimer = window.setTimeout(() => {
-      if (!task || task.id !== taskId || task.status !== 'working') return;
+    const isCurrentTask = () => task && task.id === taskId && task.status === 'working';
+    function complete() {
+      if (!isCurrentTask()) return;
       workTimer = null;
       task.status = 'done';
-      task.unread = stage !== 'compose';
+      task.unread = stage !== 'compose' || compactCompose;
       reply.text = task.preview;
       reply.working = false;
-      renderConversation();
+      reply.streaming = false;
+      chatThread.setAttribute('aria-busy', 'false');
+      updateStreamText();
       updateInputs();
       announce(`Completed: ${task.title}`);
       if (dragging) pendingCompletion = true;
       else if (stage !== 'compose' && stage !== 'reply') showCompletion();
       else syncAccess();
-    }, SIMULATED_WORK_DURATION);
+    }
+    function updateStreamText() {
+      const text = chatThread.querySelector(`[data-task-id="${taskId}"] .pet-chat-text`);
+      if (!text) return;
+      const followLatest = chatThread.scrollHeight - chatThread.clientHeight - chatThread.scrollTop < 48;
+      text.textContent = reply.text;
+      if (followLatest) chatThread.scrollTop = chatThread.scrollHeight;
+    }
+    function streamReply() {
+      const started = performance.now();
+      reply.streaming = true;
+      renderConversation();
+      function tick() {
+        if (!isCurrentTask()) return;
+        const progress = Math.min(1, (performance.now() - started) / STREAM_DURATION);
+        reply.text = task.preview.slice(0, Math.max(1, Math.ceil(task.preview.length * progress)));
+        updateStreamText();
+        if (progress < 1) workTimer = window.setTimeout(tick, 40);
+        else complete();
+      }
+      tick();
+    }
+    function nextPhase(index) {
+      if (!isCurrentTask()) return;
+      if (index === WORK_PHASES.length) {
+        streamReply();
+        return;
+      }
+      reply.phase = WORK_PHASES[index].label;
+      renderConversation();
+      workTimer = window.setTimeout(() => nextPhase(index + 1), WORK_PHASES[index].duration);
+    }
+    workTimer = window.setTimeout(() => nextPhase(1), WORK_PHASES[0].duration);
   }
   function clearTask() {
     window.clearTimeout(workTimer);
@@ -601,11 +666,12 @@
   function openNotice() {
     openComposer();
   }
-  function openComposer(prefill) {
+  function openComposer(prefill, compact = false) {
     if (typeof prefill === 'string') input.value = prefill;
-    if (task?.status === 'done') task.unread = false;
+    compactCompose = compact;
+    if (!compact && task?.status === 'done') task.unread = false;
     renderConversation(hasOpenedConversation);
-    hasOpenedConversation = true;
+    if (!compact) hasOpenedConversation = true;
     updateInputs();
     setStage('compose');
     input.focus({ preventScroll: true });
@@ -682,7 +748,7 @@
   card.addEventListener('focusin', updateStatusAccess);
   card.addEventListener('focusout', () => queueMicrotask(updateStatusAccess));
 
-  edit.addEventListener('click', () => openComposer());
+  edit.addEventListener('click', () => openComposer(undefined, true));
   hide.addEventListener('click', dockInSidebar);
   options.addEventListener('click', () => setOptionsOpen(!optionsOpen));
   options.addEventListener('keydown', event => {
