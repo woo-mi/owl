@@ -17,7 +17,7 @@
 }
 @media (hover: hover) and (pointer: fine) {
   /* Scale independently of the idle animation's head-turn transforms. */
-  .pet-fab:hover .pet-visual { scale: 1.1666666667; }
+  .pet-fab:hover .pet-visual { scale: 1.4; }
 }
 .pet-head img { filter: none; }
 .pet-blink-overlay {

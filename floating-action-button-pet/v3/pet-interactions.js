@@ -40,7 +40,7 @@
   const SIMULATED_WORK_DURATION = 6000;
   const HORIZONTAL_MARGIN = 12;
   const VERTICAL_MARGIN = 8;
-  const PANEL_GAP = 8;
+  const PANEL_GAP = 12;
   const STATUS_GAP = 16;
   const TOOLBAR_WIDTH = 95.205;
   const NOTICE_TOOLBAR_WIDTH = 144;
