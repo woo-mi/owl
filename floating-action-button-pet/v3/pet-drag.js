@@ -19,13 +19,17 @@
   function bounds() {
     const width = document.documentElement.clientWidth;
     const height = document.documentElement.clientHeight;
-    const marginX = Math.min(12, Math.max(0, (width - pet.offsetWidth) / 2));
-    const marginY = Math.min(12, Math.max(0, (height - pet.offsetHeight) / 2));
+    // A minimized dock has no layout box; retain the Owl's size on resize.
+    const style = getComputedStyle(pet);
+    const petWidth = pet.offsetWidth || parseFloat(style.width);
+    const petHeight = pet.offsetHeight || parseFloat(style.height);
+    const marginX = Math.min(12, Math.max(0, (width - petWidth) / 2));
+    const marginY = Math.min(12, Math.max(0, (height - petHeight) / 2));
     return {
       minX: marginX,
       minY: marginY,
-      maxX: Math.max(marginX, width - pet.offsetWidth - marginX),
-      maxY: Math.max(marginY, height - pet.offsetHeight - marginY),
+      maxX: Math.max(marginX, width - petWidth - marginX),
+      maxY: Math.max(marginY, height - petHeight - marginY),
     };
   }
 

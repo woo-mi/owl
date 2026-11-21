@@ -65,6 +65,30 @@ button:focus-visible, a:focus-visible {
   top: auto !important;
   bottom: 0;
 }
+.pet-sidebar-return {
+  position: absolute;
+  left: 0;
+  top: -40px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 40px;
+  height: 36px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  animation: pet-sidebar-appear 180ms ease-out;
+  transition: background-color 120ms ease;
+}
+.pet-sidebar-return:hover { background: #e6e6e6; }
+.pet-sidebar-return:focus-visible { outline: 2px solid #7855ff; outline-offset: -2px; }
+.pet-sidebar-return img { display: block; width: 20px; height: 20px; object-fit: contain; }
+@keyframes pet-sidebar-appear {
+  from { opacity: 0; transform: scale(.85); }
+  to { opacity: 1; transform: scale(1); }
+}
 [data-pencil-name="Owl affordance new"] > [data-pencil-name="Owls navigation target"] {
   position: fixed !important;
 }
@@ -312,6 +336,7 @@ button:focus-visible, a:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .pet-dock { --motion-reveal: 0ms; --motion-morph: 0ms; --motion-content: 0ms; }
   .pet-thinking-dots span { animation: none; }
+  .pet-sidebar-return { animation: none; transition: none; }
 }
 
 @media (max-width: 700px) {

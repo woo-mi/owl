@@ -8,6 +8,7 @@
   const toolbar = find('.pet-toolbar');
   const edit = find('.pet-edit');
   const hide = find('.pet-hide');
+  const sidebarReturn = document.querySelector('.pet-sidebar-return');
   const composer = find('.pet-composer');
   const input = find('#pet-message');
   const send = find('.pet-send');
@@ -289,6 +290,7 @@
     actionPointerInside = false;
     pointerFocusPending = false;
     suppressHoverUntilLeave = false;
+    if (sidebarReturn) sidebarReturn.hidden = visible;
     if (visible) {
       dock.hidden = false;
       dock.inert = false;
@@ -299,7 +301,10 @@
       clearTask();
       setStage('default');
       announcement.textContent = '';
-      if (dock.contains(document.activeElement)) document.activeElement.blur();
+      if (dock.contains(document.activeElement)) {
+        document.activeElement.blur();
+        sidebarReturn?.focus({ preventScroll: true });
+      }
       dock.inert = true;
       dock.setAttribute('aria-hidden', 'true');
       dock.classList.add('is-hiding');
@@ -407,6 +412,10 @@
 
   edit.addEventListener('click', () => openComposer());
   hide.addEventListener('click', () => setPetVisibility(false));
+  sidebarReturn?.addEventListener('click', () => {
+    setPetVisibility(true);
+    returnFocus();
+  });
   document.addEventListener('pet:visibility-request', event => {
     if (typeof event.detail?.visible === 'boolean') setPetVisibility(event.detail.visible);
   });
