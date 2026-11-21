@@ -15,8 +15,9 @@
   transform-origin: 50% 68%;
   filter: drop-shadow(0 2px 4px rgb(0 0 0 / 14%));
 }
+/* Keep active actions enlarged independently of the idle head-turn transforms. */
+.pet-dock:is([data-stage="hover"], [data-stage="compose"], [data-stage="working"], [data-stage="done-hover"], [data-stage="notice"], [data-stage="reply"]) .pet-visual { scale: 1.4; }
 @media (hover: hover) and (pointer: fine) {
-  /* Scale independently of the idle animation's head-turn transforms. */
   .pet-fab:hover .pet-visual { scale: 1.4; }
 }
 .pet-head img { filter: none; }
