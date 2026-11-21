@@ -1,4 +1,6 @@
 /* Reversible transitions between the unread toolbar, resting Owl, and chat. */
+body[data-pet-version="v4"] #pet-version-picker { display: none; }
+
 .pet-dock {
   --motion-reveal: 280ms;
   --motion-morph: 360ms;
@@ -237,6 +239,9 @@
   stroke-width: 1.25px;
   vector-effect: non-scaling-stroke;
 }
+/* Figma exports this box as a filled 1.5-unit outline. At 14/24 scale it
+   is 0.875px; expanding its edges by a 0.375px stroke gives 1.25px. */
+.pet-edit svg .pet-edit-box-outline { stroke-width: 0.375px; }
 
 .pet-done-indicator {
   left: 17px;
