@@ -273,12 +273,6 @@ button:focus-visible, a:focus-visible {
 .pet-chat-message-body { position: relative; min-width: 0; max-width: 90%; padding: 10px 14px; border-radius: 18px; background: #f1f1f1; color: #303438; font: 400 14px/20px Inter, system-ui, sans-serif; }
 .pet-chat-message--user .pet-chat-message-body { background: #0866ed; color: #fff; font-weight: 500; }
 .pet-chat-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-.pet-chat-badge { position: absolute; top: -10px; left: -7px; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #f1f1f1; color: #73777b; font: 400 12px/1 Inter, system-ui, sans-serif; }
-.pet-chat-badge::before, .pet-chat-badge::after { content: ''; position: absolute; border-radius: 50%; background: #f1f1f1; }
-.pet-chat-badge::before { left: 3px; bottom: -4px; width: 5px; height: 5px; }
-.pet-chat-badge::after { left: 0; bottom: -7px; width: 3px; height: 3px; }
-.pet-chat-badge[data-state="working"] { padding-bottom: 4px; font-weight: 600; }
-.pet-chat-badge[data-state="stopped"] { font-size: 8px; }
 #pet-message {
   display: block;
   width: 100%;

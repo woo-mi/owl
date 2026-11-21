@@ -153,14 +153,6 @@
       row.setAttribute('aria-label', fromOwl ? 'Owl' : 'Woo-Mi');
       const body = document.createElement('div');
       body.className = 'pet-chat-message-body';
-      if (fromOwl) {
-        const badge = document.createElement('span');
-        badge.className = 'pet-chat-badge';
-        badge.dataset.state = entry.working ? 'working' : entry.stopped ? 'stopped' : 'done';
-        badge.setAttribute('aria-hidden', 'true');
-        badge.textContent = entry.working ? '…' : entry.stopped ? '■' : '👍';
-        body.append(badge);
-      }
       const text = document.createElement('div');
       text.className = entry.working ? 'pet-chat-text pet-chat-thinking' : 'pet-chat-text';
       text.textContent = entry.working ? 'Thinking…' : entry.text;
