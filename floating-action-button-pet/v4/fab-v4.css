@@ -1,9 +1,18 @@
-/* V4 changes only the Owl toolbar, options menu, and corner placement. */
+/* Reversible transitions between the unread toolbar, resting Owl, and chat. */
 .pet-dock {
+  --motion-reveal: 280ms;
+  --motion-morph: 360ms;
+  --motion-content: 180ms;
   right: 24px;
   bottom: 24px;
 }
-.pet-dock .pet-visual { transform-origin: bottom right; }
+.pet-dock .pet-visual {
+  scale: .8;
+  transform-origin: bottom right;
+  transition: scale 320ms var(--motion-settle);
+}
+.pet-surface { transform: translateY(6px) scale(.96); }
+.pet-dock[data-stage="done"] .pet-surface { transform: translateY(6px) scale(.96); }
 
 .pet-dock:not([data-stage="compose"]) .pet-surface {
   border: 1px solid #e4e4e7;
@@ -20,6 +29,12 @@
   width: 100%;
   height: 100%;
   padding: 4px;
+  transform: translateY(4px);
+  transition: opacity 180ms ease, transform 280ms var(--motion-settle);
+}
+.pet-dock:is([data-stage="hover"], [data-stage="done-hover"], [data-stage="notice"], [data-stage="reply"], [data-stage="working"][data-working-hover="true"]) .pet-toolbar {
+  transform: translateY(0);
+  transition-delay: 100ms, 0s;
 }
 .pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options) {
   display: grid;
@@ -71,7 +86,7 @@
 .pet-options-menu {
   position: absolute;
   right: 4px;
-  bottom: calc(40px - var(--panel-y) + 4px);
+  bottom: calc(40px - var(--menu-anchor-y, var(--panel-y)) + 4px);
   z-index: 2;
   width: 224px;
   max-width: calc(100vw - 24px);
@@ -83,8 +98,19 @@
   background: #fff;
   color: #27272a;
   box-shadow: 0 3px 8px rgb(24 24 27 / 5%), 0 12px 30px rgb(24 24 27 / 12%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(4px) scale(.98);
   transform-origin: right bottom;
-  animation: pet-options-appear 150ms ease-out;
+  transition: opacity 180ms ease, transform 220ms var(--motion-settle), visibility 0s 220ms;
+}
+.pet-options-menu[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  transition-delay: 0s;
 }
 .pet-options-menu :is(.pet-hide, .pet-settings) {
   display: flex;
@@ -108,21 +134,87 @@
   outline-offset: -2px !important;
 }
 .pet-options-menu svg { flex: 0 0 16px; width: 16px; height: 16px; color: #71717a; }
-@keyframes pet-options-appear {
-  from { opacity: 0; transform: translateY(4px) scale(.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
 
-.pet-done-indicator { border: 0; background: #188636; }
+.pet-done-indicator {
+  left: 17px;
+  width: 14px;
+  border: 0;
+  background: #188636;
+  transition: left 320ms var(--motion-settle), width 320ms var(--motion-settle),
+    opacity 220ms ease, transform 320ms var(--motion-settle), visibility 0s 220ms;
+}
 .pet-dock[data-stage="done-hover"][data-unread="true"]:not(.is-dragging) .pet-done-indicator {
   left: 0;
+  width: 24px;
   opacity: 1;
   visibility: visible;
   transform: scaleX(1);
   pointer-events: auto;
   transition-delay: 0s;
 }
+
+.pet-dock[data-stage="compose"] .pet-surface,
+.pet-dock[data-stage="compose"]:not([data-conversation="true"]) .pet-surface {
+  border: 1px solid #e4e4e7;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgb(24 24 27 / 5%), 0 12px 32px rgb(24 24 27 / 12%), 0 28px 64px rgb(24 24 27 / 10%);
+  filter: none;
+}
+.pet-composer {
+  overflow: hidden;
+  transform: translateY(8px);
+  transition: opacity 180ms ease, transform 280ms var(--motion-settle);
+}
+.pet-dock[data-stage="compose"] .pet-composer { transform: translateY(0); transition-delay: 100ms, 0s; }
+.pet-chat-header { flex: 0 0 36px; height: 36px; gap: 4px; padding: 4px 10px 0; }
+.pet-chat-header :is(a, button) { flex: 0 0 28px; width: 28px; height: 28px; border-radius: 50%; color: #71717a; }
+.pet-chat-header svg, .pet-chat-close svg { width: 16px; height: 16px; }
+.pet-chat-thread { padding: 20px; scrollbar-color: #d4d4d8 transparent; }
+.pet-chat-thread .pet-chat-message { margin: 0 0 16px; }
+.pet-chat-thread .pet-chat-message:last-child { margin-bottom: 0; }
+.pet-chat-thread .pet-chat-message-body {
+  max-width: 100%;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #27272a;
+  font: 400 14px/22px Inter, system-ui, sans-serif;
+}
+.pet-chat-thread .pet-chat-message--user .pet-chat-message-body {
+  max-width: 84%;
+  padding: 8px 14px;
+  border-radius: 18px;
+  background: #f4f4f5;
+  color: #27272a;
+  font-weight: 400;
+}
+.pet-chat-date { margin: 4px 0 20px; color: #a1a1aa; font: 400 12px/18px Inter, system-ui, sans-serif; text-align: center; }
+.pet-chat-message + .pet-chat-date { margin-top: 24px; }
+.pet-dock[data-conversation="true"] .pet-compose-entry {
+  flex: 0 0 64px;
+  padding: 12px 16px;
+  border-top: 1px solid #e4e4e7;
+  background: #fff;
+}
+.pet-compose-footer,
+.pet-compose-footer:focus-within {
+  height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.pet-compose-actions { gap: 4px; }
+.pet-compose-footer button { flex: 0 0 32px; width: 32px; height: 32px; border-radius: 50%; }
+.pet-compose-footer .pet-send, .pet-compose-footer .pet-chat-stop { background: #18181b; color: #fff; }
+.pet-compose-footer .pet-send:not(:disabled):hover, .pet-compose-footer .pet-chat-stop:hover { background: #3f3f46; }
+.pet-compose-footer .pet-send:disabled { background: #f4f4f5; color: #a1a1aa; }
+#pet-message { height: 24px; min-height: 24px; font: 400 16px/24px Inter, system-ui, sans-serif; }
+#pet-message::placeholder { color: #a1a1aa; }
 @media (prefers-reduced-motion: reduce) {
-  .pet-options-menu { animation: none; }
-  .pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options) { transition: none; }
+  .pet-dock { --motion-reveal: 0ms; --motion-morph: 0ms; --motion-content: 0ms; }
+  .pet-dock .pet-visual, .pet-surface, .pet-toolbar, .pet-composer,
+  .pet-options-menu, .pet-done-indicator,
+  .pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options) { transition: none !important; }
 }

@@ -39,6 +39,7 @@
     chatHeader, chatThread, chatClose, chatStop].every(Boolean)) return;
 
   const HOVER_CLOSE_DELAY = 200;
+  const INTRO_HOLD_DURATION = 2400;
   const SIMULATED_WORK_DURATION = 6000;
   const HORIZONTAL_MARGIN = 12;
   const VERTICAL_MARGIN = 8;
@@ -46,13 +47,13 @@
   const STATUS_GAP = 16;
   const TOOLBAR_WIDTH = 117;
   const NOTICE_TOOLBAR_WIDTH = 117;
-  const MESSAGE_WIDTH = 380;
+  const MESSAGE_WIDTH = 480;
   const PANEL_HEIGHT = 42;
-  const COMPOSER_HEIGHT = 72;
-  const CONVERSATION_HEIGHT = 440;
+  const COMPOSER_HEIGHT = 64;
+  const CONVERSATION_HEIGHT = 600;
   const MAX_CONVERSATION_HEIGHT = 600;
   const MIN_CONVERSATION_HEIGHT = 180;
-  const COMPOSER_GAP = 16;
+  const COMPOSER_GAP = 12;
   const STATUS_HEIGHT = 65;
   const REPLY_HEIGHT = 117;
   const INDICATOR_HEIGHT = 4;
@@ -61,9 +62,12 @@
   const noticeStages = new Set(['done-hover', 'notice', 'reply']);
   const cardStages = new Set(['working', 'notice', 'reply']);
 
-  // Storyboard: Edit opens a compact card above the Owl. Send expands the card
-  // upward into a conversation; the reply settles in after the working state.
-  // Closing the card lets work continue and restores the notification flow.
+  /* ANIMATION STORYBOARD
+   *    0ms  Show the unread toolbar and active 56px Owl (image 1).
+   * 2400ms  Fade the toolbar and settle to the compact 32px Owl (image 2).
+   *  Click  Expand upward into the conversation; mark the notice read (image 3).
+   * Hover and keyboard focus keep the toolbar available while interacting.
+   */
   let stage = 'default';
   let task = null;
   let taskSequence = 0;
@@ -84,6 +88,7 @@
   let workingActionsVisible = false;
   let actionPointerInside = false;
   let conversation = [];
+  let hasOpenedConversation = false;
   let optionsOpen = false;
 
   const idleStage = () => task && task.status === 'done' && task.unread ? 'done' : 'default';
@@ -99,7 +104,8 @@
   function setOptionsOpen(open, restoreFocus = false) {
     cancelClose();
     optionsOpen = open;
-    optionsMenu.hidden = !open;
+    optionsMenu.dataset.open = String(open);
+    setAccessible(optionsMenu, open);
     options.setAttribute('aria-expanded', String(open));
     if (open) optionsMenu.querySelector('[role="menuitem"]').focus({ preventScroll: true });
     else if (restoreFocus) options.focus({ preventScroll: true });
@@ -151,13 +157,20 @@
     title.textContent = task.title;
     statusText.textContent = task.status === 'working' ? 'Thinking' : task.preview;
   }
-  function renderConversation() {
+  function renderConversation(scrollToLatest = true) {
     const expanded = conversation.length > 0;
     dock.dataset.conversation = String(expanded);
     chatHeader.hidden = !expanded;
     chatThread.hidden = !expanded;
     chatThread.replaceChildren();
     conversation.forEach(entry => {
+      if (entry.role === 'date') {
+        const separator = document.createElement('div');
+        separator.className = 'pet-chat-date';
+        separator.textContent = entry.text;
+        chatThread.append(separator);
+        return;
+      }
       const fromOwl = entry.role === 'owl';
       const row = document.createElement('div');
       row.className = `pet-chat-message pet-chat-message--${fromOwl ? 'owl' : 'user'}`;
@@ -172,10 +185,10 @@
       row.append(body);
       chatThread.append(row);
     });
-    chatThread.scrollTop = chatThread.scrollHeight;
+    chatThread.scrollTop = scrollToLatest ? chatThread.scrollHeight : 0;
     requestAnimationFrame(() => {
       if (stage === 'compose') reposition();
-      chatThread.scrollTop = chatThread.scrollHeight;
+      chatThread.scrollTop = scrollToLatest ? chatThread.scrollHeight : 0;
     });
   }
   function conversationHeight(panelWidth) {
@@ -244,7 +257,9 @@
     dock.style.setProperty('--panel-width', `${panelWidth}px`);
     dock.style.setProperty('--panel-height', `${panelHeight}px`);
     dock.style.setProperty('--panel-x', `${finalPanelLeft - dockRect.left}px`);
-    dock.style.setProperty('--panel-y', `${constrainY(panelTop, panelHeight) - dockRect.top}px`);
+    const panelOffsetY = constrainY(panelTop, panelHeight) - dockRect.top;
+    dock.style.setProperty('--panel-y', `${panelOffsetY}px`);
+    if (stage !== 'compose') dock.style.setProperty('--menu-anchor-y', `${panelOffsetY}px`);
     dock.style.setProperty('--panel-origin', `${clamp(owl.left + owl.width / 2 - finalPanelLeft, 0, panelWidth)}px`);
     dock.style.setProperty('--panel-origin-y', panelTop < owl.top ? 'bottom' : 'top');
     dock.style.setProperty('--working-width', `${statusWidth}px`);
@@ -414,7 +429,8 @@
   function openComposer(prefill) {
     if (typeof prefill === 'string') input.value = prefill;
     if (task?.status === 'done') task.unread = false;
-    renderConversation();
+    renderConversation(hasOpenedConversation);
+    hasOpenedConversation = true;
     updateInputs();
     setStage('compose');
     input.focus({ preventScroll: true });
@@ -457,20 +473,9 @@
   fab.addEventListener('pointerup', () => { pointerFocusPending = false; });
   fab.addEventListener('pointercancel', () => { pointerFocusPending = false; });
   fab.addEventListener('click', event => {
-    // The drag controller suppresses a drop's click in its capture listener.
     if (event.defaultPrevented || dragging) return;
-    if (stage === 'default' || stage === 'done') {
-      suppressHoverUntilLeave = false;
-      revealActions();
-    } else if (stage === 'working') {
-      if (lastPointerType === 'touch' && event.detail !== 0 && workingActionsVisible) {
-        workingActionsVisible = false;
-        syncAccess();
-      } else {
-        suppressHoverUntilLeave = false;
-        revealActions();
-      }
-    } else if (['hover', 'done-hover'].includes(stage) && lastPointerType === 'touch' && event.detail !== 0) collapse();
+    if (stage === 'compose') collapse(true);
+    else openComposer();
   });
   dock.addEventListener('focusin', event => {
     if (stage !== 'working' || event.target === fab || toolbar.contains(event.target)) cancelClose();
@@ -650,7 +655,6 @@
       threadResizeFrame = 0;
       if (stage !== 'compose' || !conversation.length) return;
       reposition();
-      chatThread.scrollTop = chatThread.scrollHeight;
     });
   });
   threadResizeObserver.observe(chatThread);
@@ -665,8 +669,34 @@
     else syncAccess();
   });
 
-  input.placeholder = 'Ask a question or follow-up';
+  // Sample history is part of the prototype's default unread state.
+  conversation = [
+    { role: 'date', text: 'Yesterday' },
+    { role: 'user', text: 'Which lead sources brought in the most contacts last quarter?' },
+    { role: 'owl', text: 'Organic search led with 4,812 new contacts, ahead of paid social at 3,140 and webinars at 2,276. Referrals were the smallest source but converted best: 18% became opportunities.' },
+    { role: 'user', text: 'How did webinars trend month over month?' },
+    { role: 'owl', text: 'Webinar contacts grew every month: 610 in July, 742 in August and 924 in September. That is a 51% rise across the quarter.' },
+    { role: 'date', text: 'Today' },
+    { role: 'owl', text: 'Your Monday pipeline check is ready. Open pipeline is $4.2M across 138 deals, up 6% on last week. 23 deals have had no activity for 30 days, and 9 of those belong to one owner.' },
+  ];
+  task = {
+    id: ++taskSequence,
+    status: 'done',
+    title: 'Monday pipeline check',
+    preview: conversation[conversation.length - 1].text,
+    unread: true,
+  };
+  input.placeholder = 'Give your Owl something to do...';
+  optionsMenu.hidden = false;
+  setOptionsOpen(false);
   dock.dataset.visible = 'true';
+  renderConversation(false);
   updateInputs();
-  setStage('default');
+  setStage('done-hover');
+  window.setTimeout(() => {
+    const keyboardFocusInside = keyboardInteraction && dock.contains(document.activeElement);
+    if (stage === 'done-hover' && petVisible && !optionsOpen && !pointerInside && !keyboardFocusInside) {
+      setStage(idleStage());
+    }
+  }, INTRO_HOLD_DURATION);
 })();
