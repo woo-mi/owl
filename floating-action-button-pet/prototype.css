@@ -82,28 +82,28 @@ button:focus-visible, a:focus-visible {
   --motion-content: 120ms;
   --motion-settle: cubic-bezier(.22, 1, .36, 1);
   --panel-width: 95.205px;
-  --panel-x: -3.603px;
-  --panel-y: 96px;
+  --panel-x: -15.603px;
+  --panel-y: 72px;
   --working-width: 380px;
-  --working-x: -289px;
+  --working-x: -313px;
   --working-y: -86px;
   --status-height: 64.485px;
-  --indicator-y: 97px;
+  --indicator-y: 73px;
   position: fixed;
   right: calc(64px + env(safe-area-inset-right, 0px));
   bottom: calc(88px + env(safe-area-inset-bottom, 0px));
   z-index: 20;
   display: block;
-  width: 88px;
-  height: 88px;
+  width: 64px;
+  height: 64px;
   transition: opacity var(--motion-reveal) ease;
 }
 .pet-dock.is-hiding { opacity: 0; pointer-events: none; }
 .pet-fab {
   display: block;
   padding: 0;
-  width: 88px;
-  height: 88px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   cursor: grab;
   touch-action: none;
@@ -227,7 +227,7 @@ button:focus-visible, a:focus-visible {
 .pet-send:not(:disabled):active { transform: scale(.9); }
 .pet-done-indicator {
   position: absolute;
-  left: 24px;
+  left: calc(50% - 20px);
   top: var(--indicator-y);
   width: 40px;
   height: 8px;
