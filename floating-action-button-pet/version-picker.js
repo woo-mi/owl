@@ -3,11 +3,11 @@
   // Each version has its own prototype files; only this selector is shared.
   const base = new URL('.', document.currentScript.src);
   const versions = [
-    { id: 'v1', href: new URL('./', base).href },
+    { id: 'v1', href: new URL('v1/', base).href },
     { id: 'v2', href: new URL('v2/', base).href },
     { id: 'v3', href: new URL('v3/', base).href },
   ];
-  const selected = versions.find(version => version.id === document.body.dataset.petVersion)?.id || 'v1';
+  const selected = versions.find(version => version.id === document.body.dataset.petVersion)?.id || 'v3';
   const control = document.createElement('nav');
   control.id = 'pet-version-picker';
   control.setAttribute('aria-label', 'FAB pet prototype versions');

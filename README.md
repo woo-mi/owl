@@ -6,14 +6,13 @@ This repository publishes its `main` branch root through GitHub Pages. No build
 step is required.
 
 - `index.html` and `owl-mark.svg` provide the overview page.
-- `floating-action-button-pet/` is **Floating Action Button (pet)**, an independent
-  copy of Owl affordance with the Pen **Default** blue Owl initially at the bottom-right.
-  Drag it or use arrow keys while focused to move it; refreshing restores its default position.
-  Hover or tap the Owl for actions, choose edit to type, then send to preview the
-  **working** state, which completes after a short simulated delay. Hover the activity
-  for return, stop, and dismiss controls. The green done marker leads to a notification
-  and an inline follow-up reply. Escape collapses the controls; no messages leave this
-  prototype. Voice and attachments are visual placeholders.
+- `floating-action-button-pet/` opens **FAB (pet) v3** by default, with the blue Owl
+  fixed at the bottom-right. Hover or tap the Owl for actions and choose edit to open
+  the composer above it. Sending expands a conversation with a simulated reply;
+  close, stop, and open-in-main-window controls are available. Hide Owl minimizes it
+  to a sidebar icon that restores it. Earlier v1 and v2 prototypes remain available
+  in the version selector. Escape collapses controls; no messages leave this prototype.
+  Voice and attachments are visual placeholders.
   Published at https://woo-mi.github.io/owl/floating-action-button-pet/.
 - `ui-optimization/` is **UI optimization**, a responsive copy of the Pen
   **third-party** and **third-party selected** screens, with an animated approval transition. Published at https://woo-mi.github.io/owl/ui-optimization/.
