@@ -264,6 +264,7 @@ button:focus-visible, a:focus-visible {
 .pet-chat-header { display: flex; align-items: center; justify-content: flex-end; flex: 0 0 32px; gap: 4px; padding: 4px 8px 0; }
 .pet-chat-header :is(a, button) { display: grid; place-items: center; flex: 0 0 24px; width: 24px; height: 24px; padding: 0; border-radius: 6px; color: #717578; }
 .pet-chat-header svg { width: 15px; height: 15px; }
+.pet-chat-close svg { width: 16px; height: 16px; }
 .pet-chat-header :is(a, button):hover { background: #f3f4f5; color: #363c40; }
 .pet-chat-thread { flex: 1; min-height: 0; padding: 10px 16px 18px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #d7d9db transparent; }
 .pet-chat-message { display: flex; align-items: flex-start; gap: 9px; }
