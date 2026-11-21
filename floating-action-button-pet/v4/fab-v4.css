@@ -11,6 +11,22 @@
   transform-origin: bottom right;
   transition: scale 320ms var(--motion-settle);
 }
+.pet-dock.is-docking .pet-visual { opacity: 0; }
+.pet-sidebar-return { animation: none; }
+.pet-sidebar-return.is-landing { opacity: 0; pointer-events: none; }
+.pet-docking-flight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: center;
+  filter: drop-shadow(0 3px 6px rgb(0 0 0 / 16%));
+  will-change: transform;
+}
 .pet-surface { transform: translateY(6px) scale(.96); }
 .pet-dock[data-stage="done"] .pet-surface { transform: translateY(6px) scale(.96); }
 

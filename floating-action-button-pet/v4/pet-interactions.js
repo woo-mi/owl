@@ -56,6 +56,8 @@
   const STATUS_HEIGHT = 65;
   const REPLY_HEIGHT = 117;
   const INDICATOR_HEIGHT = 4;
+  const DOCK_FLIGHT = { duration: 900, arcHeight: 120, frames: 60 };
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const clamp = (value, min, max) => Math.min(Math.max(min, max), Math.max(min, value));
   const toolbarStages = new Set(['hover', 'done-hover', 'notice', 'reply']);
   const noticeStages = new Set(['done-hover', 'notice', 'reply']);
@@ -89,6 +91,7 @@
   let conversation = [];
   let hasOpenedConversation = false;
   let optionsOpen = false;
+  let dockingFlight = null;
 
   const idleStage = () => task && task.status === 'done' && task.unread ? 'done' : 'default';
   const actionStage = () => task && task.status === 'done' ? 'done-hover' : 'hover';
@@ -386,8 +389,80 @@
     followupInput.value = '';
     updateInputs();
   }
+  function finishDockingFlight(restoreFocus = true) {
+    const flight = dockingFlight;
+    if (!flight) return;
+    dockingFlight = null;
+    flight.animation?.cancel();
+    flight.image?.remove();
+    if (!petVisible) {
+      clearTimeout(hideTimer);
+      dock.hidden = true;
+    }
+    dock.classList.remove('is-docking');
+    sidebarReturn.classList.remove('is-landing');
+    sidebarReturn.inert = false;
+    if (restoreFocus && flight.restoreFocus && !petVisible
+      && (document.activeElement === document.body || document.activeElement === sidebarReturn)) {
+      sidebarReturn.focus({ preventScroll: true });
+    }
+  }
+  function dockInSidebar() {
+    if (!petVisible || dockingFlight) return;
+    const restoreFocus = dock.contains(document.activeElement);
+    setOptionsOpen(false);
+    if (!sidebarReturn || reducedMotion.matches) {
+      setPetVisibility(false, true);
+      return;
+    }
+    // Lift away from the corner, sweep left in an arc, then settle into the rail.
+    // Capture the visible size before the dock changes to its compact state.
+    const source = find('.pet-visual').getBoundingClientRect();
+    const flight = { restoreFocus };
+    dockingFlight = flight;
+    sidebarReturn.classList.add('is-landing');
+    sidebarReturn.inert = true;
+    dock.classList.add('is-docking');
+    setPetVisibility(false, true);
+    const destination = sidebarReturn.querySelector('img').getBoundingClientRect();
+    if (!source.width || !destination.width) {
+      finishDockingFlight();
+      return;
+    }
+    const image = find('.pet-head img').cloneNode(false);
+    image.removeAttribute('id');
+    image.className = 'pet-docking-flight';
+    image.alt = '';
+    image.setAttribute('aria-hidden', 'true');
+    image.style.width = `${source.width}px`;
+    image.style.height = `${source.height}px`;
+    document.body.append(image);
+    flight.image = image;
+    const start = { x: source.left + source.width / 2, y: source.top + source.height / 2 };
+    const end = { x: destination.left + destination.width / 2, y: destination.top + destination.height / 2 };
+    const distance = Math.hypot(end.x - start.x, end.y - start.y);
+    const arcHeight = Math.min(DOCK_FLIGHT.arcHeight, distance * .18, Math.max(0, Math.min(start.y, end.y) - source.height));
+    const smooth = value => value * value * (3 - 2 * value);
+    const easeTravel = value => value < .5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2;
+    const frames = Array.from({ length: DOCK_FLIGHT.frames + 1 }, (_, index) => {
+      const progress = index / DOCK_FLIGHT.frames;
+      const travel = easeTravel(clamp((progress - .06) / .8, 0, 1));
+      const x = start.x + (end.x - start.x) * travel;
+      const y = start.y + (end.y - start.y) * smooth(progress) - Math.sin(Math.PI * progress) * arcHeight;
+      const scale = 1 + (destination.width / source.width - 1) * smooth(progress * progress);
+      return {
+        offset: progress,
+        transform: `translate3d(${x - source.width / 2}px, ${y - source.height / 2}px, 0) scale(${scale})`,
+      };
+    });
+    flight.animation = image.animate(frames, { duration: DOCK_FLIGHT.duration, easing: 'linear', fill: 'both' });
+    flight.animation.finished.then(() => {
+      if (dockingFlight === flight) finishDockingFlight();
+    }).catch(() => { /* A restore, resize, or reduced-motion change already cleaned up. */ });
+  }
   function setPetVisibility(visible, preserveConversation = false) {
     if (visible === petVisible) return;
+    if (visible) finishDockingFlight(false);
     petVisible = visible;
     window.clearTimeout(hideTimer);
     hideTimer = null;
@@ -409,7 +484,7 @@
       announcement.textContent = '';
       if (dock.contains(document.activeElement)) {
         document.activeElement.blur();
-        sidebarReturn?.focus({ preventScroll: true });
+        if (!dockingFlight) sidebarReturn?.focus({ preventScroll: true });
       }
       dock.inert = true;
       dock.setAttribute('aria-hidden', 'true');
@@ -507,10 +582,7 @@
   card.addEventListener('focusout', () => queueMicrotask(updateStatusAccess));
 
   edit.addEventListener('click', () => openComposer());
-  hide.addEventListener('click', () => {
-    setOptionsOpen(false);
-    setPetVisibility(false, true);
-  });
+  hide.addEventListener('click', dockInSidebar);
   options.addEventListener('click', () => setOptionsOpen(!optionsOpen));
   options.addEventListener('keydown', event => {
     if (!['ArrowDown', 'ArrowUp'].includes(event.key)) return;
@@ -646,7 +718,14 @@
     } else setStage(stage);
   });
   dock.addEventListener('pet:move', reposition);
-  window.addEventListener('resize', reposition);
+  window.addEventListener('resize', () => {
+    finishDockingFlight();
+    reposition();
+  });
+  reducedMotion.addEventListener('change', () => {
+    if (reducedMotion.matches) finishDockingFlight();
+  });
+  window.addEventListener('pagehide', () => finishDockingFlight(false));
   let threadResizeFrame = 0;
   const threadResizeObserver = new ResizeObserver(() => {
     if (stage !== 'compose' || !conversation.length || threadResizeFrame) return;
