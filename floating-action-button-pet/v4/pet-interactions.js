@@ -39,7 +39,6 @@
     chatHeader, chatThread, chatClose, chatStop].every(Boolean)) return;
 
   const HOVER_CLOSE_DELAY = 200;
-  const INTRO_HOLD_DURATION = 2400;
   const SIMULATED_WORK_DURATION = 6000;
   const HORIZONTAL_MARGIN = 12;
   const VERTICAL_MARGIN = 8;
@@ -63,9 +62,9 @@
   const cardStages = new Set(['working', 'notice', 'reply']);
 
   /* ANIMATION STORYBOARD
-   *    0ms  Show the unread toolbar and active 56px Owl (image 1).
-   * 2400ms  Fade the toolbar and settle to the compact 32px Owl (image 2).
-   *  Click  Expand upward into the conversation; mark the notice read (image 3).
+   * Default  Show the compact 32px Owl and green unread bar.
+   *   Hover  Reveal the toolbar and expand the Owl to 56px.
+   *   Click  Expand upward into the conversation; mark the notice read.
    * Hover and keyboard focus keep the toolbar available while interacting.
    */
   let stage = 'default';
@@ -692,11 +691,5 @@
   dock.dataset.visible = 'true';
   renderConversation(false);
   updateInputs();
-  setStage('done-hover');
-  window.setTimeout(() => {
-    const keyboardFocusInside = keyboardInteraction && dock.contains(document.activeElement);
-    if (stage === 'done-hover' && petVisible && !optionsOpen && !pointerInside && !keyboardFocusInside) {
-      setStage(idleStage());
-    }
-  }, INTRO_HOLD_DURATION);
+  setStage(idleStage());
 })();
