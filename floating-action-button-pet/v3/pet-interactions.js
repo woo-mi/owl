@@ -46,7 +46,7 @@
   const NOTICE_TOOLBAR_WIDTH = 144;
   const MESSAGE_WIDTH = 380;
   const PANEL_HEIGHT = 47;
-  const COMPOSER_HEIGHT = 88;
+  const COMPOSER_HEIGHT = 72;
   const CONVERSATION_HEIGHT = 440;
   const MAX_CONVERSATION_HEIGHT = 600;
   const MIN_CONVERSATION_HEIGHT = 180;
@@ -628,7 +628,7 @@
     else syncAccess();
   });
 
-  input.placeholder = 'Ask Owl';
+  input.placeholder = 'Ask a question or follow-up';
   dock.dataset.visible = 'true';
   updateInputs();
   setStage('default');

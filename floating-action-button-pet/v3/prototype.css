@@ -242,19 +242,18 @@ button:focus-visible, a:focus-visible {
   position: relative;
   display: flex;
   flex: 1;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
   min-height: 0;
-  padding: 12px 12px 8px;
-  background: linear-gradient(105deg, rgb(251 248 238 / 35%), rgb(252 248 250 / 28%) 50%, rgb(240 249 253 / 42%));
+  padding: 11px 12px;
+  background: #fff;
 }
-.pet-dock[data-conversation="true"] .pet-compose-entry { flex: 0 0 88px; border-top: 1px solid #eeeeef; }
-.pet-compose-footer { display: flex; align-items: center; justify-content: space-between; flex: 0 0 26px; gap: 8px; }
-.pet-compose-tools, .pet-compose-actions { display: flex; align-items: center; gap: 3px; }
-.pet-compose-footer button { color: #5d6266; }
+.pet-dock[data-conversation="true"] .pet-compose-entry { flex: 0 0 72px; padding-block: 12px; }
+.pet-compose-footer { display: flex; align-items: center; flex: 1; gap: 8px; min-width: 0; height: 48px; padding: 0 10px 0 14px; border: 1px solid #e3e5e7; border-radius: 24px; background: #fff; }
+.pet-compose-footer:focus-within { border-color: #bfc3c7; }
+.pet-compose-actions { display: flex; align-items: center; flex: 0 0 auto; gap: 8px; }
+.pet-compose-footer button { border-radius: 50%; color: #5d6266; }
 .pet-compose-footer button:disabled { opacity: 1; cursor: default; }
 .pet-compose-footer svg { width: 16px; height: 16px; }
-.pet-composer .pet-attach { border-radius: 50%; background: #f1f0ec; }
 .pet-compose-footer .pet-send, .pet-compose-footer .pet-chat-stop {
   background: #3884f5;
   color: #fff;
@@ -275,10 +274,11 @@ button:focus-visible, a:focus-visible {
 .pet-chat-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 #pet-message {
   display: block;
-  width: 100%;
+  width: 0;
+  height: 20px;
   min-width: 0;
-  min-height: 22px;
-  flex: 1 1 22px;
+  min-height: 20px;
+  flex: 1 1 0;
   padding: 0;
   margin: 0;
   border: 0;
@@ -289,10 +289,13 @@ button:focus-visible, a:focus-visible {
   font: 400 14px/20px Inter, system-ui, sans-serif;
   caret-color: #353535;
   resize: none;
+  overflow-x: hidden;
   overflow-y: auto;
+  white-space: pre-wrap;
   scrollbar-width: thin;
 }
-#pet-message::placeholder { color: #696b6d; opacity: 1; }
+#pet-message:placeholder-shown { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+#pet-message::placeholder { color: #9a9da0; opacity: 1; }
 .pet-surface:focus-within { border-color: #c8c8c8; }
 .pet-surface button:focus-visible { outline-offset: -3px !important; }
 .pet-edit:hover, .pet-hide:hover { background: #dedede; }
