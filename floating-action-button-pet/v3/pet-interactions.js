@@ -146,30 +146,26 @@
     chatThread.hidden = !expanded;
     chatThread.replaceChildren();
     conversation.forEach(entry => {
+      const fromOwl = entry.role === 'owl';
       const row = document.createElement('div');
-      row.className = 'pet-chat-message';
-      const avatar = document.createElement('div');
-      avatar.className = 'pet-chat-avatar';
-      avatar.setAttribute('aria-hidden', 'true');
-      if (entry.role === 'owl') {
-        const image = document.createElement('img');
-        image.src = 'assets/default-pet.png';
-        image.alt = '';
-        avatar.append(image);
-      } else avatar.textContent = 'WJ';
+      row.className = `pet-chat-message pet-chat-message--${fromOwl ? 'owl' : 'user'}`;
+      row.setAttribute('role', 'group');
+      row.setAttribute('aria-label', fromOwl ? 'Owl' : 'Woo-Mi');
       const body = document.createElement('div');
       body.className = 'pet-chat-message-body';
-      const author = document.createElement('span');
-      author.className = 'pet-chat-author';
-      author.textContent = entry.role === 'owl' ? 'Owl' : 'Woo-Mi';
-      const time = document.createElement('span');
-      time.className = 'pet-chat-time';
-      time.textContent = 'Just now';
+      if (fromOwl) {
+        const badge = document.createElement('span');
+        badge.className = 'pet-chat-badge';
+        badge.dataset.state = entry.working ? 'working' : entry.stopped ? 'stopped' : 'done';
+        badge.setAttribute('aria-hidden', 'true');
+        badge.textContent = entry.working ? '…' : entry.stopped ? '■' : '👍';
+        body.append(badge);
+      }
       const text = document.createElement('div');
       text.className = entry.working ? 'pet-chat-text pet-chat-thinking' : 'pet-chat-text';
       text.textContent = entry.working ? 'Thinking…' : entry.text;
-      body.append(author, time, text);
-      row.append(avatar, body);
+      body.append(text);
+      row.append(body);
       chatThread.append(row);
     });
     chatThread.scrollTop = chatThread.scrollHeight;
@@ -511,6 +507,7 @@
     const reply = conversation.find(entry => entry.taskId === task.id);
     if (reply) {
       reply.working = false;
+      reply.stopped = true;
       reply.text = 'Response stopped.';
     }
     task.status = 'stopped';
