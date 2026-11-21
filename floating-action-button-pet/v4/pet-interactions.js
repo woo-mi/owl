@@ -11,6 +11,7 @@
   const options = find('.pet-options');
   const optionsMenu = find('.pet-options-menu');
   const sidebarReturn = document.querySelector('.pet-sidebar-return');
+  const sidebarUnreadBadge = sidebarReturn?.querySelector('.pet-sidebar-unread');
   const composer = find('.pet-composer');
   const input = find('#pet-message');
   const send = find('.pet-send');
@@ -151,6 +152,11 @@
     dock.dataset.unread = String(unread);
     unreadBadge.textContent = unread ? '1' : '';
     unreadBadge.hidden = !unread;
+    if (sidebarUnreadBadge) {
+      sidebarUnreadBadge.textContent = unread ? '1' : '';
+      sidebarUnreadBadge.hidden = !unread;
+    }
+    sidebarReturn?.setAttribute('aria-label', unread ? 'Show Owl, 1 unread' : 'Show Owl');
     noticeToggle.setAttribute('aria-label', unread ? 'Open conversation, 1 unread' : 'Open conversation');
     updateStatusAccess();
   }

@@ -14,6 +14,23 @@
 .pet-dock.is-docking .pet-visual { opacity: 0; }
 .pet-sidebar-return { animation: none; }
 .pet-sidebar-return.is-landing { opacity: 0; pointer-events: none; }
+.pet-sidebar-unread {
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  background: #188636;
+  color: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 14%);
+  font: 500 10px/1 Inter, system-ui, sans-serif;
+  pointer-events: none;
+}
 .pet-docking-flight {
   position: fixed;
   top: 0;
