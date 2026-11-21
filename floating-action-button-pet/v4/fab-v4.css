@@ -1,0 +1,128 @@
+/* V4 changes only the Owl toolbar, options menu, and corner placement. */
+.pet-dock {
+  right: 24px;
+  bottom: 24px;
+}
+.pet-dock .pet-visual { transform-origin: bottom right; }
+
+.pet-dock:not([data-stage="compose"]) .pet-surface {
+  border: 1px solid #e4e4e7;
+  border-radius: 999px;
+  background: #fff;
+  color: #18181b;
+  box-shadow: 0 2px 5px rgb(24 24 27 / 5%), 0 8px 22px rgb(24 24 27 / 10%);
+}
+.pet-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+}
+.pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options) {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #18181b;
+  transition: background-color 120ms ease;
+}
+.pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options) svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+.pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options):hover,
+.pet-toolbar .pet-options[aria-expanded="true"] { background: #eeeef1; }
+.pet-toolbar .pet-notice-toggle { position: relative; }
+.pet-toolbar .pet-notice-toggle .pet-bell { display: block; }
+.pet-toolbar .pet-notice-toggle .pet-chevron { display: none; }
+.pet-toolbar .pet-toolbar-divider {
+  display: block;
+  flex: 0 0 1px;
+  width: 1px;
+  height: 16px;
+  margin: 0 2px;
+  background: #e4e4e7;
+}
+.pet-toolbar .pet-notice-toggle .pet-unread {
+  position: absolute;
+  top: -1px;
+  right: -2px;
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #188636;
+  color: #fff;
+  font: 500 10px/1 Inter, system-ui, sans-serif;
+}
+
+.pet-options-menu {
+  position: absolute;
+  right: 4px;
+  bottom: calc(40px - var(--panel-y) + 4px);
+  z-index: 2;
+  width: 224px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 160px);
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  background: #fff;
+  color: #27272a;
+  box-shadow: 0 3px 8px rgb(24 24 27 / 5%), 0 12px 30px rgb(24 24 27 / 12%);
+  transform-origin: right bottom;
+  animation: pet-options-appear 150ms ease-out;
+}
+.pet-options-menu :is(.pet-hide, .pet-settings) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 32px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: 400 14px/20px Inter, system-ui, sans-serif;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.pet-options-menu :is(.pet-hide, .pet-settings):hover { background: #f4f4f5; }
+.pet-options-menu :is(.pet-hide, .pet-settings):focus-visible {
+  outline: 2px solid #71717a !important;
+  outline-offset: -2px !important;
+}
+.pet-options-menu svg { flex: 0 0 16px; width: 16px; height: 16px; color: #71717a; }
+@keyframes pet-options-appear {
+  from { opacity: 0; transform: translateY(4px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.pet-done-indicator { border: 0; background: #188636; }
+.pet-dock[data-stage="done-hover"][data-unread="true"]:not(.is-dragging) .pet-done-indicator {
+  left: 0;
+  opacity: 1;
+  visibility: visible;
+  transform: scaleX(1);
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pet-options-menu { animation: none; }
+  .pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options) { transition: none; }
+}

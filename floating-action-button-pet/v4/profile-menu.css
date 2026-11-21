@@ -1,0 +1,71 @@
+.owl-profile-trigger {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0 !important;
+  cursor: pointer;
+}
+.owl-profile-trigger::after { content: ''; position: absolute; inset: -8px; border-radius: inherit; }
+.owl-profile-menu {
+  position: fixed;
+  z-index: 60;
+  box-sizing: border-box;
+  width: 280px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
+  padding: 6px 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  border: 1px solid #e3e4e7;
+  border-radius: 12px;
+  background: #fff;
+  color: #303238;
+  box-shadow: 0 8px 28px #2021241a, 0 2px 6px #2021240d;
+  font: 400 14px/20px Inter, system-ui, sans-serif;
+  transform-origin: bottom left;
+  animation: owl-profile-enter 140ms ease-out;
+}
+.owl-profile-identity { padding: 8px 16px 12px; }
+.owl-profile-name { color: #24262a; font-weight: 600; line-height: 22px; }
+.owl-profile-email { color: #777b83; font-size: 12px; line-height: 19px; }
+.owl-profile-divider { height: 1px; margin: 4px 0; background: #ececef; }
+.owl-profile-section { padding: 2px 6px; }
+.owl-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.owl-profile-row > span { min-width: 0; }
+.owl-profile-row:disabled { color: #4c4f55; opacity: 1; cursor: default; -webkit-text-fill-color: currentColor; }
+.owl-profile-row:not(:disabled):hover { background: #f2f2f4; }
+.owl-profile-icon { display: block; flex: 0 0 18px; width: 18px; height: 18px; color: #62656b; }
+.owl-profile-pet-toggle .owl-profile-icon { color: #000; stroke-width: 1.5; }
+.owl-profile-theme-row { display: flex; align-items: center; justify-content: space-between; min-height: 46px; margin-top: 4px; padding: 5px 10px; border-top: 1px solid #ececef; }
+.owl-profile-theme-label { display: flex; align-items: center; gap: 11px; }
+.owl-profile-theme-options { display: flex; gap: 2px; padding: 3px; border: 1px solid #e5e5e8; border-radius: 18px; background: #f5f5f6; }
+.owl-profile-theme-options button { display: grid; place-items: center; width: 29px; height: 27px; padding: 0; border: 0; border-radius: 50%; color: #6b6e76; opacity: 1; cursor: default; }
+.owl-profile-theme-options .owl-profile-icon { width: 16px; height: 16px; }
+.owl-profile-theme-options .is-selected { background: #fff; box-shadow: 0 1px 3px #20212414; }
+.owl-profile-section-title { padding: 9px 10px 4px; color: #91949b; font-size: 10px; font-weight: 600; line-height: 16px; letter-spacing: .65px; }
+.owl-profile-news .owl-profile-row { gap: 9px; font-size: 12.5px; }
+.owl-profile-news .owl-profile-icon { flex-basis: 16px; width: 16px; height: 16px; }
+.owl-profile-menu button:focus-visible { outline: 2px solid #757981 !important; outline-offset: -2px !important; }
+@keyframes owl-profile-enter {
+  from { opacity: 0; transform: translateY(4px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .owl-profile-menu { animation: none; }
+}
