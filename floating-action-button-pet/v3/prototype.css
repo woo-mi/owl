@@ -119,16 +119,16 @@ button:focus-visible, a:focus-visible {
   bottom: calc(88px + env(safe-area-inset-bottom, 0px));
   z-index: 20;
   display: block;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   transition: opacity var(--motion-reveal) ease;
 }
 .pet-dock.is-hiding { opacity: 0; pointer-events: none; }
 .pet-fab {
   display: block;
   padding: 0;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   cursor: pointer;
   touch-action: manipulation;
