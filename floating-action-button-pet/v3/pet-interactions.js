@@ -53,7 +53,7 @@
   const COMPOSER_GAP = 16;
   const STATUS_HEIGHT = 65;
   const REPLY_HEIGHT = 117;
-  const INDICATOR_HEIGHT = 8;
+  const INDICATOR_HEIGHT = 4;
   const clamp = (value, min, max) => Math.min(Math.max(min, max), Math.max(min, value));
   const toolbarStages = new Set(['hover', 'done-hover', 'notice', 'reply']);
   const noticeStages = new Set(['done-hover', 'notice', 'reply']);
@@ -126,13 +126,12 @@
     } else resultLink.removeAttribute('href');
     card.tabIndex = cardVisible && stage === 'working' ? 0 : -1;
     setAccessible(followup, available && stage === 'reply');
-    noticeToggle.setAttribute('aria-expanded', String(stage === 'notice' || stage === 'reply'));
+    noticeToggle.setAttribute('aria-expanded', String(stage === 'compose'));
     fab.setAttribute('aria-expanded', String(toolbarVisible || (available && stage === 'compose')));
     const unread = Boolean(task && task.status === 'done' && task.unread);
     unreadBadge.textContent = unread ? '1' : '';
     unreadBadge.hidden = !unread;
-    noticeToggle.setAttribute('aria-label', stage === 'notice' || stage === 'reply'
-      ? 'Collapse completed result' : unread ? 'Open completed result, 1 unread' : 'Open completed result');
+    noticeToggle.setAttribute('aria-label', unread ? 'Open conversation, 1 unread' : 'Open conversation');
     updateStatusAccess();
   }
   function renderStatus() {
@@ -396,11 +395,9 @@
     }
     document.dispatchEvent(new CustomEvent('pet:visibilitychange', { detail: { visible } }));
   }
-  function openNotice(fromKeyboard = false) {
+  function openNotice() {
     if (!task || task.status !== 'done') return;
-    task.unread = false;
-    setStage('notice');
-    if (fromKeyboard) resultLink.focus({ preventScroll: true });
+    openComposer();
   }
   function openComposer(prefill) {
     if (typeof prefill === 'string') input.value = prefill;
@@ -537,11 +534,8 @@
     const message = followupInput.value.trim();
     if (message && stage === 'reply') startTask(message);
   });
-  indicator.addEventListener('click', event => openNotice(event.detail === 0));
-  noticeToggle.addEventListener('click', event => {
-    if (stage === 'notice' || stage === 'reply') collapse(event.detail === 0);
-    else openNotice(event.detail === 0);
-  });
+  indicator.addEventListener('click', openNotice);
+  noticeToggle.addEventListener('click', openNotice);
   statusReturn.addEventListener('click', () => {
     if (!task) return;
     if (stage === 'working') openComposer();
