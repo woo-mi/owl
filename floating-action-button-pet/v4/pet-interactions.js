@@ -12,6 +12,9 @@
   const optionsMenu = find('.pet-options-menu');
   const sidebarReturn = document.querySelector('.pet-sidebar-return');
   const sidebarUnreadBadge = sidebarReturn?.querySelector('.pet-sidebar-unread');
+  const sidebarActions = document.querySelector('.pet-sidebar-actions');
+  const sidebarChat = document.querySelector('.pet-sidebar-chat');
+  const sidebarFloat = document.querySelector('.pet-sidebar-float');
   const composer = find('.pet-composer');
   const input = find('#pet-message');
   const send = find('.pet-send');
@@ -93,6 +96,8 @@
   let hasOpenedConversation = false;
   let optionsOpen = false;
   let dockingFlight = null;
+  let sidebarChatOpen = false;
+  let sidebarCloseTimer = null;
 
   const idleStage = () => task && task.status === 'done' && task.unread ? 'done' : 'default';
   const actionStage = () => task && task.status === 'done' ? 'done-hover' : 'hover';
@@ -156,7 +161,9 @@
       sidebarUnreadBadge.textContent = unread ? '1' : '';
       sidebarUnreadBadge.hidden = !unread;
     }
-    sidebarReturn?.setAttribute('aria-label', unread ? 'Show Owl, 1 unread' : 'Show Owl');
+    sidebarReturn?.setAttribute('aria-label', unread ? 'Open Owl chat, 1 unread' : 'Open Owl chat');
+    sidebarReturn?.setAttribute('aria-expanded', String(sidebarChatOpen));
+    sidebarChat?.setAttribute('aria-label', unread ? 'Open Owl chat, 1 unread' : 'Open Owl chat');
     noticeToggle.setAttribute('aria-label', unread ? 'Open conversation, 1 unread' : 'Open conversation');
     updateStatusAccess();
   }
@@ -215,6 +222,20 @@
   function reposition() {
     const viewportWidth = document.documentElement.clientWidth;
     const viewportHeight = document.documentElement.clientHeight;
+    if (dock.dataset.sidebarChat === 'true') {
+      const rail = sidebarReturn.closest('[data-pencil-name="Navigation rail"]');
+      const railRight = rail?.getBoundingClientRect().right ?? 48;
+      const left = Math.min(railRight + 12, Math.max(12, viewportWidth - 180));
+      const width = Math.min(MESSAGE_WIDTH, viewportWidth - left - 12);
+      dock.style.setProperty('--sidebar-chat-left', `${left}px`);
+      dock.style.setProperty('--panel-width', `${width}px`);
+      dock.style.setProperty('--panel-height', `${Math.min(CONVERSATION_HEIGHT, viewportHeight - 48)}px`);
+      dock.style.setProperty('--panel-x', '0px');
+      dock.style.setProperty('--panel-y', '0px');
+      dock.style.setProperty('--panel-origin', '0px');
+      dock.style.setProperty('--panel-origin-y', 'bottom');
+      return;
+    }
     const dockRect = dock.getBoundingClientRect();
     const owl = fab.getBoundingClientRect();
     const availableWidth = Math.max(1, viewportWidth - HORIZONTAL_MARGIN * 2);
@@ -292,10 +313,14 @@
   }
   function returnFocus() {
     restoringFocus = true;
-    fab.focus({ preventScroll: true });
+    (petVisible ? fab : sidebarReturn)?.focus({ preventScroll: true });
     restoringFocus = false;
   }
   function collapse(restoreFocus = false) {
+    if (sidebarChatOpen) {
+      closeSidebarChat(restoreFocus);
+      return;
+    }
     suppressHoverUntilLeave = pointerInside;
     setStage(idleStage());
     if (restoreFocus) returnFocus();
@@ -401,16 +426,17 @@
     dockingFlight = null;
     flight.animation?.cancel();
     flight.image?.remove();
-    if (!petVisible) {
+    if (!petVisible && !sidebarChatOpen) {
       clearTimeout(hideTimer);
       dock.hidden = true;
     }
-    dock.classList.remove('is-docking');
+    dock.classList.remove('is-docking', 'is-undocking');
+    dock.inert = !petVisible && !sidebarChatOpen;
     sidebarReturn.classList.remove('is-landing');
     sidebarReturn.inert = false;
-    if (restoreFocus && flight.restoreFocus && !petVisible
+    if (restoreFocus && flight.restoreFocus
       && (document.activeElement === document.body || document.activeElement === sidebarReturn)) {
-      sidebarReturn.focus({ preventScroll: true });
+      returnFocus();
     }
   }
   function dockInSidebar() {
@@ -424,13 +450,36 @@
     // Lift away from the corner, sweep left in an arc, then settle into the rail.
     // Capture the visible size before the dock changes to its compact state.
     const source = find('.pet-visual').getBoundingClientRect();
-    const flight = { restoreFocus };
+    const flight = { restoreFocus, direction: 'dock' };
     dockingFlight = flight;
     sidebarReturn.classList.add('is-landing');
     sidebarReturn.inert = true;
     dock.classList.add('is-docking');
     setPetVisibility(false, true);
     const destination = sidebarReturn.querySelector('img').getBoundingClientRect();
+    animateOwlFlight(source, destination, flight);
+  }
+  function floatInCorner() {
+    if (petVisible || dockingFlight) return;
+    const source = sidebarReturn.querySelector('img').getBoundingClientRect();
+    const restoreFocus = sidebarReturn === document.activeElement || sidebarActions?.contains(document.activeElement);
+    setSidebarActions(false);
+    if (reducedMotion.matches) {
+      setPetVisibility(true);
+      returnFocus();
+      return;
+    }
+    dock.classList.add('is-undocking');
+    setPetVisibility(true);
+    dock.inert = true;
+    const owl = fab.getBoundingClientRect();
+    // Return to the compact resting size, keeping its bottom-right anchor fixed.
+    const destination = { left: owl.right - 32, top: owl.bottom - 32, width: 32, height: 32 };
+    const flight = { restoreFocus, direction: 'float' };
+    dockingFlight = flight;
+    animateOwlFlight(source, destination, flight);
+  }
+  function animateOwlFlight(source, destination, flight) {
     if (!source.width || !destination.width) {
       finishDockingFlight();
       return;
@@ -468,7 +517,10 @@
   }
   function setPetVisibility(visible, preserveConversation = false) {
     if (visible === petVisible) return;
-    if (visible) finishDockingFlight(false);
+    if (visible || dockingFlight?.direction === 'float') finishDockingFlight(false);
+    setSidebarActions(false);
+    sidebarChatOpen = false;
+    dock.dataset.sidebarChat = 'false';
     petVisible = visible;
     window.clearTimeout(hideTimer);
     hideTimer = null;
@@ -502,6 +554,49 @@
       }, delay);
     }
     document.dispatchEvent(new CustomEvent('pet:visibilitychange', { detail: { visible } }));
+  }
+  function setSidebarActions(open) {
+    window.clearTimeout(sidebarCloseTimer);
+    sidebarCloseTimer = null;
+    if (!sidebarActions) return;
+    const visible = open && !petVisible && !sidebarChatOpen && !dockingFlight;
+    sidebarActions.dataset.open = String(visible);
+    setAccessible(sidebarActions, visible);
+  }
+  function scheduleSidebarClose() {
+    window.clearTimeout(sidebarCloseTimer);
+    sidebarCloseTimer = window.setTimeout(() => {
+      const focused = keyboardInteraction && (document.activeElement === sidebarReturn || sidebarActions?.contains(document.activeElement));
+      const hovered = sidebarReturn?.matches(':hover') || sidebarActions?.matches(':hover');
+      if (!focused && !hovered) setSidebarActions(false);
+    }, HOVER_CLOSE_DELAY);
+  }
+  function openSidebarChat() {
+    if (petVisible || dockingFlight) return;
+    sidebarChatOpen = true;
+    setSidebarActions(false);
+    window.clearTimeout(hideTimer);
+    hideTimer = null;
+    dock.dataset.sidebarChat = 'true';
+    dock.hidden = false;
+    dock.inert = false;
+    dock.removeAttribute('aria-hidden');
+    dock.classList.remove('is-hiding');
+    openComposer();
+  }
+  function closeSidebarChat(restoreFocus = false) {
+    if (!sidebarChatOpen) return;
+    sidebarChatOpen = false;
+    setStage(idleStage());
+    dock.inert = true;
+    dock.setAttribute('aria-hidden', 'true');
+    dock.classList.add('is-hiding');
+    window.clearTimeout(hideTimer);
+    hideTimer = window.setTimeout(() => {
+      if (!petVisible && !sidebarChatOpen) dock.hidden = true;
+      hideTimer = null;
+    }, reducedMotion.matches ? 0 : 180);
+    if (restoreFocus) returnFocus();
   }
   function openNotice() {
     openComposer();
@@ -612,8 +707,23 @@
     scheduleClose();
   });
   sidebarReturn?.addEventListener('click', () => {
-    setPetVisibility(true);
-    returnFocus();
+    if (sidebarChatOpen) closeSidebarChat(true);
+    else openSidebarChat();
+  });
+  sidebarChat?.addEventListener('click', openSidebarChat);
+  sidebarFloat?.addEventListener('click', floatInCorner);
+  [sidebarReturn, sidebarActions].filter(Boolean).forEach(element => {
+    element.addEventListener('pointerenter', event => {
+      if (event.pointerType !== 'touch') {
+        keyboardInteraction = false;
+        setSidebarActions(true);
+      }
+    });
+    element.addEventListener('pointerleave', scheduleSidebarClose);
+    element.addEventListener('focusin', () => {
+      if (!restoringFocus) setSidebarActions(true);
+    });
+    element.addEventListener('focusout', scheduleSidebarClose);
   });
   document.addEventListener('pet:visibility-request', event => {
     if (typeof event.detail?.visible === 'boolean') setPetVisibility(event.detail.visible);
@@ -678,6 +788,8 @@
 
   document.addEventListener('pointerdown', event => {
     keyboardInteraction = false;
+    if (sidebarReturn?.contains(event.target) || sidebarActions?.contains(event.target)) return;
+    setSidebarActions(false);
     if (dock.contains(event.target)) return;
     if (stage === 'working') {
       workingActionsVisible = false;
@@ -689,6 +801,12 @@
   }, true);
   document.addEventListener('keydown', event => {
     if (event.key === 'Tab') keyboardInteraction = true;
+    if (event.key === 'Escape' && sidebarActions?.dataset.open === 'true') {
+      event.preventDefault();
+      setSidebarActions(false);
+      returnFocus();
+      return;
+    }
     if (event.key === 'Escape' && optionsOpen && !event.defaultPrevented) {
       event.preventDefault();
       setOptionsOpen(false, true);

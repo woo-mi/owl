@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="prototype.css?v=pet-interactions-25">
     <link rel="stylesheet" href="profile-menu.css?v=2">
     <link rel="stylesheet" href="pet-idle-motion.css?v=4">
-    <link rel="stylesheet" href="fab-v4.css?v=5">
+    <link rel="stylesheet" href="fab-v4.css?v=6">
     <link rel="stylesheet" href="../version-picker.css?v=1">
     <style>
       *, ::before, ::after {
@@ -1039,10 +1039,19 @@
           data-pencil-name="div"
           style="align-items: flex-start; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; height: 92px; justify-content: flex-start; left: 3.5px; padding: 0px 0px 16px 0px; position: absolute; top: 866px; width: 40px; z-index: 2"
         >
-          <button class="pet-sidebar-return" type="button" aria-label="Show Owl" aria-controls="floating-owl" title="Show Owl" hidden>
+          <button class="pet-sidebar-return" type="button" aria-label="Open Owl chat" aria-controls="floating-owl" title="Open Owl chat" hidden>
             <img src="assets/default-pet.png" alt="" width="20" height="20" draggable="false">
             <span class="pet-sidebar-unread" aria-hidden="true" hidden>1</span>
           </button>
+          <div class="pet-sidebar-actions" role="toolbar" aria-label="Docked Owl actions" data-open="false" aria-hidden="true" inert>
+            <button class="pet-sidebar-chat" type="button" aria-label="Open Owl chat" title="Open Owl chat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+            </button>
+            <span class="pet-sidebar-divider" role="separator" aria-orientation="vertical"></span>
+            <button class="pet-sidebar-float" type="button" aria-label="Float in corner" title="Float in corner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.25 17.25H5.75C4.09315 17.25 2.75 15.9069 2.75 14.25V7.75C2.75 6.09315 4.09315 4.75 5.75 4.75H16.25C17.9069 4.75 19.25 6.09315 19.25 7.75V11.25M14.75 14.75H19.25C20.3546 14.75 21.25 15.6454 21.25 16.75V18.25C21.25 19.3546 20.3546 20.25 19.25 20.25H14.75C13.6454 20.25 12.75 19.3546 12.75 18.25V16.75C12.75 15.6454 13.6454 14.75 14.75 14.75Z"/></svg>
+            </button>
+          </div>
           <div
             data-pencil-id="UJucm"
             data-pencil-name="button"
@@ -1335,7 +1344,7 @@
       <div class="pet-announcement" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
     <script src="prototype.js?v=owl-affordance-new-nov-9"></script>
-    <script src="pet-interactions.js?v=v4-5"></script>
+    <script src="pet-interactions.js?v=v4-6"></script>
     <script src="profile-menu.js?v=2"></script>
     <script src="pet-idle-motion.js?v=1"></script>
     <script src="../version-picker.js?v=4"></script>
