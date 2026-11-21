@@ -213,12 +213,10 @@ button:focus-visible, a:focus-visible {
 .pet-toolbar-divider { width: .603px; height: 24.1px; background: #d6d6d6; }
 .pet-toolbar .pet-notice-toggle, .pet-notice-divider { display: none; }
 .pet-dock:is([data-stage="done-hover"], [data-stage="notice"], [data-stage="reply"]) .pet-notice-toggle { display: grid; position: relative; }
-.pet-dock:is([data-stage="notice"], [data-stage="reply"]) .pet-notice-divider { display: block; }
-.pet-notice-toggle::before { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: #e3e3e3; }
+.pet-dock:is([data-stage="done-hover"], [data-stage="notice"], [data-stage="reply"]) .pet-notice-divider { display: block; }
 .pet-notice-toggle svg { position: relative; width: 22px; height: 23px; }
 .pet-notice-toggle .pet-chevron { display: none; width: 18px; height: 18px; }
 .pet-unread { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 14.65px; height: 14.65px; border-radius: 50%; background: #32c85b; color: #fff; font: 600 9.77px/1 Inter, sans-serif; }
-.pet-dock:is([data-stage="notice"], [data-stage="reply"]) .pet-notice-toggle::before { background: transparent; }
 .pet-dock:is([data-stage="notice"], [data-stage="reply"]) :is(.pet-bell, .pet-unread) { display: none; }
 .pet-dock:is([data-stage="notice"], [data-stage="reply"]) .pet-chevron { display: block; }
 .pet-dock[data-stage="compose"] { z-index: 160; }
@@ -305,7 +303,7 @@ button:focus-visible, a:focus-visible {
 #pet-message::placeholder { color: #9a9da0; opacity: 1; }
 .pet-surface:focus-within { border-color: #c8c8c8; }
 .pet-surface button:focus-visible { outline-offset: -3px !important; }
-.pet-edit:hover, .pet-hide:hover { background: #dedede; }
+.pet-edit:hover, .pet-hide:hover, .pet-notice-toggle:hover { background: #dedede; }
 .pet-send:not(:disabled):hover { background: #226fdf; }
 .pet-send:not(:disabled):active { transform: scale(.9); }
 .pet-chat-stop:hover { background: #226fdf; }
