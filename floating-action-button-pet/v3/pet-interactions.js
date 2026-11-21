@@ -48,6 +48,7 @@
   const PANEL_HEIGHT = 47;
   const COMPOSER_HEIGHT = 88;
   const CONVERSATION_HEIGHT = 440;
+  const MAX_CONVERSATION_HEIGHT = 600;
   const MIN_CONVERSATION_HEIGHT = 180;
   const COMPOSER_GAP = 16;
   const STATUS_HEIGHT = 65;
@@ -161,7 +162,23 @@
       chatThread.append(row);
     });
     chatThread.scrollTop = chatThread.scrollHeight;
-    requestAnimationFrame(() => { chatThread.scrollTop = chatThread.scrollHeight; });
+    requestAnimationFrame(() => {
+      if (stage === 'compose') reposition();
+      chatThread.scrollTop = chatThread.scrollHeight;
+    });
+  }
+  function conversationHeight(panelWidth) {
+    // Measure after the panel has reached its target width so wrapped messages
+    // do not temporarily inflate the height during the opening transition.
+    if (Math.abs(chatThread.clientWidth - (panelWidth - 2)) > 1) return CONVERSATION_HEIGHT;
+    const threadStyle = getComputedStyle(chatThread);
+    const contentHeight = Array.from(chatThread.children).reduce((height, row) => {
+      const style = getComputedStyle(row);
+      return height + row.offsetHeight + parseFloat(style.marginTop) + parseFloat(style.marginBottom);
+    }, parseFloat(threadStyle.paddingTop) + parseFloat(threadStyle.paddingBottom));
+    // Natural row heights avoid feeding the growing scroll container back into itself.
+    return clamp(contentHeight + chatHeader.offsetHeight + COMPOSER_HEIGHT + 2,
+      CONVERSATION_HEIGHT, MAX_CONVERSATION_HEIGHT);
   }
   function reposition() {
     const viewportWidth = document.documentElement.clientWidth;
@@ -180,7 +197,7 @@
     let preferAbove = false;
     if (stage === 'compose') {
       panelGap = COMPOSER_GAP;
-      const desiredHeight = conversation.length ? CONVERSATION_HEIGHT : COMPOSER_HEIGHT;
+      const desiredHeight = conversation.length ? conversationHeight(panelWidth) : COMPOSER_HEIGHT;
       const aboveSpace = Math.max(0, owl.top - panelGap - VERTICAL_MARGIN);
       const belowSpace = Math.max(0, viewportHeight - VERTICAL_MARGIN - owl.bottom - panelGap);
       preferAbove = aboveSpace >= desiredHeight || aboveSpace >= belowSpace;
@@ -589,6 +606,17 @@
   });
   dock.addEventListener('pet:move', reposition);
   window.addEventListener('resize', reposition);
+  let threadResizeFrame = 0;
+  const threadResizeObserver = new ResizeObserver(() => {
+    if (stage !== 'compose' || !conversation.length || threadResizeFrame) return;
+    threadResizeFrame = requestAnimationFrame(() => {
+      threadResizeFrame = 0;
+      if (stage !== 'compose' || !conversation.length) return;
+      reposition();
+      chatThread.scrollTop = chatThread.scrollHeight;
+    });
+  });
+  threadResizeObserver.observe(chatThread);
   window.addEventListener('blur', () => {
     pointerInside = false;
     actionPointerInside = false;
