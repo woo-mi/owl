@@ -1,0 +1,25 @@
+.pet-head {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transform-origin: 50% 68%;
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 14%));
+}
+.pet-head img { filter: none; }
+.pet-blink-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: 0;
+}
+.pet-blink-eye { transform-box: view-box; }
+.pet-blink-eye-left { transform-origin: 77px 123px; }
+.pet-blink-eye-right { transform-origin: 187px 123px; }
+@media (prefers-reduced-motion: reduce) {
+  .pet-head { transform: none !important; }
+  .pet-blink-overlay { opacity: 0 !important; }
+}
