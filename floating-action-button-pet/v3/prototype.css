@@ -116,7 +116,7 @@ button:focus-visible, a:focus-visible {
   --indicator-y: 65px;
   position: fixed;
   right: calc(64px + env(safe-area-inset-right, 0px));
-  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(64px + env(safe-area-inset-bottom, 0px));
   z-index: 20;
   display: block;
   width: 40px;
@@ -232,6 +232,7 @@ button:focus-visible, a:focus-visible {
   border-color: transparent;
   background: transparent;
   box-shadow: none;
+  filter: drop-shadow(0 4px 10px rgb(27 31 35 / 10%));
 }
 .pet-dock[data-stage="compose"]:not([data-conversation="true"]) .pet-compose-entry { background: transparent; }
 .pet-composer { flex-direction: column; align-items: stretch; min-height: 0; padding: 0; overflow-y: auto; }
@@ -401,7 +402,7 @@ button:focus-visible, a:focus-visible {
   [data-pencil-name="Owl affordance new"] { padding: 270px 16px calc(144px + env(safe-area-inset-bottom, 0px)) 64px; }
   .pet-dock {
     right: calc(32px + env(safe-area-inset-right, 0px));
-    bottom: calc(48px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(32px + env(safe-area-inset-bottom, 0px));
   }
   [data-pencil-name="Personalized greeting"] { margin-bottom: 28px; }
   [data-pencil-name="Editable question placeholder"] { width: calc(100% - 40.8px); white-space: normal !important; }
