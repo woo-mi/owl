@@ -130,8 +130,8 @@ button:focus-visible, a:focus-visible {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  cursor: grab;
-  touch-action: none;
+  cursor: pointer;
+  touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
 }
