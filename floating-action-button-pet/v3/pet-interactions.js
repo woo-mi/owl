@@ -12,6 +12,10 @@
   const composer = find('.pet-composer');
   const input = find('#pet-message');
   const send = find('.pet-send');
+  const chatHeader = find('.pet-chat-header');
+  const chatThread = find('.pet-chat-thread');
+  const chatClose = find('.pet-chat-close');
+  const chatStop = find('.pet-chat-stop');
   const noticeToggle = find('.pet-notice-toggle');
   const unreadBadge = find('.pet-unread');
   const indicator = find('.pet-done-indicator');
@@ -29,7 +33,8 @@
   const announcement = find('.pet-announcement');
   if (![fab, toolbar, edit, hide, composer, input, send, noticeToggle, unreadBadge,
     indicator, card, resultLink, title, statusText, statusActions, dismiss, statusReturn,
-    stop, followup, followupInput, followupSend, announcement].every(Boolean)) return;
+    stop, followup, followupInput, followupSend, announcement,
+    chatHeader, chatThread, chatClose, chatStop].every(Boolean)) return;
 
   const HOVER_CLOSE_DELAY = 200;
   const SIMULATED_WORK_DURATION = 6000;
@@ -41,6 +46,10 @@
   const NOTICE_TOOLBAR_WIDTH = 144;
   const MESSAGE_WIDTH = 380;
   const PANEL_HEIGHT = 47;
+  const COMPOSER_HEIGHT = 88;
+  const CONVERSATION_HEIGHT = 440;
+  const MIN_CONVERSATION_HEIGHT = 180;
+  const COMPOSER_GAP = 16;
   const STATUS_HEIGHT = 65;
   const REPLY_HEIGHT = 117;
   const INDICATOR_HEIGHT = 8;
@@ -49,11 +58,9 @@
   const noticeStages = new Set(['done-hover', 'notice', 'reply']);
   const cardStages = new Set(['working', 'notice', 'reply']);
 
-  // Storyboard: approach -> actions; Edit -> type; Send -> working; completion
-  // folds the panels into a green marker. Hover reveals the bell, which opens
-  // the completed preview. Reply expands upward and submits another task.
-  // Task progress lives separately from the view so typing and dragging are
-  // never interrupted by the six-second prototype completion.
+  // Storyboard: Edit opens a compact card above the Owl. Send expands the card
+  // upward into a conversation; the reply settles in after the working state.
+  // Closing the card lets work continue and restores the notification flow.
   let stage = 'default';
   let task = null;
   let taskSequence = 0;
@@ -73,6 +80,7 @@
   let statusTouchOpen = false;
   let workingActionsVisible = false;
   let actionPointerInside = false;
+  let conversation = [];
 
   const idleStage = () => task && task.status === 'done' && task.unread ? 'done' : 'default';
   const actionStage = () => task && task.status === 'done' ? 'done-hover' : 'hover';
@@ -131,6 +139,42 @@
     title.textContent = task.title;
     statusText.textContent = task.status === 'working' ? 'Thinking' : task.preview;
   }
+  function renderConversation() {
+    const expanded = conversation.length > 0;
+    dock.dataset.conversation = String(expanded);
+    chatHeader.hidden = !expanded;
+    chatThread.hidden = !expanded;
+    chatThread.replaceChildren();
+    conversation.forEach(entry => {
+      const row = document.createElement('div');
+      row.className = 'pet-chat-message';
+      const avatar = document.createElement('div');
+      avatar.className = 'pet-chat-avatar';
+      avatar.setAttribute('aria-hidden', 'true');
+      if (entry.role === 'owl') {
+        const image = document.createElement('img');
+        image.src = 'assets/default-pet.png';
+        image.alt = '';
+        avatar.append(image);
+      } else avatar.textContent = 'WJ';
+      const body = document.createElement('div');
+      body.className = 'pet-chat-message-body';
+      const author = document.createElement('span');
+      author.className = 'pet-chat-author';
+      author.textContent = entry.role === 'owl' ? 'Owl' : 'Woo-Mi';
+      const time = document.createElement('span');
+      time.className = 'pet-chat-time';
+      time.textContent = 'Just now';
+      const text = document.createElement('div');
+      text.className = entry.working ? 'pet-chat-text pet-chat-thinking' : 'pet-chat-text';
+      text.textContent = entry.working ? 'Thinking…' : entry.text;
+      body.append(author, time, text);
+      row.append(avatar, body);
+      chatThread.append(row);
+    });
+    chatThread.scrollTop = chatThread.scrollHeight;
+    requestAnimationFrame(() => { chatThread.scrollTop = chatThread.scrollHeight; });
+  }
   function reposition() {
     const viewportWidth = document.documentElement.clientWidth;
     const viewportHeight = document.documentElement.clientHeight;
@@ -143,12 +187,26 @@
     const statusWidth = Math.min(MESSAGE_WIDTH, availableWidth);
     // Use target dimensions, not the interpolated size during CSS transitions.
     const statusHeight = stage === 'reply' ? REPLY_HEIGHT : STATUS_HEIGHT;
-    const panelBelow = owl.bottom + PANEL_GAP;
-    const panelAbove = owl.top - PANEL_GAP - PANEL_HEIGHT;
+    let panelHeight = PANEL_HEIGHT;
+    let panelGap = PANEL_GAP;
+    let preferAbove = false;
+    if (stage === 'compose') {
+      panelGap = COMPOSER_GAP;
+      const desiredHeight = conversation.length ? CONVERSATION_HEIGHT : COMPOSER_HEIGHT;
+      const aboveSpace = Math.max(0, owl.top - panelGap - VERTICAL_MARGIN);
+      const belowSpace = Math.max(0, viewportHeight - VERTICAL_MARGIN - owl.bottom - panelGap);
+      preferAbove = aboveSpace >= desiredHeight || aboveSpace >= belowSpace;
+      const minimumHeight = conversation.length ? MIN_CONVERSATION_HEIGHT : COMPOSER_HEIGHT;
+      panelHeight = Math.min(desiredHeight, viewportHeight - VERTICAL_MARGIN * 2,
+        Math.max(minimumHeight, preferAbove ? aboveSpace : belowSpace));
+    }
+    const panelBelow = owl.bottom + panelGap;
+    const panelAbove = owl.top - panelGap - panelHeight;
     const statusAbove = owl.top - STATUS_GAP - statusHeight;
     const statusBelow = owl.bottom + STATUS_GAP;
     const fits = (top, height) => top >= VERTICAL_MARGIN && top + height <= viewportHeight - VERTICAL_MARGIN;
-    let panelTop = fits(panelBelow, PANEL_HEIGHT) ? panelBelow : panelAbove;
+    let panelTop = stage === 'compose' ? (preferAbove ? panelAbove : panelBelow)
+      : fits(panelBelow, panelHeight) ? panelBelow : panelAbove;
     let statusTop = fits(statusAbove, statusHeight) ? statusAbove : statusBelow;
     if (cardStages.has(stage)) {
       const placements = [
@@ -169,9 +227,11 @@
     const indicatorBelow = owl.bottom + 9;
     const indicatorTop = fits(indicatorBelow, INDICATOR_HEIGHT) ? indicatorBelow : owl.top - 9 - INDICATOR_HEIGHT;
     dock.style.setProperty('--panel-width', `${panelWidth}px`);
+    dock.style.setProperty('--panel-height', `${panelHeight}px`);
     dock.style.setProperty('--panel-x', `${finalPanelLeft - dockRect.left}px`);
-    dock.style.setProperty('--panel-y', `${constrainY(panelTop, PANEL_HEIGHT) - dockRect.top}px`);
+    dock.style.setProperty('--panel-y', `${constrainY(panelTop, panelHeight) - dockRect.top}px`);
     dock.style.setProperty('--panel-origin', `${clamp(owl.left + owl.width / 2 - finalPanelLeft, 0, panelWidth)}px`);
+    dock.style.setProperty('--panel-origin-y', panelTop < owl.top ? 'bottom' : 'top');
     dock.style.setProperty('--working-width', `${statusWidth}px`);
     dock.style.setProperty('--working-x', `${constrainX(statusLeft, statusWidth) - dockRect.left}px`);
     dock.style.setProperty('--working-y', `${constrainY(statusTop, statusHeight) - dockRect.top}px`);
@@ -227,7 +287,10 @@
     }
   }
   function updateInputs() {
-    send.disabled = !input.value.trim();
+    const working = task?.status === 'working';
+    send.disabled = !input.value.trim() || working;
+    send.hidden = working;
+    chatStop.hidden = !working;
     const hasFollowup = Boolean(followupInput.value.trim());
     followupSend.disabled = !hasFollowup;
     followup.dataset.hasValue = String(hasFollowup);
@@ -238,11 +301,12 @@
     setStage(idleStage());
     if (hadControlFocus) returnFocus();
   }
-  function startTask(message) {
+  function startTask(message, keepConversationOpen = false) {
+    if (task?.status === 'working') return;
     window.clearTimeout(workTimer);
     announcement.textContent = '';
     pendingCompletion = false;
-    const greeting = /^(hi|hello)[\s!.,?]*$/i.test(message);
+    const greeting = /^(hi|hello|hey)( there)?[\s!.,?]*$/i.test(message);
     const priority = /\bpriorit(?:y|ies)\b/i.test(message);
     task = {
       id: ++taskSequence,
@@ -255,16 +319,25 @@
       unread: false,
     };
     const taskId = task.id;
+    conversation.push({ role: 'user', text: message });
+    const reply = { role: 'owl', text: '', working: true, taskId };
+    conversation.push(reply);
+    renderConversation();
     input.value = '';
     followupInput.value = '';
     updateInputs();
-    setStage('working');
-    returnFocus();
+    setStage(keepConversationOpen ? 'compose' : 'working');
+    if (keepConversationOpen) input.focus({ preventScroll: true });
+    else returnFocus();
     workTimer = window.setTimeout(() => {
       if (!task || task.id !== taskId || task.status !== 'working') return;
       workTimer = null;
       task.status = 'done';
-      task.unread = true;
+      task.unread = stage !== 'compose';
+      reply.text = task.preview;
+      reply.working = false;
+      renderConversation();
+      updateInputs();
       announce(`Completed: ${task.title}`);
       if (dragging) pendingCompletion = true;
       else if (stage !== 'compose' && stage !== 'reply') showCompletion();
@@ -276,6 +349,8 @@
     workTimer = null;
     taskSequence += 1;
     task = null;
+    conversation = [];
+    renderConversation();
     pendingCompletion = false;
     followupInput.value = '';
     updateInputs();
@@ -324,6 +399,8 @@
   }
   function openComposer(prefill) {
     if (typeof prefill === 'string') input.value = prefill;
+    if (task?.status === 'done') task.unread = false;
+    renderConversation();
     updateInputs();
     setStage('compose');
     input.focus({ preventScroll: true });
@@ -420,11 +497,34 @@
     if (typeof event.detail?.visible === 'boolean') setPetVisibility(event.detail.visible);
   });
   input.addEventListener('input', updateInputs);
+  input.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+      event.preventDefault();
+      if (input.value.trim() && stage === 'compose' && task?.status !== 'working') composer.requestSubmit();
+    }
+  });
+  chatClose.addEventListener('click', () => collapse(true));
+  chatStop.addEventListener('click', () => {
+    if (task?.status !== 'working') return;
+    window.clearTimeout(workTimer);
+    workTimer = null;
+    const reply = conversation.find(entry => entry.taskId === task.id);
+    if (reply) {
+      reply.working = false;
+      reply.text = 'Response stopped.';
+    }
+    task.status = 'stopped';
+    task.unread = false;
+    renderConversation();
+    updateInputs();
+    input.focus({ preventScroll: true });
+    announce('Response stopped.');
+  });
   followupInput.addEventListener('input', updateInputs);
   composer.addEventListener('submit', event => {
     event.preventDefault();
     const message = input.value.trim();
-    if (message && stage === 'compose') startTask(message);
+    if (message && stage === 'compose') startTask(message, true);
   });
   followup.addEventListener('submit', event => {
     event.preventDefault();
@@ -438,7 +538,7 @@
   });
   statusReturn.addEventListener('click', () => {
     if (!task) return;
-    if (stage === 'working') openComposer(task.message);
+    if (stage === 'working') openComposer();
     else if (stage === 'notice' || stage === 'reply') {
       setStage('reply');
       followupInput.focus({ preventScroll: true });
@@ -511,7 +611,7 @@
     else syncAccess();
   });
 
-  input.placeholder = 'give me more info';
+  input.placeholder = 'Ask Owl';
   dock.dataset.visible = 'true';
   updateInputs();
   setStage('default');

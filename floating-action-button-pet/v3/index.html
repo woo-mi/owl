@@ -6,7 +6,7 @@
     <title>FAB (pet) · v3</title>
     <meta name="description" content="Floating Action Button (pet): an Owl interaction prototype.">
     <link rel="canonical" href="https://woo-mi.github.io/owl/floating-action-button-pet/v3/">
-    <link rel="stylesheet" href="prototype.css?v=pet-interactions-12">
+    <link rel="stylesheet" href="prototype.css?v=pet-interactions-13">
     <link rel="stylesheet" href="profile-menu.css?v=2">
     <link rel="stylesheet" href="pet-idle-motion.css?v=1">
     <link rel="stylesheet" href="../version-picker.css?v=1">
@@ -1282,13 +1282,45 @@
           </button>
         </div>
         <form class="pet-composer" aria-label="Message your Owl" aria-hidden="true" inert>
-          <button class="pet-attach" type="button" aria-label="Add attachment, coming soon" title="Attachments are coming soon" disabled>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-          </button>
-          <input id="pet-message" type="text" name="message" aria-label="Message your Owl" placeholder="give me more info" autocomplete="off" maxlength="500">
-          <button class="pet-send" type="submit" aria-label="Send message" title="Send message" disabled>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
-          </button>
+          <div class="pet-chat-header" hidden>
+            <a class="pet-chat-open" href="https://woo-mi.github.io/owl/for-dev/" aria-label="Open in main window" title="Open in main window">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3h7v7m0-7-10 10M10 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg>
+            </a>
+            <button class="pet-chat-close" type="button" aria-label="Close conversation" title="Close conversation">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="m9 9 6 6m0-6-6 6"/></svg>
+            </button>
+          </div>
+          <div class="pet-chat-thread" role="log" aria-label="Conversation with Owl" hidden></div>
+          <div class="pet-compose-entry">
+            <textarea id="pet-message" rows="1" name="message" aria-label="Message your Owl" placeholder="Ask Owl" autocomplete="off" maxlength="500"></textarea>
+            <div class="pet-compose-footer">
+              <div class="pet-compose-tools" role="group" aria-label="Message tools">
+                <button class="pet-attach" type="button" aria-label="Add attachment" title="Add attachment" disabled>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+                <button class="pet-camera" type="button" aria-label="Take a screenshot" title="Take a screenshot" disabled>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6 1.5-3h5L16 6h3a2 2 0 0 1 2 2v11H3V8a2 2 0 0 1 2-2h3Z"/><circle cx="12" cy="12.5" r="3.5"/></svg>
+                </button>
+                <button class="pet-context" type="button" aria-label="Add screen context" title="Add screen context" disabled>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="14" height="11" rx="2"/><path d="M7 17h3M6 6h3m-3 3h2"/><rect x="11" y="9" width="10" height="12" rx="2"/><path d="M14 13h4m-4 4h2"/></svg>
+                </button>
+                <button class="pet-connect" type="button" aria-label="Connect tools" title="Connect tools" disabled>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5 5 5m-7-3 5 5m-8 1 4-4 5 5-4 4a3.5 3.5 0 0 1-5-5Zm-1 6-2 2H3m14-13 3-3m-2 8 3-3"/></svg>
+                </button>
+              </div>
+              <div class="pet-compose-actions">
+                <button class="pet-mic" type="button" aria-label="Use microphone" title="Use microphone" disabled>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11v1a6 6 0 0 0 12 0v-1m-6 7v3m-3 0h6"/></svg>
+                </button>
+                <button class="pet-send" type="submit" aria-label="Send message" title="Send message" disabled>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+                </button>
+                <button class="pet-chat-stop" type="button" aria-label="Stop response" title="Stop response" hidden>
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
         </form>
       </div>
       <button class="pet-done-indicator" type="button" aria-label="Open completed result" aria-controls="pet-activity" aria-hidden="true" inert></button>
@@ -1314,7 +1346,7 @@
     </div>
     <script src="prototype.js?v=owl-affordance-new-nov-9"></script>
     <script src="pet-drag.js?v=4"></script>
-    <script src="pet-interactions.js?v=8"></script>
+    <script src="pet-interactions.js?v=9"></script>
     <script src="profile-menu.js?v=2"></script>
     <script src="pet-idle-motion.js?v=1"></script>
     <script src="../version-picker.js?v=2"></script>

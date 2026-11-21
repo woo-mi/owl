@@ -106,6 +106,7 @@ button:focus-visible, a:focus-visible {
   --motion-content: 120ms;
   --motion-settle: cubic-bezier(.22, 1, .36, 1);
   --panel-width: 95.205px;
+  --panel-height: 47px;
   --panel-x: -19.603px;
   --panel-y: 64px;
   --working-width: 380px;
@@ -149,7 +150,7 @@ button:focus-visible, a:focus-visible {
   left: var(--panel-x);
   top: var(--panel-y);
   width: var(--panel-width);
-  height: 47px;
+  height: var(--panel-height);
   overflow: hidden;
   border: 1.2px solid #dedede;
   border-radius: 23.5px;
@@ -158,11 +159,16 @@ button:focus-visible, a:focus-visible {
   opacity: 0;
   visibility: hidden;
   transform: translateY(-5px) scale(.94);
-  transform-origin: var(--panel-origin, 50%) center;
+  transform-origin: var(--panel-origin, 50%) var(--panel-origin-y, center);
   pointer-events: none;
   transition:
     width var(--motion-morph) var(--motion-settle),
+    height var(--motion-morph) var(--motion-settle),
     left var(--motion-morph) var(--motion-settle),
+    top var(--motion-morph) var(--motion-settle),
+    border-radius var(--motion-morph) var(--motion-settle),
+    background-color var(--motion-morph) ease,
+    box-shadow var(--motion-morph) ease,
     opacity var(--motion-reveal) ease,
     transform var(--motion-morph) var(--motion-settle),
     visibility 0s var(--motion-reveal);
@@ -215,41 +221,87 @@ button:focus-visible, a:focus-visible {
 .pet-dock:is([data-stage="notice"], [data-stage="reply"]) .pet-notice-toggle::before { background: transparent; }
 .pet-dock:is([data-stage="notice"], [data-stage="reply"]) :is(.pet-bell, .pet-unread) { display: none; }
 .pet-dock:is([data-stage="notice"], [data-stage="reply"]) .pet-chevron { display: block; }
-.pet-composer { gap: 9.18px; padding: 0 8.56px; }
+.pet-dock[data-stage="compose"] { z-index: 160; }
+.pet-dock[data-stage="compose"] .pet-surface {
+  border: 1px solid #e8e8e9;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 6px 24px rgb(27 31 35 / 8%), 0 1px 6px rgb(27 31 35 / 4%);
+}
+.pet-composer { flex-direction: column; align-items: stretch; min-height: 0; padding: 0; overflow-y: auto; }
 .pet-composer button {
   display: grid;
   place-items: center;
-  flex: 0 0 27.55px;
-  width: 27.55px;
-  height: 27.55px;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
   padding: 0;
-  border-radius: 50%;
+  border-radius: 6px;
 }
-.pet-attach { background: #e3e3e3; color: #3d3d3d; }
-.pet-attach svg { width: 16.07px; height: 16.07px; }
-.pet-send { background: #3884f5; color: white; transition: background var(--motion-content), transform var(--motion-content); }
-.pet-send svg { width: 14.92px; height: 14.92px; }
-.pet-send:disabled { background: #719bd8; cursor: default; }
-.pet-attach:disabled { cursor: default; }
+.pet-compose-entry {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  padding: 12px 12px 8px;
+  background: linear-gradient(105deg, rgb(251 248 238 / 35%), rgb(252 248 250 / 28%) 50%, rgb(240 249 253 / 42%));
+}
+.pet-dock[data-conversation="true"] .pet-compose-entry { flex: 0 0 88px; border-top: 1px solid #eeeeef; }
+.pet-compose-footer { display: flex; align-items: center; justify-content: space-between; flex: 0 0 26px; gap: 8px; }
+.pet-compose-tools, .pet-compose-actions { display: flex; align-items: center; gap: 3px; }
+.pet-compose-footer button { color: #5d6266; }
+.pet-compose-footer button:disabled { opacity: 1; cursor: default; }
+.pet-compose-footer svg { width: 16px; height: 16px; }
+.pet-composer .pet-attach { border-radius: 50%; background: #f1f0ec; }
+.pet-compose-footer .pet-send, .pet-compose-footer .pet-chat-stop {
+  background: #3884f5;
+  color: #fff;
+  transition: background var(--motion-content), transform var(--motion-content);
+}
+.pet-compose-footer .pet-send:disabled { background: #eef2f3; color: #a8b0b5; }
+.pet-chat-header { display: flex; align-items: center; justify-content: flex-end; flex: 0 0 32px; gap: 4px; padding: 4px 8px 0; }
+.pet-chat-header :is(a, button) { display: grid; place-items: center; flex: 0 0 24px; width: 24px; height: 24px; padding: 0; border-radius: 6px; color: #717578; }
+.pet-chat-header svg { width: 15px; height: 15px; }
+.pet-chat-header :is(a, button):hover { background: #f3f4f5; color: #363c40; }
+.pet-chat-thread { flex: 1; min-height: 0; padding: 10px 16px 18px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #d7d9db transparent; }
+.pet-chat-message { display: flex; align-items: flex-start; gap: 9px; }
+.pet-chat-message + .pet-chat-message { margin-top: 20px; }
+.pet-chat-avatar { display: grid; place-items: center; flex: 0 0 28px; width: 28px; height: 28px; border-radius: 6px; background: #f3edf5; color: #53275e; font: 600 10px/1 Inter, system-ui, sans-serif; }
+.pet-chat-avatar:has(img) { background: transparent; }
+.pet-chat-avatar img { display: block; width: 28px; height: 28px; object-fit: contain; }
+.pet-chat-message-body { flex: 1; min-width: 0; }
+.pet-chat-author { display: inline-block; margin-right: 6px; color: #23272a; font: 600 13px/18px Inter, system-ui, sans-serif; }
+.pet-chat-time { color: #7b7e81; font: 400 11px/18px Inter, system-ui, sans-serif; white-space: nowrap; }
+.pet-chat-text { margin: 2px 0 0; color: #303438; font: 400 13px/19px Inter, system-ui, sans-serif; white-space: pre-wrap; overflow-wrap: anywhere; }
+.pet-chat-thinking { color: #7b7e81; font: 400 13px/19px Inter, system-ui, sans-serif; }
 #pet-message {
+  display: block;
   width: 100%;
   min-width: 0;
-  flex: 1;
+  min-height: 22px;
+  flex: 1 1 22px;
   padding: 0;
+  margin: 0;
   border: 0;
   outline: 0;
   border-radius: 0;
   background: transparent;
   color: #292929;
-  font: 400 14.64px/20px Inter, system-ui, sans-serif;
+  font: 400 14px/20px Inter, system-ui, sans-serif;
   caret-color: #353535;
+  resize: none;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
-#pet-message::placeholder { color: #545454; opacity: 1; }
+#pet-message::placeholder { color: #696b6d; opacity: 1; }
 .pet-surface:focus-within { border-color: #c8c8c8; }
 .pet-surface button:focus-visible { outline-offset: -3px !important; }
 .pet-edit:hover, .pet-hide:hover { background: #dedede; }
 .pet-send:not(:disabled):hover { background: #226fdf; }
 .pet-send:not(:disabled):active { transform: scale(.9); }
+.pet-chat-stop:hover { background: #226fdf; }
 .pet-done-indicator {
   position: absolute;
   left: calc(50% - 20px);
