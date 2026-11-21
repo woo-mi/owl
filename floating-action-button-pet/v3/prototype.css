@@ -97,7 +97,6 @@ button:focus-visible, a:focus-visible {
   z-index: 10 !important;
 }
 [data-pencil-name="Got it — outlined button"]:hover { background-color: #f5f5f7; }
-[data-pencil-name="Owls navigation target"]:hover { background-color: #ddd !important; }
 
 .pet-dock {
   /* Reveal actions -> expand composer -> working -> done marker -> result -> reply. */
