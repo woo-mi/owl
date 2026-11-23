@@ -3,16 +3,17 @@
   // The prototype files are independent; only the version selector is shared.
   const base = new URL('.', document.currentScript.src);
   const versions = [
-    { id: 'v1', path: './' },
-    { id: 'v2', path: 'v2/' },
-    { id: 'v3', path: 'v3/' },
+    { id: 'v1', label: 'v1', path: './' },
+    { id: 'v2', label: 'v2', path: 'v2/' },
+    { id: 'v3', label: 'v3 · realistic', path: 'v3/' },
   ];
-  const selected = versions.find(version => version.id === document.body.dataset.customizeVersion)?.id || 'v1';
+  const selectedVersion = versions.find(version => version.id === document.body.dataset.customizeVersion) || versions[0];
+  const selected = selectedVersion.id;
   const control = document.createElement('nav');
   control.id = 'customize-version-picker';
   control.setAttribute('aria-label', 'Customize Owl prototype versions');
-  control.innerHTML = `<button class="connections-version-trigger" type="button" aria-label="Customize Owl version, ${selected}" aria-haspopup="menu" aria-expanded="false" aria-controls="customize-version-menu">
-    <span>${selected}</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
+  control.innerHTML = `<button class="connections-version-trigger" type="button" aria-label="Customize Owl version, ${selectedVersion.label}" aria-haspopup="menu" aria-expanded="false" aria-controls="customize-version-menu">
+    <span>${selectedVersion.label}</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
   </button>
   <ul id="customize-version-menu" class="connections-version-menu" role="menu" aria-label="Customize Owl versions" hidden></ul>`;
   document.body.prepend(control);
@@ -22,7 +23,7 @@
     const item = document.createElement('li');
     item.setAttribute('role', 'none');
     const link = document.createElement('a');
-    link.textContent = version.id;
+    link.textContent = version.label;
     link.dataset.version = version.id;
     link.setAttribute('role', 'menuitemradio');
     link.setAttribute('aria-checked', String(version.id === selected));
