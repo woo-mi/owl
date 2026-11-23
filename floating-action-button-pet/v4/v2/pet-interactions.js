@@ -170,7 +170,6 @@
       sidebarUnreadBadge.hidden = !unread;
     }
     sidebarReturn?.setAttribute('aria-label', unread ? 'Open Owl chat, 1 unread' : 'Open Owl chat');
-    sidebarReturn?.setAttribute('aria-expanded', String(sidebarChatOpen));
     sidebarChat?.setAttribute('aria-label', unread ? 'Open Owl chat, 1 unread' : 'Open Owl chat');
     if (sidebarChat) sidebarChat.hidden = !unread;
     if (sidebarActions) sidebarActions.dataset.unread = String(unread);
@@ -779,10 +778,6 @@
     if (!event.relatedTarget || dock.contains(event.relatedTarget)) return;
     setOptionsOpen(false);
     scheduleClose();
-  });
-  sidebarReturn?.addEventListener('click', () => {
-    if (sidebarChatOpen) closeSidebarChat(true);
-    else openSidebarChat();
   });
   sidebarChat?.addEventListener('click', openSidebarChat);
   sidebarFloat?.addEventListener('click', floatInCorner);

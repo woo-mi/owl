@@ -1,0 +1,21 @@
+.fsw-history{min-width:0;font:var(--fsw-type-body);color:var(--fsw-text-primary)}
+/* Align conversation text with the heading while preserving padded hover rows. */
+.fsw-dialog[data-section=history] .fsw-scroll{margin-inline:calc(-1 * var(--fsw-hover-gutter));padding-inline:var(--fsw-hover-gutter)}
+.fsw-history-intro{margin:0 0 var(--fsw-section-gap);font:var(--fsw-type-body);color:var(--fsw-text-secondary)}
+.fsw-history-list{list-style:none;margin:0 calc(-1 * var(--fsw-hover-gutter));padding:0}
+.fsw-history-list>li{margin:0;padding:0}
+.fsw-history-row{position:relative;appearance:none;display:flex;align-items:center;gap:16px;width:100%;min-width:0;min-height:var(--fsw-row-min-height);padding:var(--fsw-row-padding) var(--fsw-hover-gutter);border:0;border-radius:8px;background:#fff;text-align:left;font:var(--fsw-type-body);color:var(--fsw-text-primary);cursor:pointer}
+.fsw-history-row::after{content:"";position:absolute;bottom:0;left:var(--fsw-hover-gutter);right:var(--fsw-hover-gutter);height:1px;background:#eee;pointer-events:none}
+.fsw-history-row:hover{background:#f8f8f8}
+.fsw-dialog .fsw-history-row:focus-visible{outline:2px solid #0085ff;outline-offset:-2px}
+.fsw-history-copy{display:flex;flex-direction:column;gap:var(--fsw-copy-gap);flex:1;min-width:0}
+.fsw-history-title{font-weight:400;color:var(--fsw-text-primary)}
+.fsw-history-summary{font:var(--fsw-type-body);color:var(--fsw-text-secondary)}
+.fsw-history-replies{flex:none;white-space:nowrap;font:var(--fsw-type-meta);color:var(--fsw-text-secondary)}
+.fsw-history-row>svg{width:16px;height:16px;flex:none;color:#8b8b85}
+.fsw-history-detail{display:flex;flex-direction:column;gap:16px;min-width:0;max-width:780px;font:var(--fsw-type-body);color:var(--fsw-text-primary)}
+.fsw-history-detail p{margin:0}
+.fsw-history-detail .fsw-history-detail-label{font:var(--fsw-type-label);color:var(--fsw-text-secondary)}
+.fsw-history-detail .fsw-content-primary{margin-top:8px}
+@media(max-width:600px){.fsw-history-row{gap:10px}}
+@media(max-width:480px){.fsw-history-row{gap:10px;flex-wrap:wrap}.fsw-history-copy{flex-basis:calc(100% - 26px)}.fsw-history-row>svg{order:1}.fsw-history-replies{order:2;flex-basis:100%}.fsw-history-title,.fsw-history-summary{overflow-wrap:anywhere}}
