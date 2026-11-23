@@ -8,6 +8,7 @@
   const screens = [...document.querySelectorAll('[data-prototype-screen]')];
   const composer = document.querySelector('.composer');
   const labels = { 'third-party': 'third-party', clarification: 'clarification', 'multi-select-q': 'multi-select Q', 'data-connect-modal': 'Data connect modal' };
+  const defaultVersion = 'data-connect-modal';
   let currentVersion;
   let positionFrame;
 
@@ -49,7 +50,7 @@
 
   function versionFromLocation() {
     const requested = new URL(location.href).searchParams.get('version');
-    return Object.hasOwn(labels, requested) ? requested : 'third-party';
+    return Object.hasOwn(labels, requested) ? requested : defaultVersion;
   }
 
   function showVersion(version, { updateHistory = false, restoreFocus = false } = {}) {
@@ -72,7 +73,7 @@
     if (updateHistory) {
       const url = new URL(location.href);
       url.searchParams.delete('v');
-      if (version === 'third-party') url.searchParams.delete('version');
+      if (version === defaultVersion) url.searchParams.delete('version');
       else url.searchParams.set('version', version);
       history.pushState(history.state, '', url);
     }

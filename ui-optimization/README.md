@@ -20,8 +20,8 @@ resizing safely completes the animation, and keyboard focus follows the result.
 Reloading resets the prototype. The approval is simulated locally; it does not
 call Claude or Linear. Deny, navigation, and the composer remain static.
 
-The Links-style version selector switches between **third-party** (default),
-**Clarification** (`?version=clarification`), and **multi-select Q**
+The Links-style version selector switches between **Data connect modal** (default),
+**third-party** (`?version=third-party`), **Clarification** (`?version=clarification`), and **multi-select Q**
 (`?version=multi-select-q`). Clarification offers two answers or
 a custom text field; Submit appears when custom text is entered. Choosing an
 answer uses the same compact transition and displays the actual selected text.

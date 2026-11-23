@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="data-connect-modal.css?v=1">
     <script src="prototype.js?v=multi-select-1" defer></script>
     <script src="data-connect-modal.js?v=1" defer></script>
-    <script src="version-picker.js?v=data-connect-modal-1" defer></script>
+    <script src="version-picker.js?v=data-connect-default-1" defer></script>
   </head>
-  <body>
+  <body data-prototype-version="data-connect-modal">
     <aside id="sidebar" class="sidebar" aria-label="Workspace navigation preview">
  <div class="brand"><div class="brand-logo" role="img" aria-label="WisdomAI"><div
                 data-pencil-id="lqbxN"
@@ -203,7 +203,7 @@
       <div class="conversation">
         <div class="thread">
           <p class="timestamp">Today, Mon, Oct 13 7:02 AM</p>
-          <section class="prototype-screen" data-prototype-screen="third-party" aria-label="Third-party approval">
+          <section class="prototype-screen" data-prototype-screen="third-party" aria-label="Third-party approval" hidden>
           <article class="request-card" id="approval-card" aria-labelledby="request-title" data-stage="0">
             <div class="request-pending">
             <header class="request-source"><img src="assets/claude.svg" width="16" height="16" alt=""><span>Claude</span></header>
@@ -284,7 +284,7 @@
               </div>
             </template>
           </section>
-          <section class="prototype-screen data-connect-screen" data-prototype-screen="data-connect-modal" aria-label="Data connect modal" hidden>
+          <section class="prototype-screen data-connect-screen" data-prototype-screen="data-connect-modal" aria-label="Data connect modal">
             <div class="data-conversation-header"><img src="assets/owl.svg" width="16" height="16" alt=""><span>Woo-Mi's Owl</span></div>
             <p class="data-message data-message-owl">I’m missing the question this answers. What would you like me to go ahead with?</p>
             <div class="data-user-turn"><p class="data-message data-message-user">connect data</p><span class="data-reply-count">1 Reply</span></div>
@@ -307,14 +307,14 @@
         </div>
         <div class="conversation-footer">
           <nav class="prototype-versions" id="ui-version-picker" aria-label="Prototype version">
-            <button class="prototype-version-trigger" type="button" aria-label="Prototype version, third-party" aria-haspopup="menu" aria-expanded="false" aria-controls="ui-version-menu">
-              <span class="prototype-version-label">third-party</span><svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
+            <button class="prototype-version-trigger" type="button" aria-label="Prototype version, Data connect modal" aria-haspopup="menu" aria-expanded="false" aria-controls="ui-version-menu">
+              <span class="prototype-version-label">Data connect modal</span><svg class="prototype-version-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
             </button>
             <ul class="prototype-version-menu" id="ui-version-menu" role="menu" aria-label="Prototype versions" hidden>
-              <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="third-party" aria-checked="true" tabindex="-1">third-party</button></li>
+              <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="third-party" aria-checked="false" tabindex="-1">third-party</button></li>
               <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="clarification" aria-checked="false" tabindex="-1">clarification</button></li>
               <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="multi-select-q" aria-checked="false" tabindex="-1">multi-select Q</button></li>
-              <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="data-connect-modal" aria-checked="false" tabindex="-1">Data connect modal</button></li>
+              <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="data-connect-modal" aria-checked="true" tabindex="-1">Data connect modal</button></li>
             </ul>
           </nav>
         <div class="composer" aria-label="Message composer preview">
