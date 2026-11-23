@@ -61,6 +61,21 @@
   text-align: center;
 }
 .pen-frame-replies { gap: 24px; }
+.fab-latest-update { width: 100%; margin-top: 24px; color: #27272a; }
+.fab-latest-update .new-divider {
+  height: auto;
+  padding: 0;
+  font: 700 12px/18px Inter, system-ui, sans-serif;
+  letter-spacing: 0;
+}
+body[data-bubble-format] .fab-latest-update .date-stamp {
+  height: auto;
+  margin: 16px 0 24px;
+  padding: 0;
+  color: #a1a1aa;
+  font: 400 12px/18px Inter, system-ui, sans-serif;
+}
+.fab-latest-update .message-copy { margin: 0; font: 400 14px/22px Inter, system-ui, sans-serif; }
 body[data-bubble-format="aligned"] .pen-frame-transcript .unfurl-block {
   width: min(605px, 100%);
   align-self: flex-start;

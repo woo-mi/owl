@@ -147,10 +147,16 @@
     return template.innerHTML;
   }
   // Keep a distinct view identity so the new copy owns its conversation and replies.
+  const latestPipelineUpdate = `
+    <section class="fab-latest-update" aria-label="Latest Owl update">
+      <div class="new-divider" role="separator" aria-label="New messages"><span></span><span>NEW</span><span></span></div>
+      <p class="date-stamp">Today</p>
+      <article class="message" aria-label="Owl"><p class="message-copy">Your Monday pipeline check is ready. Open pipeline is $4.2M across 138 deals, up 6% on last week. 23 deals have had no activity for 30 days, and 9 of those belong to one owner.</p></article>
+    </section>`;
   window.MVPViews['latest-oct-28'] = {
     ...window.MVPViews['latest-oct-27'],
     label: 'For dev',
-    html: updatedArrowMarkers(variants.aligned.html)
+    html: updatedArrowMarkers(variants.aligned.html) + latestPipelineUpdate
   };
   window.MVPViews['latest-oct-28-replies'] = {
     ...window.MVPViews['latest-oct-27-replies'],

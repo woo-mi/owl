@@ -22,6 +22,7 @@
     let sidebarOpen = false;
     let currentView = 'text-only';
     let currentStateKey = 'text-only';
+    let renderGeneration = 0;
     const viewStates = new Map();
     const replyViews = Object.freeze({
       'text-furling': 'clicked-replies',
@@ -134,14 +135,14 @@
       }
     }
 
-    function scrollToBottom(container) {
+    function scrollToBottom(container, behavior = reducedMotion.matches ? 'auto' : 'smooth') {
       if (!container) return;
       const requestedFromState = currentStateKey;
       requestAnimationFrame(() => {
         if (currentStateKey !== requestedFromState) return;
         container.scrollTo({
           top: container.scrollHeight,
-          behavior: reducedMotion.matches ? 'auto' : 'smooth'
+          behavior
         });
       });
     }
@@ -321,6 +322,7 @@
       const leavingReplies = isReplyView();
       const definition = window.MVPViews?.[nextView];
       if (view !== 'text-only' && !definition) return;
+      const generation = ++renderGeneration;
       closeMenu();
       viewStates.set(currentStateKey, {
         nodes: [...ui.messages.childNodes],
@@ -347,6 +349,12 @@
       autosize(ui['message-input']);
       updateSendButtons();
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
+      if (!previous && nextView === 'latest-oct-28') {
+        scrollToBottom(ui['chat-scroll'], 'auto');
+        document.fonts.ready.then(() => {
+          if (renderGeneration === generation) scrollToBottom(ui['chat-scroll'], 'auto');
+        });
+      }
       syncAgentHeader();
       document.title = `Owl · FAB (pet) v2${repliesOpen ? ' · Replies' : ''}`;
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
