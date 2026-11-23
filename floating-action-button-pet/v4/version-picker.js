@@ -5,6 +5,7 @@
   const versions = [
     { id: 'v1', href: new URL('./', base).href },
     { id: 'v2', href: new URL('v2/', base).href },
+    { id: 'v3', href: new URL('v3/', base).href },
   ];
   const selected = versions.find(version => version.id === document.body.dataset.petVersion)?.id || 'v1';
   const control = document.createElement('nav');
