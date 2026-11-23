@@ -7,14 +7,14 @@
  *  900ms   hairline cracks branch down from the upper-right shoulder
  * 2900ms   the uneven horizontal seam connects across the shell
  * 3600ms   the seam opens into the reference's wide, shaded fracture
- * 3950ms   one curved shell fragment falls and settles under the egg
+ * 3950ms   two curved shell fragments fall and settle under the egg
  * 6200ms   hold the broken shell; the Owl remains hidden until Hatch
  *
  * Hatch, measured from the click:
  *    0ms   continue from the current sway and existing cracks
  *  120ms   remaining hairlines extend through a slow rocking motion
  *  400ms   finish opening the missing strip, preserving current damage
- *  550ms   finish the fragment's fall if Hatch was pressed early
+ *  550ms   finish both fragments' fall if Hatch was pressed early
  * 2050ms   the two matching broken edges part; small chips fall
  * 2250ms   the supplied Owl emerges behind the textured shell rim
  * 3400ms   the foreground shell gently fades before the page handoff
@@ -33,8 +33,8 @@
     idleSeam:2900,         // horizontal crack connects
     idleGap:3600,          // shaded opening widens
     idleGapReveal:900,     // ease the opening from hairline to full depth
-    idleFragment:3950,     // the larger missing strip drops
-    idleFragmentFall:1200, // curved fragment lands with a small settle
+    idleFragment:3950,     // the missing strip drops as two broken pieces
+    idleFragmentFall:1200, // both fragments land with a small settle
     idleFinish:6200,       // hold the reference pose
     idleReveal:1000,       // individual hairline growth
     hatchCrack:120,        // extend remaining cracks
@@ -69,7 +69,7 @@
     width:IMAGE.width*imageScale,height:IMAGE.height*imageScale,
   };
   // Points follow the supplied reference in its original 464 x 760 coordinates.
-  // Reuse the exact edges for the opening, missing fragment, and shell clips.
+  // Reuse the exact edges for the opening, missing fragments, and shell clips.
   const REFERENCE={left:22,top:85,width:417,height:587};
   const referencePoint=([x,y])=>[
     IMAGE.placement.x+(x-REFERENCE.left)/REFERENCE.width*IMAGE.alphaBounds.width*imageScale,
@@ -78,6 +78,7 @@
   const referencePath=(points,closed=false)=>points.map((point,index)=>`${index?'L':'M'}${referencePoint(point).map(value=>value.toFixed(2)).join(' ')}`).join('')+(closed?'Z':'');
   const upperEdge=[[22,408],[45,411],[63,408],[80,397],[98,392],[126,379],[147,403],[175,395],[192,395],[214,389],[239,388],[257,379],[278,380],[299,389]];
   const lowerEdge=[[22,408],[36,418],[50,427],[65,429],[87,421],[111,425],[123,433],[144,449],[163,440],[185,446],[214,442],[232,439],[255,429],[268,409],[286,397],[299,389]];
+  const fragmentCut=[[175,395],[165,410],[177,424],[163,440]];
   const rightSeam=[[330,397],[345,409],[369,415],[389,415],[417,439],[438,443],[455,433],[700,433]];
   const SEAM=referencePath([[-200,408],...upperEdge,...rightSeam]);
   const CUP_SEAM=referencePath([[-200,408],...lowerEdge,...rightSeam]);
@@ -87,10 +88,23 @@
     center:[166,301], // pivot inside the missing strip
     rim:'#f4f0e8',rimWidth:1.3, // lit edge shows shell thickness
     shadow:'#756c61',interior:'#a0988c', // softly shaded cavity
-    dx:19,dy:170,lift:3,turn:5, // fall beneath the egg, with slight outward drift
-    scaleX:.8,scaleY:.8, // curved fragment settles flatter on the ground
     airFraction:.88,bounceHeight:2.2, // one restrained landing bounce
-    groundX:185,groundY:475,shadowWidth:54,shadowHeight:3,
+    groundY:475,shadowHeight:3,
+    // Complementary jagged edges fit the cavity at release, then drift apart.
+    pieces:[
+      {
+        shape:referencePath([...upperEdge.slice(0,8),...fragmentCut.slice(1),...lowerEdge.slice(0,8).reverse()],true),
+        upper:referencePath([...upperEdge.slice(0,8),...fragmentCut.slice(1)]),
+        center:referencePoint([100,420]),dx:18,dy:168,lift:3,turn:-9,
+        scaleX:.82,scaleY:.8,groundX:149,shadowWidth:35,
+      },
+      {
+        shape:referencePath([...upperEdge.slice(7),...lowerEdge.slice(8,-1).reverse(),...fragmentCut.slice(1,-1).reverse()],true),
+        upper:referencePath(upperEdge.slice(7)),
+        center:referencePoint([231,413]),dx:22,dy:170,lift:4,turn:8,
+        scaleX:.82,scaleY:.85,groundX:227.5,shadowWidth:32,
+      },
+    ],
   };
   const EGG = {
     crack:'#827b72',shadow:'#b4aca0',crackStroke:.9,
@@ -133,7 +147,7 @@
   const smooth = value=>value*value*(3-2*value);
   const easeOut = value=>1-Math.pow(1-value,3);
   const mix = (from,to,amount)=>from+(to-from)*amount;
-  let host,scene,svg,body,closedShell,openShell,shadow,reveal,crackNodes,chipNodes,shellNodes,gap,fragment,fragmentShadow;
+  let host,scene,svg,body,closedShell,openShell,shadow,reveal,crackNodes,chipNodes,shellNodes,gap,fragmentNodes,fragmentShadows;
   let mode='stopped',stage=0,elapsed=0,lastTick=null,frame=0;
   let hatchPromise=null,resolveHatch=null,seedCracks=[],seedChips=[],seedAngle=0,seedGapProgress=0,seedFragment=0;
 
@@ -175,14 +189,14 @@
       <div id="owl-egg-reveal" class="owl-egg-reveal" aria-hidden="true" style="left:${OWL.x/420*100}%;top:${OWL.y/530*100}%;width:${OWL.size/420*100}%"></div>
       <svg class="owl-egg-art" viewBox="0 0 420 530" fill="none" role="img" aria-labelledby="owl-egg-title owl-egg-description" xmlns="http://www.w3.org/2000/svg">
         <title id="owl-egg-title">An egg beginning to hatch</title>
-        <desc id="owl-egg-description">A realistic ivory egg gently sways. Branching cracks widen into a broken opening, and a curved shell fragment settles below. The Owl stays hidden until Hatch is pressed.</desc>
+        <desc id="owl-egg-description">A realistic ivory egg gently sways. Branching cracks widen into a broken opening, and two curved shell fragments settle below. The Owl stays hidden until Hatch is pressed.</desc>
         <defs>
           <image id="owl-egg-texture" href="${IMAGE.url}" x="${imagePlacement.x}" y="${imagePlacement.y}" width="${imagePlacement.width}" height="${imagePlacement.height}"/>
           <mask id="owl-egg-alpha" maskUnits="userSpaceOnUse" x="-50" y="-100" width="520" height="730" style="mask-type:alpha"><use href="#owl-egg-texture"/></mask>
           <filter id="owl-egg-ground-soft" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="3"/></filter>
           <filter id="owl-egg-fragment-soft" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.2" stdDeviation=".8" flood-color="#6e6454" flood-opacity=".15"/></filter>
           <linearGradient id="owl-egg-cavity" x1="0" y1="280" x2="0" y2="325" gradientUnits="userSpaceOnUse"><stop stop-color="${FRACTURE.shadow}"/><stop offset="1" stop-color="${FRACTURE.interior}"/></linearGradient>
-          <clipPath id="owl-egg-missing-strip"><path d="${FRACTURE.shape}"/></clipPath>
+          ${FRACTURE.pieces.map((piece,index)=>`<clipPath id="owl-egg-strip-clip-${index}" clipPathUnits="userSpaceOnUse"><path d="${piece.shape}"/></clipPath>`).join('')}
           ${SHELL.sections.map(section=>`<clipPath id="owl-egg-${section.id}-clip" clipPathUnits="userSpaceOnUse"><path d="${section.clip}"/></clipPath>`).join('')}
           ${CHIPS.items.map((chip,index)=>`<clipPath id="owl-egg-chip-clip-${index}" clipPathUnits="userSpaceOnUse"><path d="${chip.shape}"/></clipPath>`).join('')}
         </defs>
@@ -203,13 +217,13 @@
             <g mask="url(#owl-egg-alpha)"><path d="${section.edge}" fill="none" stroke="${section.rim}" stroke-width="2.4"/><path d="${section.edge}" transform="translate(0 1)" fill="none" stroke="#fffdf8" stroke-width=".8" opacity=".8"/></g>
           </g></g>`).join('')}</g>
         </g>
-        <ellipse class="owl-egg-strip-shadow" cx="${FRACTURE.groundX}" cy="${FRACTURE.groundY}" rx="${FRACTURE.shadowWidth}" ry="${FRACTURE.shadowHeight}" fill="${EGG.shadow}" opacity="0" filter="url(#owl-egg-ground-soft)"/>
+        ${FRACTURE.pieces.map((piece,index)=>`<ellipse class="owl-egg-strip-shadow" cx="${piece.groundX}" cy="${FRACTURE.groundY}" rx="${piece.shadowWidth}" ry="${FRACTURE.shadowHeight}" fill="${EGG.shadow}" opacity="0" filter="url(#owl-egg-ground-soft)"/>
         <g class="owl-egg-strip-fragment" opacity="0" filter="url(#owl-egg-fragment-soft)" aria-hidden="true">
-          <path d="${FRACTURE.shape}" transform="translate(0 1.5)" fill="#d5cfc4"/>
-          <path d="${FRACTURE.shape}" fill="#fffdf8"/>
-          <g clip-path="url(#owl-egg-missing-strip)" opacity=".28"><use href="#owl-egg-texture"/></g>
-          <path d="${FRACTURE.upper}" fill="none" stroke="#fdfcf9" stroke-width="1.5"/>
-        </g>
+          <path d="${piece.shape}" transform="translate(0 1.5)" fill="#d5cfc4"/>
+          <path d="${piece.shape}" fill="#fffdf8"/>
+          <g clip-path="url(#owl-egg-strip-clip-${index})" opacity=".28"><use href="#owl-egg-texture"/></g>
+          <path d="${piece.upper}" fill="none" stroke="#fdfcf9" stroke-width="1.5"/>
+        </g>`).join('')}
         <g aria-hidden="true">${CHIPS.items.map((chip,index)=>`<g transform="translate(${chip.x} ${chip.y})"><g class="owl-egg-chip" filter="url(#owl-egg-fragment-soft)">
           <path d="${chip.shape}" transform="translate(.3 .8)" fill="#ddd6cb"/>
           <g clip-path="url(#owl-egg-chip-clip-${index})"><use href="#owl-egg-texture" transform="translate(${-chip.x} ${-chip.y})"/></g>
@@ -227,8 +241,8 @@
     chipNodes=[...host.querySelectorAll('.owl-egg-chip')];
     shellNodes=[...host.querySelectorAll('.owl-egg-shell-section')];
     gap=host.querySelector('.owl-egg-wide-fracture');
-    fragment=host.querySelector('.owl-egg-strip-fragment');
-    fragmentShadow=host.querySelector('.owl-egg-strip-shadow');
+    fragmentNodes=[...host.querySelectorAll('.owl-egg-strip-fragment')];
+    fragmentShadows=[...host.querySelectorAll('.owl-egg-strip-shadow')];
     resetPose();
     return true;
   }
@@ -261,14 +275,16 @@
   function renderFragment(amount) {
     const air=clamp(amount/FRACTURE.airFraction);
     const landing=progress(amount,FRACTURE.airFraction,1-FRACTURE.airFraction);
-    const velocity=2*(FRACTURE.lift+Math.sqrt(FRACTURE.lift*(FRACTURE.lift+FRACTURE.dy)));
-    let y=(FRACTURE.dy+velocity)*air*air-velocity*air;
-    if(landing>0)y=FRACTURE.dy-Math.sin(landing*Math.PI)*FRACTURE.bounceHeight;
-    const [cx,cy]=FRACTURE.center;
     const flatten=smooth(air);
-    fragment.setAttribute('opacity',String(smooth(clamp(amount*8))));
-    fragment.setAttribute('transform',`translate(${FRACTURE.dx*easeOut(air)} ${y}) translate(${cx} ${cy}) rotate(${FRACTURE.turn*air}) scale(${mix(1,FRACTURE.scaleX,flatten)} ${mix(1,FRACTURE.scaleY,flatten)}) translate(${-cx} ${-cy})`);
-    fragmentShadow.setAttribute('opacity',String(.18*smooth(progress(amount,.65,.35))));
+    FRACTURE.pieces.forEach((piece,index)=>{
+      const velocity=2*(piece.lift+Math.sqrt(piece.lift*(piece.lift+piece.dy)));
+      let y=(piece.dy+velocity)*air*air-velocity*air;
+      if(landing>0)y=piece.dy-Math.sin(landing*Math.PI)*FRACTURE.bounceHeight;
+      const [cx,cy]=piece.center;
+      fragmentNodes[index].setAttribute('opacity',String(smooth(clamp(amount*8))));
+      fragmentNodes[index].setAttribute('transform',`translate(${piece.dx*easeOut(air)} ${y}) translate(${cx} ${cy}) rotate(${piece.turn*air}) scale(${mix(1,piece.scaleX,flatten)} ${mix(1,piece.scaleY,flatten)}) translate(${-cx} ${-cy})`);
+      fragmentShadows[index].setAttribute('opacity',String(.18*smooth(progress(amount,.65,.35))));
+    });
     host.dataset.fragment=amount>=1?'landed':amount>0?'falling':'attached';
   }
   function renderIdle(time) {
@@ -352,7 +368,7 @@
     scene.style.transform='';
     svg.style.opacity='1';
     svg.querySelector('title').textContent='An egg beginning to hatch';
-    svg.querySelector('desc').textContent='A realistic ivory egg gently sways. Branching cracks widen into a broken opening, and a curved shell fragment settles below. The Owl stays hidden until Hatch is pressed.';
+    svg.querySelector('desc').textContent='A realistic ivory egg gently sways. Branching cracks widen into a broken opening, and two curved shell fragments settle below. The Owl stays hidden until Hatch is pressed.';
     reveal.style.opacity='0';
     reveal.style.transform='';
     reveal.replaceChildren();
