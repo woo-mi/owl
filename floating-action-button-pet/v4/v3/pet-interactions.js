@@ -122,7 +122,6 @@
     optionsOpen = open;
     optionsMenu.dataset.open = String(open);
     setAccessible(optionsMenu, open);
-    options.setAttribute('aria-expanded', String(open));
     if (open) optionsMenu.querySelector('[role="menuitem"]').focus({ preventScroll: true });
     else if (restoreFocus) options.focus({ preventScroll: true });
   }
@@ -341,7 +340,7 @@
   }
   function returnFocus() {
     restoringFocus = true;
-    (petVisible ? fab : sidebarReturn)?.focus({ preventScroll: true });
+    (petVisible ? fab : document.querySelector('.owl-profile-trigger'))?.focus({ preventScroll: true });
     restoringFocus = false;
   }
   function collapse(restoreFocus = false) {
@@ -580,7 +579,7 @@
       if (dockingFlight === flight) finishDockingFlight();
     }).catch(() => { /* A restore, resize, or reduced-motion change already cleaned up. */ });
   }
-  function setPetVisibility(visible, preserveConversation = false) {
+  function setPetVisibility(visible, preserveConversation = true) {
     if (visible === petVisible) return;
     if (visible || dockingFlight?.direction === 'float') finishDockingFlight(false);
     setSidebarActions(false);
@@ -594,7 +593,8 @@
     actionPointerInside = false;
     pointerFocusPending = false;
     suppressHoverUntilLeave = false;
-    if (sidebarReturn) sidebarReturn.hidden = visible;
+    // v3 hides Owl completely; the profile menu is the way to show it again.
+    if (sidebarReturn) sidebarReturn.hidden = true;
     if (visible) {
       dock.hidden = false;
       dock.inert = false;
@@ -607,7 +607,7 @@
       announcement.textContent = '';
       if (dock.contains(document.activeElement)) {
         document.activeElement.blur();
-        if (!dockingFlight) sidebarReturn?.focus({ preventScroll: true });
+        if (!dockingFlight) returnFocus();
       }
       dock.inert = true;
       dock.setAttribute('aria-hidden', 'true');
@@ -749,13 +749,7 @@
   card.addEventListener('focusout', () => queueMicrotask(updateStatusAccess));
 
   edit.addEventListener('click', () => openComposer(undefined, true));
-  hide.addEventListener('click', dockInSidebar);
-  options.addEventListener('click', () => setOptionsOpen(!optionsOpen));
-  options.addEventListener('keydown', event => {
-    if (!['ArrowDown', 'ArrowUp'].includes(event.key)) return;
-    event.preventDefault();
-    setOptionsOpen(true);
-  });
+  options.addEventListener('click', () => setPetVisibility(false));
   optionsMenu.addEventListener('keydown', event => {
     const items = [...optionsMenu.querySelectorAll('[role="menuitem"]')];
     const index = items.indexOf(document.activeElement);
@@ -955,7 +949,7 @@
     unread: true,
   };
   input.placeholder = 'Give your Owl something to do...';
-  optionsMenu.hidden = false;
+  optionsMenu.hidden = true;
   setOptionsOpen(false);
   dock.dataset.visible = 'true';
   renderConversation(false);

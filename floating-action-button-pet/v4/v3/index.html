@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="prototype.css?v=pet-interactions-25">
     <link rel="stylesheet" href="profile-menu.css?v=2">
     <link rel="stylesheet" href="pet-idle-motion.css?v=4">
-    <link rel="stylesheet" href="fab-v4.css?v=9">
+    <link rel="stylesheet" href="fab-v4.css?v=v3-10">
     <link rel="stylesheet" href="../../version-picker.css?v=1">
     <style>
       *, ::before, ::after {
@@ -1290,7 +1290,10 @@
             <span class="pet-unread" aria-hidden="true">1</span>
           </button>
           <span class="pet-toolbar-divider" aria-hidden="true"></span>
-          <button class="pet-options" type="button" aria-label="Owl options" title="Owl options" aria-haspopup="menu" aria-expanded="false" aria-controls="pet-options-menu"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></button>
+          <button class="pet-options" type="button" aria-label="Hide Owl" title="Hide Owl">
+            <svg class="pet-eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12C4 7.5 7.5 5 12 5s8 2.5 10 7c-2 4.5-5.5 7-10 7S4 16.5 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="pet-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><mask id="pet-eye-slash-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="white" stroke="none"/><path d="M3 3l18 18" stroke="black" stroke-width="5"/></mask></defs><g mask="url(#pet-eye-slash-cutout)"><path d="M2 12C4 7.5 7.5 5 12 5s8 2.5 10 7c-2 4.5-5.5 7-10 7S4 16.5 2 12Z"/><circle cx="12" cy="12" r="3"/></g><path d="M3 3l18 18"/></svg>
+          </button>
         </div>
         <form class="pet-composer" aria-label="Message your Owl" aria-hidden="true" inert>
           <div class="pet-chat-header" hidden>
@@ -1346,7 +1349,7 @@
       <div class="pet-announcement" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
     <script src="prototype.js?v=owl-affordance-new-nov-9"></script>
-    <script src="pet-interactions.js?v=v4-7"></script>
+    <script src="pet-interactions.js?v=v3-8"></script>
     <script src="profile-menu.js?v=2"></script>
     <script src="pet-idle-motion.js?v=1"></script>
     <script src="../version-picker.js?v=2"></script>

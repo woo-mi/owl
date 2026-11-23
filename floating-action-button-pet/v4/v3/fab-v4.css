@@ -153,6 +153,16 @@
   width: 14px;
   height: 14px;
 }
+.pet-toolbar .pet-options svg { grid-area: 1 / 1; transition: opacity 120ms ease; }
+.pet-toolbar .pet-options .pet-eye-off { opacity: 0; }
+.pet-toolbar .pet-options:is(:hover, :focus-visible) .pet-eye-open { opacity: 0; }
+.pet-toolbar .pet-options:is(:hover, :focus-visible) .pet-eye-off { opacity: 1; }
+/* Keep the slash cutout's wider mask stroke intact. */
+.pet-toolbar .pet-options svg > :is(path, circle),
+.pet-toolbar .pet-options svg > g > :is(path, circle) {
+  stroke-width: 1.25px;
+  vector-effect: non-scaling-stroke;
+}
 .pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options):hover,
 .pet-toolbar .pet-options[aria-expanded="true"] { background: #eeeef1; }
 .pet-toolbar .pet-notice-toggle { position: relative; }
@@ -353,6 +363,7 @@
   .pet-dock { --motion-reveal: 0ms; --motion-morph: 0ms; --motion-content: 0ms; }
   .pet-dock .pet-visual, .pet-surface, .pet-toolbar, .pet-composer,
   .pet-options-menu, .pet-done-indicator, .pet-sidebar-actions, .pet-sidebar-actions button,
-  .pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options) { transition: none !important; }
+  .pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options),
+  .pet-toolbar .pet-options svg { transition: none !important; }
   .pet-loading-skeleton > span { animation: none; background-image: none; }
 }
