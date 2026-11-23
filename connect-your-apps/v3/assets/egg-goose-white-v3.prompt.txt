@@ -7,7 +7,7 @@ https://forgedmettlefarm.com/2023/04/11/hatch-day-houdinis-the-amazing-gosling-e
 https://www.tyrantfarms.com/how-to-hatch-goose-eggs-tips-tricks-and-troubleshooting/
 https://www.nancyhoffmangallery.com/exhibition-nathalia-edenmont-2024
 Reference photographs were used for study, not copied into the prototype.
-Animation compresses the real pip / perimeter-zip / cap-release sequence to prototype timing.
+The texture stays white; the animation uses the previous v3 wide-fracture sequence at the user's request.
 
 Initial shape prompt:
 Use case: precise-object-edit. Asset type: transparent photographic goose egg texture for an animated website. Edit target: supplied intact ivory egg. Replace the somewhat stylized pointy chicken-egg shape/material with one realistic domestic goose egg, upright, long axis vertical. A goose egg is an elongated oval with a softly rounded upper end and a broader rounded lower end, subtly asymmetric rather than a sharp teardrop. True macro product photograph with fine calcium pores, matte chalky warm-white shell, extremely subtle natural mottling, faint uneven mineral grain. Soft daylight from upper left, believable gentle shading to right and underside, no strong shiny highlights. Keep the egg centered and entirely visible, almost filling the square canvas vertically, and approximately 0.70 width-to-height ratio. This is the intact base for programmatic cracks: NO cracks, NO broken pieces, NO bird, NO ground, NO cast shadow, NO text. Actual transparent background with clean alpha edges, no checkerboard texture or painted white rectangle. Photographic natural texture, not plastic, not porcelain, not cartoon, not CGI.

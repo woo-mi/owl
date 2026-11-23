@@ -1,13 +1,13 @@
 /* ─────────────────────────────────────────────────────────
- * V3 ANIMATION STORYBOARD — white goose egg, pip, perimeter zip, cap release.
+ * V3 ANIMATION STORYBOARD — the supplied wide fracture and fallen shell.
  * Timeline below uses animation-clock milliseconds at 1.25x playback:
  * the initial cracking takes 4.96s and the Hatch reveal takes 3.12s.
  *
- *    0ms   small planted pressure pulses alternate with stillness
- *  900ms   fine cracks radiate from a small external pip
- * 2900ms   an irregular zip extends around the shell's upper half
- * 3600ms   two chipped edges expose a recessed, membrane-lined opening
- * 3950ms   two unequal shell flakes drop and settle beneath the egg
+ *    0ms   the realistic shell begins one gentle, planted sway
+ *  900ms   hairline cracks branch down from the upper-right shoulder
+ * 2900ms   the uneven horizontal seam connects across the shell
+ * 3600ms   the seam opens into the reference's wide, shaded fracture
+ * 3950ms   two curved shell fragments fall and settle under the egg
  * 6200ms   hold the broken shell; the Owl remains hidden until Hatch
  *
  * Hatch, measured from the click:
@@ -68,79 +68,77 @@
     y:IMAGE.placement.y-IMAGE.alphaBounds.y*imageScale,
     width:IMAGE.width*imageScale,height:IMAGE.height*imageScale,
   };
-  // Normalized shell coordinates keep the photographic texture, zip, and flakes aligned.
-  // Real goose-hatch references: small external pip, perimeter zip, then cap release.
+  // Points follow the supplied reference in its original 464 x 760 coordinates.
+  // Reuse the exact edges for the opening, missing fragments, and shell clips.
   const REFERENCE={left:22,top:85,width:417,height:587};
   const referencePoint=([x,y])=>[
     IMAGE.placement.x+(x-REFERENCE.left)/REFERENCE.width*IMAGE.alphaBounds.width*imageScale,
     IMAGE.placement.y+(y-REFERENCE.top)/REFERENCE.height*IMAGE.placement.height,
   ];
   const referencePath=(points,closed=false)=>points.map((point,index)=>`${index?'L':'M'}${referencePoint(point).map(value=>value.toFixed(2)).join(' ')}`).join('')+(closed?'Z':'');
-  const leftSeam=[[-200,331],[58,331],[73,338],[88,337],[95,342],[110,341],[120,345],[137,343],[150,349],[165,347],[178,352],[191,349]];
-  const upperEdge=[[200,352],[210,349],[218,352],[225,344],[232,346],[238,341],[247,344],[256,338],[265,340],[274,337],[280,342],[288,338],[299,341],[310,336]];
-  const lowerEdge=[[200,352],[208,359],[218,359],[224,365],[234,363],[242,370],[249,366],[257,368],[265,361],[276,362],[282,354],[292,352],[298,344],[306,342],[310,336]];
-  const fragmentCut=[[256,338],[252,348],[260,356],[257,368]];
-  const rightSeam=[[318,339],[327,332],[336,334],[348,325],[357,328],[365,322],[376,323],[386,317],[400,317],[412,311],[700,311]];
-  const SEAM=referencePath([...leftSeam,...upperEdge,...rightSeam]);
-  const CUP_SEAM=referencePath([...leftSeam,...lowerEdge,...rightSeam]);
-  const PIP=referencePath([[249,340],[253,332],[260,334],[263,341],[258,347],[250,345]],true);
+  const upperEdge=[[22,408],[45,411],[63,408],[80,397],[98,392],[126,379],[147,403],[175,395],[192,395],[214,389],[239,388],[257,379],[278,380],[299,389]];
+  const lowerEdge=[[22,408],[36,418],[50,427],[65,429],[87,421],[111,425],[123,433],[144,449],[163,440],[185,446],[214,442],[232,439],[255,429],[268,409],[286,397],[299,389]];
+  const fragmentCut=[[175,395],[165,410],[177,424],[163,440]];
+  const rightSeam=[[330,397],[345,409],[369,415],[389,415],[417,439],[438,443],[455,433],[700,433]];
+  const SEAM=referencePath([[-200,408],...upperEdge,...rightSeam]);
+  const CUP_SEAM=referencePath([[-200,408],...lowerEdge,...rightSeam]);
   const FRACTURE={
     shape:referencePath([...upperEdge,...lowerEdge.slice(0,-1).reverse()],true),
     upper:referencePath(upperEdge),lower:referencePath(lowerEdge),
-    center:referencePoint([256,352]),
-    rim:'#f8f8f5',rimWidth:1.15, // thin chalk-white shell thickness
-    shadow:'#484743',interior:'#94928c', // recessed shadow behind the broken rim
-    airFraction:.92,bounceHeight:.65, // light shell flakes settle without rubbery bouncing
-    groundY:474,shadowHeight:1.8,
+    center:[166,301], // pivot inside the missing strip
+    rim:'#f4f0e8',rimWidth:1.3, // lit edge shows shell thickness
+    shadow:'#756c61',interior:'#a0988c', // softly shaded cavity
+    airFraction:.88,bounceHeight:2.2, // one restrained landing bounce
+    groundY:475,shadowHeight:3,
     // Complementary jagged edges fit the cavity at release, then drift apart.
     pieces:[
       {
-        shape:referencePath([...upperEdge.slice(0,8),...fragmentCut.slice(1),...lowerEdge.slice(0,7).reverse()],true),
+        shape:referencePath([...upperEdge.slice(0,8),...fragmentCut.slice(1),...lowerEdge.slice(0,8).reverse()],true),
         upper:referencePath([...upperEdge.slice(0,8),...fragmentCut.slice(1)]),
-        center:referencePoint([228,355]),dx:-31,dy:205,lift:.8,turn:-14,delay:0,
-        scaleX:.94,scaleY:.65,groundX:173,shadowWidth:17,
+        center:referencePoint([100,420]),dx:18,dy:168,lift:3,turn:-9,
+        scaleX:.82,scaleY:.8,groundX:157.7,shadowWidth:31,
       },
       {
-        shape:referencePath([...upperEdge.slice(7),...lowerEdge.slice(7,-1).reverse(),...fragmentCut.slice(1,-1).reverse()],true),
+        shape:referencePath([...upperEdge.slice(7),...lowerEdge.slice(8,-1).reverse(),...fragmentCut.slice(1,-1).reverse()],true),
         upper:referencePath(upperEdge.slice(7)),
-        center:referencePoint([281,351]),dx:4,dy:207,lift:1.1,turn:19,delay:.1,
-        scaleX:.9,scaleY:.72,groundX:235,shadowWidth:15,
+        center:referencePoint([231,413]),dx:22,dy:170,lift:4,turn:8,
+        scaleX:.82,scaleY:.85,groundX:227.8,shadowWidth:28.4,
       },
     ],
   };
   const EGG = {
-    crack:'#77766f',shadow:'#a8a7a1',crackStroke:.6,
+    crack:'#827b72',shadow:'#b4aca0',crackStroke:.9,
     centerX:205.5,groundY:449,shadowCompression:.012,
     cracks:[
-      {d:referencePath([...upperEdge.slice(0,8).reverse(),...leftSeam.slice().reverse()]),idle:1800,hatch:350,width:.8},
-      {d:referencePath([[254,336],[247,329],[248,322],[240,315],[241,307],[235,301]]),idle:0,hatch:0,width:.65},
-      {d:referencePath([[260,341],[270,346],[275,354],[284,359],[282,368],[288,376]]),idle:400,hatch:100,width:.55},
-      {d:referencePath([[250,342],[242,347],[234,342],[224,344],[218,338],[210,337]]),idle:650,hatch:160,width:.6},
-      {d:referencePath([[259,335],[266,328],[276,328],[281,321],[289,319],[292,310]]),idle:1000,hatch:200,width:.5},
-      {d:referencePath([...upperEdge.slice(7),...rightSeam]),idle:2150,hatch:420,width:.7},
-      {d:referencePath([[257,368],[253,377],[256,384],[249,394],[251,402]]),idle:2550,hatch:470,width:.5},
-      {d:referencePath([[150,349],[153,358],[150,365],[155,372]]),idle:2400,hatch:500,width:.4},
+      {d:SEAM,idle:2000,hatch:400,width:1.25},
+      {d:referencePath([[362,176],[345,197],[325,220],[306,238],[282,242],[257,260],[245,259],[230,244],[214,242],[195,236],[175,248]]),idle:0,hatch:0,width:1.1},
+      {d:referencePath([[306,238],[304,264],[309,294],[297,313],[274,325],[250,329],[225,340],[201,354],[190,372],[185,393]]),idle:900,hatch:100,width:1.1},
+      {d:referencePath([[255,429],[249,459],[244,481],[245,512],[232,525],[223,546],[202,566]]),idle:2400,hatch:450,width:1},
+      {d:referencePath([[250,329],[260,309],[277,295],[284,278]]),idle:1200,hatch:150,width:.65},
+      {d:referencePath([[320,307],[322,338],[335,358],[330,379],[330,397]]),idle:1650,hatch:250,width:.85},
+      {d:referencePath([[438,443],[422,471],[414,504],[395,530],[377,555],[350,563],[319,564]]),idle:2550,hatch:500,width:1},
+      {d:referencePath([[144,449],[128,458],[110,472],[97,477]]),idle:2600,hatch:550,width:.75},
     ],
-    idlePulses:[{at:450,duration:800,angle:-.65},{at:1820,duration:720,angle:.9},{at:3300,duration:580,angle:-1.05},{at:4300,duration:520,angle:.45}],
-    hatchPulses:[{at:230,duration:750,angle:-.6},{at:1200,duration:600,angle:.85}],
-    pushIn:.008,
+    idleAngles:[0,-1.6,1.5,-.65,0],
+    hatchAngles:[0,-1.8,1.35,0],
+    pushIn:.025,
   };
   const OWL = {x:107.8,y:167.8,size:194.4,rise:43,startScale:.91,overshoot:1.014};
   const SHELL = {
     sections:[
-      {id:'cap',origin:[120,264],dx:-25,dy:-31,lift:4,turn:-28,
-        clip:SEAM+'L520 -100L-100 -100Z',edge:SEAM,rim:'#e9e9e3'},
-      {id:'cup',origin:[205.5,449],dx:1,dy:1,lift:0,turn:1,
-        clip:CUP_SEAM+'L520 630L-100 630Z',edge:CUP_SEAM,rim:'#dbdbd3'},
+      {id:'cap',origin:[126.1,300],dx:-30,dy:-48,lift:9,turn:-18,
+        clip:SEAM+'L520 -100L-100 -100Z',edge:SEAM,rim:'#e5dfd5'},
+      {id:'cup',origin:[205.5,449],dx:2,dy:8,lift:1.5,turn:2,
+        clip:CUP_SEAM+'L520 630L-100 630Z',edge:CUP_SEAM,rim:'#cfc7bb'},
     ],
   };
   const CHIPS = {
-    airFraction:.9,bounceHeight:.6,flatten:.62,
+    airFraction:.82,bounceHeight:2,flatten:.62,
     items:[
-      {x:142,y:264,dx:-25,lift:3,turn:-34,groundOffset:7,shape:'M-4-2L1-3L4 0L2 3L-3 2Z'},
-      {x:163,y:270,dx:-16,lift:2,turn:22,groundOffset:13,shape:'M-2-2L1-3L3 1L0 2Z'},
-      {x:266,y:258,dx:18,lift:3,turn:-18,groundOffset:12,shape:'M-3-2L2-3L4 1L1 3L-3 2Z'},
-      {x:285,y:252,dx:25,lift:4,turn:32,groundOffset:6,shape:'M-5-2L1-4L5-1L3 4L-4 3Z'},
+      {x:141.2,y:307,dx:-58,lift:12,turn:-34,groundOffset:7,shape:'M-10-4L1-8L10 0L4 7L-7 4Z'},
+      {x:157.2,y:305,dx:-16,lift:7,turn:22,groundOffset:13,shape:'M-4-3L2-4L5 1L0 4Z'},
+      {x:269.8,y:300,dx:25,lift:9,turn:-18,groundOffset:12,shape:'M-7-5L3-7L8 1L1 6L-6 3Z'},
+      {x:290.2,y:313,dx:48,lift:13,turn:32,groundOffset:6,shape:'M-12-6L1-10L13-2L7 9L-9 7Z'},
     ],
   };
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -149,15 +147,14 @@
   const smooth = value=>value*value*(3-2*value);
   const easeOut = value=>1-Math.pow(1-value,3);
   const mix = (from,to,amount)=>from+(to-from)*amount;
-  let host,scene,svg,body,closedShell,openShell,shadow,reveal,crackNodes,chipNodes,shellNodes,gap,pip,fragmentNodes,fragmentShadows;
+  let host,scene,svg,body,closedShell,openShell,shadow,reveal,crackNodes,chipNodes,shellNodes,gap,fragmentNodes,fragmentShadows;
   let mode='stopped',stage=0,elapsed=0,lastTick=null,frame=0;
   let hatchPromise=null,resolveHatch=null,seedCracks=[],seedChips=[],seedAngle=0,seedGapProgress=0,seedFragment=0;
 
-  function pressureAngle(pulses,time) {
-    return pulses.reduce((angle,pulse)=>{
-      const phase=progress(time,pulse.at,pulse.duration);
-      return angle+pulse.angle*Math.pow(Math.sin(phase*Math.PI),2);
-    },0);
+  function poseAngle(values,amount) {
+    const position=clamp(amount)*(values.length-1);
+    const index=Math.min(values.length-2,Math.floor(position));
+    return mix(values[index],values[index+1],smooth(position-index));
   }
   function setStage(next) {
     if(stage===next)return;
@@ -192,14 +189,13 @@
       <div id="owl-egg-reveal" class="owl-egg-reveal" aria-hidden="true" style="left:${OWL.x/420*100}%;top:${OWL.y/530*100}%;width:${OWL.size/420*100}%"></div>
       <svg class="owl-egg-art" viewBox="0 0 420 530" fill="none" role="img" aria-labelledby="owl-egg-title owl-egg-description" xmlns="http://www.w3.org/2000/svg">
         <title id="owl-egg-title">An egg beginning to hatch</title>
-        <desc id="owl-egg-description">A white goose egg rocks gently with pauses. A small pip grows into a fine crack around the shell, and two shell flakes settle below. The Owl stays hidden until Hatch is pressed.</desc>
+        <desc id="owl-egg-description">A white goose egg gently sways. Branching cracks widen into a broken opening, and two curved shell fragments settle below. The Owl stays hidden until Hatch is pressed.</desc>
         <defs>
           <image id="owl-egg-texture" href="${IMAGE.url}" x="${imagePlacement.x}" y="${imagePlacement.y}" width="${imagePlacement.width}" height="${imagePlacement.height}"/>
           <mask id="owl-egg-alpha" maskUnits="userSpaceOnUse" x="-50" y="-100" width="520" height="730" style="mask-type:alpha"><use href="#owl-egg-texture"/></mask>
           <filter id="owl-egg-ground-soft" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="3"/></filter>
           <filter id="owl-egg-fragment-soft" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="1.2" stdDeviation=".8" flood-color="#6e6454" flood-opacity=".15"/></filter>
-          <linearGradient id="owl-egg-cavity" x1="0" y1="${FRACTURE.center[1]-12}" x2="0" y2="${FRACTURE.center[1]+13}" gradientUnits="userSpaceOnUse"><stop stop-color="${FRACTURE.shadow}"/><stop offset=".45" stop-color="#66645f"/><stop offset="1" stop-color="${FRACTURE.interior}"/></linearGradient>
-          <linearGradient id="owl-egg-flake" x1="0" y1="${FRACTURE.center[1]-10}" x2="0" y2="${FRACTURE.center[1]+15}" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset=".55" stop-color="#f3f3ef"/><stop offset="1" stop-color="#ddddd6"/></linearGradient>
+          <linearGradient id="owl-egg-cavity" x1="0" y1="280" x2="0" y2="325" gradientUnits="userSpaceOnUse"><stop stop-color="${FRACTURE.shadow}"/><stop offset="1" stop-color="${FRACTURE.interior}"/></linearGradient>
           ${FRACTURE.pieces.map((piece,index)=>`<clipPath id="owl-egg-strip-clip-${index}" clipPathUnits="userSpaceOnUse"><path d="${piece.shape}"/></clipPath>`).join('')}
           ${SHELL.sections.map(section=>`<clipPath id="owl-egg-${section.id}-clip" clipPathUnits="userSpaceOnUse"><path d="${section.clip}"/></clipPath>`).join('')}
           ${CHIPS.items.map((chip,index)=>`<clipPath id="owl-egg-chip-clip-${index}" clipPathUnits="userSpaceOnUse"><path d="${chip.shape}"/></clipPath>`).join('')}
@@ -208,28 +204,25 @@
         <g class="owl-egg-body" stroke-linecap="round" stroke-linejoin="round">
           <g class="owl-egg-closed-shell">
             <use href="#owl-egg-texture"/>
-            <g mask="url(#owl-egg-alpha)" fill="none">${EGG.cracks.map(crack=>`<g class="owl-egg-crack"><path pathLength="1" stroke="#fff" stroke-opacity=".8" stroke-width="${(crack.width||EGG.crackStroke)+.5}" transform="translate(.3 .55)" d="${crack.d}"/><path pathLength="1" stroke="${EGG.crack}" stroke-opacity=".85" stroke-width="${crack.width||EGG.crackStroke}" d="${crack.d}"/></g>`).join('')}</g>
-            <g class="owl-egg-pip" opacity="0"><path d="${PIP}" fill="#5a5953" stroke="#f8f8f4" stroke-width="1.2"/><path d="${referencePath([[249,340],[253,332],[260,334]])}" stroke="#b6b6ad" stroke-width=".65"/></g>
+            <g mask="url(#owl-egg-alpha)" fill="none" stroke="${EGG.crack}">${EGG.cracks.map(crack=>`<path class="owl-egg-crack" pathLength="1" stroke-width="${crack.width||EGG.crackStroke}" d="${crack.d}"/>`).join('')}</g>
             <g mask="url(#owl-egg-alpha)"><g class="owl-egg-wide-fracture" opacity="0">
               <path d="${FRACTURE.shape}" fill="url(#owl-egg-cavity)"/>
-              <path d="${referencePath([[204,353],[215,356],[224,357],[234,361],[245,358],[257,362],[268,357],[279,357],[292,349],[300,342],[310,336],...lowerEdge.slice().reverse()],true)}" fill="#deded4" opacity=".45"/>
-              <path d="${FRACTURE.upper}" fill="none" stroke="#5c5c56" stroke-width=".8"/>
+              <path d="${FRACTURE.upper}" fill="none" stroke="#6e675e" stroke-width="1.1"/>
               <path d="${FRACTURE.lower}" fill="none" stroke="${FRACTURE.rim}" stroke-width="${FRACTURE.rimWidth}"/>
-              <path d="${referencePath([[228,352],[231,358],[234,361],[236,365]])}" fill="none" stroke="#e8e8df" stroke-width=".5" opacity=".6"/>
             </g></g>
           </g>
           <g class="owl-egg-open-shell">${SHELL.sections.map(section=>`<g class="owl-egg-shell-section" data-shell="${section.id}"><g clip-path="url(#owl-egg-${section.id}-clip)">
             <use href="#owl-egg-texture"/>
-            <g mask="url(#owl-egg-alpha)" fill="none" stroke="${EGG.crack}" opacity=".52">${EGG.cracks.slice(1).map(crack=>`<path stroke-width="${crack.width}" d="${crack.d}"/>`).join('')}</g>
-            <g mask="url(#owl-egg-alpha)"><path d="${section.edge}" fill="none" stroke="${section.rim}" stroke-width="2"/><path d="${section.edge}" transform="translate(0 .7)" fill="none" stroke="#fff" stroke-width=".65" opacity=".8"/></g>
+            <g mask="url(#owl-egg-alpha)" fill="none" stroke="#999188" stroke-width=".85" opacity=".52">${EGG.cracks.slice(1).map(crack=>`<path d="${crack.d}"/>`).join('')}</g>
+            <g mask="url(#owl-egg-alpha)"><path d="${section.edge}" fill="none" stroke="${section.rim}" stroke-width="2.4"/><path d="${section.edge}" transform="translate(0 1)" fill="none" stroke="#fffdf8" stroke-width=".8" opacity=".8"/></g>
           </g></g>`).join('')}</g>
         </g>
         ${FRACTURE.pieces.map((piece,index)=>`<ellipse class="owl-egg-strip-shadow" cx="${piece.groundX}" cy="${FRACTURE.groundY}" rx="${piece.shadowWidth}" ry="${FRACTURE.shadowHeight}" fill="${EGG.shadow}" opacity="0" filter="url(#owl-egg-ground-soft)"/>
         <g class="owl-egg-strip-fragment" opacity="0" filter="url(#owl-egg-fragment-soft)" aria-hidden="true">
-          <path d="${piece.shape}" transform="translate(0 .9)" fill="#cfcfc6"/>
-          <path d="${piece.shape}" fill="url(#owl-egg-flake)"/>
-          <g clip-path="url(#owl-egg-strip-clip-${index})" opacity=".38"><use href="#owl-egg-texture"/></g>
-          <path d="${piece.upper}" fill="none" stroke="#fff" stroke-width=".8"/>
+          <path d="${piece.shape}" transform="translate(0 1.5)" fill="#d5cfc4"/>
+          <path d="${piece.shape}" fill="#fffdf8"/>
+          <g clip-path="url(#owl-egg-strip-clip-${index})" opacity=".28"><use href="#owl-egg-texture"/></g>
+          <path d="${piece.upper}" fill="none" stroke="#fdfcf9" stroke-width="1.5"/>
         </g>`).join('')}
         <g aria-hidden="true">${CHIPS.items.map((chip,index)=>`<g transform="translate(${chip.x} ${chip.y})"><g class="owl-egg-chip" filter="url(#owl-egg-fragment-soft)">
           <path d="${chip.shape}" transform="translate(.3 .8)" fill="#ddd6cb"/>
@@ -248,7 +241,6 @@
     chipNodes=[...host.querySelectorAll('.owl-egg-chip')];
     shellNodes=[...host.querySelectorAll('.owl-egg-shell-section')];
     gap=host.querySelector('.owl-egg-wide-fracture');
-    pip=host.querySelector('.owl-egg-pip');
     fragmentNodes=[...host.querySelectorAll('.owl-egg-strip-fragment')];
     fragmentShadows=[...host.querySelectorAll('.owl-egg-strip-shadow')];
     resetPose();
@@ -270,15 +262,10 @@
     node.setAttribute('transform',`translate(${chip.dx*easeOut(air)} ${y}) scale(1 ${flatten}) rotate(${chip.turn*air})`);
   }
   function renderSection(node,section,index,amount) {
-    // The cap first pivots at its rim; its outward movement follows the push.
-    const opening=index===0?smooth(progress(amount,.12,.88)):smooth(amount);
+    const opening=easeOut(amount);
     const rise=Math.sin(amount*Math.PI)*section.lift;
     const [xOrigin,yOrigin]=section.origin;
-    const turn=index===0?easeOut(amount):opening;
-    node.setAttribute('transform',`translate(${section.dx*opening} ${section.dy*opening-rise}) rotate(${section.turn*turn} ${xOrigin} ${yOrigin})`);
-  }
-  function renderPip(amount,gapAmount) {
-    pip.setAttribute('opacity',String(smooth(amount)*(1-gapAmount)));
+    node.setAttribute('transform',`translate(${section.dx*opening} ${section.dy*opening-rise}) rotate(${section.turn*opening} ${xOrigin} ${yOrigin})`);
   }
   function renderFracture(amount) {
     gap.setAttribute('opacity',String(amount));
@@ -286,37 +273,33 @@
     host.dataset.fracture=amount>=1?'open':amount>0?'forming':'closed';
   }
   function renderFragment(amount) {
+    const air=clamp(amount/FRACTURE.airFraction);
+    const landing=progress(amount,FRACTURE.airFraction,1-FRACTURE.airFraction);
+    const flatten=smooth(air);
     FRACTURE.pieces.forEach((piece,index)=>{
-      const pieceAmount=progress(amount,piece.delay,1-piece.delay);
-      const air=clamp(pieceAmount/FRACTURE.airFraction);
-      const landing=progress(pieceAmount,FRACTURE.airFraction,1-FRACTURE.airFraction);
-      const flatten=smooth(air);
       const velocity=2*(piece.lift+Math.sqrt(piece.lift*(piece.lift+piece.dy)));
       let y=(piece.dy+velocity)*air*air-velocity*air;
       if(landing>0)y=piece.dy-Math.sin(landing*Math.PI)*FRACTURE.bounceHeight;
       const [cx,cy]=piece.center;
-      fragmentNodes[index].setAttribute('opacity',String(smooth(clamp(pieceAmount*10))));
+      fragmentNodes[index].setAttribute('opacity',String(smooth(clamp(amount*8))));
       fragmentNodes[index].setAttribute('transform',`translate(${piece.dx*easeOut(air)} ${y}) translate(${cx} ${cy}) rotate(${piece.turn*air}) scale(${mix(1,piece.scaleX,flatten)} ${mix(1,piece.scaleY,flatten)}) translate(${-cx} ${-cy})`);
-      fragmentShadows[index].setAttribute('opacity',String(.2*smooth(progress(pieceAmount,.75,.25))));
+      fragmentShadows[index].setAttribute('opacity',String(.18*smooth(progress(amount,.65,.35))));
     });
     host.dataset.fragment=amount>=1?'landed':amount>0?'falling':'attached';
   }
   function renderIdle(time) {
     setStage(time<TIMING.idleCrack?1:time<TIMING.idleBranch?2:time<TIMING.idleSeam?3:4);
-    setWobble(pressureAngle(EGG.idlePulses,time));
+    setWobble(poseAngle(EGG.idleAngles,time/TIMING.idleWobble));
     crackNodes.forEach((node,index)=>drawCrack(node,idleCrackAmount(index,time)));
     chipNodes.forEach((node,index)=>renderChip(node,CHIPS.items[index],idleChipAmount(index,time)));
     renderFracture(idleGapAmount(time));
-    renderPip(idleCrackAmount(1,time),idleGapAmount(time));
     renderFragment(idleFragmentAmount(time));
   }
   function renderHatch(time) {
     setStage(time<TIMING.hatchCrack?6:time<TIMING.hatchOpen?7:time<TIMING.hatchOwl?8:9);
-    const anticipation=pressureAngle(EGG.hatchPulses,time);
+    const anticipation=poseAngle(EGG.hatchAngles,time/TIMING.hatchShiver);
     setWobble(anticipation+seedAngle*(1-smooth(progress(time,0,TIMING.hatchSeedSettle))));
-    const fractureAmount=smooth(continueProgress(seedGapProgress,time,TIMING.hatchGap,seedGapProgress>0?TIMING.idleGapReveal:TIMING.hatchGapReveal));
-    renderFracture(fractureAmount);
-    renderPip(mix(seedCracks[1],1,progress(time,TIMING.hatchCrack,TIMING.hatchReveal)),fractureAmount);
+    renderFracture(smooth(continueProgress(seedGapProgress,time,TIMING.hatchGap,seedGapProgress>0?TIMING.idleGapReveal:TIMING.hatchGapReveal)));
     renderFragment(continueProgress(seedFragment,time,TIMING.hatchFragment,seedFragment>0?TIMING.idleFragmentFall:TIMING.hatchFragmentFall));
     crackNodes.forEach((node,index)=>{
       const grown=progress(time,TIMING.hatchCrack+EGG.cracks[index].hatch,TIMING.hatchReveal);
@@ -385,7 +368,7 @@
     scene.style.transform='';
     svg.style.opacity='1';
     svg.querySelector('title').textContent='An egg beginning to hatch';
-    svg.querySelector('desc').textContent='A white goose egg rocks gently with pauses. A small pip grows into a fine crack around the shell, and two shell flakes settle below. The Owl stays hidden until Hatch is pressed.';
+    svg.querySelector('desc').textContent='A white goose egg gently sways. Branching cracks widen into a broken opening, and two curved shell fragments settle below. The Owl stays hidden until Hatch is pressed.';
     reveal.style.opacity='0';
     reveal.style.transform='';
     reveal.replaceChildren();
@@ -395,7 +378,6 @@
     chipNodes.forEach(node=>{node.style.opacity='0';node.removeAttribute('transform');});
     shellNodes.forEach(node=>node.removeAttribute('transform'));
     renderFracture(0);
-    renderPip(0,0);
     renderFragment(0);
     setWobble(0);
   }
@@ -425,7 +407,7 @@
     const idleTime=mode==='resting'?TIMING.idleFinish:elapsed;
     seedCracks=EGG.cracks.map((_,index)=>idleCrackAmount(index,idleTime));
     seedChips=CHIPS.items.map((_,index)=>idleChipAmount(index,idleTime));
-    seedAngle=pressureAngle(EGG.idlePulses,idleTime);
+    seedAngle=poseAngle(EGG.idleAngles,idleTime/TIMING.idleWobble);
     seedGapProgress=progress(idleTime,TIMING.idleGap,TIMING.idleGapReveal);
     seedFragment=idleFragmentAmount(idleTime);
     cancelClock();
