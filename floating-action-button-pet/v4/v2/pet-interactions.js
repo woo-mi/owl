@@ -43,6 +43,7 @@
     chatHeader, chatThread, chatClose, chatStop].every(Boolean)) return;
 
   const HOVER_CLOSE_DELAY = 200;
+  const HOVER_PROXIMITY = 120;
   const WORK_PHASES = [
     { label: 'Reading WisdomAI Hubspot', duration: 700 },
     { label: 'Running the query', duration: 700 },
@@ -90,6 +91,7 @@
   let dragging = false;
   let pendingCompletion = false;
   let pointerInside = false;
+  let proximityInside = false;
   let pointerFocusPending = false;
   let keyboardInteraction = false;
   let suppressHoverUntilLeave = false;
@@ -356,7 +358,7 @@
       closeSidebarChat(restoreFocus);
       return;
     }
-    suppressHoverUntilLeave = pointerInside;
+    suppressHoverUntilLeave = pointerInside || proximityInside;
     setStage(idleStage());
     if (restoreFocus) returnFocus();
   }
@@ -368,20 +370,20 @@
       closeTimer = null;
       if (stage === 'working') {
         const actionFocus = document.activeElement === fab || toolbar.contains(document.activeElement);
-        if (!actionPointerInside && !(keyboardInteraction && actionFocus)) {
+        if (!actionPointerInside && !proximityInside && !(keyboardInteraction && actionFocus)) {
           workingActionsVisible = false;
           syncAccess();
         }
         return;
       }
       const keyboardFocusInside = keyboardInteraction && dock.contains(document.activeElement);
-      if (['hover', 'done-hover'].includes(stage) && !pointerInside && !keyboardFocusInside) setStage(idleStage());
+      if (['hover', 'done-hover'].includes(stage) && !pointerInside && !proximityInside && !keyboardFocusInside) setStage(idleStage());
     }, HOVER_CLOSE_DELAY);
   }
   function revealActions() {
     if (dragging || suppressHoverUntilLeave) return;
     if (stage === 'default' || stage === 'done') setStage(actionStage());
-    else if (stage === 'working') {
+    else if (stage === 'working' && !workingActionsVisible) {
       workingActionsVisible = true;
       syncAccess();
     }
@@ -598,6 +600,7 @@
     hideTimer = null;
     dock.dataset.visible = String(visible);
     pointerInside = false;
+    proximityInside = false;
     actionPointerInside = false;
     pointerFocusPending = false;
     suppressHoverUntilLeave = false;
@@ -684,6 +687,35 @@
     input.focus({ preventScroll: true });
   }
 
+  // Measure from the stable button bounds, so the growing artwork cannot
+  // change its own hover boundary. Nearby page controls remain clickable.
+  document.addEventListener('pointermove', event => {
+    if (event.pointerType === 'touch') return;
+    const wasNearby = proximityInside;
+    proximityInside = false;
+    if (petVisible && !dock.hidden && !dock.inert && !dockingFlight && !dragging) {
+      const bounds = fab.getBoundingClientRect();
+      const dx = Math.max(bounds.left - event.clientX, 0, event.clientX - bounds.right);
+      const dy = Math.max(bounds.top - event.clientY, 0, event.clientY - bounds.bottom);
+      proximityInside = Math.hypot(dx, dy) <= HOVER_PROXIMITY;
+    }
+    if (proximityInside) {
+      keyboardInteraction = false;
+      cancelClose();
+      revealActions();
+    } else if (wasNearby) {
+      if (!pointerInside) suppressHoverUntilLeave = false;
+      scheduleClose();
+    }
+  }, { passive: true });
+  document.documentElement.addEventListener('pointerleave', event => {
+    if (event.pointerType === 'touch') return;
+    proximityInside = false;
+    pointerInside = false;
+    actionPointerInside = false;
+    suppressHoverUntilLeave = false;
+    scheduleClose();
+  });
   dock.addEventListener('pointerenter', event => {
     if (event.pointerType === 'touch') return;
     pointerInside = true;
@@ -692,7 +724,7 @@
   dock.addEventListener('pointerleave', event => {
     if (event.pointerType === 'touch') return;
     pointerInside = false;
-    suppressHoverUntilLeave = false;
+    if (!proximityInside) suppressHoverUntilLeave = false;
     scheduleClose();
   });
   [fab, toolbar].forEach(element => {
@@ -885,7 +917,7 @@
     event.preventDefault();
     if (stage === 'working' && workingActionsVisible) {
       workingActionsVisible = false;
-      suppressHoverUntilLeave = pointerInside;
+      suppressHoverUntilLeave = pointerInside || proximityInside;
       syncAccess();
       returnFocus();
       return;
@@ -894,6 +926,7 @@
   });
   dock.addEventListener('pet:dragstart', () => {
     dragging = true;
+    proximityInside = false;
     workingActionsVisible = false;
     actionPointerInside = false;
     suppressHoverUntilLeave = true;
@@ -931,6 +964,7 @@
   threadResizeObserver.observe(chatThread);
   window.addEventListener('blur', () => {
     pointerInside = false;
+    proximityInside = false;
     actionPointerInside = false;
     workingActionsVisible = false;
     pointerFocusPending = false;
