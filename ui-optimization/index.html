@@ -4,13 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light">
-    <meta name="description" content="UI optimization — responsive third-party approval, clarification, and multi-select question prototypes.">
+    <meta name="description" content="UI optimization — responsive approval, clarification, multi-select question, and data connection modal prototypes.">
     <title>UI optimization</title>
     <link rel="icon" href="assets/owl.svg" type="image/svg+xml">
     <link rel="preload" href="../reply-ux-pattern/assets/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="styles.css?v=custom-answer-bg-1">
+    <link rel="stylesheet" href="data-connect-modal.css?v=1">
     <script src="prototype.js?v=multi-select-1" defer></script>
-    <script src="version-picker.js?v=lowercase-clarification-1" defer></script>
+    <script src="data-connect-modal.js?v=1" defer></script>
+    <script src="version-picker.js?v=data-connect-modal-1" defer></script>
   </head>
   <body>
     <aside id="sidebar" class="sidebar" aria-label="Workspace navigation preview">
@@ -282,6 +284,26 @@
               </div>
             </template>
           </section>
+          <section class="prototype-screen data-connect-screen" data-prototype-screen="data-connect-modal" aria-label="Data connect modal" hidden>
+            <div class="data-conversation-header"><img src="assets/owl.svg" width="16" height="16" alt=""><span>Woo-Mi's Owl</span></div>
+            <p class="data-message data-message-owl">I’m missing the question this answers. What would you like me to go ahead with?</p>
+            <div class="data-user-turn"><p class="data-message data-message-user">connect data</p><span class="data-reply-count">1 Reply</span></div>
+            <div class="data-chat-card"><p>Which data source do you want to connect?</p><p class="data-muted">BigQuery</p></div>
+            <div class="data-integration-placeholder" aria-hidden="true"></div>
+            <p class="data-message data-message-user data-popup-request">show me every pop-up that you ask to people</p>
+            <div class="data-chat-card"><p>Do you mean the pop-up/card types I can show in this chat, or a list of pop-ups across WisdomAI?</p><p class="data-muted">This chat</p></div>
+            <div class="data-connection-card"><img src="assets/notion.svg" width="16" height="16" alt=""><span>Notion</span><span class="data-connected"><i aria-hidden="true"></i>Connected</span></div>
+            <div class="data-modal-reopen"><button class="wisdom-button wisdom-primary" id="open-data-connect" type="button"><img src="assets/google-calendar.svg" width="16" height="16" alt="">Connect Google Calendar</button><p id="data-connect-result" role="status"></p></div>
+            <dialog class="data-connect-overlay" id="data-connect-dialog" aria-labelledby="data-connect-title" aria-describedby="data-connect-description data-connect-privacy">
+              <div class="data-connect-panel">
+                <header class="data-connect-header"><span class="data-calendar-icon"><img src="assets/google-calendar.svg" width="14" height="14" alt=""></span><h2 id="data-connect-title" tabindex="-1">Connect Google Calendar</h2><button class="data-modal-close" type="button" aria-label="Close dialog" data-close-data-connect><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12"/></svg></button></header>
+                <div class="data-connect-divider" aria-hidden="true"></div>
+                <p id="data-connect-description">Sign in with your Google Calendar account. WisdomAI sees only what that account can see, and only you can use this connection.</p>
+                <div class="data-connect-information"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><p id="data-connect-privacy">WisdomAI doesn’t crawl or index Google Calendar. It reads from it only when you ask something.<br>Admins can see your chats, including anything pulled from Google Calendar.</p></div>
+                <footer class="data-connect-actions"><button class="wisdom-button wisdom-secondary" type="button" data-close-data-connect>Cancel</button><button class="wisdom-button wisdom-primary" id="continue-data-connect" type="button">Continue to Google Calendar</button></footer>
+              </div>
+            </dialog>
+          </section>
         </div>
         <div class="conversation-footer">
           <nav class="prototype-versions" id="ui-version-picker" aria-label="Prototype version">
@@ -292,6 +314,7 @@
               <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="third-party" aria-checked="true" tabindex="-1">third-party</button></li>
               <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="clarification" aria-checked="false" tabindex="-1">clarification</button></li>
               <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="multi-select-q" aria-checked="false" tabindex="-1">multi-select Q</button></li>
+              <li role="none"><button class="prototype-version-option" type="button" role="menuitemradio" data-version="data-connect-modal" aria-checked="false" tabindex="-1">Data connect modal</button></li>
             </ul>
           </nav>
         <div class="composer" aria-label="Message composer preview">

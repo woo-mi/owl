@@ -7,13 +7,18 @@
   const options = [...menu.querySelectorAll('[role="menuitemradio"][data-version]')];
   const screens = [...document.querySelectorAll('[data-prototype-screen]')];
   const composer = document.querySelector('.composer');
-  const labels = { 'third-party': 'third-party', clarification: 'clarification', 'multi-select-q': 'multi-select Q' };
+  const labels = { 'third-party': 'third-party', clarification: 'clarification', 'multi-select-q': 'multi-select Q', 'data-connect-modal': 'Data connect modal' };
   let currentVersion;
   let positionFrame;
 
   function position() {
     positionFrame = undefined;
     if (!composer) return;
+    if (picker.closest('dialog[open]')) {
+      picker.classList.remove('is-docked');
+      menu.style.maxHeight = `${Math.max(0, picker.getBoundingClientRect().top - 16)}px`;
+      return;
+    }
     const bounds = composer.getBoundingClientRect();
     const availableRight = innerWidth - 16 - trigger.offsetWidth;
     picker.classList.toggle('is-docked', bounds.right + 12 > availableRight);
@@ -56,6 +61,7 @@
     const isSwitch = currentVersion !== undefined;
     window.dispatchEvent(new CustomEvent('ui-version-will-change', { detail: { version } }));
     currentVersion = version;
+    document.body.dataset.prototypeVersion = version;
     screens.forEach(screen => { screen.hidden = screen.dataset.prototypeScreen !== version; });
     options.forEach(option => {
       option.setAttribute('aria-checked', String(option.dataset.version === version));
