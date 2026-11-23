@@ -37,7 +37,7 @@
     travel:620, // continuous move from the egg to the appearance preview
     revealDelay:180, // let the Owl lead before introducing controls
     revealDuration:300, // calm reveal of the surrounding page
-    departureDelay:620, // old page fades while the shell is opening
+    departureDelay:1650, // old page fades while the v2 shell is opening
     departureDuration:240, // remove the old text and button together
     offset:8, // small vertical movement for page content
     easing:'cubic-bezier(.22,1,.36,1)', // smooth arrival without bouncing
