@@ -30,15 +30,15 @@
   const TRANSITION = {shrink:560,controlsDelay:140,controlsReveal:300,easing:'cubic-bezier(.22,1,.36,1)',offset:10};
   /* HATCH HANDOFF STORYBOARD (after the shell reveal)
    *   0ms   the revealed Owl keeps its position while the next page mounts
-   * 180ms   the name, heading, and feature controls begin to appear
-   * 620ms   the same Owl settles into the customization preview
+   * 144ms   the name, heading, and feature controls begin to appear
+   * 496ms   the same Owl settles into the customization preview
    */
   const HATCH_HANDOFF = {
-    travel:620, // continuous move from the egg to the appearance preview
-    revealDelay:180, // let the Owl lead before introducing controls
-    revealDuration:300, // calm reveal of the surrounding page
-    departureDelay:2050, // old page fades while the v3 shell halves open
-    departureDuration:240, // remove the old text and button together
+    travel:496, // continuous move at the egg's 1.25x playback pace
+    revealDelay:144, // let the Owl lead before introducing controls
+    revealDuration:240, // calm reveal of the surrounding page
+    departureDelay:1640, // 2050 animation ms / 1.25, matching the shell opening
+    departureDuration:192, // remove the old text and button together
     offset:8, // small vertical movement for page content
     easing:'cubic-bezier(.22,1,.36,1)', // smooth arrival without bouncing
   };

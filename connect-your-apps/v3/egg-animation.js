@@ -1,5 +1,7 @@
 /* ─────────────────────────────────────────────────────────
  * V3 ANIMATION STORYBOARD — the supplied wide fracture and fallen shell.
+ * Timeline below uses animation-clock milliseconds at 1.25x playback:
+ * the initial cracking takes 4.96s and the Hatch reveal takes 3.12s.
  *
  *    0ms   the realistic shell begins one gentle, planted sway
  *  900ms   hairline cracks branch down from the upper-right shoulder
@@ -23,6 +25,7 @@
  * ───────────────────────────────────────────────────────── */
 (() => {
   'use strict';
+  const PLAYBACK_RATE = 1.25;
   const TIMING = {
     idleWobble:6200,       // sway continues through the broken-strip reveal
     idleCrack:900,         // first shoulder hairline
@@ -328,7 +331,7 @@
   }
   function tick(now) {
     if(document.hidden||!['idle','hatching'].includes(mode))return;
-    if(lastTick!==null)elapsed+=now-lastTick;
+    if(lastTick!==null)elapsed+=(now-lastTick)*PLAYBACK_RATE;
     lastTick=now;
     const end=mode==='hatching'?TIMING.hatchFinish:TIMING.idleFinish;
     if(elapsed>=end){finish();return;}
