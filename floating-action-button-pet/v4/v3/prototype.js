@@ -13,7 +13,7 @@
     element.append(...node.childNodes);
     element.setAttribute('aria-label', label);
     if (tag === 'button') element.type = 'button';
-    else element.href = '../../../ftux/';
+    else element.href = '../v2/owl/';
     node.replaceWith(element);
     return element;
   }
