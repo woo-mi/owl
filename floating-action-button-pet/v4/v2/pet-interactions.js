@@ -77,7 +77,7 @@
    * Default  Show the compact 32px Owl and green unread bar.
    *   Hover  Reveal the toolbar and expand the Owl to 56px.
    *   Click  Expand upward into the conversation; mark the notice read.
-   *   Write  Open the compact input; Send expands it upward into the thread.
+   *   Write  Open the full conversation and focus its input.
    * Hover and keyboard focus keep the toolbar available while interacting.
    */
   let stage = 'default';
@@ -748,7 +748,7 @@
   card.addEventListener('focusin', updateStatusAccess);
   card.addEventListener('focusout', () => queueMicrotask(updateStatusAccess));
 
-  edit.addEventListener('click', () => openComposer(undefined, true));
+  edit.addEventListener('click', () => openComposer());
   hide.addEventListener('click', dockInSidebar);
   options.addEventListener('click', () => setOptionsOpen(!optionsOpen));
   options.addEventListener('keydown', event => {
