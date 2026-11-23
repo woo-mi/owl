@@ -1,6 +1,7 @@
 #connections-version-picker,
 #ready-version-picker,
-#chat-version-picker {
+#chat-version-picker,
+#customize-version-picker {
   position:fixed;
   top:calc(16px + env(safe-area-inset-top));
   right:calc(16px + env(safe-area-inset-right));
@@ -45,7 +46,7 @@
   box-shadow:0 8px 24px #0000001f;
 }
 .connections-version-menu[hidden] { display:none; }
-.connections-version-menu button {
+.connections-version-menu :is(button, a) {
   display:flex;
   align-items:center;
   gap:8px;
@@ -58,10 +59,11 @@
   color:inherit;
   font:inherit;
   text-align:left;
+  text-decoration:none;
   cursor:pointer;
 }
-.connections-version-menu button:is(:hover,:focus-visible) { background:#eeeef0;outline:none; }
-.connections-version-menu button[aria-checked="true"]::after {
+.connections-version-menu :is(button, a):is(:hover,:focus-visible) { background:#eeeef0;outline:none; }
+.connections-version-menu :is(button, a)[aria-checked="true"]::after {
   content:"";
   width:6px;
   height:11px;
@@ -76,6 +78,8 @@ body.sidebar-open #ready-version-picker,
 body:not([data-flow-step="ready"]) #ready-version-picker { display:none; }
 body.sidebar-open #chat-version-picker,
 body:not([data-flow-step="chat"]) #chat-version-picker { display:none; }
+body.sidebar-open #customize-version-picker,
+body:not([data-flow-step="customize"]) #customize-version-picker { display:none; }
 #chat-version-menu { width:248px; }
 #ready-version-menu { width:216px; }
 @media(prefers-reduced-motion:reduce) {

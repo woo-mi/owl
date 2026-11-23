@@ -1,0 +1,78 @@
+/* Latest onboarding headers and footer areas from the 1440 × 958 Pen frames. */
+/* Center the bounded stage on tall displays; longer content may still grow. */
+.connections-main > .onboarding {
+  min-height:min(100dvh,960px);
+  align-self:flex-start;
+  margin-block:auto;
+}
+.connections-main > .onboarding > .heading { text-align:center; }
+.connections-main > .onboarding > .heading h1 {
+  font-size:22px;
+  font-weight:500;
+  line-height:28px;
+  letter-spacing:-.4px;
+}
+.connections-main > .onboarding > .heading p {
+  margin-top:8px;
+  font-size:14px;
+  line-height:21px;
+}
+:is(#connections-view,#appearance-view,#personality-view) .flow-footer {
+  min-height:62px;
+  padding:11px 20px;
+  border:0;
+  box-shadow:none;
+}
+:is(#connections-view,#appearance-view,#personality-view) .footer-action {
+  height:40px;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:14px;
+  line-height:20px;
+}
+:is(#connections-view,#appearance-view,#personality-view) .footer-action.secondary,
+:is(#connections-view,#appearance-view,#personality-view) .footer-action.primary { min-width:112px; }
+:is(#connections-view,#appearance-view,#personality-view) .progress { gap:4px; }
+
+#connections-view {
+  width:728px;
+  min-width:0;
+  padding:60px 24px 72px;
+}
+#connections-view .account {
+  min-height:56px;
+  margin-top:40.83333px;
+  padding:8px 10.83333px;
+  gap:9.16667px;
+  border-radius:14.16667px;
+}
+#connections-view .account-logo { width:33.33333px;height:33.33333px; }
+#connections-view .account-copy,#connections-view .account-copy p { line-height:18px; }
+#connections-view .google-apps { width:105px;height:21.66667px; }
+#connections-view .integration-section { margin-top:28px; }
+#connections-view .integration-section h2 { margin-bottom:4px;line-height:20px; }
+#connections-view .integration-grid { gap:10px; }
+#connections-view .integration-card { min-height:54px;padding:9px 14px 9px 10px;gap:10px; }
+#connections-view .integration-card .app-icon { width:20px;height:20px;margin:0 6.66667px; }
+#connections-view .integration-section.suggested { margin-top:32px; }
+body[data-connections-version="no"] #connections-view .integration-section.suggested { margin-top:39px; }
+#connections-view .browse-all { min-height:56px;margin-top:21px;padding:8px 10.83333px;gap:14.16667px; }
+#connections-view .more-logos { width:117.5px;height:23.33333px; }
+#connections-view .browse-copy,#connections-view .browse-copy span { line-height:18px; }
+#connections-view .browse-label { gap:6px;font-size:12px;line-height:18px; }
+#connections-view .flow-footer { margin-top:40px; }
+
+@media(max-width:700px) {
+  #connections-view { padding:80px 16px 24px; }
+  #connections-view .account { margin-top:28px;padding:12px;gap:12px; }
+  #connections-view .google-apps { margin-left:45.33333px; }
+  #connections-view .integration-section,
+  #connections-view .integration-section.suggested,
+  body[data-connections-version="no"] #connections-view .integration-section.suggested { margin-top:24px; }
+  #connections-view .integration-card { min-height:64px;padding:11px 12px; }
+  #connections-view .browse-all { gap:12px;padding:12px;margin-top:24px; }
+  :is(#connections-view,#appearance-view,#personality-view) .flow-footer { min-height:72px;padding:16px 0;column-gap:4px; }
+  :is(#connections-view,#appearance-view,#personality-view) .footer-action { width:100%;max-width:112px;height:40px;padding:0 8px;font-size:14px;line-height:20px; }
+  :is(#connections-view,#appearance-view,#personality-view) .footer-action.secondary,
+  :is(#connections-view,#appearance-view,#personality-view) .footer-action.primary { min-width:0; }
+}

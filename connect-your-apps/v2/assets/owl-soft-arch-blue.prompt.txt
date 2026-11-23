@@ -1,0 +1,6 @@
+Use case: precise-object-edit.
+Asset type: transparent 3D plush Owl avatar for a UI customizer.
+Input image: edit target and visual reference for the blue Owl's face, materials, colors, lighting, and front-facing composition.
+Primary request: Change ONLY the outer head silhouette from round to an ARCH shape: a broad rounded dome on top, clearly STRAIGHT VERTICAL left and right sides in the lower half, and a genuinely FLAT HORIZONTAL bottom edge with only small rounded bottom corners. It should read unmistakably as a rounded upside-down U/dome block with a flat base, never a circle, egg, or rounded square. The dome should smoothly join the vertical sides.
+Preserve the vivid blue plush fur, classic light-blue heart-shaped facial patch, two round black eyes, centered small black diamond beak, soft 3D volume, frontal orthographic view, and gentle studio lighting from the reference. Retain the same friendly neutral expression and facial proportions. The two eyes must be level and unobscured.
+Composition: one head only, centered on a square canvas, fully visible, comfortable transparent padding on every side. No horns or ears in this version. No body, feet, wings, accessories, floor, cast ground shadow, text, watermark, outline stroke, or background. Output genuine transparent RGBA alpha; do not paint a checkerboard.

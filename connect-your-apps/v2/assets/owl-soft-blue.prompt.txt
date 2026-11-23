@@ -1,0 +1,4 @@
+Generated with the built-in image_gen tool.
+Source: owl-soft-preview.png (identical to images/owl-soft-preview-oct27.png in the referenced Pen Soft style screen).
+
+Use case: precise-object-edit. Asset type: transparent plush 3D Owl avatar for an onboarding website. Edit target is the provided pink plush Owl PNG. Change ONLY its pink fur colors to blue: outer head should be vivid blue matching #1E86FC, and inner heart-shaped face should be lighter blue approximately #84BCFC. Preserve the EXACT same rounded head silhouette, face shape, dimensions, straight-on camera, black round eyes, black diamond beak, eye positions, soft furry material, fine texture, lighting, shading, depth, framing, and generous transparent perimeter. Keep eyes and beak black/neutral. No pink remains. No text, no UI, no background, no added features. Output one isolated Owl with real alpha transparency, same centered square composition as the original.
