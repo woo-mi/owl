@@ -67,12 +67,12 @@
     screen.querySelectorAll('[data-appearance-color]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.appearanceColor === draft.color)));
     const preview = screen.querySelector('.owl-appearance-preview');
     preview.innerHTML = art.render(draft.studio,draft.color);
-    const colorName = colors.find(([,color]) => color === draft.color)?.[0] || 'Pink';
+    const colorName = colors.find(([,color]) => color === draft.color)?.[0] || 'Gray';
     preview.setAttribute('aria-label',`${colorName} Owl: ${tabs.map(item => art.options[item.id].find(option => option.id === draft.studio[item.key]).label + ' ' + item.label.toLowerCase()).join(', ')}`);
     renderName();
   }
   function open({name,studio,color} = {}) {
-    draft = {name:name?.trim() || "Ayush's Owl",color:colors.some(([,value]) => value === color) ? color : '#FA70AB',studio:art.normalize(studio)};
+    draft = {name:name?.trim() || "Ayush's Owl",color:colors.some(([,value]) => value === color) ? color : art.defaultColor,studio:art.normalize(studio)};
     original = copy(draft);
     currentTab = 'heads';
     editingName = false;

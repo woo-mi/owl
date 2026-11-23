@@ -127,11 +127,11 @@
       else window.OwlEgg?.stop();
       if (step === 'appearance') window.OwlAppearance.open({...savedOwl,name:nameInput.value});
       if (step === 'personality') {
-        savedOwl ||= {name:nameInput.value,color:'#FA70AB',studio:{...window.OwlStudioArtwork.defaults}};
+        savedOwl ||= {name:nameInput.value,color:window.OwlStudioArtwork.defaultColor,studio:{...window.OwlStudioArtwork.defaults}};
         window.OwlPersonality.open({...savedOwl,name:nameInput.value});
       }
       if (step === 'ready') {
-        savedOwl ||= {name:nameInput.value,color:'#FA70AB',studio:{...window.OwlStudioArtwork.defaults}};
+        savedOwl ||= {name:nameInput.value,color:window.OwlStudioArtwork.defaultColor,studio:{...window.OwlStudioArtwork.defaults}};
         window.OwlReady.open({...savedOwl,name:nameInput.value,preferences:savedPreferences});
       }
       if (step === '00') window.OwlHome.open({name:savedSetup?.name || nameInput.value,color:savedSetup?.color || savedOwl?.color,studio:savedSetup?.studio || savedOwl?.studio});
@@ -208,7 +208,7 @@
       });
     }
     try {
-      const artwork = window.OwlStudioArtwork.render(window.OwlStudioArtwork.defaults,'#FA70AB');
+      const artwork = window.OwlStudioArtwork.render(window.OwlStudioArtwork.defaults,window.OwlStudioArtwork.defaultColor);
       const result = await window.OwlEgg.hatch({artwork});
       if (request !== hatchRequest || currentStep !== 'customize') return;
       if (!result.completed) { clearTransition();return; }

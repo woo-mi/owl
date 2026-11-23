@@ -8,7 +8,7 @@
     {id:'launch-review', title:'Get the launch review ready', description:'Bring positioning, demo readiness and owners together.', metadata:'Goal · First step · Prepare a short review note', kind:'goal'}
   ];
   const state = {
-    name:"Ayush's Owl", studio:null, color:'#FA70AB',
+    name:"Ayush's Owl", studio:null, color:window.OwlStudioArtwork.defaultColor,
     preferences:{slack:false, email:false, length:'short', personality:'direct'},
     identity:{
       role:'Product at WisdomAI',

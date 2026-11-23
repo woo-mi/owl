@@ -23,6 +23,7 @@
     {selector:'.owl-home-chat',offsetY:10,initialScale:1,delay:TIMING.actionAppear,duration:TIMING.actionDuration}
   ];
   const PINK = '#FA70AB';
+  const DEFAULT_COLOR = window.OwlStudioArtwork.defaultColor;
   const PINK_IMAGE = 'assets/owl-soft-preview.png';
   const HEADS = {
     round:{name:'a round head',none:'assets/owl-soft-blue.png',feathered:'assets/owl-soft-round-feathered-blue.png'},
@@ -52,7 +53,7 @@
   let entranceRequest = 0;
   let imagePending = false;
   let owlName = "Ayush's Owl";
-  let owlColor = PINK;
+  let owlColor = DEFAULT_COLOR;
   let owlStudio = {head:'round',horns:'none'};
 
   function normalizeStudio(studio) {
@@ -149,7 +150,7 @@
   function build() {
     host = document.getElementById('home-view');
     if (!host) return false;
-    host.innerHTML = `<img class="owl-home-image" alt="Soft pink Owl" width="600" height="600" draggable="false" decoding="async">
+    host.innerHTML = `<img class="owl-home-image" alt="Soft gray Owl" width="600" height="600" draggable="false" decoding="async">
       <h1 id="home-title" tabindex="-1"></h1>
       <a class="owl-home-chat" href="?step=chat&amp;chatVersion=live">Start chat</a>`;
     host.querySelector('.owl-home-chat').addEventListener('click', event => {
@@ -165,8 +166,8 @@
   function open({name,color,studio} = {}) {
     if (!host?.isConnected && !build()) return;
     if (typeof name === 'string' && name.trim()) owlName = name.trim();
-    const requestedColor = typeof color === 'string' ? color.trim().toUpperCase() : PINK;
-    owlColor = Object.hasOwn(APPEARANCES,requestedColor) ? requestedColor : PINK;
+    const requestedColor = typeof color === 'string' ? color.trim().toUpperCase() : DEFAULT_COLOR;
+    owlColor = Object.hasOwn(APPEARANCES,requestedColor) ? requestedColor : DEFAULT_COLOR;
     owlStudio = normalizeStudio(studio);
     host.querySelector('#home-title').textContent = owlName;
     const chatUrl = new URL(location.href);

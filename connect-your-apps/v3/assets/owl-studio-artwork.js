@@ -13,6 +13,7 @@
   for (const items of Object.values(options)) { items.forEach(Object.freeze); Object.freeze(items); }
   Object.freeze(options);
   const defaults = Object.freeze({head:'round',eyes:'solid',goggles:'classic',horns:'none'});
+  const defaultColor = '#959595';
   function normalize(config = {}) {
     return {head:options.heads.some(x=>x.id===config.head)?config.head:defaults.head,
       eyes:options.eyes.some(x=>x.id===config.eyes)?config.eyes:defaults.eyes,
@@ -20,7 +21,7 @@
       horns:options.horns.some(x=>x.id===config.horns)?config.horns:defaults.horns};
   }
   function paint(body, color, cheekyScale = 4.25) {
-    const primary = typeof color==='string' && /^#[0-9a-f]{6}$/i.test(color) ? color.toUpperCase() : '#FA70AB';
+    const primary = typeof color==='string' && /^#[0-9a-f]{6}$/i.test(color) ? color.toUpperCase() : defaultColor;
     const secondary = primary==='#FA70AB' ? '#FFADD0' : '#' + [1,3,5].map(i=>Math.round(parseInt(primary.slice(i,i+2),16)*.56+255*.44).toString(16).padStart(2,'0')).join('').toUpperCase();
     if (primary==='#000000') {
       body=body.replace(/<(?:ellipse|rect|path)\b[^>]*>/g, shape=>{
@@ -76,5 +77,5 @@
     const body = lineHorn ? '<g transform="translate(6.8 17) scale(.8)">'+artwork.lineHorns.round+'</g>' : artwork.optionBodies[key][item.id];
     return wrap(paint(body,color,4.5));
   }
-  window.OwlStudioArtwork=Object.freeze({options,defaults,normalize,render,renderOption});
+  window.OwlStudioArtwork=Object.freeze({options,defaults,defaultColor,normalize,render,renderOption});
 })();

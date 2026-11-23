@@ -6,7 +6,7 @@
     {id:'missed-follow-ups',name:'Catch missed follow-ups',description:'Work worth revisiting',schedule:'Weekdays · 4 PM IST'},
     {id:'weekly-recap',name:'Weekly action-item recap',description:'Decisions and open to-dos',schedule:'Friday · 4 PM IST'}
   ];
-  const context = {name:"Ayush's Owl",studio:null,color:'#FA70AB',preferences:{},identity:{},selection:[]};
+  const context = {name:"Ayush's Owl",studio:null,color:window.OwlStudioArtwork.defaultColor,preferences:{},identity:{},selection:[]};
   const freshConversation = () => ({draft:'',attachments:[],messages:[],routineDrafts:{}});
   const conversations = {live:freshConversation(),'no-work':freshConversation()};
   let version = 'live';

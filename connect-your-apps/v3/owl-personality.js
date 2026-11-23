@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const settings = {slack:false, email:false, length:'short', personality:'direct'};
-  const identity = {name:"Ayush's Owl", studio:null, color:'#FA70AB'};
+  const identity = {name:"Ayush's Owl", studio:null, color:window.OwlStudioArtwork.defaultColor};
   const examples = {
     direct: {
       short:'Tell me what you want to work on. I’ll help you plan the next step.',
