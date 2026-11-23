@@ -1,0 +1,39 @@
+.pet-visual {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  scale: 1;
+  transition: scale 180ms cubic-bezier(.22, 1, .36, 1);
+}
+.pet-head {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transform-origin: 50% 68%;
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 14%));
+}
+/* Keep active actions enlarged independently of the idle head-turn transforms. */
+.pet-dock:is([data-stage="hover"], [data-stage="compose"], [data-stage="working"], [data-stage="done-hover"], [data-stage="notice"], [data-stage="reply"]) .pet-visual { scale: 1.4; }
+@media (hover: hover) and (pointer: fine) {
+  .pet-fab:hover .pet-visual { scale: 1.4; }
+}
+.pet-head img { filter: none; }
+.pet-blink-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: 0;
+}
+.pet-blink-eye { transform-box: view-box; }
+.pet-blink-eye-left { transform-origin: 77px 123px; }
+.pet-blink-eye-right { transform-origin: 187px 123px; }
+@media (prefers-reduced-motion: reduce) {
+  .pet-visual { transition: none; }
+  .pet-head { transform: none !important; }
+  .pet-blink-overlay { opacity: 0 !important; }
+}

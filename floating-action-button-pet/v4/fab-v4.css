@@ -1,6 +1,4 @@
 /* Reversible transitions between the unread toolbar, resting Owl, and chat. */
-body[data-pet-version="v4"] #pet-version-picker { display: none; }
-
 .pet-dock {
   --motion-reveal: 280ms;
   --motion-morph: 360ms;
