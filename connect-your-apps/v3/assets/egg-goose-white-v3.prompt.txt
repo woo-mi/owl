@@ -1,0 +1,16 @@
+Asset: egg-goose-white-v3.png
+Created with: built-in image_gen (transparent image edit).
+Generated photographic texture, not a photograph of a real hatch.
+
+Visual and motion research:
+https://forgedmettlefarm.com/2023/04/11/hatch-day-houdinis-the-amazing-gosling-escape/
+https://www.tyrantfarms.com/how-to-hatch-goose-eggs-tips-tricks-and-troubleshooting/
+https://www.nancyhoffmangallery.com/exhibition-nathalia-edenmont-2024
+Reference photographs were used for study, not copied into the prototype.
+Animation compresses the real pip / perimeter-zip / cap-release sequence to prototype timing.
+
+Initial shape prompt:
+Use case: precise-object-edit. Asset type: transparent photographic goose egg texture for an animated website. Edit target: supplied intact ivory egg. Replace the somewhat stylized pointy chicken-egg shape/material with one realistic domestic goose egg, upright, long axis vertical. A goose egg is an elongated oval with a softly rounded upper end and a broader rounded lower end, subtly asymmetric rather than a sharp teardrop. True macro product photograph with fine calcium pores, matte chalky warm-white shell, extremely subtle natural mottling, faint uneven mineral grain. Soft daylight from upper left, believable gentle shading to right and underside, no strong shiny highlights. Keep the egg centered and entirely visible, almost filling the square canvas vertically, and approximately 0.70 width-to-height ratio. This is the intact base for programmatic cracks: NO cracks, NO broken pieces, NO bird, NO ground, NO cast shadow, NO text. Actual transparent background with clean alpha edges, no checkerboard texture or painted white rectangle. Photographic natural texture, not plastic, not porcelain, not cartoon, not CGI.
+
+Final white-shell correction prompt:
+Precise object edit for a website goose-egg asset: change ONLY the shell color/material to a WHITE domestic goose egg. The user explicitly wants white, not ivory, cream, beige, tan or brown. Natural chalk white calcium shell with very fine subtle pores; neutral soft gray shading only, daylight white balance. Remove ALL yellow/beige/brown cast and tan speckles. Preserve the same upright oval goose-egg silhouette, camera angle, composition, full visible egg, realistic photographic surface detail, upper-left soft illumination. Intact shell with no cracks yet (animation adds cracks), no bird, no ground, no text. Preserve true transparent alpha background and clean edges. White shell must look natural and matte, not metallic, glossy ceramic, or flat clipped pure white.
