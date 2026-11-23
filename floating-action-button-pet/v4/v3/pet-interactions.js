@@ -191,6 +191,14 @@
     chatThread.replaceChildren();
     conversation.forEach(entry => {
       if (entry.role === 'date') {
+        if (entry.newMessages) {
+          const divider = document.createElement('div');
+          divider.className = 'pet-chat-new-divider';
+          divider.setAttribute('role', 'separator');
+          divider.setAttribute('aria-label', 'New messages');
+          divider.textContent = 'NEW';
+          chatThread.append(divider);
+        }
         const separator = document.createElement('div');
         separator.className = 'pet-chat-date';
         separator.textContent = entry.text;
@@ -938,7 +946,7 @@
     { role: 'owl', text: 'Organic search led with 4,812 new contacts, ahead of paid social at 3,140 and webinars at 2,276. Referrals were the smallest source but converted best: 18% became opportunities.' },
     { role: 'user', text: 'How did webinars trend month over month?' },
     { role: 'owl', text: 'Webinar contacts grew every month: 610 in July, 742 in August and 924 in September. That is a 51% rise across the quarter.' },
-    { role: 'date', text: 'Today' },
+    { role: 'date', text: 'Today', newMessages: true },
     { role: 'owl', text: 'Your Monday pipeline check is ready. Open pipeline is $4.2M across 138 deals, up 6% on last week. 23 deals have had no activity for 30 days, and 9 of those belong to one owner.' },
   ];
   task = {
