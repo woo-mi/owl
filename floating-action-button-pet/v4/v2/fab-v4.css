@@ -1,3 +1,6 @@
+/* V2 uses the floating Owl instead of the static Owls navigation shortcut. */
+[data-pencil-name="Owls navigation target"] { display: none !important; }
+
 /* Reversible transitions between the unread toolbar, resting Owl, and chat. */
 .pet-dock {
   --motion-reveal: 280ms;
