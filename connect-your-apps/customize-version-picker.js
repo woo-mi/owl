@@ -5,6 +5,7 @@
   const versions = [
     { id: 'v1', path: './' },
     { id: 'v2', path: 'v2/' },
+    { id: 'v3', path: 'v3/' },
   ];
   const selected = versions.find(version => version.id === document.body.dataset.customizeVersion)?.id || 'v1';
   const control = document.createElement('nav');

@@ -1,0 +1,6 @@
+Use case: precise-object-edit.
+Asset type: transparent 3D plush Owl avatar for a UI customizer.
+Input image 1 is the edit target: the existing blue plush Owl.
+Change only the outer head silhouette from circular to a clearly rounded-square pillow (squircle): a visibly broad near-horizontal top, visibly straight vertical sides, visibly broad near-horizontal bottom, and four generously rounded corners. It must read immediately as a soft square, not a round ball or oval. Keep a subtle 3D padded volume.
+Preserve the exact beautiful Soft style: vivid blue outer fur, light blue classic heart-shaped facial patch with its central dip at the top, two simple round matte black eyes, small vertical black diamond beak, fine realistic plush fibers, soft shading, straight-on frontal symmetric composition, and friendly expression. Keep the face proportions and placement consistent with the source. No horns and no ear tufts in this variant.
+Center a single head on a square canvas with a small transparent safety margin all around. Keep the entire head and fur edges within the canvas. Background must be genuinely transparent with a clean alpha channel; no solid backdrop, checkerboard, floor, cast shadow outside the object, body, text, logo, or extra objects. Do not stylize it into flat art.
