@@ -283,8 +283,6 @@
     if (identity && typeof identity === 'object') context.identity = {...identity};
     if (Array.isArray(selection)) context.selection = [...selection];
     host.querySelector('.owl-chat-avatar').innerHTML = art.render(context.studio || art.defaults,context.color);
-    const sidebarOwl = document.querySelector('#sidebar [data-nav="Owls"] .nav-icon');
-    if (sidebarOwl) sidebarOwl.innerHTML = art.render(context.studio || art.defaults,context.color);
     host.querySelector('#chat-profile-button span').textContent = context.name;
     renderConversation();
   }

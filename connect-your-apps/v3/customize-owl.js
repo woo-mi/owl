@@ -15,6 +15,8 @@
   const hatchButton = document.querySelector('#hatch-owl');
   const eggStage = document.querySelector('#egg-stage');
   const hatchedStage = document.querySelector('#hatched-owl-stage');
+  const sidebarOwl = document.querySelector('#sidebar [data-nav="Owls"]');
+  sidebarOwl?.parentElement.prepend(sidebarOwl);
   const APPEARANCE_STORAGE_KEY = 'owl-onboarding-v3-appearance';
   let currentStep;
   let savedOwl = readAppearance();
@@ -26,6 +28,13 @@
   const routeAnimations = new Set();
   const pausedRouteAnimations = new Set();
   if (savedOwl) nameInput.value = savedOwl.name;
+
+  function renderSidebarOwl(appearance) {
+    const icon = sidebarOwl?.querySelector('.nav-icon');
+    if (!icon) return;
+    const art = window.Owl3DArtwork;
+    icon.innerHTML = art.render(appearance?.studio || art.defaults,appearance?.color || art.defaultColor);
+  }
 
   function normalizeAppearance(value) {
     if (!value || typeof value !== 'object' || Array.isArray(value)) return;
@@ -184,6 +193,7 @@
       }
       if (step === '00') window.OwlHome.open({name:savedSetup?.name || nameInput.value,color:savedSetup?.color || savedOwl?.color,studio:savedSetup?.studio || savedOwl?.studio});
       if (step === 'chat') window.OwlChat.open(savedSetup || {...savedOwl,name:nameInput.value,preferences:savedPreferences});
+      if (step !== 'appearance') renderSidebarOwl(savedSetup || savedOwl);
     }
     if (step === 'chat') window.OwlChat.setVersion(new URL(location.href).searchParams.get('chatVersion') === 'no-work' ? 'no-work' : 'live');
     eggStage.hidden = hasCustomizedThisVisit;
@@ -269,6 +279,7 @@
       status.textContent = 'Please try hatching your Owl again.';
     }
   });
+  window.addEventListener('owl-appearance:change',event => renderSidebarOwl(event.detail));
   window.addEventListener('owl-appearance:save',event => {
     saveAppearance(event.detail);
     navigate('personality',{shrinkOwl:true});
