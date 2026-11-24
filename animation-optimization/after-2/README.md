@@ -2,41 +2,30 @@
 
 Prototype URL: https://woo-mi.github.io/owl/animation-optimization/after-2/
 
-Independent duplicate of **before**, created November 24, 2026. Its original
-conversation playback, workspace, and customization are retained. Sending a
-message uses the transition read from a Codex desktop recording (below).
+Independent version with steady conversation behavior, updated November 24, 2026.
+The latest interaction requirements take precedence over the earlier top-parking
+motion from the supplied Codex recording. All four comparison versions now share the Reply UX Pattern timeline content.
 
-Use the top-right selector to switch between **before**, **after 1**, **after 2**, and **after 3**.
-Prototype files and assets are local copies; only the version selector script and
-stylesheet are shared with the parent directory.
+## Motion and reading position
 
-## Motion in after 2
+- A sent message has one restrained 8px, 180ms entrance. The shell and whole thread do not glide, scale, or bounce.
+- Progress and streamed response text occupy the same assistant article. Text updates in batches with no animation per token or batch; pending replies retain their node identity even when their thread is in the background.
+- Replies follow the bottom only if the reader was already there. When reading older messages, the visible message remains anchored and a **Jump to latest** control appears above the composer. Clicking it is the only explicit animated scroll.
+- The main conversation, four timeline reply threads, and Goals views fade their content for 160ms while the shell stays fixed. Returning restores the destination's scroll position, draft, attachments, and unseen-response state.
+- The composer is anchored at its bottom edge. Textarea and attachment growth update bottom clearance while preserving the visible message; focus never scrolls the conversation.
+- Intro playback uses the same shared progress container and scroll-preservation rules. Its sample content and demonstration pacing remain available.
+- Reduced motion disables entrance, content fade, and animated jumping. Scrolling can interrupt Jump to latest.
 
-Read from a screen recording of the Codex desktop app (Nov 24, 2026, 11:10 AM). The
-recorder kept only five frames of the glide, so its curve is an estimate; `?tune` below
-lets you match it by eye. The values live in the `MOTION` table at the top of
-`send-transition.js`.
+## Tuning
 
-| Moment | What moves |
-| --- | --- |
-| Send | The composer clears and the sent bubble joins the thread below the fold. The whole thread glides up until the bubble parks near the top: about 440ms for a 600px move on `cubic-bezier(.3, 0, .2, 1)`, longer for longer moves. |
-| Thinking | Replaces the typing dots. Appears 200ms after the send, under the bubble. One highlight sweeps across it 940ms later (830ms long), then again every 3.2s. |
-| Reply | Fades in over 240ms while "Thinking" fades out. The bubble stays where it parked. |
+`?tune` opens the existing local motion panel and holds intro playback. Controls now
+adjust only the sent-message entrance and explicit Jump to latest. The obsolete
+whole-thread glide, landing target, and Thinking shimmer controls are removed.
+Settings use a new browser-local storage key so earlier glide values cannot leak
+into this version. Normal visits always use the shipped defaults.
 
-- Only transform and opacity move. The final scroll position lands at once and the difference is animated away, so the browser's own smooth scroll is never used.
-- Blank runway under the thread lets even a short thread park the bubble at the top. It shrinks as the reply grows. If the layout above the bubble changes, the bubble stays on its spot until the reader scrolls.
-- A very long jump glides only its last 1.2 screens.
-- The intro playback, its scripted replies, and the other views keep the original behavior.
-
-## Tuning the motion
-
-Add `?tune` to the page URL ([after-2/?tune](https://woo-mi.github.io/owl/animation-optimization/after-2/?tune)). The panel edits the live `MOTION` table, so the next send uses the new value.
-
-- Drag the two handles on the curve or type the four numbers. The dashed line is the value read from the recording.
-- With **Replay on release** on, letting go of a handle or slider sends a sample message so you can see the change.
-- Settings persist in your browser only. **Copy values** copies the whole table as JSON, and **Reset all** restores the original values.
-- `?tune` holds the intro playback so the panel is usable at once.
-
+Content is shared with `../../reply-ux-pattern/` through the parent timeline adapters.
 Static HTML/CSS/JavaScript; no build step. Serve the repository over HTTP.
 This is an interaction prototype using sample content, without live AI, accounts,
-analytics, file upload, or microphone services.
+analytics, file upload, or microphone services. Recent-chat labels remain preview placeholders; the four timeline threads and
+Goals workspace are interactive.

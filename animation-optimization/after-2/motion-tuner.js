@@ -3,7 +3,7 @@
  *
  * Add ?tune to the page URL to open it. Every control edits the live MOTION
  * table in send-transition.js, so the next send uses the new value. Dashed lines
- * are the values read from the Codex recording. Settings persist in this browser
+ * are the steady-motion defaults. Settings persist in this browser
  * only; "Copy values" copies the whole table as JSON.
  */
 (() => {
@@ -11,8 +11,8 @@
   const engine = window.OwlSendMotion;
   if (!engine || !new URLSearchParams(location.search).has('tune')) return;
   const { MOTION, DEFAULTS } = engine;
-  const STORE = 'owl.after-2.motion';
-  const STORE_REPLAY = 'owl.after-2.motion.replay';
+  const STORE = 'owl.after-2.steady-motion';
+  const STORE_REPLAY = 'owl.after-2.steady-motion.replay';
   const SVG = 'http://www.w3.org/2000/svg';
   const CURVE_LOW = -0.25;
   const CURVE_HIGH = 1.25;
@@ -255,26 +255,21 @@
   // ----------------------------------------------------------------- layout
   const range$ = (key, label, min, max, step, unit = 'ms', digits = 0) => ({ type: 'range', key, label, min, max, step, unit, digits });
   const sections = [
-    { id: 'glide', title: 'Send glide', replay: send, open: true, groups: [
-      { title: 'Thread glide', path: 'glide', controls: [
-        { type: 'curve' }, range$('base', 'Base', 80, 800, 5), range$('perPx', 'Per pixel', 0, 0.6, 0.01, 'ms', 2),
-        range$('max', 'Longest', 200, 1000, 10), range$('delay', 'Delay', 0, 300, 5)] },
-      { title: 'Landing spot', path: 'land', controls: [range$('top', 'Below top', 40, 320, 2, 'px')] }
+    { id: 'entrance', title: 'Sent message', replay: send, open: true, groups: [
+      { title: 'One subtle entrance', path: 'entrance', controls: [
+        { type: 'curve' }, range$('duration', 'Duration', 0, 350, 10),
+        range$('offset', 'Rise', 0, 16, 1, 'px')] }
     ] },
-    { id: 'thinking', title: 'Thinking label', replay: send, groups: [
-      { title: 'Appearance', path: 'thinking', controls: [range$('delay', 'Appears after', 0, 800, 10), range$('fade', 'Fade in', 0, 500, 5)] },
-      { title: 'Highlight sweep', path: 'thinking', controls: [
-        range$('shimmerDelay', 'Starts after', 0, 3000, 50), range$('sweep', 'Sweep', 200, 2500, 50), range$('period', 'Repeats every', 1000, 8000, 100)] }
-    ] },
-    { id: 'reply', title: 'Reply', replay: send, groups: [
-      { title: 'Reply', path: 'reply', controls: [range$('fade', 'Fade in', 0, 800, 10), range$('labelOut', 'Label out', 0, 500, 10)] }
+    { id: 'jump', title: 'Jump to latest', groups: [
+      { title: 'Reader-controlled scroll', path: 'jump', controls: [
+        range$('duration', 'Duration', 0, 400, 10), range$('threshold', 'Bottom threshold', 0, 48, 1, 'px')] }
     ] }
   ];
 
   function sectionElement(section) {
     return h('details', { class: 'mt-section', open: section.open },
       h('summary', {}, h('span', { text: section.title }),
-        h('button', { type: 'button', class: 'mt-play', 'aria-label': `Replay ${section.title}`, text: '▶', onclick: event => { event.preventDefault(); section.replay(); } })),
+        section.replay ? h('button', { type: 'button', class: 'mt-play', 'aria-label': `Replay ${section.title}`, text: '▶', onclick: event => { event.preventDefault(); section.replay(); } }) : null),
       section.groups.map(group => groupElement(group, section)));
   }
 

@@ -14,9 +14,13 @@
     const timers = new Map();
     const mobile = window.matchMedia('(max-width: 900px)');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const bubblePlayback = window.MVPBubblePlayback?.create({ messages: ui.messages, scroll: ui['chat-scroll'], reducedMotion });
     const sendMotion = window.OwlSendMotion?.create({ messages: ui.messages, scroll: ui['chat-scroll'], reducedMotion });
-    const tuning = new URLSearchParams(location.search).has('tune'); // ?tune opens the motion tuner and holds the intro playback
+    const bubblePlayback = window.MVPBubblePlayback?.create({ messages: ui.messages, scroll: ui['chat-scroll'], reducedMotion, motion: sendMotion });
+    const tuning = new URLSearchParams(location.search).has('tune');
+    const STREAM = Object.freeze({ delay: 1200, interval: 40, chunk: 24 });
+    const VIEW = Object.freeze({ fade: 160 });
+    let viewFade = null;
+    let hasRenderedView = false;
     let attachmentNames = [];
     let sourceSequence = 0;
     let toastTimer;
@@ -26,6 +30,22 @@
     let currentView = 'text-only';
     let currentStateKey = 'text-only';
     const viewStates = new Map();
+    const coveredSurfaces = new Set();
+    let coveredReading = null;
+    function coverConversation(surface) {
+      if (!coveredSurfaces.size) coveredReading = sendMotion?.snapshot();
+      coveredSurfaces.add(surface);
+    }
+    function uncoverConversation(surface) {
+      coveredSurfaces.delete(surface);
+      if (coveredSurfaces.size || !coveredReading) return;
+      sendMotion?.restore(coveredReading);
+      coveredReading = null;
+    }
+    window.addEventListener('timeline-thread-open', () => coverConversation('thread'));
+    window.addEventListener('timeline-thread-close', () => uncoverConversation('thread'));
+    window.addEventListener('mvp-workspace-open', () => coverConversation('workspace'));
+    window.addEventListener('mvp-workspace-close', () => uncoverConversation('workspace'));
     const replyViews = Object.freeze({
       'text-furling': 'clicked-replies',
       'multiple-bubbles': 'multiple-bubbles-replies',
@@ -39,9 +59,8 @@
     const agentHeader = agentProfile?.closest('.agent-header');
     function syncAgentHeader() {
       if (!agentProfile) return;
-      // Separate thresholds prevent flicker near the top of the conversation.
-      const threshold = agentProfile.classList.contains('is-compact') ? 8 : 48;
-      const compact = !isReplyView() && replyBase() === 'latest-oct-28' && ui['chat-scroll'].scrollTop > threshold;
+      // Keep the shell identical between the conversation and its reply thread.
+      const compact = replyBase() === 'latest-oct-28';
       agentProfile.classList.toggle('is-compact', compact);
       agentHeader?.classList.toggle('is-compact', compact);
     }
@@ -120,15 +139,31 @@
       }, 3400);
     }
 
+    function syncComposerClearance() {
+      const dock = ui['message-form']?.closest('.composer-dock');
+      if (!dock) return;
+      const occupied = ui['chat-scroll'].getBoundingClientRect().bottom - dock.getBoundingClientRect().top;
+      const clearance = Math.max(mobile.matches ? 160 : 124, Math.ceil(occupied + 24));
+      ui['chat-scroll'].style.setProperty('--composer-clearance', `${clearance}px`);
+    }
+
+    function keepReading(update) {
+      if (sendMotion) sendMotion.preserve(update);
+      else update();
+    }
+
     function autosize(input) {
       if (!input) return;
-      const minimum = 17;
-      input.style.height = `${minimum}px`;
-      const cssMaximum = Number.parseFloat(window.getComputedStyle(input).maxHeight);
-      const maximum = Math.min(140, Number.isFinite(cssMaximum) ? cssMaximum : 140);
-      const height = Math.min((input.value ? Math.max(input.scrollHeight, minimum) : minimum), maximum);
-      input.style.height = `${height}px`;
-      input.style.overflowY = input.scrollHeight > maximum ? 'auto' : 'hidden';
+      keepReading(() => {
+        const minimum = 17;
+        input.style.height = `${minimum}px`;
+        const cssMaximum = Number.parseFloat(window.getComputedStyle(input).maxHeight);
+        const maximum = Math.min(140, Number.isFinite(cssMaximum) ? cssMaximum : 140);
+        const height = Math.min((input.value ? Math.max(input.scrollHeight, minimum) : minimum), maximum);
+        input.style.height = `${height}px`;
+        input.style.overflowY = input.scrollHeight > maximum ? 'auto' : 'hidden';
+        syncComposerClearance();
+      });
     }
 
     function updateSendButtons() {
@@ -196,7 +231,7 @@
     }
 
     function responseFor(question) {
-      const report = [...sources.values()].filter((entry) => !entry.node.dataset.demoMessage);
+      const report = [...sources.values()].filter((entry) => entry.node.isConnected && !entry.node.closest('[hidden]') && !entry.node.dataset.demoMessage);
       const words = question.toLowerCase().match(/[a-z0-9]+/g) || [];
       const usefulWords = words.filter((word) => word.length > 3 || /sql|api|seo|mql/.test(word));
       const match = report.map((entry) => ({
@@ -209,6 +244,7 @@
 
     function renderAttachments() {
       if (!ui.attachments) return;
+      keepReading(() => {
       ui.attachments.replaceChildren();
       attachmentNames.forEach((name, index) => {
         const chip = document.createElement('span');
@@ -223,51 +259,83 @@
           attachmentNames.splice(index, 1);
           renderAttachments();
           updateSendButtons();
-          ui['message-input']?.focus();
+          ui['message-input']?.focus({ preventScroll: true });
         });
         chip.append(label, remove);
         ui.attachments.append(chip);
       });
       ui.attachments.hidden = !attachmentNames.length;
+      syncComposerClearance();
+      });
+    }
+
+    function scheduleReply(origin, step, delay) {
+      const timer = window.setTimeout(() => { timers.delete(timer); step(); }, delay);
+      timers.set(timer, origin);
     }
 
     function sendMain(event) {
       event?.preventDefault();
       const value = ui['message-input']?.value.trim() || '';
       if ((!value && !attachmentNames.length) || !ui.messages) return;
-      bubblePlayback?.finish();
+      keepReading(() => bubblePlayback?.finish());
+      const sentFromState = currentStateKey;
+      const response = value ? responseFor(value) : 'The filenames are attached to this conversation. This local preview does not read or upload file contents.';
       const userMessage = makeMessage('user', value, attachmentNames);
-      const animateMessages = replyBase() === 'latest-oct-28' && Boolean(sendMotion);
-      if (animateMessages) sendMotion.send(userMessage, () => ui.messages.append(userMessage));
-      else ui.messages.append(userMessage);
+      // The pending article remains the same DOM node for the entire response,
+      // including when its thread is detached while the reader visits another.
+      const reply = makeMessage('assistant', '');
+      reply.classList.add('reply-pending');
+      reply.setAttribute('aria-busy', 'true');
+      const copy = reply.querySelector('.message-copy');
+      copy.classList.add('reply-copy');
+      copy.hidden = true;
+      const text = document.createTextNode('');
+      copy.replaceChildren(text);
+      const progress = document.createElement('div');
+      progress.className = 'reply-progress';
+      progress.setAttribute('role', 'status');
+      progress.textContent = 'Thinking…';
+      copy.before(progress);
+      const append = () => ui.messages.append(userMessage, reply);
+      if (sendMotion) sendMotion.send(userMessage, append);
+      else append();
       attachmentNames = [];
       renderAttachments();
       ui['message-input'].value = '';
       autosize(ui['message-input']);
       updateSendButtons();
-      if (!animateMessages) scrollToBottom(ui['chat-scroll']);
-      ui['message-input'].focus();
-      const response = value ? responseFor(value) : 'The filenames are attached to this conversation. This local preview does not read or upload file contents.';
-      const sentFromState = currentStateKey;
-      if (animateMessages && !reducedMotion.matches) sendMotion.showThinking();
-      const timer = window.setTimeout(() => {
-        timers.delete(timer);
-        const message = makeMessage('assistant', response);
-        message.classList.add('message-source');
-        if (currentStateKey === sentFromState) {
-          if (animateMessages) sendMotion.reply(message, () => ui.messages.append(message));
-          else {
-            bubblePlayback?.hideTyping();
-            ui.messages.append(message);
+      ui['message-input'].focus({ preventScroll: true });
+
+      let length = 0;
+      function stream() {
+        length = reducedMotion.matches ? response.length : Math.min(response.length, length + STREAM.chunk);
+        const update = () => {
+          progress.hidden = true;
+          copy.hidden = false;
+          text.data = response.slice(0, length);
+          if (length === response.length) {
+            progress.remove();
+            reply.classList.remove('reply-pending');
+            reply.removeAttribute('aria-busy');
+            reply.classList.add('message-source');
           }
-          registerSource(message);
-          if (animateMessages && !reducedMotion.matches && [...timers.values()].includes(currentStateKey)) sendMotion.showThinking();
-          if (!animateMessages) scrollToBottom(ui['chat-scroll']);
+        };
+        if (currentStateKey === sentFromState && reply.isConnected) {
+          if (coveredSurfaces.size) {
+            update();
+            if (coveredReading) coveredReading.unseen = true;
+          } else if (sendMotion) sendMotion.reply(reply, update);
+          else update();
+          if (length === response.length) registerSource(reply);
         } else {
-          viewStates.get(sentFromState)?.nodes.push(message);
+          update();
+          const saved = viewStates.get(sentFromState);
+          if (saved?.motion) saved.motion.unseen = true;
         }
-      }, reducedMotion.matches ? 0 : animateMessages ? bubblePlayback?.replyDelay || 320 : 320);
-      timers.set(timer, sentFromState);
+        if (length < response.length) scheduleReply(sentFromState, stream, STREAM.interval);
+      }
+      scheduleReply(sentFromState, stream, reducedMotion.matches ? 0 : STREAM.delay);
     }
 
     function closeMenu() {
@@ -305,7 +373,7 @@
       const versions = document.querySelector('.prototype-versions');
       if (versions) versions.inert = sidebarOpen;
       syncSidebarButton();
-      if (focus) ui['sidebar-close']?.focus();
+      if (focus) ui['sidebar-close']?.focus({ preventScroll: true });
     }
 
     function setDesktopCollapsed(collapsed) {
@@ -323,7 +391,7 @@
     }
 
     function renderView(view, label) {
-      const nextView = replyViews[view] && new URL(location.href).searchParams.get('thread') === 'revenue'
+      const nextView = replyViews[view] && !window.AnimationTimeline && new URL(location.href).searchParams.get('thread') === 'revenue'
         ? replyViews[view] : view;
       const presentation = viewPresentation(nextView);
       if (presentation.key === currentStateKey) {
@@ -334,12 +402,15 @@
       const leavingReplies = isReplyView();
       const definition = window.MVPViews?.[nextView];
       if (view !== 'text-only' && !definition) return;
+      const reading = sendMotion?.snapshot() || { scrollTop: ui['chat-scroll'].scrollTop, following: false, unseen: false };
+      viewFade?.cancel();
       bubblePlayback?.finish();
       sendMotion?.reset();
       closeMenu();
       viewStates.set(currentStateKey, {
         nodes: [...ui.messages.childNodes],
-        scrollTop: ui['chat-scroll'].scrollTop,
+        scrollTop: reading.scrollTop,
+        motion: reading,
         draft: ui['message-input'].value,
         attachments: [...attachmentNames]
       });
@@ -361,9 +432,15 @@
       renderAttachments();
       autosize(ui['message-input']);
       updateSendButtons();
-      ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
+      if (sendMotion) sendMotion.restore(previous?.motion || { scrollTop: previous?.scrollTop || 0, following: false, unseen: false });
+      else ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
       syncAgentHeader();
       document.title = `Animation optimization · after 2 · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
+      if (hasRenderedView && !reducedMotion.matches) {
+        const content = ui.messages.closest('.conversation') || ui.messages;
+        viewFade = content.animate([{ opacity: .25 }, { opacity: 1 }], { duration: VIEW.fade, easing: 'ease-out' });
+      }
+      hasRenderedView = true;
       if (!previous && nextView === 'latest-oct-28' && !location.hash && !tuning) bubblePlayback?.play();
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
       else if (leavingReplies && replyViews[view]) {
@@ -375,6 +452,7 @@
     function resetConversation() {
       bubblePlayback?.finish();
       sendMotion?.reset();
+      viewFade?.cancel();
       timers.forEach((origin, timer) => {
         if (origin !== currentStateKey) return;
         clearTimeout(timer);
@@ -390,7 +468,7 @@
       autosize(ui['message-input']);
       updateSendButtons();
       setSidebarOpen(false);
-      ui['message-input']?.focus();
+      ui['message-input']?.focus({ preventScroll: true });
       announce('New conversation started. The reference report is ready.');
     }
 
@@ -412,7 +490,7 @@
       event.target.value = '';
       renderAttachments();
       updateSendButtons();
-      ui['message-input']?.focus();
+      ui['message-input']?.focus({ preventScroll: true });
     });
 
     ui['thinking-button']?.setAttribute('aria-expanded', 'false');
@@ -422,7 +500,7 @@
       const open = ui['thinking-menu'].hidden;
       ui['thinking-menu'].hidden = !open;
       ui['thinking-button'].setAttribute('aria-expanded', String(open));
-      if (open) ui['thinking-menu'].querySelector('[data-mode]')?.focus();
+      if (open) ui['thinking-menu'].querySelector('[data-mode]')?.focus({ preventScroll: true });
     });
     ui['thinking-menu']?.querySelectorAll('[data-mode]').forEach((option) => {
       option.addEventListener('click', () => {
@@ -447,7 +525,7 @@
           item.setAttribute('aria-checked', String(selected));
         });
         closeMenu();
-        button?.focus();
+        button?.focus({ preventScroll: true });
       });
     });
     ui['thinking-menu']?.addEventListener('keydown', (event) => {
@@ -460,7 +538,7 @@
       else if (event.key === 'End') next = options.length - 1;
       else return;
       event.preventDefault();
-      options[next]?.focus();
+      options[next]?.focus({ preventScroll: true });
     });
 
     ui['mic-button']?.setAttribute('aria-pressed', 'false');
@@ -493,7 +571,7 @@
         else if (normalized === 'owls' || normalized === 'owl') {
           setSidebarOpen(false);
           scrollToBottom(ui['chat-scroll']);
-          ui['message-input']?.focus();
+          ui['message-input']?.focus({ preventScroll: true });
         } else announce(`${item.textContent.trim() || name} is outside this preview.`);
       });
     });
@@ -505,7 +583,7 @@
         autosize(ui['message-input']);
         updateSendButtons();
         setSidebarOpen(false);
-        ui['message-input']?.focus();
+        ui['message-input']?.focus({ preventScroll: true });
       });
     });
 
@@ -558,7 +636,7 @@
         if (document.querySelector('.prototype-versions [aria-haspopup="menu"][aria-expanded="true"]')) return;
         if (ui['thinking-menu'] && !ui['thinking-menu'].hidden) {
           closeMenu();
-          ui['thinking-button']?.focus();
+          ui['thinking-button']?.focus({ preventScroll: true });
         } else if (sidebarOpen) setSidebarOpen(false, true);
         else if (isReplyView()) closeReplies();
       }
@@ -568,15 +646,20 @@
         const last = focusable[focusable.length - 1];
         if (event.shiftKey && document.activeElement === first) {
           event.preventDefault();
-          last?.focus();
+          last?.focus({ preventScroll: true });
         } else if (!event.shiftKey && document.activeElement === last) {
           event.preventDefault();
-          first?.focus();
+          first?.focus({ preventScroll: true });
         }
       }
     });
     window.addEventListener('mvp-workspace-open', () => { closeMenu(); setSidebarOpen(false); });
     mobile.addEventListener('change', syncSidebar);
+    reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) viewFade?.cancel(); });
+    if (typeof ResizeObserver !== 'undefined') {
+      const dock = ui['message-form']?.closest('.composer-dock');
+      if (dock) new ResizeObserver(() => keepReading(syncComposerClearance)).observe(dock);
+    }
     document.querySelectorAll('.message-source').forEach(registerSource);
     renderAttachments();
     autosize(ui['message-input']);

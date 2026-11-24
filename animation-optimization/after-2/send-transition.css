@@ -1,28 +1,41 @@
-/* AFTER 2: Codex-style send transition (see send-transition.js). */
+/* AFTER 2: only a newly sent message moves; conversation layout stays natural. */
+.chat-scroll {
+  overflow-anchor: none;
+  scroll-behavior: auto;
+}
+.messages { position: relative; }
 
-/* The browser must not re-anchor the thread while it is parked on a sent bubble. */
-.chat-scroll { overflow-anchor: none; }
+/* Out of the scrolling content and out of the composer's layout flow. */
+.jump-to-latest {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid #e1e3e8;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 2px 8px #14181f0c;
+  color: #494c55;
+  font: 500 12px/18px Inter, system-ui, sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.jump-to-latest:hover { background: #f6f7f9; }
+.jump-to-latest:focus-visible { outline: 2px solid #167bd6; outline-offset: 3px; }
+.jump-to-latest[hidden] { display: none !important; }
+.jump-to-latest-fallback { bottom: 104px; }
 
-/* Blank space under the thread that lets a short thread still park the sent bubble at the top. */
-.send-runway { height: 0; pointer-events: none; }
-
-/* "Thinking": muted text with one highlight pass sweeping left to right. */
-.thinking-label {
-  align-self: flex-start;
-  margin-top: 8px;
+/* Progress and final text share one assistant-message container. */
+.reply-progress {
+  margin: 0;
+  color: #747780;
   font: 400 14px/20px Inter, system-ui, sans-serif;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  background: linear-gradient(100deg, #9b9ba1 0 42%, #ececef 50%, #9b9ba1 58% 100%) 90% 0 / 300% 100% no-repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
 }
-.thinking-label.is-ghost { z-index: 1; }
-
-@media (prefers-reduced-motion: reduce) {
-  .thinking-label {
-    background: none;
-    color: #9b9ba1;
-    -webkit-text-fill-color: currentColor;
-  }
-}
+.reply-copy { white-space: pre-wrap; }
+.reply-copy:empty { display: none; }

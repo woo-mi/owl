@@ -1,0 +1,26 @@
+/* After 2 retains the app shell while the destination content briefly fades. */
+body.workspace-page-steady-open { overflow:hidden; }
+.workspace-page-steady-open #main { visibility:hidden; }
+.workspace-page-steady-open :is(.skip-link, #animation-version-picker, .indexing-nav-rail, .indexing-nav-preview, #indexing-menu-toggle) { visibility:hidden; }
+body[data-animation-version="after-2"] .workspace-page,
+body[data-animation-version="after-2"] .workspace-page.is-closing {
+  animation:none;
+  transition:none;
+  border-radius:0;
+  box-shadow:none;
+}
+body[data-animation-version="after-2"] .workspace-page .fsw-scroll {
+  overflow-anchor:none;
+  scroll-behavior:auto;
+}
+/* Goals remain reachable while their detail is being read. This also prevents
+   focusing a destination from scrolling the current goal before it is saved. */
+@media (min-width:1001px) {
+  body[data-animation-version="after-2"] .workspace-page .wg-navigator {
+    position:sticky;
+    top:0;
+    max-height:calc(100dvh - 120px);
+    overflow-y:auto;
+    overscroll-behavior:contain;
+  }
+}

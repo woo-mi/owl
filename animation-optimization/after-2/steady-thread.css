@@ -1,0 +1,21 @@
+/* Only conversation content changes between the main thread and its replies. */
+body[data-prototype-view="latest-oct-28"] .agent-header,
+body[data-prototype-view="latest-oct-28"].replies-open .agent-header {
+  height: 64px;
+  background: linear-gradient(to bottom, #fffffff5 0, #ffffffad 32px, #ffffff00 64px);
+}
+.replies-open .chat-scroll {
+  position: relative;
+  inset: auto;
+  height: 100%;
+  background: transparent;
+  scroll-padding-top: 130px;
+}
+.replies-open .conversation { padding-top: 114px; }
+body[data-animation-version="after-2"] .chat-scroll .conversation {
+  padding-bottom: var(--composer-clearance, 124px);
+}
+.chat-scroll { scroll-padding-bottom: var(--composer-clearance, 124px); }
+/* The existing dock is bottom-anchored: textarea growth only moves its top edge. */
+.composer-dock { transition: none; }
+.reply-copy { animation: none; transition: none; }

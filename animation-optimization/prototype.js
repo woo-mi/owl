@@ -319,7 +319,7 @@
     }
 
     function renderView(view, label) {
-      const nextView = replyViews[view] && new URL(location.href).searchParams.get('thread') === 'revenue'
+      const nextView = replyViews[view] && !window.AnimationTimeline && new URL(location.href).searchParams.get('thread') === 'revenue'
         ? replyViews[view] : view;
       const presentation = viewPresentation(nextView);
       if (presentation.key === currentStateKey) {

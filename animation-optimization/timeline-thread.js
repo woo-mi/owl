@@ -1,0 +1,585 @@
+/*
+ * Reply popup storyboard (Pen s1WgPQ, SuBGR, B9TkG and WkXzo)
+ * 0ms: keep the timeline in place; fade in its frosted overlay.
+ * 0–260ms: lift the focused thread 16px and settle it at full size.
+ * Close: fade and lower the thread over 180ms, then restore its opener.
+ * After 2 changes conversation content only, preserving its steady shell and reader.
+ * Reduced motion skips both transforms and fades. Content comes from the pristine
+ * shared timeline, so opening a thread never clones an incomplete playback frame.
+ */
+(() => {
+  'use strict';
+  const THREADS = {
+    profile: {
+      title:'What did you learn about me?',
+      unreadBefore:'SN8ox',
+      unreadFrame:'tYlx8',
+      groups:[['SN8ox'], ['C7hyC8']]
+    },
+    'chat-growth': {
+      title:'Can you help me grow the dau/mau for chat?',
+      unreadBefore:'aDGGZ',
+      unreadFrame:'VI1QJ',
+      groups:[['m8is7b'], ['yRqck'], ['wSwXA'], ['R56w6', 'ECtpL', 'k5sIEa', 'XxtbI'], ['aDGGZ']]
+    },
+    'chat-surface': {
+      title:'Similarly build some understanding of chat as a surface. Why don’t you connect to my slack? But only read no write',
+      unreadBefore:'Dr5fX',
+      unreadFrame:'z3RA7',
+      groups:[['bUhpm'], ['zCpXs'], ['CY9hb'], ['Dr5fX'], ['z2iL42']],
+      initialScroll:'end'
+    },
+    'gandhi-jayanti': {
+      title:'Friday was gandhi jayanti, could be the reason?',
+      unreadBefore:'g0x3g',
+      unreadFrame:'ack3g',
+      groups:[['ABTkz'], ['VLFVG'], ['pY3xS'], ['g0x3g'], ['D3TJch'], ['ExjZ8'], ['VKDzT'], ['lxiD8']],
+      initialScroll:'end'
+    }
+  };
+
+  const VERSIONS = ['timeline'];
+  // Closing an owned history entry is asynchronous. Defer a newer thread
+  // request until that Back finishes so it cannot erase the newer URL.
+  let pendingHistoryClose = null;
+  let deferredThreadRequest = null;
+  window.addEventListener('popstate', () => {
+    if (!pendingHistoryClose) return;
+    pendingHistoryClose = null;
+    const request = deferredThreadRequest;
+    deferredThreadRequest = null;
+    if (request) queueMicrotask(request);
+  });
+
+  // Each variant's thread owns its cached messages, draft, attachments and motion.
+  function createThread(key, thread, version) {
+    const STAGE = { CLOSED:0, OPENING:1, OPEN:2, CLOSING:3 };
+    const TIMING = { open:260, close:180 };
+    const MOTION = { offset:16, scale:.985, enter:'cubic-bezier(.16, 1, .3, 1)', exit:'cubic-bezier(.4, 0, 1, 1)' };
+    const PARAM = 'timeline-thread';
+    const MODE_PARAM = 'timeline-mode';
+    const HISTORY_KEY = 'timelineThreadEntry';
+    const sessionToken = `${version}-${key}-${Date.now()}`;
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    const steady = document.body.dataset.animationVersion === 'after-2';
+    const STREAM = { delay:1200, interval:40, chunk:24 };
+    let stage = STAGE.CLOSED;
+    let dialog, header, profile, content, scroller, dock, composer, input, send, files, attachments, status, unreadDivider, messages, steadyMotion;
+    let sourceTexts = [];
+    const readingByMode = new Map();
+    let mode = 'replies';
+    let opener, savedScroll = 0, generation = 0, animations = [], pendingFiles = [];
+    let pointerStartedOutside = false, followingBottom = false, composerWidth = 0;
+    const active = () => document.body.dataset.replyVersion === version && document.body.dataset.prototypeView === 'latest-oct-28' &&
+      !document.body.classList.contains('workspace-page-open') && !document.body.classList.contains('workspace-page-steady-open');
+    const requested = () => new URL(location.href).searchParams.get(PARAM) === key;
+    const requestedMode = () => new URL(location.href).searchParams.get(MODE_PARAM) === 'unread' ? 'unread' : 'replies';
+    const keepReading = update => steadyMotion && dialog?.open ? steadyMotion.preserve(update) : update();
+    function readingSnapshot() {
+      return steadyMotion ? steadyMotion.snapshot() : { scrollTop:scroller.scrollTop, following:atBottom(), unseen:false };
+    }
+
+    function cleanClone(source) {
+      const clone = source.cloneNode(true);
+      for (const element of [clone, ...clone.querySelectorAll('*')]) {
+        element.removeAttribute('id');
+        element.removeAttribute('aria-controls');
+        element.removeAttribute('aria-labelledby');
+        element.removeAttribute('data-timeline-message');
+        element.classList.remove('is-compact');
+      }
+      return clone;
+    }
+
+    function fitToMain() {
+      if (!dialog?.open) return;
+      const rect = document.querySelector('main.main').getBoundingClientRect();
+      keepReading(() => {
+        Object.assign(dialog.style, {left:`${rect.left}px`, top:`${rect.top}px`, width:`${rect.width}px`, height:`${rect.height}px`});
+        fitComposer(followingBottom);
+      });
+    }
+
+    const atBottom = () => scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop <= 24;
+
+    function syncHeader() {
+      if (!dialog?.open || !profile) return;
+      // Match the main chat's hysteresis so the header does not flicker at the top.
+      const threshold = profile.classList.contains('is-compact') ? 8 : 48;
+      const compact = steady || scroller.scrollTop > threshold;
+      profile.classList.toggle('is-compact', compact);
+      header.classList.toggle('is-compact', compact);
+    }
+
+    function updateComposerDock(keepBottom = atBottom()) {
+      if (!dialog?.open) return;
+      const height = dock.offsetHeight;
+      if (height <= 0) return;
+      dialog.style.setProperty('--timeline-thread-dock-height', `${height}px`);
+      if (!steadyMotion && keepBottom) scroller.scrollTop = scroller.scrollHeight;
+      followingBottom = atBottom();
+      syncHeader();
+    }
+
+    function syncComposerDock(keepBottom = atBottom()) {
+      keepReading(() => updateComposerDock(keepBottom));
+    }
+
+    function fitComposer(keepBottom = atBottom()) {
+      composerWidth = dock.clientWidth;
+      input.style.height = '17px';
+      const maximum = Number.parseFloat(getComputedStyle(input).maxHeight) || 120;
+      const height = Math.min(input.value ? Math.max(17, input.scrollHeight) : 17, maximum);
+      input.style.height = `${height}px`;
+      input.style.overflowY = input.scrollHeight > maximum ? 'auto' : 'hidden';
+      composer.classList.toggle('is-multiline', height > 26);
+      send.disabled = !input.value.trim() && !pendingFiles.length;
+      updateComposerDock(keepBottom);
+    }
+
+    function syncComposer(keepBottom = atBottom()) {
+      keepReading(() => fitComposer(keepBottom));
+    }
+
+    function renderAttachments() {
+      keepReading(() => {
+      attachments.replaceChildren();
+      pendingFiles.forEach((file, index) => {
+        const chip = document.createElement('span');
+        chip.className = 'attachment-chip';
+        const label = document.createElement('span');
+        label.textContent = file.name;
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.textContent = '×';
+        remove.setAttribute('aria-label', `Remove ${file.name}`);
+        remove.addEventListener('click', () => { pendingFiles.splice(index, 1); renderAttachments(); input.focus({preventScroll:true}); });
+        chip.append(label, remove);
+        attachments.append(chip);
+      });
+      fitComposer();
+      });
+    }
+
+    function responseFor(prompt) {
+      const words = prompt.toLowerCase().match(/[a-z0-9]+/g)?.filter(word => word.length > 3) || [];
+      const matches = sourceTexts.map(text => ({ text, score:words.filter(word => text.toLowerCase().includes(word)).length }))
+        .sort((a, b) => b.score - a.score);
+      return matches[0]?.score ? `From this thread: ${matches[0].text}`
+        : `Your reply is saved in this prototype thread about “${thread.title}”. You can review the conversation above or ask about a detail in it.`;
+    }
+
+    function appendPendingReply() {
+      const article = document.createElement('article');
+      article.className = 'message assistant-message ftux-bubble timeline-bubble timeline-stack reply-pending';
+      article.dataset.demoMessage = 'true';
+      article.setAttribute('aria-busy', 'true');
+      const progress = document.createElement('div');
+      progress.className = 'reply-progress';
+      progress.setAttribute('role', 'status');
+      progress.textContent = 'Thinking…';
+      const copy = document.createElement('p');
+      copy.className = 'timeline-text reply-copy';
+      copy.hidden = true;
+      const text = document.createTextNode('');
+      copy.append(text);
+      article.append(progress, copy);
+      messages.append(article);
+      return { article, progress, copy, text };
+    }
+
+    function streamReply(reply, response) {
+      let length = 0;
+      const tick = () => {
+        length = reducedMotion.matches ? response.length : Math.min(response.length, length + STREAM.chunk);
+        const update = () => {
+          reply.progress.hidden = true;
+          reply.copy.hidden = false;
+          reply.text.data = response.slice(0, length);
+          if (length === response.length) {
+            reply.progress.remove();
+            reply.article.classList.remove('reply-pending');
+            reply.article.removeAttribute('aria-busy');
+          }
+        };
+        if (steadyMotion && dialog.open && stage !== STAGE.CLOSING) steadyMotion.reply(reply.article, update);
+        else {
+          update();
+          const saved = readingByMode.get(mode);
+          if (saved) saved.unseen = true;
+        }
+        if (length < response.length) setTimeout(tick, STREAM.interval);
+      };
+      setTimeout(tick, reducedMotion.matches ? 0 : STREAM.delay);
+    }
+
+    function buildDialog() {
+      if (dialog) return true;
+      const canonical = document.createElement('template');
+      canonical.innerHTML = window.AnimationTimeline?.html || window.ReplyTimelineContent?.('timeline') || '';
+      const sourceRoot = canonical.content.childElementCount ? canonical.content : document;
+      const sourceGroups = thread.groups.map(group => group.map(id => sourceRoot.querySelector(`#timeline-message-${id}`)));
+      if (sourceGroups.some(group => group.some(source => !source))) return false;
+      dialog = document.createElement('dialog');
+      dialog.id = `${version}-${key}-thread`;
+      dialog.className = 'timeline-thread-dialog';
+      dialog.dataset.replyVersion = version;
+      dialog.dataset.animationVersion = document.body.dataset.animationVersion || 'before';
+      dialog.setAttribute('aria-label', `${thread.title} - reply opened`);
+      header = cleanClone(document.querySelector('.main > .agent-header'));
+      header.classList.add('timeline-thread-header');
+      profile = header.querySelector('.agent-profile');
+      if (profile) {
+        const label = document.createElement('div');
+        label.className = profile.className;
+        label.append(...profile.childNodes);
+        profile.replaceWith(label);
+        profile = label;
+      }
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'timeline-thread-close';
+      close.setAttribute('aria-label', 'Close reply thread');
+      close.innerHTML = '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 20 20M26 6 6 26"/></svg>';
+      close.addEventListener('click', requestClose);
+      scroller = document.createElement('div');
+      scroller.className = 'timeline-thread-scroll';
+      scroller.addEventListener('scroll', () => {
+        followingBottom = atBottom();
+        syncHeader();
+      }, {passive:true});
+      content = document.createElement('div');
+      content.className = 'timeline-thread-content';
+      messages = document.createElement('div');
+      messages.className = `timeline-thread-messages reply-timeline${['timeline', 'timeline-unread', 'timeline-unread-dark'].includes(version) ? '' : ' reply-timeline-variant'}`;
+      unreadDivider = document.createElement('div');
+      unreadDivider.className = 'timeline-new timeline-thread-new';
+      unreadDivider.textContent = 'NEW';
+      unreadDivider.setAttribute('role', 'separator');
+      unreadDivider.setAttribute('aria-label', 'New messages');
+      unreadDivider.hidden = true;
+      for (const sources of sourceGroups) {
+        const group = document.createElement('div');
+        group.className = 'timeline-group timeline-stack';
+        group.style.setProperty('--timeline-gap', '16px');
+        for (const source of sources) {
+          if (source.id === `timeline-message-${thread.unreadBefore}`) {
+            if (group.childElementCount) group.append(unreadDivider);
+            else messages.append(unreadDivider);
+          }
+          const message = cleanClone(source);
+          message.querySelectorAll('.timeline-context, .timeline-reference').forEach(element => element.remove());
+          // Focused frames omit outgoing receipts; Owl reply timestamps remain.
+          if (message.classList.contains('timeline-outgoing')) {
+            message.querySelectorAll('.timeline-footer, .timeline-stamp').forEach(element => element.remove());
+          }
+          group.append(message);
+        }
+        messages.append(group);
+      }
+      composer = cleanClone(document.getElementById('message-form'));
+      composer.classList.add('timeline-thread-composer');
+      dock = document.createElement('div');
+      dock.className = 'timeline-thread-composer-dock';
+      composer.querySelector('.mode-picker')?.remove();
+      input = composer.querySelector('textarea');
+      input.value = '';
+      input.setAttribute('aria-label', `Reply to ${thread.title}`);
+      input.placeholder = 'What can I help you with today?';
+      send = composer.querySelector('[type="submit"]');
+      send.setAttribute('aria-label', 'Send reply');
+      files = composer.querySelector('[type="file"]');
+      composer.querySelector('[aria-label="Attach files"]').addEventListener('click', () => files.click());
+      files.addEventListener('change', () => {
+        pendingFiles.push(...files.files);
+        files.value = '';
+        renderAttachments();
+      });
+      const mic = composer.querySelector('[aria-label="Dictate a message"]');
+      mic?.classList.remove('is-listening');
+      mic?.setAttribute('aria-pressed', 'false');
+      mic?.addEventListener('click', () => { status.textContent = 'Voice input is not available in this prototype. Type a reply below.'; input.focus({preventScroll:true}); });
+      attachments = document.createElement('div');
+      attachments.className = 'timeline-thread-attachments';
+      status = document.createElement('div');
+      status.className = 'timeline-thread-status';
+      status.setAttribute('role', 'status');
+      input.addEventListener('input', () => syncComposer());
+      input.addEventListener('keydown', event => {
+        if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+          event.preventDefault();
+          composer.requestSubmit();
+        }
+      });
+      composer.addEventListener('submit', event => {
+        event.preventDefault();
+        const text = input.value.trim();
+        if (!text && !pendingFiles.length) return;
+        const message = document.createElement('div');
+        message.className = 'timeline-message timeline-stack timeline-outgoing';
+        message.style.setProperty('--timeline-gap', '4px');
+        const bubble = document.createElement('article');
+        bubble.className = 'message user-message ftux-user-bubble timeline-bubble timeline-stack';
+        const copy = document.createElement('p');
+        copy.className = 'timeline-text';
+        copy.textContent = [text, ...pendingFiles.map(file => file.name)].filter(Boolean).join('\n');
+        bubble.append(copy);
+        const stamp = document.createElement('div');
+        stamp.className = 'timeline-stamp';
+        stamp.textContent = new Intl.DateTimeFormat('en-US', {hour:'numeric', minute:'2-digit'}).format(new Date());
+        stamp.style.alignSelf = 'flex-end';
+        stamp.style.padding = '0 13px';
+        message.append(bubble, stamp);
+        message.dataset.demoMessage = 'true';
+        let pendingReply;
+        const append = () => {
+          messages.append(message);
+          if (steady) pendingReply = appendPendingReply();
+        };
+        if (steadyMotion) steadyMotion.send(message, append);
+        else append();
+        input.value = '';
+        pendingFiles = [];
+        renderAttachments();
+        if (!steadyMotion) {
+          scroller.scrollTop = scroller.scrollHeight;
+          followingBottom = true;
+        }
+        if (pendingReply) streamReply(pendingReply, responseFor(text));
+        syncHeader();
+        status.textContent = 'Reply added to this prototype thread.';
+        input.focus({preventScroll:true});
+      });
+      content.append(messages);
+      scroller.append(content);
+      dock.append(attachments, composer);
+      dialog.append(header, close, scroller, dock, status);
+      document.body.append(dialog);
+      sourceTexts = [...messages.querySelectorAll('.timeline-message:not(.timeline-outgoing) .timeline-bubble')]
+        .map(node => node.textContent.trim()).filter(Boolean);
+      if (steady && window.OwlSendMotion) {
+        steadyMotion = window.OwlSendMotion.create({ messages, scroll:scroller, reducedMotion, dock });
+      }
+      new ResizeObserver(() => {
+        if (!dialog.open || !dock.clientWidth) return;
+        if (dock.clientWidth !== composerWidth) syncComposer(followingBottom);
+        else syncComposerDock();
+      }).observe(dock);
+      dialog.addEventListener('cancel', event => { event.preventDefault(); requestClose(); });
+      dialog.addEventListener('keydown', event => {
+        if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); requestClose(); }
+      });
+      const outside = target => target === dialog || target === scroller;
+      dialog.addEventListener('pointerdown', event => { pointerStartedOutside = outside(event.target); });
+      dialog.addEventListener('click', event => { if (pointerStartedOutside && outside(event.target)) requestClose(); });
+      return true;
+    }
+
+    function finishClose() {
+      steadyMotion?.reset();
+      dialog.close();
+      const anotherThreadOpen = document.querySelector('.timeline-thread-dialog[open]');
+      if (!anotherThreadOpen) document.body.classList.remove('timeline-thread-open');
+      if (active() && !anotherThreadOpen) {
+        document.getElementById('chat-scroll').scrollTop = savedScroll;
+        const target = opener?.isConnected ? opener : document.querySelector(`[data-timeline-thread="${key}"][data-timeline-mode="${mode}"]`);
+        const focusTarget = target?.id === 'unread-menu-toggle' && target.hidden
+          ? document.querySelector('#sidebar [data-nav="Owls"]') : target;
+        focusTarget?.focus({preventScroll:true});
+      }
+      if (!anotherThreadOpen) {
+        window.dispatchEvent(new CustomEvent('timeline-thread-close', {detail:{key, version}}));
+      }
+      return !anotherThreadOpen && active();
+    }
+
+    async function transition(open) {
+      const token = ++generation;
+      if (!open && stage !== STAGE.CLOSED && stage !== STAGE.CLOSING) readingByMode.set(mode, readingSnapshot());
+      const opacity = getComputedStyle(dialog).opacity;
+      const layers = [content, dock].map(element => ({
+        element,
+        opacity:getComputedStyle(element).opacity,
+        transform:getComputedStyle(element).transform
+      }));
+      animations.forEach(animation => animation.cancel());
+      animations = [];
+      if (steady && !open) {
+        // Release the modal immediately: the next thread remains clickable
+        // while only the newly revealed conversation content fades in.
+        stage = STAGE.CLOSED;
+        const revealMain = finishClose();
+        if (revealMain && !reducedMotion.matches) {
+          const mainContent = document.querySelector('.main .conversation');
+          if (mainContent) animations = [mainContent.animate([{opacity:.25}, {opacity:1}], {
+            duration:160, easing:'ease-out', fill:'both'
+          })];
+        }
+        await Promise.all(animations.map(animation => animation.finished.catch(() => {})));
+        if (token !== generation) return;
+        animations.forEach(animation => animation.cancel());
+        animations = [];
+        return;
+      }
+      if (!reducedMotion.matches) {
+        if (steady) {
+          animations = [content.animate([
+            {opacity:open && stage === STAGE.CLOSED ? .25 : getComputedStyle(content).opacity},
+            {opacity:open ? 1 : 0}
+          ], {duration:160, easing:'ease-out', fill:'both'})];
+        } else {
+          const options = {duration:open ? TIMING.open : TIMING.close, easing:open ? MOTION.enter : MOTION.exit, fill:'both'};
+          const offset = `translateY(${MOTION.offset}px) scale(${MOTION.scale})`;
+          animations = [
+            dialog.animate([{opacity:open && stage === STAGE.CLOSED ? 0 : opacity}, {opacity:open ? 1 : 0}], options),
+            ...layers.map(layer => layer.element.animate([
+              {opacity:open && stage === STAGE.CLOSED ? 0 : layer.opacity, transform:open && stage === STAGE.CLOSED ? offset : layer.transform},
+              {opacity:open ? 1 : 0, transform:open ? 'translateY(0) scale(1)' : offset}
+            ], options))
+          ];
+        }
+      }
+      stage = open ? STAGE.OPENING : STAGE.CLOSING;
+      await Promise.all(animations.map(animation => animation.finished.catch(() => {})));
+      if (token !== generation) return;
+      animations.forEach(animation => animation.cancel());
+      animations = [];
+      stage = open ? STAGE.OPEN : STAGE.CLOSED;
+      if (!open) finishClose();
+    }
+
+    function positionThread() {
+      const saved = readingByMode.get(mode);
+      if (saved) {
+        if (steadyMotion) steadyMotion.restore(saved);
+        else scroller.scrollTop = saved.scrollTop;
+        followingBottom = atBottom();
+        syncHeader();
+        return;
+      }
+      scroller.scrollTop = 0;
+      if (mode === 'unread' && unreadDivider.isConnected) {
+        const top = unreadDivider.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+        scroller.scrollTop = Math.max(0, top - 126);
+      } else if (thread.initialScroll === 'end') scroller.scrollTop = scroller.scrollHeight;
+      followingBottom = atBottom();
+      steadyMotion?.restore({scrollTop:scroller.scrollTop, following:followingBottom, unseen:false});
+      syncHeader();
+    }
+
+    function openThread(trigger) {
+      if (!active()) return;
+      if (!trigger && pendingHistoryClose?.key === key) return;
+      const mainScroll = document.getElementById('chat-scroll');
+      const beforeOpen = mainScroll.scrollTop;
+      if (!dialog?.open) {
+        window.dispatchEvent(new CustomEvent('animation-timeline-open', {detail:{key, version}}));
+        // Finishing the main playback must not move the reader behind the popup.
+        mainScroll.scrollTop = beforeOpen;
+      }
+      if (!buildDialog()) return;
+      if (trigger) opener = trigger.closest('#unread-menu') ? document.getElementById('unread-menu-toggle')
+        : trigger.closest('#indexing-menu') ? document.getElementById('indexing-menu-toggle')
+        : trigger.closest('#indexing-nav-preview') ? document.querySelector(`[data-indexing-stop="${trigger.dataset.indexingTopic}"]`) : trigger;
+      const nextMode = requestedMode();
+      const changed = mode !== nextMode;
+      if (changed && dialog.open) readingByMode.set(mode, readingSnapshot());
+      mode = nextMode;
+      window.dispatchEvent(new CustomEvent('timeline-thread-open', {detail:{key, version, mode}}));
+      unreadDivider.hidden = mode !== 'unread';
+      dialog.dataset.timelineMode = mode;
+      dialog.setAttribute('aria-label', `${thread.title} - ${mode === 'unread' ? 'unread' : 'reply'} opened`);
+      if (mode === 'unread') dialog.dataset.penFrame = thread.unreadFrame;
+      else delete dialog.dataset.penFrame;
+      if (stage === STAGE.OPEN || stage === STAGE.OPENING) {
+        if (changed) positionThread();
+        return;
+      }
+      if (!dialog.open) {
+        savedScroll = beforeOpen;
+        dialog.showModal();
+        document.body.classList.add('timeline-thread-open');
+        fitToMain();
+        syncComposer();
+        positionThread();
+        dialog.querySelector('.timeline-thread-close').focus({preventScroll:true});
+      }
+      transition(true);
+    }
+
+    function clearParameter() {
+      const url = new URL(location.href);
+      url.searchParams.delete(PARAM);
+      url.searchParams.delete(MODE_PARAM);
+      const state = {...history.state};
+      delete state[HISTORY_KEY];
+      history.replaceState(state, '', url);
+    }
+
+    function requestClose() {
+      if (stage === STAGE.CLOSED || stage === STAGE.CLOSING) return;
+      const wasRequested = requested();
+      const useBack = wasRequested && history.state?.[HISTORY_KEY] === sessionToken;
+      if (useBack) pendingHistoryClose = {key, sessionToken};
+      transition(false);
+      if (!wasRequested) return;
+      if (useBack) history.back();
+      else clearParameter();
+    }
+
+    function syncLocation() {
+      if (active() && requested()) openThread();
+      else if (stage !== STAGE.CLOSED && stage !== STAGE.CLOSING) transition(false);
+    }
+
+    function start() {
+      document.addEventListener('click', event => {
+        const trigger = event.target.closest(`[data-timeline-thread="${key}"]`);
+        if (!trigger || !active()) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const nextMode = trigger.dataset.timelineMode === 'unread' ? 'unread' : 'replies';
+        const request = () => {
+          if (!active()) return;
+          if (!requested() || nextMode !== requestedMode()) {
+            const url = new URL(location.href);
+            url.searchParams.set(PARAM, key);
+            if (nextMode === 'unread') url.searchParams.set(MODE_PARAM, 'unread');
+            else url.searchParams.delete(MODE_PARAM);
+            if (requested()) history.replaceState(history.state, '', url);
+            else history.pushState({...history.state, [HISTORY_KEY]:sessionToken}, '', url);
+          }
+          openThread(trigger);
+        };
+        if (pendingHistoryClose) deferredThreadRequest = request;
+        else request();
+      }, true);
+      window.addEventListener('resize', fitToMain);
+      window.addEventListener('popstate', syncLocation);
+      reducedMotion.addEventListener('change', () => {
+        if (reducedMotion.matches) animations.forEach(animation => animation.cancel());
+      });
+      const leaveThread = () => {
+        if (stage === STAGE.CLOSED) return;
+        const urlVersion = new URL(location.href).searchParams.get('version') || 'timeline';
+        if (requested() && urlVersion === version) clearParameter();
+        if (stage !== STAGE.CLOSED && stage !== STAGE.CLOSING) transition(false);
+      };
+      for (const eventName of ['reply-version-change', 'mvp-view-change']) {
+        window.addEventListener(eventName, () => {
+          // The version picker announces its initial view once more on the next frame.
+          // That notification must not dismiss a valid direct link to this thread.
+          if (active()) syncLocation();
+          else leaveThread();
+        });
+      }
+      window.addEventListener('mvp-workspace-open', leaveThread);
+      syncLocation();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+    else start();
+  }
+  VERSIONS.forEach(version => {
+    Object.entries(THREADS).forEach(([key, thread]) => createThread(key, thread, version));
+  });
+})();

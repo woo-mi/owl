@@ -124,12 +124,12 @@
     return Array.from({ length: count + 1 }, (_, i) => ({ offset: i / count, ...frame(i === count ? duration : (i / count) * duration) }));
   }
 
-  const UNIT = '.pen-bubble, .unfurl-user-turn, .unfurl-block, .unfurl-thread-cue';
+  const UNIT = '.timeline-message, .timeline-date, .timeline-new, .timeline-link-chip, .timeline-card, .timeline-context, .pen-bubble, .unfurl-user-turn, .unfurl-block, .unfurl-thread-cue';
   const UNITS = `${UNIT}, .bubble-typing, [data-demo-message]`;
-  const isOutgoing = node => node.matches('.unfurl-user-turn, .user-message');
-  const isReply = node => node.matches('.pen-bubble, .assistant-message');
+  const isOutgoing = node => node.matches('.unfurl-user-turn, .user-message, .timeline-outgoing');
+  const isReply = node => node.matches('.pen-bubble, .assistant-message') || (node.matches('.timeline-message') && !isOutgoing(node));
   const isTyping = node => node.matches('.bubble-typing');
-  const bubbleOf = node => node.matches('.unfurl-user-turn') ? node.querySelector('.unfurl-user-bubble') || node : node;
+  const bubbleOf = node => node.matches('.timeline-outgoing') ? node.querySelector('.timeline-bubble') || node : node.matches('.unfurl-user-turn') ? node.querySelector('.unfurl-user-bubble') || node : node;
 
   function create({ messages, scroll, reducedMotion, composer = null }) {
     // The whole scroll content moves as one piece, so every row stays rigid.
@@ -273,7 +273,7 @@
         : [{ opacity: 0, offset: 0 }, { opacity: 1, offset: Math.min(60 / total, .999) }, { opacity: 1, offset: 1 }],
       { duration: total, easing: 'linear', fill: 'backwards' });
       // Anything else in the turn (read receipt and the like) arrives like an ordinary bubble.
-      if (bubble !== node) [...node.children].filter(child => child !== bubble && !child.hidden && !child.hasAttribute('hidden')).forEach(fadeIn);
+      if (bubble !== node) [...node.children].filter(child => child !== bubble && !child.contains(bubble) && !child.hidden && !child.hasAttribute('hidden')).forEach(fadeIn);
       if (!withBar) return;
 
       const ghost = document.createElement('div');

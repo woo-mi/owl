@@ -1,0 +1,32 @@
+/* Timeline content shares the reference's layout; motion remains version-specific. */
+body.ftux-prototype { --ftux-content-top:126px; --ftux-composer-bottom:24px; }
+.reply-timeline [hidden] { display:none !important; }
+.reply-timeline .timeline-message > .bubble-typing { align-self:flex-start; }
+.reply-timeline .reply-progress { padding:9px 13px; border-radius:16px; background:#f1f1f1; }
+.reply-timeline .timeline-bubble > .reply-progress { padding:0; background:none; border-radius:0; }
+body.timeline-thread-open #animation-version-picker { display:none; }
+
+/* The source timeline has no separate date or divider outside its own content. */
+body.ftux-prototype .conversation > :is(.new-divider, .date-stamp) { display:none; }
+body[data-animation-version="after-2"].ftux-prototype.has-mvp-versions[data-prototype-view="latest-oct-28"] .conversation {
+  padding-bottom:var(--composer-clearance, 124px);
+}
+body[data-animation-version="after-2"] .timeline-thread-dialog {
+  background:#fff;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+body[data-animation-version="after-2"] .timeline-thread-header {
+  height:64px;
+}
+body[data-animation-version="after-2"] .timeline-thread-scroll {
+  overflow-anchor:none;
+  scroll-behavior:auto;
+}
+body[data-animation-version="after-2"] .timeline-thread-content { margin:0 auto; }
+body[data-animation-version="after-2"] .timeline-thread-close {
+  top:16px;
+  width:36px;
+  height:36px;
+}
+body[data-animation-version="after-2"] .timeline-thread-close svg { width:20px; height:20px; }

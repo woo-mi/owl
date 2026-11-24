@@ -30,7 +30,13 @@
   });
   const BUBBLE = Object.freeze({ offsetY: 14, initialScale: .96, settleY: -1, settleScale: 1.005 });
   const REACTION = Object.freeze({ initialScale: .22, offsetY: 8, initialTilt: -14, overshoot: 1.22, overshootTilt: 8, settleScale: .94, settleTilt: -4 });
-  const UNITS = '.pen-bubble, .unfurl-user-turn, .unfurl-block, .unfurl-thread-cue';
+  // A timeline message can contain several bubbles and cards. Reveal the
+  // complete message once, while keeping standalone context and dates in order.
+  const UNITS = '.pen-bubble, .unfurl-user-turn, .unfurl-block, .unfurl-thread-cue, .timeline-message, .timeline-link-chip, .timeline-card, .timeline-context, .timeline-reference, .timeline-date, .timeline-new';
+  const WRAPPERS = '.pen-bubble-group, .unfurl-thread-detail, .timeline-section, .timeline-group';
+  const OUTGOING = '.unfurl-user-turn, .user-message, .timeline-outgoing';
+  const isAssistant = node => node.matches('.pen-bubble, .assistant-message') ||
+    (node.matches('.timeline-message') && !node.matches(OUTGOING));
 
   function create({ messages, scroll, reducedMotion }) {
     let sequence = null;
@@ -63,7 +69,7 @@
 
     function enter(node) {
       if (reducedMotion.matches) return;
-      const outgoing = node.matches('.unfurl-user-turn, .user-message');
+      const outgoing = node.matches(OUTGOING);
       node.animate([
         { opacity: 0, transform: `translateY(${BUBBLE.offsetY}px) scale(${BUBBLE.initialScale})`, transformOrigin: outgoing ? 'bottom right' : 'bottom left' },
         { opacity: 1, transform: `translateY(${BUBBLE.settleY}px) scale(${BUBBLE.settleScale})`, offset: .8, transformOrigin: outgoing ? 'bottom right' : 'bottom left' },
@@ -158,11 +164,11 @@
       sequence.wrappers.forEach(wrapper => {
         if (wrapper.contains(node)) wrapper.hidden = false;
       });
-      const assistant = node.matches('.pen-bubble');
+      const assistant = isAssistant(node);
       if (assistant) showTyping(node);
       const delay = sequence.stage === 0 ? TIMING.firstArrival : assistant
         ? Math.min(TIMING.typingMaximum, TIMING.typingMinimum + node.textContent.trim().length * TIMING.characterDelay)
-        : node.matches('.unfurl-user-turn') ? TIMING.userArrival : TIMING.previewArrival;
+        : node.matches(OUTGOING) ? TIMING.userArrival : TIMING.previewArrival;
       followLatest();
       schedule(reveal, delay);
     }
@@ -170,12 +176,15 @@
     function play() {
       finish();
       if (reducedMotion.matches) return;
-      const transcript = messages.querySelector('.pen-frame-transcript');
+      const transcript = messages.querySelector('.reply-timeline, .pen-frame-transcript');
       if (!transcript) return;
       const units = [...transcript.querySelectorAll(UNITS)].filter(node =>
         !node.closest('[hidden]') && !node.parentElement.closest(UNITS));
       if (!units.length) return;
-      const wrappers = [...transcript.querySelectorAll('.pen-bubble-group, .unfurl-thread-detail')].filter(node => !node.hidden);
+      // Groups inside a message belong to that unit, so never hide them
+      // independently: revealing their parent must reveal all original content.
+      const wrappers = [...transcript.querySelectorAll(WRAPPERS)].filter(node =>
+        !node.closest('[hidden]') && !node.closest(UNITS));
       const reactions = units.flatMap(node => [...node.querySelectorAll('.unfurl-reaction')]).filter(node => !node.hidden);
       const connectors = units.flatMap(node => [...node.querySelectorAll('.unfurl-thread-connector')]).filter(node => !node.hasAttribute('hidden'));
       sequence = { units, wrappers, reactions, connectors, stage: 0 };
@@ -208,6 +217,7 @@
       if (event.target.closest('.unfurl-show-more')) finish();
     }, true);
     window.addEventListener('mvp-workspace-open', finish);
+    window.addEventListener('animation-timeline-open', () => finish());
     reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) finish(); });
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {

@@ -2,7 +2,7 @@
   'use strict';
   // This independent snapshot always renders the copied Oct 28 V2 experience.
   const views = Object.freeze([
-    Object.freeze({ view: 'latest-oct-28', label: 'Oct 28 V2', bubbleFormat: 'aligned' })
+    Object.freeze({ view: 'latest-oct-28', label: 'Timeline', bubbleFormat: 'aligned' })
   ]);
   const variants = Object.freeze([
     Object.freeze({ id: 'v2', label: 'V2' })
