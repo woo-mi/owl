@@ -43,8 +43,7 @@
     let timer = 0;
     let pendingStep = null;
     let pendingDelay = 0;
-    let follow = true;
-    let lastScrollTop = 0;
+    const scrollFollow = window.OwlScrollFollow.create({ scroll, reducedMotion });
     const accentAnimations = new Set();
     const typing = document.createElement('div');
     typing.className = 'bubble-typing';
@@ -63,9 +62,7 @@
       }, delay);
     }
 
-    function followLatest() {
-      if (follow) scroll.scrollTo({ top: scroll.scrollHeight, behavior: reducedMotion.matches ? 'auto' : 'smooth' });
-    }
+    const followLatest = (options) => scrollFollow.followLatest(options);
 
     function enter(node) {
       if (reducedMotion.matches) return;
@@ -85,6 +82,7 @@
     }
 
     function finish() {
+      scrollFollow.cancel();
       clearTimeout(timer);
       pendingStep = null;
       hideTyping();
@@ -194,25 +192,10 @@
       connectors.forEach(node => node.setAttribute('hidden', ''));
       messages.dataset.playback = 'playing';
       scroll.classList.add('is-bubble-playback');
-      follow = true;
-      lastScrollTop = scroll.scrollTop;
+      scrollFollow.resetFollowing(true);
       prepareNext();
     }
 
-    scroll.addEventListener('scroll', () => {
-      const top = scroll.scrollTop;
-      if (top < lastScrollTop - 2) {
-        if (follow) scroll.scrollTo({ top, behavior: 'instant' });
-        follow = false;
-      } else if (top > lastScrollTop && scroll.scrollHeight - scroll.clientHeight - top < 4) follow = true;
-      lastScrollTop = top;
-    }, { passive: true });
-    scroll.addEventListener('wheel', event => {
-      if (event.deltaY < 0) {
-        if (follow) scroll.scrollTo({ top: scroll.scrollTop, behavior: 'instant' });
-        follow = false;
-      }
-    }, { passive: true });
     messages.addEventListener('click', event => {
       if (event.target.closest('.unfurl-show-more')) finish();
     }, true);
@@ -229,7 +212,7 @@
       }
     });
 
-    return Object.freeze({ play, finish, enter, showTyping, hideTyping, replyDelay: TIMING.reply });
+    return Object.freeze({ play, finish, enter, showTyping, hideTyping, followLatest, replyDelay: TIMING.reply });
   }
   window.MVPBubblePlayback = Object.freeze({ create });
 })();

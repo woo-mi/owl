@@ -135,8 +135,12 @@
       }
     }
 
-    function scrollToBottom(container) {
+    function scrollToBottom(container, { force = false } = {}) {
       if (!container) return;
+      if (container === ui['chat-scroll'] && bubblePlayback?.followLatest) {
+        bubblePlayback.followLatest({ force });
+        return;
+      }
       const requestedFromState = currentStateKey;
       requestAnimationFrame(() => {
         if (currentStateKey !== requestedFromState) return;
@@ -243,11 +247,11 @@
       ui['message-input'].value = '';
       autosize(ui['message-input']);
       updateSendButtons();
-      scrollToBottom(ui['chat-scroll']);
       ui['message-input'].focus();
       const response = value ? responseFor(value) : 'The filenames are attached to this conversation. This local preview does not read or upload file contents.';
       const sentFromState = currentStateKey;
       if (animateMessages && !reducedMotion.matches) bubblePlayback?.showTyping();
+      scrollToBottom(ui['chat-scroll'], { force:true });
       const timer = window.setTimeout(() => {
         timers.delete(timer);
         const message = makeMessage('assistant', response);

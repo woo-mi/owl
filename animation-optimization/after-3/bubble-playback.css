@@ -1,3 +1,4 @@
+.chat-scroll.has-smooth-follow { overflow-anchor:none; scroll-behavior:auto; }
 .chat-scroll.is-bubble-playback { overflow-anchor: none; }
 
 /* The reaction grows from its small thought-bubble tail. */

@@ -3,7 +3,7 @@
 Live prototype: https://woo-mi.github.io/owl/animation-optimization/
 
 The main link opens **v3** by default. V1 remains available from the picker at
-`?version=v1`; direct v2, v3, and v4 URLs continue to open their selected version.
+`?animation=v1`; direct v2, v3, and v4 URLs continue to open their selected version.
 
 The **v1**, **v2**, **v3**, and **v4** versions all use the
 conversation from `../reply-ux-pattern/?version=timeline`: 34 messages across
@@ -16,7 +16,8 @@ with Reply UX Pattern. `timeline-adapter.js` resolves assets against that source
 and reading state. Serve the repository root, not this subdirectory alone.
 
 The picker maps **v1** to the original before version, **v2** to after 1, and
-**v3** to after 3. V1 and v3 keep the original animations; v2 uses the recorded
+**v3** to after 3. V1 and v3 keep the original bubble animations; v3 adds a gentler
+automatic scroll that pauses when the reader scrolls back. V2 uses the recorded
 iMessage-style transition. The removed after 2 URL redirects to the default v3. Existing
 URLs for the remaining versions stay valid. V4 duplicates v3 and adds a smooth
 typing-to-reply height transition with synchronized scrolling and no text scaling.
