@@ -523,6 +523,7 @@
     hideTimer = null;
     dock.hidden = true;
     if (restoreFocus) returnFocus();
+    setSidebarActions(restoreFocus && keyboardInteraction);
   }
   function floatInCorner() {
     if (petVisible || dockingFlight) return;
@@ -813,7 +814,7 @@
     });
     element.addEventListener('pointerleave', scheduleSidebarClose);
     element.addEventListener('focusin', () => {
-      if (!restoringFocus) setSidebarActions(true);
+      if (!restoringFocus && keyboardInteraction) setSidebarActions(true);
     });
     element.addEventListener('focusout', scheduleSidebarClose);
   });
