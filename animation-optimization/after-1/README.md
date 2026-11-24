@@ -4,7 +4,7 @@ Prototype URL: https://woo-mi.github.io/owl/animation-optimization/after-1/
 
 Independent version of the animation optimization prototype, copied November 23,
 2026. The original experience remains at `../` as **before**. Use the top-right
-selector to switch between **before** and **after 1**.
+selector to switch between **before**, **after 1**, and **after 2**.
 
 The version retains conversation playback, replies, workspace, and Owl
 customization. Its prototype source and assets are local copies; only the version
