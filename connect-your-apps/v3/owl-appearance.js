@@ -10,11 +10,12 @@
     {id:'horns',key:'horns',label:'Horn',guidance:'Choose a horn style.'}
   ];
   const colors = [
-    ['Black','#000000'],['Brown','#A16C39'],['Red','#FB2C3F'],
+    ['Brown','#A16C39'],['Red','#FB2C3F'],
     ['Orange','#FE6A10'],['Amber','#F69312'],['Green','#13C16F'],
     ['Teal','#15B8A3'],['Blue','#1E86FC'],['Purple','#905AFA'],
-    ['Pink','#FA70AB'],['Gray','#959595']
+    ['Pink','#FA70AB']
   ];
+  const defaultColor = '#1E86FC';
   const nameButton = screen.querySelector('#appearance-edit-name');
   const nameInput = screen.querySelector('#appearance-name');
   const nameError = screen.querySelector('#appearance-name-error');
@@ -67,12 +68,12 @@
     screen.querySelectorAll('[data-appearance-color]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.appearanceColor === draft.color)));
     const preview = screen.querySelector('.owl-appearance-preview');
     preview.innerHTML = art.render(draft.studio,draft.color);
-    const colorName = colors.find(([,color]) => color === draft.color)?.[0] || 'Gray';
+    const colorName = colors.find(([,color]) => color === draft.color)?.[0] || 'Blue';
     preview.setAttribute('aria-label',`${colorName} Owl: ${tabs.map(item => art.options[item.id].find(option => option.id === draft.studio[item.key]).label + ' ' + item.label.toLowerCase()).join(', ')}`);
     renderName();
   }
   function open({name,studio,color} = {}) {
-    draft = {name:name?.trim() || "Ayush's Owl",color:colors.some(([,value]) => value === color) ? color : art.defaultColor,studio:art.normalize(studio)};
+    draft = {name:name?.trim() || "Ayush's Owl",color:colors.some(([,value]) => value === color) ? color : defaultColor,studio:art.normalize(studio)};
     original = copy(draft);
     currentTab = 'heads';
     editingName = false;
