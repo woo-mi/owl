@@ -13,6 +13,7 @@
     const sources = new Map();
     const timers = new Map();
     const mobile = window.matchMedia('(max-width: 900px)');
+    const sidebarShortcut = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘B' : 'Ctrl+B';
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const bubblePlayback = window.MVPBubblePlayback?.create({ messages: ui.messages, scroll: ui['chat-scroll'], reducedMotion });
     let attachmentNames = [];
@@ -281,8 +282,9 @@
       const button = ui['sidebar-close'];
       button?.setAttribute('aria-expanded', String(expanded));
       button?.setAttribute('aria-controls', 'sidebar');
+      button?.setAttribute('aria-keyshortcuts', 'Meta+B Control+B');
       button?.setAttribute('aria-label', expanded ? 'Collapse sidebar' : 'Expand sidebar');
-      if (button) button.title = expanded ? 'Collapse sidebar' : 'Expand sidebar';
+      if (button) button.title = `${expanded ? 'Collapse' : 'Expand'} sidebar (${sidebarShortcut})`;
     }
 
     function setSidebarOpen(open, focus = false) {
@@ -302,8 +304,9 @@
         }
       }
       document.querySelector('.main').inert = sidebarOpen;
-      const versions = document.querySelector('.prototype-versions');
-      if (versions) versions.inert = sidebarOpen;
+      document.querySelectorAll('.prototype-versions, #animation-version-picker').forEach(versions => {
+        versions.inert = sidebarOpen;
+      });
       syncSidebarButton();
       if (focus) ui['sidebar-close']?.focus();
     }
@@ -552,6 +555,16 @@
     });
     document.addEventListener('keydown', (event) => {
       if (window.MVPWorkspace?.isOpen()) return;
+      if ((event.metaKey || event.ctrlKey) && !event.altKey && event.key.toLowerCase() === 'b' &&
+          !event.target.closest('input, textarea, [contenteditable="true"]')) {
+        event.preventDefault();
+        if (mobile.matches) setSidebarOpen(!sidebarOpen, true);
+        else {
+          setDesktopCollapsed(!document.body.classList.contains('sidebar-collapsed'));
+          ui['sidebar-close']?.focus({ preventScroll: true });
+        }
+        return;
+      }
       if (event.key === 'Escape') {
         if (document.querySelector('.prototype-versions [aria-haspopup="menu"][aria-expanded="true"]')) return;
         if (ui['thinking-menu'] && !ui['thinking-menu'].hidden) {
@@ -564,7 +577,10 @@
         const focusable = [...ui.sidebar.querySelectorAll('button:not([disabled]), a[href], input, [tabindex="0"]')].filter((node) => node.getClientRects().length);
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
-        if (event.shiftKey && document.activeElement === first) {
+        if (!focusable.includes(document.activeElement)) {
+          event.preventDefault();
+          (event.shiftKey ? last : first)?.focus();
+        } else if (event.shiftKey && document.activeElement === first) {
           event.preventDefault();
           last?.focus();
         } else if (!event.shiftKey && document.activeElement === last) {

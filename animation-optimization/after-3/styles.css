@@ -11,18 +11,19 @@
 /* Navigation matches the supplied expanded and compact references. */
 .sidebar{padding:2px 6px 108px;overflow:hidden;color:#333444;-webkit-font-smoothing:antialiased;transition:width 220ms ease}
 .brand{height:40px;padding:0;position:relative;flex-shrink:0}
-.brand-logo{display:block;flex-shrink:0;width:126px;height:40px;overflow:hidden}
+.brand-logo{display:block;flex-shrink:0;width:126px;height:40px;overflow:hidden;transition:opacity 120ms ease}
 .brand .icon-button{position:fixed;top:6px;left:219px;margin:0;width:32px;height:32px;padding:0;display:grid;place-items:center;color:#626268;z-index:35}
 .brand .icon-button .native-icon{display:block;width:20px;height:20px;transform:none}
+.brand .icon-button{transition:opacity 120ms ease,background-color 120ms ease}
 .brand .icon-button:hover{background:#e4e6ea}
 .sidebar nav{margin-top:11px;gap:0;flex-shrink:0}
-.nav-item{height:36px;border-radius:8px;gap:12px;padding:8px;width:248px;color:#333444;flex-shrink:0}
+.nav-item{height:36px;border-radius:8px;gap:12px;padding:8px;width:248px;color:#333444;flex-shrink:0;transition:width 220ms ease}
 .sidebar .nav-item.is-active{background:transparent}
 .sidebar .nav-item:hover{background:#ebeced}
 .nav-icon{display:block;position:relative;width:20px;height:20px;flex-shrink:0}
 .nav-icon>svg{display:block;width:20px;height:20px}
 .nav-icon>img{display:block;width:20px;height:20px;object-fit:contain}
-.nav-label{overflow:hidden;white-space:nowrap;text-align:left}
+.nav-label{display:block;flex-shrink:0;max-width:200px;overflow:hidden;white-space:nowrap;text-align:left;opacity:1;transition:max-width 220ms ease,opacity 140ms ease}
 .sidebar .recent{margin-top:32px;overflow:auto;scrollbar-width:thin;scrollbar-color:#d9d9dd transparent;flex:1}
 .recent-heading{display:flex;align-items:center;justify-content:space-between;height:20px;padding:0 4px!important;font-size:13px!important;font-weight:500!important;line-height:20px;margin:0 0 6px!important;color:#63666d!important}
 #recent-search-button{display:grid;place-items:center;padding:0;width:24px;height:24px}
@@ -37,22 +38,25 @@
 body.sidebar-collapsed{--sidebar-width:48px}
 body.sidebar-collapsed .main{margin-left:48px}
 body.sidebar-collapsed .toast{left:calc(50% + 24px)}
-.sidebar.is-compact{padding:8px 4px 108px}
-.sidebar.is-compact .brand{height:76px;align-items:flex-start}
-.sidebar.is-compact .brand-logo{width:40px}
-.sidebar.is-compact .brand .icon-button{left:8px;top:61px}
-.sidebar.is-compact .nav-label{display:none}
-.sidebar.is-compact .nav-item{width:40px;justify-content:center;padding:8px 0;gap:0}
-.sidebar.is-compact .sidebar-footer .nav-item{padding:0}
-.sidebar.is-compact .recent{display:block;flex:none;margin:6px 6px 0;width:28px;overflow:visible;border-top:1px solid #e6e6e6}
-.sidebar.is-compact .recent-heading{width:40px;height:32px;margin:12px 0 0 -6px!important;padding:0!important;justify-content:center}
+.sidebar.is-compact{padding:2px 4px 108px}
+.sidebar.is-compact .brand{height:40px;align-items:center}
+.sidebar.is-compact .brand-logo{width:40px;margin-left:2px}
+.sidebar.is-compact .brand .icon-button{left:8px;top:6px;opacity:0}
+.sidebar.is-compact .brand:hover .brand-logo,.sidebar.is-compact .brand:has(.icon-button:focus-visible) .brand-logo{opacity:0}
+.sidebar.is-compact .brand:hover .icon-button,.sidebar.is-compact .brand .icon-button:focus-visible{opacity:1}
+.sidebar.is-compact .nav-label{display:block;max-width:0;opacity:0}
+.sidebar.is-compact .nav-item{width:40px;justify-content:flex-start;padding:8px 10px;gap:12px}
+.sidebar.is-compact .sidebar-footer .nav-item{padding:0;gap:2px}
+.sidebar.is-compact .recent{display:block;flex:none;margin:32px 0 0;width:40px;overflow:visible;border-top:0}
+.sidebar.is-compact .recent-heading{width:40px;height:20px;margin:0 0 6px!important;padding:0!important;justify-content:center}
 .sidebar.is-compact .recent-heading>span,.sidebar.is-compact .recent-list,.sidebar.is-compact .recent-filter{display:none}
-.sidebar.is-compact #recent-search-button{width:32px;height:32px}
+.sidebar.is-compact #recent-search-button{width:24px;height:24px}
 @media(max-width:900px){
  body{--sidebar-width:48px}.main{margin-left:48px!important}
  .sidebar{width:48px;transform:none;z-index:40}
  .sidebar.is-open{width:min(260px,calc(100vw - 48px));box-shadow:8px 0 24px #00000014}
  .sidebar-backdrop{z-index:35}
+ body.sidebar-open :is(.prototype-versions,#animation-version-picker){visibility:hidden}
  .toast{left:calc(50% + 24px)}
 }
 
