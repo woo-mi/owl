@@ -6,7 +6,14 @@
   <meta name="theme-color" content="#ffffff">
   <title>Connect your apps · Owl</title>
   <meta name="description" content="Connect your apps to Owl. An interactive onboarding prototype.">
-  <link rel="canonical" href="https://woo-mi.github.io/owl/connect-your-apps/">
+  <link rel="canonical" href="https://woo-mi.github.io/owl/connect-your-apps/v3/">
+  <script>
+    // Keep bookmarked steps and connection options when opening the default.
+    const destination = new URL('./v3/', window.location.href);
+    destination.search = window.location.search;
+    destination.hash = window.location.hash;
+    window.location.replace(destination.href);
+  </script>
   <link rel="icon" href="assets/owl-mark.svg" type="image/svg+xml">
   <link rel="preload" href="assets/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/egg-white-render.png" as="image">
