@@ -41,9 +41,8 @@
       ${visibleVersions.map(version => `<li role="none"><button type="button" class="prototype-version-option reply-version-option" role="menuitemradio" aria-checked="false" tabindex="-1" data-reply-version="${version}">${versionLabel(version)}</button></li>`).join('')}
     </ul>
   </div><div class="reply-theme-control" role="group" aria-label="Color mode" hidden>
-    <span class="reply-theme-icon" data-theme-label="light" title="Light mode" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></span>
-    <button id="reply-theme-toggle" class="reply-theme-toggle" type="button" role="switch" aria-label="Dark mode" aria-checked="true"><span class="reply-theme-thumb" aria-hidden="true"></span></button>
-    <span class="reply-theme-icon" data-theme-label="dark" title="Dark mode" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></span>
+    <button class="reply-theme-button" type="button" data-theme="dark" aria-label="Dark mode" aria-pressed="false" title="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <button class="reply-theme-button" type="button" data-theme="light" aria-label="Light mode" aria-pressed="false" title="Light mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></button>
   </div>`;
   document.body.prepend(control);
   const trigger = control.querySelector('.reply-version-trigger');
@@ -52,7 +51,7 @@
   const options = [...menu.querySelectorAll('button')];
   const versionControl = control.querySelector('.prototype-control');
   const themeControl = control.querySelector('.reply-theme-control');
-  const themeToggle = control.querySelector('.reply-theme-toggle');
+  const themeButtons = [...themeControl.querySelectorAll('.reply-theme-button')];
 
   function focusOption(option) {
     if (!option) return;
@@ -71,14 +70,14 @@
       const availableOptions = options.filter(option => !option.parentElement.hidden);
       focusOption(availableOptions.find(option => option.dataset.replyVersion === selected) || availableOptions[0]);
     }
-    else if (restoreFocus && !control.hidden) (versionControl.hidden ? themeToggle : trigger).focus({preventScroll:true});
+    else if (restoreFocus && !control.hidden) (versionControl.hidden ? themeButtons.find(button => button.getAttribute('aria-pressed') === 'true') : trigger).focus({preventScroll:true});
   }
   function sync() {
     const links = linksVersions.includes(selected);
     const themeOnly = selected === 'timeline-unread-dark';
-    const hasThemeToggle = themeOnly || links;
+    const hasThemePicker = themeOnly || links;
     versionControl.hidden = themeOnly;
-    themeControl.hidden = !hasThemeToggle;
+    themeControl.hidden = !hasThemePicker;
     control.classList.toggle('has-theme-picker', links);
     control.setAttribute('aria-label', links ? 'Prototype use case and color mode' : themeOnly ? 'Prototype color mode' : 'Reply UX Pattern versions');
     if (themeOnly) setOpen(false);
@@ -102,7 +101,7 @@
     const theme = (themeOnly && requestedTheme !== 'light') || (links && requestedTheme === 'dark') ? 'dark' : 'light';
     document.documentElement.dataset.replyTheme = theme;
     document.body.dataset.replyTheme = theme;
-    themeToggle.setAttribute('aria-checked', String(theme === 'dark'));
+    themeButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.theme === theme)));
     document.body.dataset.replyExperience = unread ? 'unread' : selected;
     document.body.dataset.replyVersion = selected;
     const themeColor = getComputedStyle(document.body).getPropertyValue('--reply-theme-color').trim() || (theme === 'dark' ? '#17191d' : '#ffffff');
@@ -125,9 +124,10 @@
     if (changed) window.dispatchEvent(new CustomEvent('reply-version-change', {detail:{version:selected}}));
   }
   trigger.addEventListener('click', () => setOpen(menu.hidden));
-  themeToggle.addEventListener('click', () => {
+  themeButtons.forEach(button => button.addEventListener('click', () => {
+    const nextTheme = button.dataset.theme;
+    if (nextTheme === document.body.dataset.replyTheme) return;
     const url = new URL(location.href);
-    const nextTheme = document.body.dataset.replyTheme === 'dark' ? 'light' : 'dark';
     const defaultTheme = selected === 'timeline-unread-dark' ? 'dark' : 'light';
     if (nextTheme === defaultTheme) url.searchParams.delete('theme');
     else url.searchParams.set('theme', nextTheme);
@@ -136,7 +136,7 @@
     sync();
     window.dispatchEvent(new CustomEvent('reply-theme-change', {detail:{theme:nextTheme}}));
     schedulePosition();
-  });
+  }));
   trigger.addEventListener('keydown', event => {
     if (!['ArrowDown', 'ArrowUp'].includes(event.key)) return;
     event.preventDefault();
