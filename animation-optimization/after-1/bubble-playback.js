@@ -44,6 +44,15 @@
 
     const enter = motion.enter;
 
+    function change(update, options = {}) {
+      const incoming = [...(options.incoming || [])];
+      const wasTyping = typing.isConnected;
+      return motion.change(() => {
+        update();
+        if (!wasTyping && typing.isConnected) incoming.push(typing);
+      }, { ...options, incoming, morphFrom: typing });
+    }
+
     function hideTyping() { typing.remove(); }
     function showTyping(before) {
       hideTyping();
@@ -112,7 +121,7 @@
     function reveal() {
       if (!sequence) return;
       const node = sequence.units[sequence.stage];
-      motion.change(() => {
+      change(() => {
         hideTyping();
         node.hidden = false;
       }, { incoming: [node] });
@@ -133,7 +142,7 @@
           if (wrapper.contains(node)) wrapper.hidden = false;
         });
         if (assistant) showTyping(node);
-      });
+      }, { incoming: assistant ? [typing] : [] });
       const delay = sequence.stage === 0 ? TIMING.firstArrival : assistant
         ? Math.min(TIMING.typingMaximum, TIMING.typingMinimum + node.textContent.trim().length * TIMING.characterDelay)
         : node.matches('.unfurl-user-turn') ? TIMING.userArrival : TIMING.previewArrival;
@@ -158,6 +167,7 @@
       connectors.forEach(node => node.setAttribute('hidden', ''));
       messages.dataset.playback = 'playing';
       scroll.classList.add('is-bubble-playback');
+      motion.resetFollowing(true);
       prepareNext();
     }
 
@@ -183,7 +193,7 @@
       }
     });
 
-    return Object.freeze({ play, finish, enter, showTyping, hideTyping, change: motion.change, toBottom: motion.toBottom, replyDelay: TIMING.reply });
+    return Object.freeze({ play, finish, enter, showTyping, hideTyping, change, toBottom: motion.toBottom, resetFollowing: motion.resetFollowing, replyDelay: TIMING.reply });
   }
   window.MVPBubblePlayback = Object.freeze({ create });
 })();

@@ -13,11 +13,12 @@ variant, and bubble-format IDs remain unchanged.
 
 ## Motion in after 1
 
-- Conversation height and scroll position share a 420ms `cubic-bezier(.2,.8,.2,1)` transition.
-- Messages fade and rise 8px over 300ms, without scaling or overshoot.
+- Conversation height, scroll position, and bubble arrivals share a 480ms `cubic-bezier(.2,.8,.2,1)` transition, inspired by the iMessage reference recording.
+- Sent bubbles lift 48px into place while earlier messages glide upward. Incoming bubbles use a quieter 18px entrance. All arrivals retain their place in the conversation to avoid overlapping earlier messages.
+- The typing pill expands into the reply bubble. Dots dissolve over 100ms, and text fades in from 80–300ms at its final size; the opening surface reveals the text without scaling or reflowing it.
 - Typing-to-reply swaps and Show more use the same measured layout transition.
 - Scrolling upward interrupts automatic following; an explicit send resumes it.
-- Reduced motion, interrupted transitions, view changes, and resizing release temporary geometry.
+- Reduced motion, interrupted transitions, view changes, and resizing release temporary geometry and bubble surfaces. Touch scrolling resumes following when the reader returns to the bottom.
 
 The original message content and demonstration pacing are retained. Reaction and
 connector reveals are quieter; the typing dots use a slower, smaller movement.

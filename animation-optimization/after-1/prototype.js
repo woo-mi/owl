@@ -367,6 +367,7 @@
       autosize(ui['message-input']);
       updateSendButtons();
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
+      bubblePlayback?.resetFollowing();
       syncAgentHeader();
       document.title = `Animation optimization · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
       if (!previous && nextView === 'latest-oct-28' && !location.hash) bubblePlayback?.play();
