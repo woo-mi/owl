@@ -430,7 +430,7 @@
   const body = h('div', { class: 'mt-body' }, sections.map(sectionElement));
   const panel = h('aside', { class: 'mt-panel', 'aria-label': 'Motion tuner' },
     h('div', { class: 'mt-head' },
-      h('div', {}, h('div', { class: 'mt-title', text: 'Motion tuner' }), h('div', { class: 'mt-sub', text: 'after 1 · applies to the next motion' })),
+      h('div', {}, h('div', { class: 'mt-title', text: 'Motion tuner' }), h('div', { class: 'mt-sub', text: 'v2 · applies to the next motion' })),
       h('div', { class: 'mt-head-actions' },
         h('button', { type: 'button', class: 'mt-icon', 'aria-label': 'Collapse panel', text: '–', onclick: () => panel.classList.toggle('is-collapsed') }),
         h('button', { type: 'button', class: 'mt-icon', 'aria-label': 'Close panel', text: '×', onclick: () => { panel.remove(); document.body.classList.remove('motion-tuning'); } }))),

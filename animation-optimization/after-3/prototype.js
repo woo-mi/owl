@@ -358,7 +358,7 @@
       updateSendButtons();
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
       syncAgentHeader();
-      document.title = `Animation optimization · after 3 · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
+      document.title = `Animation optimization · v3 · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
       if (!previous && nextView === 'latest-oct-28' && !location.hash) bubblePlayback?.play();
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
       else if (leavingReplies && replyViews[view]) {

@@ -1,17 +1,17 @@
-# Animation optimization · after 1
+# Animation optimization · v2
 
 Prototype URL: https://woo-mi.github.io/owl/animation-optimization/after-1/
 
 Independent version of the animation optimization prototype, copied November 23,
 2026. The original experience remains at `../` as **before**. Use the top-right
-selector to switch between **before**, **after 1**, **after 2**, and **after 3**.
+selector to switch between **v1**, **v2**, and **v3**.
 
 The version retains conversation playback, replies, workspace, and Owl
 customization. Its prototype source and assets are local copies; only the version
 selector script and stylesheet are shared with the parent directory. Inner view,
 variant, and bubble-format IDs remain unchanged.
 
-## Motion in after 1
+## Motion in v2
 
 Measured from a 60fps recording of Messages on macOS (Nov 23, 2026, 9:20 PM). Bubble
 positions and opacities were tracked frame by frame and fitted to the curves below.

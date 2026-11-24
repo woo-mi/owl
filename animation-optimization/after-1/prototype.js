@@ -377,7 +377,7 @@
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
       bubblePlayback?.resetFollowing();
       syncAgentHeader();
-      document.title = `Animation optimization · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
+      document.title = `Animation optimization · v2 · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
       if (!previous && nextView === 'latest-oct-28' && !location.hash && !tuning) bubblePlayback?.play();
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
       else if (leavingReplies && replyViews[view]) {
