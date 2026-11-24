@@ -4,39 +4,37 @@
   scrollbar-gutter: stable;
 }
 
-/* Height is owned by one cancellable motion controller, only while changing.
-   Extra clip room protects the existing reaction tails and thread connectors. */
-.messages.is-changing-height {
-  overflow: clip;
-  overflow-clip-margin: 28px;
-}
 .messages > *, .pen-frame-transcript > *, .pen-bubble-group > * {
   flex-shrink: 0;
 }
 
-/* Only the empty bubble surface changes size. Text keeps its final layout. */
+/* The fading typing ghost is positioned against the message column. */
 .messages { position: relative; isolation: isolate; }
-.bubble-morph-shell {
+
+/* Bubbles grow from the corner their tail sits in. */
+.bubble-typing, .assistant-message, .pen-frame-transcript .pen-bubble { transform-origin: 0 100%; }
+.user-message, .unfurl-user-bubble { transform-origin: 100% 50%; }
+
+/* A sent bubble leaves the composer from a fixed layer above the dock: a bar
+   stretches back toward the field and collapses into the bubble. */
+.send-ghost { position: fixed; z-index: 40; pointer-events: none; transform-origin: 100% 50%; }
+.send-ghost-bubble {
+  position: absolute !important;
+  inset: 0;
+  box-sizing: border-box;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+.send-ghost-bar {
   position: absolute;
-  z-index: -1;
-  pointer-events: none;
-  overflow: hidden;
-  transform-origin: top left;
-}
-.is-morphing-bubble { background-color: transparent !important; }
-.bubble-morph-dots {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  width: 50px;
-  height: 32px;
-}
-.bubble-morph-dots span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #7b7d82;
+  top: 0;
+  bottom: 0;
+  right: 100%;
+  width: 0;
+  margin-right: -18px;
+  background: var(--blue);
+  border-radius: 16px 0 0 16px;
 }
 
 /* The reaction grows from its small thought-bubble tail. */

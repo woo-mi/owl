@@ -14,7 +14,8 @@
     const timers = new Map();
     const mobile = window.matchMedia('(max-width: 900px)');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const bubblePlayback = window.MVPBubblePlayback?.create({ messages: ui.messages, scroll: ui['chat-scroll'], reducedMotion });
+    const bubblePlayback = window.MVPBubblePlayback?.create({ messages: ui.messages, scroll: ui['chat-scroll'], reducedMotion, composer: ui['message-input'] });
+    const TYPING_DELAY = 600; // ms after a send, once the sent bubble has settled and the dots appear
     let attachmentNames = [];
     let sourceSequence = 0;
     let toastTimer;
@@ -242,7 +243,6 @@
       const appendUser = () => {
         bubblePlayback?.finish({ cancelMotion: false });
         ui.messages.append(userMessage);
-        if (animateMessages && !reducedMotion.matches) bubblePlayback?.showTyping();
       };
       if (bubblePlayback) bubblePlayback.change(appendUser, { incoming: [userMessage], pin: true });
       else appendUser();
@@ -255,6 +255,13 @@
       ui['message-input'].focus({ preventScroll: true });
       const response = value ? responseFor(value) : 'The filenames are attached to this conversation. This local preview does not read or upload file contents.';
       const sentFromState = currentStateKey;
+      if (animateMessages && bubblePlayback && !reducedMotion.matches) {
+        const typingTimer = window.setTimeout(() => {
+          timers.delete(typingTimer);
+          if (currentStateKey === sentFromState) bubblePlayback.change(() => bubblePlayback.showTyping(), { pin: true });
+        }, TYPING_DELAY);
+        timers.set(typingTimer, sentFromState);
+      }
       const timer = window.setTimeout(() => {
         timers.delete(timer);
         const message = makeMessage('assistant', response);

@@ -13,12 +13,22 @@ variant, and bubble-format IDs remain unchanged.
 
 ## Motion in after 1
 
-- Conversation height, scroll position, and bubble arrivals share a 480ms `cubic-bezier(.2,.8,.2,1)` transition, inspired by the iMessage reference recording.
-- Sent bubbles lift 48px into place while earlier messages glide upward. Incoming bubbles use a quieter 18px entrance. All arrivals retain their place in the conversation to avoid overlapping earlier messages.
-- The typing pill expands into the reply bubble. Dots dissolve over 100ms, and text fades in from 80–300ms at its final size; the opening surface reveals the text without scaling or reflowing it.
-- Typing-to-reply swaps and Show more use the same measured layout transition.
-- Scrolling upward interrupts automatic following; an explicit send resumes it.
-- Reduced motion, interrupted transitions, view changes, and resizing release temporary geometry and bubble surfaces. Touch scrolling resumes following when the reader returns to the bottom.
+Measured from a 60fps recording of Messages on macOS (Nov 23, 2026, 9:20 PM). Bubble
+positions and opacities were tracked frame by frame and fitted to the curves below.
+The values live in the `MOTION` table at the top of `chat-motion.js`.
+
+| Moment | What moves |
+| --- | --- |
+| Send | The thread glides up for 370ms on `cubic-bezier(.30, .86, .37, 1)`. The typed text becomes a blue bar over the composer that collapses into the bubble (158ms). The bubble rises from the composer on a spring (damping .72, 554ms period, about 4% overshoot) while growing from 0.76 to full size. |
+| Typing dots | Appear 600ms after a send. The thread glides up for 290ms after a 40ms delay, and the bubble pops in on a spring (damping .51, 324ms period, about 17% overshoot). |
+| Reply | Fades in over 280ms and scales .944 → 1 over 90ms while the typing bubble fades out beneath it. |
+| Arrival | The thread glides up for 215ms and the bubble fades in over 310ms. It rides the thread with no lift of its own. |
+| Switching views | A hard cut, as in the recording. |
+
+- Everything moves with `transform` and `opacity`. The final layout and scroll position apply immediately, then the difference is animated away on the compositor. Height and `scrollTop` are never animated frame by frame.
+- Interrupting a motion (a second send, Show more) starts from where the bubbles and thread visibly are, so nothing jumps.
+- Scrolling upward interrupts automatic following; an explicit send resumes it. Touch scrolling resumes following when the reader returns to the bottom.
+- Reduced motion, view changes, and resizing release temporary geometry and ghost elements.
 
 The original message content and demonstration pacing are retained. Reaction and
 connector reveals are quieter; the typing dots use a slower, smaller movement.

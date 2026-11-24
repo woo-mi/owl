@@ -1,4 +1,4 @@
-/* AFTER 1: coordinated height/scroll changes; restrained arrivals and reactions. */
+/* AFTER 1: iMessage motion measured from a recording (see chat-motion.js); restrained reactions and connectors. */
 (() => {
   'use strict';
   const TIMING = Object.freeze({
@@ -18,12 +18,12 @@
   });
   const UNITS = '.pen-bubble, .unfurl-user-turn, .unfurl-block, .unfurl-thread-cue';
 
-  function create({ messages, scroll, reducedMotion }) {
+  function create({ messages, scroll, reducedMotion, composer = null }) {
     let sequence = null;
     let timer = 0;
     let pendingStep = null;
     let pendingDelay = 0;
-    const motion = window.OwlChatMotion.create({ messages, scroll, reducedMotion });
+    const motion = window.OwlChatMotion.create({ messages, scroll, reducedMotion, composer });
     const accentAnimations = new Set();
     const typing = document.createElement('div');
     typing.className = 'bubble-typing';

@@ -1,226 +1,335 @@
 /*
- * AFTER 1 — one clock for conversation growth and its scroll position.
- * 0ms       measure the current, possibly interrupted presentation
- * 0–480ms   conversation, scroll, and message placement settle on one curve
- * 0–480ms   typing pill expands into the reply; outgoing bubbles lift into place
- * 0–100ms   typing dots dissolve as the bubble opens
- * 80–300ms  reply text fades in at its final size, without scaling or reflow
- * settled   release all temporary geometry; the layout is natural again
+ * AFTER 1 — iMessage motion, measured frame by frame.
+ *
+ * Source: a 60fps screen recording of Messages on macOS (Nov 23, 2026, 9:20 PM).
+ * Bubble positions and opacities were tracked in every frame and fitted to the
+ * curves below, so these numbers are measurements, not taste.
+ *
+ * SEND            0ms  the typed text becomes a blue bar over the composer
+ *                 0ms  the thread glides up for 370ms on cubic-bezier(.30, .86, .37, 1)
+ *                25ms  the bubble rises from the composer on a spring
+ *                      (damping .72, 554ms period, ~4% overshoot)
+ *            0–158ms   the bar collapses toward the bubble and hands off at 0.76 scale
+ *          210–560ms   the bubble grows from 0.76 to full size
+ * TYPING DOTS    40ms  the thread glides up for 290ms
+ *               140ms  the bubble pops in on a spring (damping .51, 324ms period, ~17% overshoot)
+ * REPLY           0ms  the reply fades in over 280ms and scales .944 → 1 over 90ms
+ *                 0ms  the typing bubble fades out beneath it
+ * ARRIVAL        90ms  the thread glides up for 215ms; the bubble fades in over 310ms
+ *                      and rides the thread with no lift of its own
+ * SWITCHING       0ms  a hard cut. The recording shows no transition at all.
+ *
+ * Only transform and opacity move. The final layout and scroll position land
+ * immediately, then the visual difference is animated away on the compositor.
+ * Nothing animates height or scrollTop frame by frame, so a busy main thread
+ * cannot make the thread and its bubbles drift apart.
  */
 (() => {
   'use strict';
-  const MOTION = Object.freeze({
-    layout: 480,
-    entrance: 300,
-    textDelay: 80,
-    dotsExit: 100,
-    offset: 18,
-    sendLift: 48,
-    easing: 'cubic-bezier(.2, .8, .2, 1)',
-    bottomThreshold: 32
-  });
-  // The same cubic curve as the CSS animations, sampled for height + scroll.
-  function ease(progress) {
-    let low = 0, high = 1, t = progress;
-    const cubic = (a, b, v) => 3 * (1 - v) ** 2 * v * a + 3 * (1 - v) * v ** 2 * b + v ** 3;
-    for (let i = 0; i < 14; i++) {
-      if (cubic(.2, .2, t) < progress) low = t;
-      else high = t;
-      t = (low + high) / 2;
-    }
-    return progress === 1 ? 1 : cubic(.8, 1, t);
+
+  function deepFreeze(object) {
+    Object.values(object).forEach(value => { if (value && typeof value === 'object') deepFreeze(value); });
+    return Object.freeze(object);
   }
 
-  function create({ messages, scroll, reducedMotion }) {
-    let frame = 0;
+  // curve: cubic-bezier control points. zeta/omega: damping ratio and natural
+  // frequency (rad/s) of a spring. All times are milliseconds.
+  const MOTION = deepFreeze({
+    sampleMs: 12,
+    bottomThreshold: 32,
+    send: {
+      shift: { delay: 0, duration: 370, curve: [.30, .86, .37, 1] },
+      flight: { delay: 25, zeta: .72, omega: 11.34, settle: 850 },
+      bar: { duration: 158, curve: [.63, .57, .46, .70], inset: 14, alpha: .62 },
+      grow: { from: .76, delay: 52, duration: 354, curve: [.26, .20, .35, 1] },
+      minFlight: 24
+    },
+    typing: {
+      shift: { delay: 40, duration: 290, curve: [.68, .36, .32, .70] },
+      pop: { delay: 140, zeta: .51, omega: 19.4, settle: 540, from: .1, fade: 110 }
+    },
+    reply: {
+      fade: { duration: 280, curve: [.36, .065, .43, 1] },
+      scale: { from: .944, duration: 90, curve: [.20, .80, .20, 1] },
+      ghostFade: 200
+    },
+    arrive: {
+      shift: { delay: 90, duration: 215, curve: [0, .35, .76, .70] },
+      fade: { duration: 310, curve: [.57, .66, .48, 1] }
+    },
+    scroll: { base: 240, perPx: .35, extra: 320, curve: [.30, .86, .37, 1] }
+  });
+
+  const css = curve => `cubic-bezier(${curve.join(', ')})`;
+  const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
+
+  // Progress (0 → 1) of a cubic-bezier timing function, matching the browser's own.
+  function bezier([x1, y1, x2, y2]) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const x = s => ((ax * s + bx) * s + cx) * s;
+    const y = s => ((ay * s + by) * s + cy) * s;
+    const slope = s => (3 * ax * s + 2 * bx) * s + cx;
+    return progress => {
+      if (progress <= 0) return 0;
+      if (progress >= 1) return 1;
+      let s = progress;
+      for (let i = 0; i < 8; i++) {
+        const error = x(s) - progress;
+        if (Math.abs(error) < 1e-6) return y(s);
+        const d = slope(s);
+        if (Math.abs(d) < 1e-6) break;
+        s -= error / d;
+      }
+      let low = 0, high = 1;
+      s = progress;
+      for (let i = 0; i < 24; i++) {
+        const error = x(s) - progress;
+        if (Math.abs(error) < 1e-6) break;
+        if (error > 0) high = s; else low = s;
+        s = (low + high) / 2;
+      }
+      return y(s);
+    };
+  }
+
+  // Step response of an underdamped spring: 0 → overshoot → 1. Time is in seconds.
+  function spring({ zeta, omega }) {
+    const damped = omega * Math.sqrt(1 - zeta * zeta);
+    const ratio = zeta * omega / damped;
+    return t => t <= 0 ? 0 : 1 - Math.exp(-zeta * omega * t) * (Math.cos(damped * t) + ratio * Math.sin(damped * t));
+  }
+
+  // Springs have no CSS equivalent that every browser supports, so they are
+  // sampled into finely spaced keyframes and played back linearly.
+  function keyframes(duration, frame) {
+    const count = Math.max(2, Math.round(duration / MOTION.sampleMs));
+    return Array.from({ length: count + 1 }, (_, i) => ({ offset: i / count, ...frame(i === count ? duration : (i / count) * duration) }));
+  }
+
+  const UNIT = '.pen-bubble, .unfurl-user-turn, .unfurl-block, .unfurl-thread-cue';
+  const UNITS = `${UNIT}, .bubble-typing, [data-demo-message]`;
+  const isOutgoing = node => node.matches('.unfurl-user-turn, .user-message');
+  const isReply = node => node.matches('.pen-bubble, .assistant-message');
+  const isTyping = node => node.matches('.bubble-typing');
+  const bubbleOf = node => node.matches('.unfurl-user-turn') ? node.querySelector('.unfurl-user-bubble') || node : node;
+
+  function create({ messages, scroll, reducedMotion, composer = null }) {
+    // The whole scroll content moves as one piece, so every row stays rigid.
+    const content = messages.closest('.conversation') || messages;
     let follow = true;
     let expectedTop = scroll.scrollTop;
     let touching = false;
-    let finishLayout = null;
-    let animationStart = null;
-    const animations = new Set();
-    const cleanups = new Set();
-    const surfaces = new Map();
-    const originalHeight = messages.style.height;
-    const units = () => [...messages.querySelectorAll('.pen-bubble, .unfurl-user-turn, .unfurl-block, .unfurl-thread-cue, .bubble-typing, [data-demo-message]')]
-      .filter(node => !node.closest('[hidden]') && !node.parentElement.closest('.pen-bubble, .unfurl-user-turn, .unfurl-block, .unfurl-thread-cue'));
+    const shifts = new Set();    // thread glides: cancelled and re-measured on every change
+    const locals = new Set();    // per-bubble motion: left running when a change interrupts
+    const cleanups = new Set();  // temporary elements (ghosts) to remove
+    const units = () => [...messages.querySelectorAll(UNITS)]
+      .filter(node => !node.closest('[hidden]') && !node.parentElement.closest(UNIT));
     const maxScroll = () => Math.max(0, scroll.scrollHeight - scroll.clientHeight);
     const writeScroll = top => {
       scroll.scrollTop = top;
       expectedTop = scroll.scrollTop;
     };
+    const motionOff = () => reducedMotion.matches || document.hidden;
 
-    function track(animation) {
-      if (animationStart !== null) animation.startTime = animationStart;
-      animations.add(animation);
-      const release = () => animations.delete(animation);
+    function play(set, node, frames, options) {
+      const animation = node.animate(frames, options);
+      set.add(animation);
+      const release = () => set.delete(animation);
       animation.addEventListener('finish', release, { once: true });
       animation.addEventListener('cancel', release, { once: true });
       return animation;
     }
 
-    function enter(node, { outgoing = false } = {}) {
-      if (reducedMotion.matches || document.hidden) return;
-      // Enter below the new row, then follow the shared upward scroll. Keeping
-      // its place in the flow avoids overlapping the preceding message.
-      const offset = outgoing ? MOTION.sendLift : MOTION.offset;
-      track(node.animate([
-        { opacity: 0, transform: `translateY(${offset}px)` },
-        { opacity: 1, transform: 'translateY(0)' }
-      ], { duration: MOTION.layout, easing: MOTION.easing }));
+    function removeWith(element, animation) {
+      const remove = () => {
+        element.remove();
+        cleanups.delete(remove);
+      };
+      cleanups.add(remove);
+      animation.addEventListener('finish', remove, { once: true });
+      animation.addEventListener('cancel', remove, { once: true });
     }
 
-    function morph(node, origin) {
-      const bounds = messages.getBoundingClientRect();
-      const destination = node.getBoundingClientRect();
-      const appearance = getComputedStyle(node);
-      const shell = document.createElement('div');
-      shell.className = 'bubble-morph-shell';
-      shell.setAttribute('aria-hidden', 'true');
-      Object.assign(shell.style, {
-        left: `${destination.left - bounds.left}px`,
-        top: `${destination.top - bounds.top}px`,
-        width: `${destination.width}px`,
-        height: `${destination.height}px`,
-        borderRadius: appearance.borderRadius,
-        backgroundColor: appearance.backgroundColor
-      });
-      const dots = document.createElement('div');
-      dots.className = 'bubble-morph-dots';
-      dots.innerHTML = '<span></span><span></span><span></span>';
-      shell.append(dots);
-      messages.append(shell);
-      surfaces.set(node, shell);
-      const background = appearance.backgroundColor;
-      node.classList.add('is-morphing-bubble');
-      const restore = () => {
-        node.classList.remove('is-morphing-bubble');
-        shell.remove();
-        if (surfaces.get(node) === shell) surfaces.delete(node);
-        cleanups.delete(restore);
-      };
-      cleanups.add(restore);
-      const animation = track(shell.animate([
-        {
-          width: `${origin.width}px`, height: `${origin.height}px`,
-          transform: `translate(${origin.left - destination.left}px, ${origin.top + origin.scrollTop - destination.top - scroll.scrollTop}px)`,
-          borderRadius: origin.radius, backgroundColor: origin.background
-        },
-        {
-          width: `${destination.width}px`, height: `${destination.height}px`,
-          transform: 'translate(0, 0)', borderRadius: appearance.borderRadius,
-          backgroundColor: background
-        }
-      ], { duration: MOTION.layout, easing: MOTION.easing }));
-      animation.addEventListener('finish', restore, { once: true });
-      animation.addEventListener('cancel', restore, { once: true });
-      track(dots.animate([{ opacity: origin.resume ? 0 : 1 }, { opacity: 0 }], {
-        duration: MOTION.dotsExit, easing: 'ease-out', fill: 'forwards'
-      }));
-      track(node.animate([{ opacity: origin.opacity ?? 0 }, { opacity: 1 }], {
-        delay: origin.resume ? 0 : MOTION.textDelay, duration: MOTION.entrance - MOTION.textDelay,
-        easing: MOTION.easing, fill: 'backwards'
-      }));
-      track(node.animate([
-        { clipPath: `inset(0 ${Math.max(0, destination.width - origin.width)}px ${Math.max(0, destination.height - origin.height)}px 0 round ${origin.radius})` },
-        { clipPath: 'inset(0 0 0 0 round 0px)' }
-      ], { duration: MOTION.layout, easing: MOTION.easing }));
+    // How far the thread is currently displaced from its resting place.
+    function threadOffset() {
+      const transform = getComputedStyle(content).transform;
+      return transform && transform !== 'none' ? new DOMMatrixReadOnly(transform).m42 : 0;
+    }
+
+    function cancelShifts() {
+      shifts.forEach(animation => animation.cancel());
+      shifts.clear();
     }
 
     function cancel() {
-      cancelAnimationFrame(frame);
-      frame = 0;
-      const complete = finishLayout;
-      finishLayout = null;
-      messages.style.height = originalHeight;
-      messages.classList.remove('is-changing-height');
-      animations.forEach(animation => animation.cancel());
-      animations.clear();
-      cleanups.forEach(cleanup => cleanup());
-      complete?.(false);
+      cancelShifts();
+      locals.forEach(animation => animation.cancel());
+      locals.clear();
+      [...cleanups].forEach(cleanup => cleanup());
     }
 
-    function change(update, { incoming = [], pin = false, target = null, morphFrom = null } = {}) {
-      const startHeight = messages.getBoundingClientRect().height;
+    function shiftSpec(kind, distance) {
+      const base = kind === 'scroll'
+        ? { delay: 0, duration: MOTION.scroll.base + Math.min(MOTION.scroll.extra, distance * MOTION.scroll.perPx), curve: MOTION.scroll.curve }
+        : MOTION[kind === 'reply' ? 'arrive' : kind].shift;
+      // The recording only has short moves; longer ones take proportionally longer.
+      const stretch = kind === 'scroll' ? 1 : 1 + clamp((distance - 80) / 800, 0, .6);
+      return { delay: base.delay, duration: Math.round(base.duration * stretch), curve: base.curve };
+    }
+
+    function fadeIn(node) {
+      const { duration, curve } = MOTION.arrive.fade;
+      play(locals, node, [{ opacity: 0 }, { opacity: 1 }], { duration, easing: css(curve), fill: 'backwards' });
+    }
+
+    // The typing bubble springs in from its tail corner.
+    function popTyping(node) {
+      const { delay, zeta, omega, settle, from, fade } = MOTION.typing.pop;
+      const pop = spring({ zeta, omega });
+      play(locals, node, keyframes(settle, t => ({
+        transform: `scale(${(t >= settle ? 1 : from + (1 - from) * pop(t / 1000)).toFixed(4)})`
+      })), { duration: settle, delay, easing: 'linear', fill: 'backwards' });
+      play(locals, node, [{ opacity: 0 }, { opacity: 1 }], { duration: fade, delay, easing: 'ease-out', fill: 'backwards' });
+    }
+
+    // The reply fades in at its final size while the typing bubble fades out.
+    function crossfade(node) {
+      const { fade, scale } = MOTION.reply;
+      play(locals, node, [{ opacity: 0 }, { opacity: 1 }], { duration: fade.duration, easing: css(fade.curve), fill: 'backwards' });
+      play(locals, node, [{ transform: `scale(${scale.from})` }, { transform: 'scale(1)' }], { duration: scale.duration, easing: css(scale.curve), fill: 'backwards' });
+    }
+
+    // A copy of the typing bubble, pinned where it was, so it can fade out after the real one is gone.
+    function ghostOf(node) {
+      const rect = node.getBoundingClientRect();
+      const frame = messages.getBoundingClientRect();
+      const clone = node.cloneNode(true);
+      clone.classList.add('is-ghost');
+      clone.removeAttribute('role');
+      clone.setAttribute('aria-hidden', 'true');
+      Object.assign(clone.style, {
+        position: 'absolute', left: `${rect.left - frame.left}px`, top: `${rect.top - frame.top}px`,
+        width: `${rect.width}px`, height: `${rect.height}px`, margin: '0', pointerEvents: 'none'
+      });
+      return { node, clone };
+    }
+
+    function fadeOutGhost({ clone }) {
+      messages.append(clone);
+      const animation = play(locals, clone, [{ opacity: 1 }, { opacity: 0 }], { duration: MOTION.reply.ghostFade, easing: 'ease-in-out', fill: 'forwards' });
+      removeWith(clone, animation);
+    }
+
+    // The bubble leaves the composer: a bar collapses into it while it rises on a spring.
+    function launchOutgoing(node, { slot, origin, delta, spec }) {
+      const { flight, bar, grow: growth, minFlight } = MOTION.send;
+      const bubble = bubbleOf(node);
+      const lift = spring(flight);
+      const glide = bezier(spec.curve);
+      const collapse = bezier(bar.curve);
+      const swell = bezier(growth.curve);
+      const slotMid = slot.top + slot.height / 2;
+      const originMid = origin && origin.height ? origin.top + origin.height / 2 : slot.bottom + 80;
+      const distance = Math.max(minFlight, originMid - slotMid);
+      const reach = origin ? Math.max(0, slot.left - (origin.left + bar.inset)) : 0;
+      const withBar = reach > 8;
+      const handoff = withBar ? bar.duration : 0;
+      // On-screen offset from the bubble's resting place, as the recording measured it.
+      const path = t => distance * (1 - lift((t - flight.delay) / 1000));
+      // The share of that offset already supplied by the thread gliding up beneath it.
+      const thread = t => delta * (1 - glide(clamp((t - spec.delay) / spec.duration, 0, 1)));
+      const scaleAt = t => t < handoff
+        ? 1 + (growth.from - 1) * collapse(t / handoff)
+        : growth.from + (1 - growth.from) * swell((t - handoff - growth.delay) / growth.duration);
+      const done = t => t >= flight.settle;
+
+      play(locals, bubble, keyframes(flight.settle, t => ({
+        transform: `translateY(${(done(t) ? 0 : path(t) - thread(t)).toFixed(2)}px) scale(${(done(t) ? 1 : scaleAt(t)).toFixed(4)})`
+      })), { duration: flight.settle, easing: 'linear', fill: 'backwards' });
+      const appear = handoff / flight.settle;
+      play(locals, bubble, withBar
+        ? [{ opacity: 0, offset: 0 }, { opacity: 0, offset: appear - .001 }, { opacity: 1, offset: appear }, { opacity: 1, offset: 1 }]
+        : [{ opacity: 0, offset: 0 }, { opacity: 1, offset: 60 / flight.settle }, { opacity: 1, offset: 1 }],
+      { duration: flight.settle, easing: 'linear', fill: 'backwards' });
+      // Anything else in the turn (read receipt and the like) arrives like an ordinary bubble.
+      if (bubble !== node) [...node.children].filter(child => child !== bubble && !child.hidden && !child.hasAttribute('hidden')).forEach(fadeIn);
+      if (!withBar) return;
+
+      const ghost = document.createElement('div');
+      ghost.className = 'send-ghost';
+      ghost.setAttribute('aria-hidden', 'true');
+      const stretch = document.createElement('div');
+      stretch.className = 'send-ghost-bar';
+      const clone = bubble.cloneNode(true);
+      clone.querySelectorAll('.unfurl-reaction, .unfurl-thread-connector').forEach(element => element.remove());
+      clone.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+      clone.removeAttribute('id');
+      clone.removeAttribute('data-demo-message');
+      clone.removeAttribute('data-source-id');
+      clone.classList.add('send-ghost-bubble');
+      ghost.append(stretch, clone);
+      Object.assign(ghost.style, { left: `${slot.left}px`, top: `${slot.top}px`, width: `${slot.width}px`, height: `${slot.height}px` });
+      document.body.append(ghost);
+      const swoop = play(locals, ghost, keyframes(handoff, t => ({
+        transform: `translateY(${path(t).toFixed(2)}px) scale(${scaleAt(t).toFixed(4)})`
+      })), { duration: handoff, easing: 'linear', fill: 'both' });
+      play(locals, stretch, [{ width: `${reach}px`, opacity: bar.alpha }, { width: '0px', opacity: 1 }],
+        { duration: handoff, easing: css(bar.curve), fill: 'both' });
+      removeWith(ghost, swoop);
+    }
+
+    function change(update, { incoming = [], pin = false, target = null, morphFrom = null, launch = null } = {}) {
+      const animated = !motionOff();
       const startTop = scroll.scrollTop;
-      const origin = morphFrom?.isConnected ? {
-        ...morphFrom.getBoundingClientRect().toJSON(),
-        scrollTop: startTop,
-        radius: getComputedStyle(morphFrom).borderRadius,
-        background: getComputedStyle(morphFrom).backgroundColor
-      } : null;
-      // A second send can interrupt a reply mid-expansion. Carry its visible
-      // surface into the next layout instead of snapping it to full size.
-      const continuing = [...surfaces].map(([node, shell]) => [node, {
-        ...shell.getBoundingClientRect().toJSON(), scrollTop: startTop,
-        radius: getComputedStyle(shell).borderRadius,
-        background: getComputedStyle(shell).backgroundColor,
-        opacity: Number(getComputedStyle(node).opacity), resume: true
-      }]);
-      const positions = new Map(units().map(node => [node, node.getBoundingClientRect().top + startTop]));
-      cancel();
+      // Measure the presentation as the reader currently sees it, even mid-motion.
+      const carried = animated ? threadOffset() : 0;
+      const before = animated ? new Map(units().map(node => [node, node.getBoundingClientRect().top])) : null;
+      const typing = animated && morphFrom?.isConnected ? ghostOf(morphFrom) : null;
+      cancelShifts();
       if (pin) follow = true;
       update();
-      const endHeight = messages.getBoundingClientRect().height;
       const endTop = target
-        ? Math.max(0, Math.min(maxScroll(), target.getBoundingClientRect().top - scroll.getBoundingClientRect().top + scroll.scrollTop - 100))
+        ? clamp(target.getBoundingClientRect().top - scroll.getBoundingClientRect().top + scroll.scrollTop - 100, 0, maxScroll())
         : follow ? maxScroll() : startTop;
-      if (reducedMotion.matches || document.hidden) {
-        writeScroll(endTop);
-        if (target) follow = false;
-        return Promise.resolve(true);
-      }
+      // The scroll position lands at once; the glide below hides the jump.
+      writeScroll(endTop);
+      if (target) follow = false;
+      if (!animated) return Promise.resolve(true);
 
-      // WAAPI and requestAnimationFrame must share an actual start timestamp,
-      // especially when a long transcript is revealed by an interrupted send.
-      const started = document.timeline?.currentTime ?? performance.now();
-      animationStart = started;
+      const nodes = incoming.filter(node => node.isConnected && !node.closest('[hidden]'));
+      const slots = new Map(nodes.filter(isOutgoing).map(node => [node, bubbleOf(node).getBoundingClientRect()]));
+      const from = launch?.from || composer;
+      const origin = from?.isConnected ? from.getBoundingClientRect() : null;
+      const typingGone = Boolean(typing) && !typing.node.isConnected;
+      const reply = typingGone ? nodes.find(isReply) : null;
+      const delta = carried + (scroll.scrollTop - startTop);
+      const kind = nodes.some(isOutgoing) ? 'send' : reply ? 'reply' : nodes.some(isTyping) ? 'typing' : nodes.length ? 'arrive' : 'scroll';
+      const spec = shiftSpec(kind, Math.abs(delta));
+      const timing = { duration: spec.duration, delay: spec.delay, easing: css(spec.curve), fill: 'backwards' };
 
-      // FLIP existing rows so inserting content above them never teleports text.
-      for (const [node, top] of positions) {
+      // Rows that moved on their own (the rest ride the thread glide below).
+      for (const [node, top] of before) {
         if (!node.isConnected || node.closest('[hidden]')) continue;
-        const offset = top - (node.getBoundingClientRect().top + scroll.scrollTop);
-        if (Math.abs(offset) > .5) track(node.animate([
-          { transform: `translateY(${offset}px)` }, { transform: 'translateY(0)' }
-        ], { duration: MOTION.layout, easing: MOTION.easing }));
-      }
-      const reply = origin && incoming.find(node => node.matches('.pen-bubble, .assistant-message'));
-      continuing.forEach(([node, surface]) => {
-        if (node !== reply && node.isConnected && !node.closest('[hidden]')) morph(node, surface);
-      });
-      if (reply) morph(reply, origin);
-      incoming.forEach(node => {
-        if (node === reply) return;
-        enter(node, {
-          outgoing: node.matches('.user-message, .unfurl-user-turn')
-        });
-      });
-      animationStart = null;
-      messages.classList.add('is-changing-height');
-      messages.style.height = `${startHeight}px`;
-      writeScroll(startTop);
-      const shouldScroll = follow || Boolean(target);
-      return new Promise(resolve => {
-        finishLayout = resolve;
-        function tick(now) {
-          const progress = Math.min(1, (now - started) / MOTION.layout);
-          const eased = ease(progress);
-          messages.style.height = `${startHeight + (endHeight - startHeight) * eased}px`;
-          // A deliberate reader scroll interrupts following, not the expansion.
-          if (shouldScroll && follow) writeScroll(startTop + (endTop - startTop) * eased);
-          if (progress < 1) frame = requestAnimationFrame(tick);
-          else {
-            frame = 0;
-            messages.style.height = originalHeight;
-            messages.classList.remove('is-changing-height');
-            if (shouldScroll && follow) writeScroll(endTop);
-            if (target) follow = false;
-            finishLayout = null;
-            resolve(true);
-          }
+        const residual = top - node.getBoundingClientRect().top - delta;
+        if (Math.abs(residual) > .5) {
+          play(shifts, node, [{ transform: `translateY(${residual}px)` }, { transform: 'translateY(0px)' }], { ...timing, composite: 'add' });
         }
-        frame = requestAnimationFrame(tick);
-      });
+      }
+      let finished = Promise.resolve(true);
+      if (Math.abs(delta) > .5) {
+        const glide = play(shifts, content, [{ transform: `translateY(${delta}px)` }, { transform: 'translateY(0px)' }], timing);
+        finished = glide.finished.then(() => true, () => false);
+      }
+
+      for (const node of nodes) {
+        if (isOutgoing(node)) launchOutgoing(node, { slot: slots.get(node), origin, delta, spec });
+        else if (isTyping(node)) popTyping(node);
+        else if (node === reply) crossfade(node);
+        else fadeIn(node);
+      }
+      if (typingGone) fadeOutGhost(typing);
+      return finished;
     }
 
     function toBottom() { return change(() => {}, { pin: true }); }
@@ -239,6 +348,9 @@
       touching = false;
       resetFollowing();
     }
+    function enter(node) {
+      if (!motionOff()) fadeIn(node);
+    }
     scroll.addEventListener('wheel', event => { if (event.deltaY < 0) stopFollowing(); }, { passive: true });
     scroll.addEventListener('touchstart', () => { touching = true; stopFollowing(); }, { passive: true });
     scroll.addEventListener('touchend', endTouch, { passive: true });
@@ -249,7 +361,7 @@
     });
     scroll.addEventListener('scroll', () => {
       const top = scroll.scrollTop;
-      // Ignore our own writes and scroll-range clamping during a height change.
+      // Ignore our own writes and scroll-range clamping.
       if (Math.abs(top - expectedTop) < 2) return;
       if (!touching && top > expectedTop && maxScroll() - top <= MOTION.bottomThreshold) follow = true;
       else if (top < expectedTop || touching) follow = false;
@@ -267,7 +379,7 @@
         if (Math.abs(nextWidth - width) > .5) { width = nextWidth; settle(); }
       }).observe(messages);
     }
-    return Object.freeze({ change, enter, cancel, track, toBottom, stopFollowing, resetFollowing });
+    return Object.freeze({ change, enter, cancel, toBottom, stopFollowing, resetFollowing });
   }
-  window.OwlChatMotion = Object.freeze({ create });
+  window.OwlChatMotion = Object.freeze({ create, MOTION });
 })();
