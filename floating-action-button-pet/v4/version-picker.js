@@ -3,28 +3,30 @@
   // Each version has its own prototype files; only this selector is shared.
   const base = new URL('.', document.currentScript.src);
   const versions = [
-    { id: 'v1', href: new URL('./', base).href },
-    { id: 'v2', href: new URL('v2/', base).href },
-    { id: 'v3', href: new URL('v3/', base).href },
-    { id: 'v4', href: new URL('v4/', base).href },
+    { id: 'v1', label: 'v1', href: new URL('./', base).href },
+    { id: 'v2', label: 'v2 - no side nav', href: new URL('v2/', base).href },
+    { id: 'v3', label: 'v3 - FAB + side nav', href: new URL('v3/', base).href },
+    { id: 'v4', label: 'v4 - v2+no animation', href: new URL('v4/', base).href },
   ];
-  const selected = versions.find(version => version.id === document.body.dataset.petVersion)?.id || 'v1';
+  const selectedVersion = versions.find(version => version.id === document.body.dataset.petVersion) || versions[0];
+  const selected = selectedVersion.id;
   const control = document.createElement('nav');
   control.id = 'pet-version-picker';
   control.setAttribute('aria-label', 'FAB pet prototype versions');
-  control.innerHTML = `<button class="pet-version-trigger" type="button" aria-label="Prototype version, ${selected}" aria-haspopup="menu" aria-expanded="false" aria-controls="pet-version-menu">
-    <span>${selected}</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
+  control.innerHTML = `<button class="pet-version-trigger" type="button" aria-label="Prototype version, ${selectedVersion.label}" aria-haspopup="menu" aria-expanded="false" aria-controls="pet-version-menu">
+    <span>${selectedVersion.label}</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 7 6 6 6-6"/></svg>
   </button>
   <ul id="pet-version-menu" class="pet-version-menu" role="menu" aria-label="Prototype versions" hidden></ul>`;
   document.body.prepend(control);
   const trigger = control.querySelector('button');
   const menu = control.querySelector('[role="menu"]');
+  menu.style.width = '240px';
   const options = versions.map(version => {
     const item = document.createElement('li');
     item.setAttribute('role', 'none');
     const link = document.createElement('a');
     link.href = version.href;
-    link.textContent = version.id;
+    link.textContent = version.label;
     link.dataset.version = version.id;
     link.setAttribute('role', 'menuitemradio');
     link.setAttribute('aria-checked', String(version.id === selected));
