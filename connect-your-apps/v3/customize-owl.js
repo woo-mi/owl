@@ -18,6 +18,8 @@
   const APPEARANCE_STORAGE_KEY = 'owl-onboarding-v3-appearance';
   let currentStep;
   let savedOwl = readAppearance();
+  // A remembered appearance does not mean the egg has hatched in this visit.
+  let hasCustomizedThisVisit = false;
   let savedSetup;
   let hatchRequest = 0;
   let savedPreferences = window.OwlPersonality.snapshot();
@@ -49,6 +51,7 @@
     const appearance = normalizeAppearance(value);
     if (!appearance) return;
     savedOwl = appearance;
+    hasCustomizedThisVisit = true;
     nameInput.value = appearance.name;
     sizeName();
     // Keep setup details while replacing any older appearance saved with them.
@@ -160,7 +163,7 @@
     url.searchParams.set('step', 'customize');
     advanceLinks.forEach(link => { link.href = url.pathname + url.search; });
     if (changed) {
-      if (isCustomize && !savedOwl) window.OwlEgg?.start();
+      if (isCustomize && !hasCustomizedThisVisit) window.OwlEgg?.start();
       else window.OwlEgg?.stop();
       if (step === 'appearance') window.OwlAppearance.open({...savedOwl,name:nameInput.value});
       if (step === 'personality') {
@@ -175,10 +178,10 @@
       if (step === 'chat') window.OwlChat.open(savedSetup || {...savedOwl,name:nameInput.value,preferences:savedPreferences});
     }
     if (step === 'chat') window.OwlChat.setVersion(new URL(location.href).searchParams.get('chatVersion') === 'no-work' ? 'no-work' : 'live');
-    eggStage.hidden = !!savedOwl;
-    hatchedStage.hidden = !savedOwl;
-    if (savedOwl) hatchedStage.innerHTML = window.OwlStudioArtwork.render(savedOwl.studio,savedOwl.color);
-    hatchButton.innerHTML = `${savedOwl ? 'Customize your Owl' : 'Hatch your Owl'}<span aria-hidden="true">→</span>`;
+    eggStage.hidden = hasCustomizedThisVisit;
+    hatchedStage.hidden = !hasCustomizedThisVisit;
+    if (hasCustomizedThisVisit && savedOwl) hatchedStage.innerHTML = window.OwlStudioArtwork.render(savedOwl.studio,savedOwl.color);
+    hatchButton.innerHTML = `${hasCustomizedThisVisit ? 'Customize your Owl' : 'Hatch your Owl'}<span aria-hidden="true">→</span>`;
     currentStep = step;
     window.dispatchEvent(new CustomEvent('owl-flow:change', {detail:{step}}));
     if (focusHeading) {
@@ -207,7 +210,7 @@
   }));
   window.addEventListener('popstate', () => renderRoute(true));
   window.addEventListener('pageshow', event => {
-    if (event.persisted && currentStep === 'customize' && !savedOwl) window.OwlEgg?.start();
+    if (event.persisted && currentStep === 'customize' && !hasCustomizedThisVisit) window.OwlEgg?.start();
   });
   window.addEventListener('connections:version-change', () => renderRoute());
   window.addEventListener('owl-chat:version-change', () => renderRoute());
@@ -230,7 +233,7 @@
   document.querySelector('#edit-owl-name').addEventListener('click', () => { nameInput.focus();nameInput.select(); });
   hatchButton.addEventListener('click', async () => {
     if (hatchButton.disabled) return;
-    if (savedOwl) { navigate('appearance');return; }
+    if (hasCustomizedThisVisit) { navigate('appearance');return; }
     const request = ++hatchRequest;
     hatchButton.disabled = true;
     customizeView.inert = true;
