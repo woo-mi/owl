@@ -3,7 +3,7 @@
   // Versions share only this selector; each version owns its prototype files.
   const base = new URL('.', document.currentScript.src);
   const versions = [
-    { id: 'before', label: 'v1', href: new URL('./', base).href },
+    { id: 'before', label: 'v1', href: new URL('./?version=v1', base).href },
     { id: 'after-1', label: 'v2', href: new URL('after-1/', base).href },
     { id: 'after-3', label: 'v3', href: new URL('after-3/', base).href },
     { id: 'after-4', label: 'v4', href: new URL('after-4/', base).href },
