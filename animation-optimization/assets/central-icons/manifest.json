@@ -1,0 +1,20 @@
+{
+  "library": "central-icon-system-v1.35",
+  "fileKey": "DHvlntO88oQJCoiawCCr3d",
+  "icons": {
+    "pencil": {
+      "nodeId": "5753:62239",
+      "component": "pencil, edit, write",
+      "variant": {
+        "filled": "off",
+        "stroke": 1.5,
+        "radius": 2,
+        "join": "round"
+      },
+      "source": "pencil-source.svg",
+      "sourceSha256": "8dea83f74f9a101e5668084d0e750b35a72230a3eba189ab8b19158cfc2b9400",
+      "rendered": "pencil-1.5.svg",
+      "adaptation": "Original exported paths and 1.5 stroke preserved; non-scaling-stroke keeps the stroke 1.5 CSS px at the existing 16 px display size."
+    }
+  }
+}
