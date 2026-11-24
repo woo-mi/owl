@@ -40,7 +40,7 @@
   function syncIdentity() {
     state = states[activeVariant()];
     const active = document.body.dataset.prototypeView === 'latest-oct-28' && (state.variant || state.studio);
-    if (sidebarMark) sidebarMark.innerHTML = active ? artwork() : originalSidebarMark;
+    if (sidebarMark && !sidebarMark.hasAttribute('data-fixed-sidebar-artwork')) sidebarMark.innerHTML = active ? artwork() : originalSidebarMark;
     if (!headerName || !headerMark) return;
     const showV2Name = document.body.dataset.prototypeView === 'latest-oct-28' && activeVariant() === 'v2';
     headerName.textContent = active || showV2Name ? state.name : originalName;
