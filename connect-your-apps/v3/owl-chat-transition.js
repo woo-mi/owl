@@ -10,7 +10,7 @@
    *  320ms   avatar circle, profile label, and version selector appear
    *  360ms   the conversation fades up
    *  440ms   the composer fades up, keeping its existing horizontal transform
-   *  580ms   the arriving PNG crossfades → the selected flat Owl
+   *  580ms   the arriving plush Owl crossfades → the selected flat Owl
    *  720ms   the chat settles; all temporary effects are removed
    * A pending/invisible source image uses the same fades without a flight.
    * ───────────────────────────────────────────────────────── */
@@ -49,10 +49,35 @@
   };
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let active = null;
+  let snapshotSequence = 0;
 
   function rectOf(element) {
     const {left,top,width,height} = element.getBoundingClientRect();
     return {left,top,width,height};
+  }
+
+  function remapCloneIds(clone) {
+    const elements = [clone,...clone.querySelectorAll('*')];
+    const ids = new Map();
+    const prefix = `owl-chat-ghost-${++snapshotSequence}-`;
+    elements.forEach(element => {
+      const id = element.getAttribute('id');
+      if (!id) return;
+      if (element.namespaceURI === 'http://www.w3.org/2000/svg') {
+        const replacement = prefix + ids.size;
+        ids.set(id,replacement);
+        element.setAttribute('id',replacement);
+      } else element.removeAttribute('id');
+    });
+    elements.forEach(element => {
+      [...element.attributes].forEach(attribute => {
+        if (attribute.name === 'id') return;
+        let value = attribute.value.replace(/url\(\s*(['"]?)#([^)'"\s]+)\1\s*\)/g,(match,quote,id) => ids.has(id) ? `url(#${ids.get(id)})` : match);
+        if (['href','xlink:href'].includes(attribute.name) && value.startsWith('#') && ids.has(value.slice(1))) value = '#' + ids.get(value.slice(1));
+        if (['aria-labelledby','aria-describedby'].includes(attribute.name)) value = value.split(/\s+/).map(id => ids.get(id) || id).join(' ');
+        if (value !== attribute.value) element.setAttribute(attribute.name,value);
+      });
+    });
   }
 
   function sourceSnapshot(element) {
@@ -63,7 +88,6 @@
     const inViewport = rect.left < window.innerWidth && rect.left + rect.width > 0 && rect.top < window.innerHeight && rect.top + rect.height > 0;
     if (!rect.width || !rect.height || !inViewport || style.visibility !== 'visible' || style.display === 'none' || opacity <= MOTION.minimumOpacity) return null;
     const clone = element.cloneNode(true);
-    [clone,...clone.querySelectorAll('[id]')].forEach(node => node.removeAttribute('id'));
     clone.removeAttribute('href');
     clone.removeAttribute('srcset');
     clone.removeAttribute('sizes');
@@ -76,6 +100,7 @@
       opacity:'1',animation:'none',transition:'none',pointerEvents:'none'
     });
     if (element.tagName === 'IMG') clone.src = element.currentSrc || element.src;
+    remapCloneIds(clone);
     return {clone,rect,opacity};
   }
 
@@ -87,10 +112,11 @@
     const right = Math.min(window.innerWidth,mainRect.left + mainRect.width);
     if (right <= left) return null;
     const image = homeView.querySelector('.owl-home-image');
+    const artworkReady = image?.tagName === 'IMG' ? image.complete && image.naturalWidth > 0 : image?.dataset.artworkReady === 'true';
     const background = getComputedStyle(main).backgroundColor;
     return {
       main:{left,width:right-left,height:window.innerHeight,background:background === 'rgba(0, 0, 0, 0)' || background === 'transparent' ? GHOST.fallbackBackground : background},
-      image:image?.complete && image.naturalWidth > 0 ? sourceSnapshot(image) : null,
+      image:artworkReady ? sourceSnapshot(image) : null,
       details:GHOST.detailSelectors.map(selector => sourceSnapshot(homeView.querySelector(selector))).filter(Boolean)
     };
   }

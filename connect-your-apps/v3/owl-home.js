@@ -22,28 +22,13 @@
     {selector:'#home-title',offsetY:12,initialScale:1,delay:TIMING.nameAppear,duration:TIMING.nameDuration},
     {selector:'.owl-home-chat',offsetY:10,initialScale:1,delay:TIMING.actionAppear,duration:TIMING.actionDuration}
   ];
-  const PINK = '#FA70AB';
-  const DEFAULT_COLOR = window.OwlStudioArtwork.defaultColor;
-  const PINK_IMAGE = 'assets/owl-soft-preview.png';
-  const HEADS = {
-    round:{name:'a round head',none:'assets/owl-soft-blue.png',feathered:'assets/owl-soft-round-feathered-blue.png'},
-    rounded:{name:'a rounded square head',none:'assets/owl-soft-rounded-blue.png',feathered:'assets/owl-soft-rounded-feathered-blue.png'},
-    arch:{name:'an arched head',none:'assets/owl-soft-arch-blue.png',feathered:'assets/owl-soft-arch-feathered-blue.png'}
-  };
-  // Hue/saturation/brightness are fitted from the blue palette reference.
-  // No color offset is applied, so black eyes and the plush shading remain intact.
+  const art = window.Owl3DArtwork;
+  const DEFAULT_COLOR = art.defaultColor;
   const APPEARANCES = {
-    '#000000':{name:'black',filter:'grayscale(1) brightness(.32)'},
-    '#A16C39':{name:'brown',filter:'hue-rotate(178.2deg) saturate(.506) brightness(.956)'},
-    '#FB2C3F':{name:'red',filter:'hue-rotate(136.6deg) saturate(1.908) brightness(1.042)'},
-    '#FE6A10':{name:'orange',filter:'hue-rotate(166.6deg) saturate(.988) brightness(1.102)'},
-    '#F69312':{name:'amber',filter:'hue-rotate(-174.3deg) saturate(.886) brightness(1.304)'},
-    '#13C16F':{name:'green',filter:'hue-rotate(-66.6deg) saturate(.872) brightness(1.172)'},
-    '#15B8A3':{name:'teal',filter:'hue-rotate(-47.1deg) saturate(.858) brightness(1.152)'},
-    '#1E86FC':{name:'blue',filter:'none'},
-    '#905AFA':{name:'purple',filter:'hue-rotate(41.1deg) saturate(1.378) brightness(.982)'},
-    '#FA70AB':{name:'pink',filter:'hue-rotate(114deg) saturate(.594) brightness(1.26)'},
-    '#959595':{name:'gray',filter:'grayscale(1) brightness(1.2)'}
+    '#A16C39':'brown', '#FB2C3F':'red', '#FE6A10':'orange',
+    '#F69312':'amber', '#13C16F':'green', '#15B8A3':'teal',
+    '#1E86FC':'blue', '#905AFA':'purple', '#FA70AB':'pink',
+    '#959595':'gray'
   };
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const animations = new Set();
@@ -54,16 +39,7 @@
   let imagePending = false;
   let owlName = "Ayush's Owl";
   let owlColor = DEFAULT_COLOR;
-  let owlStudio = {head:'round',horns:'none'};
-
-  function normalizeStudio(studio) {
-    const input = studio && typeof studio === 'object' ? studio : {};
-    const normalized = window.OwlStudioArtwork?.normalize?.(input) || input;
-    return {
-      head:Object.hasOwn(HEADS,normalized.head) ? normalized.head : 'round',
-      horns:normalized.horns === 'feathered' ? 'feathered' : 'none'
-    };
-  }
+  let owlStudio = art.normalize();
 
   function close() {
     entranceRequest++;
@@ -85,8 +61,13 @@
     });
   }
 
-  function currentImageReady() {
-    return illustration.complete && illustration.naturalWidth > 0 && illustration.currentSrc === illustration.src;
+  function decodeArtwork() {
+    const sources = new Set([...illustration.querySelectorAll('image')].map(image => image.getAttribute('href')));
+    return Promise.allSettled([...sources].map(src => {
+      const image = new Image();
+      image.src = src;
+      return image.decode();
+    }));
   }
 
   function reveal(config, request) {
@@ -113,44 +94,31 @@
   function enter() {
     close();
     const request = entranceRequest;
-    const appearance = APPEARANCES[owlColor];
-    const head = HEADS[owlStudio.head];
-    const originalPink = owlColor === PINK && owlStudio.head === 'round' && owlStudio.horns === 'none';
-    const src = originalPink ? PINK_IMAGE : head[owlStudio.horns];
-    const sourceChanged = illustration.getAttribute('src') !== src;
     const useMotion = !reducedMotion.matches && Boolean(illustration.animate);
-    // Hide before replacing src: browsers may retain the previous decoded bitmap.
     illustration.style.opacity = '0';
-    illustration.style.filter = originalPink ? 'none' : appearance.filter;
-    illustration.alt = `Soft ${appearance.name} Owl with ${head.name} and ${owlStudio.horns === 'feathered' ? 'feathered horns' : 'no horns'}`;
-    if (sourceChanged) illustration.src = src;
-    if (!useMotion && !sourceChanged && currentImageReady()) {
-      illustration.style.removeProperty('opacity');
-      return;
-    }
+    illustration.dataset.artworkReady = 'false';
+    illustration.innerHTML = art.render(owlStudio,owlColor);
+    const features = [['heads','head'],['eyes','eyes'],['goggles','goggles'],['horns','horns']].map(([group,key]) => `${art.options[group].find(option => option.id === owlStudio[key]).label} ${key}`);
+    illustration.setAttribute('aria-label',`Soft ${APPEARANCES[owlColor]} Owl: ${features.join(', ')}`);
     host.dataset.homeStage = '1';
     if (useMotion) DETAILS.forEach(config => reveal(config, request));
     imagePending = true;
-    illustration.decode().then(() => {
+    decodeArtwork().then(results => {
       if (request !== entranceRequest || host.hidden) return;
       imagePending = false;
+      illustration.dataset.artworkReady = String(results.every(result => result.status === 'fulfilled'));
       if (useMotion) reveal(OWL, request);
       else {
         illustration.style.removeProperty('opacity');
         markSettled();
       }
-    }).catch(() => {
-      if (request !== entranceRequest) return;
-      imagePending = false;
-      if (currentImageReady()) illustration.style.removeProperty('opacity');
-      markSettled();
     });
   }
 
   function build() {
     host = document.getElementById('home-view');
     if (!host) return false;
-    host.innerHTML = `<img class="owl-home-image" alt="Soft gray Owl" width="600" height="600" draggable="false" decoding="async">
+    host.innerHTML = `<div class="owl-home-image" role="img" aria-label="Soft Owl"></div>
       <h1 id="home-title" tabindex="-1"></h1>
       <a class="owl-home-chat" href="?step=chat&amp;chatVersion=live">Start chat</a>`;
     host.querySelector('.owl-home-chat').addEventListener('click', event => {
@@ -168,7 +136,7 @@
     if (typeof name === 'string' && name.trim()) owlName = name.trim();
     const requestedColor = typeof color === 'string' ? color.trim().toUpperCase() : DEFAULT_COLOR;
     owlColor = Object.hasOwn(APPEARANCES,requestedColor) ? requestedColor : DEFAULT_COLOR;
-    owlStudio = normalizeStudio(studio);
+    owlStudio = art.normalize(studio);
     host.querySelector('#home-title').textContent = owlName;
     const chatUrl = new URL(location.href);
     chatUrl.searchParams.set('step', 'chat');

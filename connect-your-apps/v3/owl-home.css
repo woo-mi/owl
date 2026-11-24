@@ -23,6 +23,7 @@ body[data-flow-step="00"] #main.connections-main {
   object-fit:contain;
   transform-origin:50% 60%;
 }
+.owl-home-image > svg { display:block;width:100%;height:100%; }
 #home-title {
   position:relative;
   max-width:100%;

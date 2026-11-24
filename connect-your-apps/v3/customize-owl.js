@@ -15,13 +15,50 @@
   const hatchButton = document.querySelector('#hatch-owl');
   const eggStage = document.querySelector('#egg-stage');
   const hatchedStage = document.querySelector('#hatched-owl-stage');
+  const APPEARANCE_STORAGE_KEY = 'owl-onboarding-v3-appearance';
   let currentStep;
-  let savedOwl;
+  let savedOwl = readAppearance();
   let savedSetup;
   let hatchRequest = 0;
   let savedPreferences = window.OwlPersonality.snapshot();
   const routeAnimations = new Set();
   const pausedRouteAnimations = new Set();
+  if (savedOwl) nameInput.value = savedOwl.name;
+
+  function normalizeAppearance(value) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return;
+    const studio = value.studio && typeof value.studio === 'object' && !Array.isArray(value.studio) ? value.studio : {};
+    const color = typeof value.color === 'string' ? value.color.trim().toUpperCase() : '';
+    return {
+      name:typeof value.name === 'string' && value.name.trim() ? value.name.trim().slice(0,32) : defaultName,
+      color:/^#[0-9A-F]{6}$/.test(color) ? color : window.Owl3DArtwork.defaultColor,
+      studio:window.Owl3DArtwork.normalize(studio)
+    };
+  }
+
+  function readAppearance() {
+    try {
+      const stored = window.localStorage.getItem(APPEARANCE_STORAGE_KEY);
+      return stored ? normalizeAppearance(JSON.parse(stored)) : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
+  function saveAppearance(value) {
+    const appearance = normalizeAppearance(value);
+    if (!appearance) return;
+    savedOwl = appearance;
+    nameInput.value = appearance.name;
+    sizeName();
+    // Keep setup details while replacing any older appearance saved with them.
+    if (savedSetup) savedSetup = {...savedSetup,...appearance,studio:{...appearance.studio}};
+    try {
+      window.localStorage.setItem(APPEARANCE_STORAGE_KEY,JSON.stringify(appearance));
+    } catch {
+      // The current flow still works when browser storage is unavailable.
+    }
+  }
   /* TRANSITION STORYBOARD
    *   0ms   the selected Owl moves from its 175px preview toward the 90px slot
    * 140ms   personality controls fade up beneath it
@@ -222,9 +259,7 @@
     }
   });
   window.addEventListener('owl-appearance:save',event => {
-    savedOwl = event.detail;
-    nameInput.value = savedOwl.name;
-    sizeName();
+    saveAppearance(event.detail);
     navigate('personality',{shrinkOwl:true});
   });
   window.addEventListener('owl-personality:save',event => {
@@ -234,6 +269,7 @@
   window.addEventListener('owl-personality:skip',() => navigate('customize'));
   window.addEventListener('owl-ready:save',event => {
     savedSetup = event.detail;
+    saveAppearance(savedSetup);
     navigate('00');
   });
   window.addEventListener('owl-ready:skip',() => { window.location.href = '../../reply-ux-pattern/'; });
