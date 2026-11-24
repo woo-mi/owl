@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      if (new URLSearchParams(window.location.search).get('version') !== 'v1') {
+        const destination = new URL('./v3/', window.location.href);
+        destination.search = window.location.search;
+        destination.hash = window.location.hash;
+        window.location.replace(destination.href);
+      }
+    </script>
     <title>FAB (pet) · v1</title>
     <meta name="description" content="Floating Action Button (pet): an Owl interaction prototype.">
     <link rel="canonical" href="https://woo-mi.github.io/owl/floating-action-button-pet/v4/">
@@ -1349,6 +1357,6 @@
     <script src="pet-interactions.js?v=proximity-120-1"></script>
     <script src="profile-menu.js?v=2"></script>
     <script src="pet-idle-motion.js?v=1"></script>
-    <script src="version-picker.js?v=5"></script>
+    <script src="version-picker.js?v=7"></script>
   </body>
 </html>

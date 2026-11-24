@@ -6,13 +6,12 @@ This repository publishes its `main` branch root through GitHub Pages. No build
 step is required.
 
 - `index.html` and `owl-mark.svg` provide the overview page.
-- `floating-action-button-pet/` opens **FAB (pet) v3** by default, with the blue Owl
-  fixed at the bottom-right. Hover or tap the Owl for actions and choose edit to open
-  the composer above it. Sending expands a conversation with a simulated reply;
-  close, stop, and open-in-main-window controls are available. Hide Owl minimizes it
-  to a sidebar icon that restores it. Earlier v1 and v2 prototypes remain available
-  in the version selector. Escape collapses controls; no messages leave this prototype.
-  Voice and attachments are visual placeholders.
+- `floating-action-button-pet/` and `floating-action-button-pet/v4/` open
+  **FAB (pet) v3 — side nav only** at `floating-action-button-pet/v4/v3/`
+  by default, with the 3D Owl in the sidebar above the new chat button.
+  The version selector keeps v1 (before feedback), v2 (no side nav), and
+  v4 (v2 + no animation) available. The original v1 is accessible at
+  `floating-action-button-pet/v4/?version=v1`.
   Published at https://woo-mi.github.io/owl/floating-action-button-pet/.
 - `ui-optimization/` is **UI optimization**, a responsive copy of the Pen
   **third-party** and **third-party selected** screens, with an animated approval transition. Published at https://woo-mi.github.io/owl/ui-optimization/.
