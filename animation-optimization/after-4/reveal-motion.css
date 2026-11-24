@@ -1,0 +1,15 @@
+/* v4 allocates the reply's height progressively without resizing its text. */
+.chat-scroll.has-reveal-motion {
+  overflow-anchor: none;
+  scroll-behavior: auto;
+  scrollbar-gutter: stable;
+}
+
+.messages.is-reveal-resizing {
+  overflow: clip;
+  min-height: 0;
+}
+
+.messages.is-reveal-resizing > * {
+  flex-shrink: 0;
+}

@@ -6,6 +6,7 @@
     { id: 'before', label: 'v1', href: new URL('./', base).href },
     { id: 'after-1', label: 'v2', href: new URL('after-1/', base).href },
     { id: 'after-3', label: 'v3', href: new URL('after-3/', base).href },
+    { id: 'after-4', label: 'v4', href: new URL('after-4/', base).href },
   ];
   const selected = versions.find(version => version.id === document.body.dataset.animationVersion) || versions[0];
   const control = document.createElement('nav');
