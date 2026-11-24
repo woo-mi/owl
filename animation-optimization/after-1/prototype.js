@@ -16,6 +16,7 @@
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const bubblePlayback = window.MVPBubblePlayback?.create({ messages: ui.messages, scroll: ui['chat-scroll'], reducedMotion, composer: ui['message-input'] });
     const TYPING_DELAY = 600; // ms after a send, once the sent bubble has settled and the dots appear
+    const tuning = new URLSearchParams(location.search).has('tune'); // ?tune opens the motion tuner and holds the intro playback
     let attachmentNames = [];
     let sourceSequence = 0;
     let toastTimer;
@@ -377,7 +378,7 @@
       bubblePlayback?.resetFollowing();
       syncAgentHeader();
       document.title = `Animation optimization · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
-      if (!previous && nextView === 'latest-oct-28' && !location.hash) bubblePlayback?.play();
+      if (!previous && nextView === 'latest-oct-28' && !location.hash && !tuning) bubblePlayback?.play();
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
       else if (leavingReplies && replyViews[view]) {
         const replyOpener = replyOpeners.get(currentStateKey);

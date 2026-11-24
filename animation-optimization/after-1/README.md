@@ -33,6 +33,16 @@ The values live in the `MOTION` table at the top of `chat-motion.js`.
 The original message content and demonstration pacing are retained. Reaction and
 connector reveals are quieter; the typing dots use a slower, smaller movement.
 
+## Tuning the motion
+
+Add `?tune` to the page URL ([after-1/?tune](https://woo-mi.github.io/owl/animation-optimization/after-1/?tune)). The panel edits the live `MOTION` table in `chat-motion.js`, so the next motion you trigger uses the new value.
+
+- Drag the two handles on a curve or type the four numbers. Dashed lines are the values measured from the recording.
+- Springs use the names UIKit and SwiftUI use: response (the period of the undamped spring) and damping (1 means no bounce).
+- The play buttons replay a send, the typing dots and reply, an arrival, or the whole scripted conversation. With **Replay on release** on, letting go of a handle or slider replays that moment.
+- Settings persist in your browser only. **Copy values** copies the whole table as JSON, and **Reset all** restores the measured values.
+- `?tune` holds the intro playback; use **Full run** to play it.
+
 Static HTML/CSS/JavaScript; no build step. Serve the repository over HTTP so both
 versions and their shared selector are available.
 

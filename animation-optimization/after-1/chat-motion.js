@@ -32,21 +32,22 @@
     return Object.freeze(object);
   }
 
-  // curve: cubic-bezier control points. zeta/omega: damping ratio and natural
-  // frequency (rad/s) of a spring. All times are milliseconds.
-  const MOTION = deepFreeze({
+  // The values measured from the recording. curve: cubic-bezier control points.
+  // zeta/omega: damping ratio and natural frequency (rad/s) of a spring; how long
+  // a spring takes to settle follows from them. All times are milliseconds.
+  const DEFAULTS = deepFreeze({
     sampleMs: 12,
     bottomThreshold: 32,
     send: {
       shift: { delay: 0, duration: 370, curve: [.30, .86, .37, 1] },
-      flight: { delay: 25, zeta: .72, omega: 11.34, settle: 850 },
-      bar: { duration: 158, curve: [.63, .57, .46, .70], inset: 14, alpha: .62 },
+      flight: { delay: 25, zeta: .72, omega: 11.34 },
+      bar: { enabled: true, duration: 158, curve: [.63, .57, .46, .70], inset: 14, alpha: .62 },
       grow: { from: .76, delay: 52, duration: 354, curve: [.26, .20, .35, 1] },
       minFlight: 24
     },
     typing: {
       shift: { delay: 40, duration: 290, curve: [.68, .36, .32, .70] },
-      pop: { delay: 140, zeta: .51, omega: 19.4, settle: 540, from: .1, fade: 110 }
+      pop: { delay: 140, zeta: .51, omega: 19.4, from: .1, fade: 110 }
     },
     reply: {
       fade: { duration: 280, curve: [.36, .065, .43, 1] },
@@ -59,6 +60,8 @@
     },
     scroll: { base: 240, perPx: .35, extra: 320, curve: [.30, .86, .37, 1] }
   });
+  // The live table. The tuning panel (?tune) edits it in place, and every motion reads it as it starts.
+  const MOTION = JSON.parse(JSON.stringify(DEFAULTS));
 
   const css = curve => `cubic-bezier(${curve.join(', ')})`;
   const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
@@ -93,11 +96,25 @@
     };
   }
 
-  // Step response of an underdamped spring: 0 → overshoot → 1. Time is in seconds.
+  // Step response of a damped spring, 0 → 1, overshooting when zeta < 1. Time is in seconds.
   function spring({ zeta, omega }) {
-    const damped = omega * Math.sqrt(1 - zeta * zeta);
-    const ratio = zeta * omega / damped;
-    return t => t <= 0 ? 0 : 1 - Math.exp(-zeta * omega * t) * (Math.cos(damped * t) + ratio * Math.sin(damped * t));
+    if (zeta < 1) {
+      const damped = omega * Math.sqrt(1 - zeta * zeta);
+      const ratio = zeta * omega / damped;
+      return t => t <= 0 ? 0 : 1 - Math.exp(-zeta * omega * t) * (Math.cos(damped * t) + ratio * Math.sin(damped * t));
+    }
+    if (zeta === 1) return t => t <= 0 ? 0 : 1 - (1 + omega * t) * Math.exp(-omega * t);
+    const root = Math.sqrt(zeta * zeta - 1);
+    const slow = -omega * (zeta - root), fast = -omega * (zeta + root);
+    return t => t <= 0 ? 0 : 1 - (fast * Math.exp(slow * t) - slow * Math.exp(fast * t)) / (fast - slow);
+  }
+
+  // Milliseconds until a spring stays within 0.2% of its target.
+  function settleOf(params) {
+    const progress = spring(params);
+    let last = 0;
+    for (let t = 0; t <= 4000; t += 10) if (Math.abs(1 - progress(t / 1000)) > .002) last = t;
+    return last + 40;
   }
 
   // Springs have no CSS equivalent that every browser supports, so they are
@@ -185,8 +202,9 @@
 
     // The typing bubble springs in from its tail corner.
     function popTyping(node) {
-      const { delay, zeta, omega, settle, from, fade } = MOTION.typing.pop;
+      const { delay, zeta, omega, from, fade } = MOTION.typing.pop;
       const pop = spring({ zeta, omega });
+      const settle = settleOf({ zeta, omega });
       play(locals, node, keyframes(settle, t => ({
         transform: `scale(${(t >= settle ? 1 : from + (1 - from) * pop(t / 1000)).toFixed(4)})`
       })), { duration: settle, delay, easing: 'linear', fill: 'backwards' });
@@ -233,7 +251,7 @@
       const originMid = origin && origin.height ? origin.top + origin.height / 2 : slot.bottom + 80;
       const distance = Math.max(minFlight, originMid - slotMid);
       const reach = origin ? Math.max(0, slot.left - (origin.left + bar.inset)) : 0;
-      const withBar = reach > 8;
+      const withBar = bar.enabled && reach > 8;
       const handoff = withBar ? bar.duration : 0;
       // On-screen offset from the bubble's resting place, as the recording measured it.
       const path = t => distance * (1 - lift((t - flight.delay) / 1000));
@@ -242,16 +260,18 @@
       const scaleAt = t => t < handoff
         ? 1 + (growth.from - 1) * collapse(t / handoff)
         : growth.from + (1 - growth.from) * swell((t - handoff - growth.delay) / growth.duration);
-      const done = t => t >= flight.settle;
+      // Run until both the spring has settled and the thread has finished gliding beneath the bubble.
+      const total = Math.max(flight.delay + settleOf(flight), spec.delay + spec.duration);
+      const done = t => t >= total;
 
-      play(locals, bubble, keyframes(flight.settle, t => ({
+      play(locals, bubble, keyframes(total, t => ({
         transform: `translateY(${(done(t) ? 0 : path(t) - thread(t)).toFixed(2)}px) scale(${(done(t) ? 1 : scaleAt(t)).toFixed(4)})`
-      })), { duration: flight.settle, easing: 'linear', fill: 'backwards' });
-      const appear = handoff / flight.settle;
+      })), { duration: total, easing: 'linear', fill: 'backwards' });
+      const appear = Math.min(handoff / total, .999);
       play(locals, bubble, withBar
-        ? [{ opacity: 0, offset: 0 }, { opacity: 0, offset: appear - .001 }, { opacity: 1, offset: appear }, { opacity: 1, offset: 1 }]
-        : [{ opacity: 0, offset: 0 }, { opacity: 1, offset: 60 / flight.settle }, { opacity: 1, offset: 1 }],
-      { duration: flight.settle, easing: 'linear', fill: 'backwards' });
+        ? [{ opacity: 0, offset: 0 }, { opacity: 0, offset: Math.max(0, appear - .001) }, { opacity: 1, offset: appear }, { opacity: 1, offset: 1 }]
+        : [{ opacity: 0, offset: 0 }, { opacity: 1, offset: Math.min(60 / total, .999) }, { opacity: 1, offset: 1 }],
+      { duration: total, easing: 'linear', fill: 'backwards' });
       // Anything else in the turn (read receipt and the like) arrives like an ordinary bubble.
       if (bubble !== node) [...node.children].filter(child => child !== bubble && !child.hidden && !child.hasAttribute('hidden')).forEach(fadeIn);
       if (!withBar) return;
@@ -381,5 +401,5 @@
     }
     return Object.freeze({ change, enter, cancel, toBottom, stopFollowing, resetFollowing });
   }
-  window.OwlChatMotion = Object.freeze({ create, MOTION });
+  window.OwlChatMotion = Object.freeze({ create, MOTION, DEFAULTS, curves: Object.freeze({ bezier, spring, settleOf }) });
 })();

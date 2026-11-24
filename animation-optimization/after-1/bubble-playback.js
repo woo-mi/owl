@@ -17,6 +17,7 @@
     reply: 2000           // Typing pause for a locally generated reply.
   });
   const UNITS = '.pen-bubble, .unfurl-user-turn, .unfurl-block, .unfurl-thread-cue';
+  let current = null; // the newest controller, so the motion tuner (?tune) can drive it
 
   function create({ messages, scroll, reducedMotion, composer = null }) {
     let sequence = null;
@@ -193,7 +194,8 @@
       }
     });
 
-    return Object.freeze({ play, finish, enter, showTyping, hideTyping, change, toBottom: motion.toBottom, resetFollowing: motion.resetFollowing, replyDelay: TIMING.reply });
+    current = Object.freeze({ play, finish, enter, showTyping, hideTyping, change, toBottom: motion.toBottom, resetFollowing: motion.resetFollowing, replyDelay: TIMING.reply });
+    return current;
   }
-  window.MVPBubblePlayback = Object.freeze({ create });
+  window.MVPBubblePlayback = Object.freeze({ create, get current() { return current; } });
 })();
