@@ -46,7 +46,8 @@
     const pupil = (x,y,size=10.4) => `<svg x="${x}" y="${y}" width="${size}" height="${size * 1.03}" viewBox="290 500 192 198" overflow="hidden"><image href="${SOURCE}" width="1254" height="1254" filter="${ref('dark-parts')}"/></svg>`;
     const solidEyes = pupil(15.55,27.2) + pupil(41.9,27.2);
     const ringEyes = [20.75,47.1].map(cx => `<circle cx="${cx}" cy="32.55" r="5.3" fill="${ref('eye-white')}" filter="${ref('depth')}"/>${pupil(cx-2.8,29.7,5.6)}`).join('');
-    const squaredEyes = [20.75,47.1].map(cx => `<g filter="${ref('depth')}"><path d="M${cx-5} 28.1 Q${cx} 27 ${cx+5} 28.1 L${cx+4.6} 33.7 Q${cx+4} 37.7 ${cx} 38 Q${cx-4.4} 37 ${cx-4.8} 33.6 Z" fill="${ref('eye-fur')}"/></g>`).join('');
+    // Keep the original mirrored Squared contours and head-specific fit.
+    const squaredEyes = `<g filter="${ref('depth')}">${layers.eyes.replaceAll('#191C1F',ref('eye-fur'))}</g>`;
     const eyes = {solid:solidEyes,ring:ringEyes,squared:squaredEyes}[state.eyes];
     const face = state.goggles === 'none' ? '' : `<g clip-path="${ref('face-clip')}" data-owl-part="goggles">${image(blank,`filter="${ref('face-fur')}"`)}</g>`;
     const beak = `<svg x="30.4" y="40.2" width="6.6" height="10.7" viewBox="560 742 122 197" overflow="hidden"><image href="${SOURCE}" width="1254" height="1254" filter="${ref('dark-parts')}"/></svg>`;
