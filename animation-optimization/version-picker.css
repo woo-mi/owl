@@ -1,0 +1,95 @@
+#animation-version-picker {
+  position: fixed;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  z-index: 150;
+  color: #1c1c1c;
+  font: 400 14px/20px Inter, system-ui, sans-serif;
+}
+
+/* Keep the comparison control clear of the conversation's Close button. */
+body.replies-open #animation-version-picker,
+body.workspace-open #animation-version-picker {
+  right: calc(76px + env(safe-area-inset-right, 0px));
+}
+
+.animation-version-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #e4e4e614;
+  border-radius: 16px;
+  background: #4a4a4a;
+  color: #fff;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 12px 40px #00000029;
+}
+
+.animation-version-trigger:hover { background: #3f3f3f; }
+.animation-version-trigger:focus-visible {
+  outline: 2px solid #167bd6;
+  outline-offset: 3px;
+}
+.animation-version-trigger svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  transition: transform 150ms ease;
+}
+.animation-version-trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+.animation-version-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  box-sizing: border-box;
+  width: 124px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 80px - env(safe-area-inset-top, 0px));
+  overflow: auto;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid #e5e5e7;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 24px #0000001f;
+}
+
+.animation-version-menu[hidden] { display: none; }
+.animation-version-menu a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: inherit;
+  font: inherit;
+  text-decoration: none;
+}
+.animation-version-menu a:hover { background: #eeeef0; }
+.animation-version-menu a:focus-visible {
+  background: #eeeef0;
+  outline: 2px solid #167bd6;
+  outline-offset: -2px;
+}
+.animation-version-menu a[aria-checked="true"]::after {
+  content: "";
+  width: 6px;
+  height: 11px;
+  flex: none;
+  margin-left: auto;
+  border: solid currentColor;
+  border-width: 0 1.5px 1.5px 0;
+  transform: translateY(-2px) rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animation-version-trigger svg { transition: none; }
+}
