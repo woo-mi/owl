@@ -517,21 +517,12 @@
     if (!petVisible || dockingFlight) return;
     const restoreFocus = dock.contains(document.activeElement);
     setOptionsOpen(false);
-    if (!sidebarReturn || reducedMotion.matches) {
-      setPetVisibility(false, true);
-      return;
-    }
-    // Lift away from the corner, sweep left in an arc, then settle into the rail.
-    // Capture the visible size before the dock changes to its compact state.
-    const source = find('.pet-visual').getBoundingClientRect();
-    const flight = { restoreFocus, direction: 'dock' };
-    dockingFlight = flight;
-    sidebarReturn.classList.add('is-landing');
-    sidebarReturn.inert = true;
-    dock.classList.add('is-docking');
+    // V4 docks immediately while preserving the conversation and unread state.
     setPetVisibility(false, true);
-    const destination = sidebarReturn.querySelector('img').getBoundingClientRect();
-    animateOwlFlight(source, destination, flight);
+    window.clearTimeout(hideTimer);
+    hideTimer = null;
+    dock.hidden = true;
+    if (restoreFocus) returnFocus();
   }
   function floatInCorner() {
     if (petVisible || dockingFlight) return;
