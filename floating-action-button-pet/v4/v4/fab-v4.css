@@ -1,0 +1,376 @@
+/* V2 uses the floating Owl instead of the static Owls navigation shortcut. */
+[data-pencil-name="Owls navigation target"] { display: none !important; }
+
+/* Reversible transitions between the unread toolbar, resting Owl, and chat. */
+.pet-dock {
+  --motion-reveal: 280ms;
+  --motion-morph: 360ms;
+  --motion-content: 180ms;
+  right: 24px;
+  bottom: 24px;
+}
+.pet-dock .pet-visual {
+  scale: .8;
+  transform-origin: bottom right;
+  transition: scale 320ms var(--motion-settle);
+}
+.pet-dock.is-docking .pet-visual { opacity: 0; }
+.pet-dock.is-undocking { opacity: 0; pointer-events: none; }
+.pet-sidebar-return { animation: none; }
+.pet-sidebar-return.is-landing { opacity: 0; pointer-events: none; }
+.pet-sidebar-actions {
+  position: absolute;
+  top: -43px;
+  left: 50.5px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-sizing: border-box;
+  width: 83px;
+  height: 42px;
+  padding: 4px;
+  border: 1px solid #e4e4e7;
+  border-radius: 999px;
+  background: #fff;
+  color: #18181b;
+  box-shadow: 0 2px 5px rgb(24 24 27 / 5%), 0 8px 22px rgb(24 24 27 / 10%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(-4px);
+  transform-origin: left center;
+  transition: opacity 200ms ease, transform 200ms cubic-bezier(.22, 1, .36, 1), visibility 0s 200ms;
+}
+.pet-sidebar-actions::before { content: ''; position: absolute; top: 0; bottom: 0; left: -12px; width: 12px; }
+.pet-sidebar-actions[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(0);
+  transition-delay: 0s;
+}
+.pet-sidebar-actions[data-unread="false"] { width: 42px; }
+.pet-sidebar-actions[data-unread="false"] .pet-sidebar-divider { display: none; }
+.pet-sidebar-actions button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.pet-sidebar-actions button:hover { background: #eeeef1; }
+.pet-sidebar-actions button:focus-visible { outline: 2px solid #71717a !important; outline-offset: -2px !important; }
+.pet-sidebar-actions svg { display: block; width: 14px; height: 14px; }
+.pet-sidebar-divider { display: block; flex: 0 0 1px; width: 1px; height: 16px; margin: 0 2px; background: #e4e4e7; }
+.pet-dock[data-sidebar-chat="true"] {
+  position: fixed;
+  right: auto;
+  bottom: 24px;
+  left: var(--sidebar-chat-left, 60px);
+  width: var(--panel-width);
+  height: var(--panel-height);
+}
+.pet-dock[data-sidebar-chat="true"] :is(.pet-fab, .pet-done-indicator, .pet-toolbar, .pet-options-menu) { display: none; }
+.pet-dock[data-sidebar-chat="true"] .pet-surface { top: 0; left: 0; transform-origin: left bottom; }
+.pet-dock[data-sidebar-chat="true"]:not([data-stage="compose"]) .pet-surface { border-radius: 20px; }
+.pet-sidebar-unread {
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  background: #188636;
+  color: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 14%);
+  font: 500 10px/1 Inter, system-ui, sans-serif;
+  pointer-events: none;
+}
+.pet-docking-flight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: center;
+  filter: drop-shadow(0 3px 6px rgb(0 0 0 / 16%));
+  will-change: transform;
+}
+.pet-surface { transform: translateY(6px) scale(.96); }
+.pet-dock[data-stage="done"] .pet-surface { transform: translateY(6px) scale(.96); }
+
+.pet-dock:not([data-stage="compose"]) .pet-surface {
+  border: 1px solid #e4e4e7;
+  border-radius: 999px;
+  background: #fff;
+  color: #18181b;
+  box-shadow: 0 2px 5px rgb(24 24 27 / 5%), 0 8px 22px rgb(24 24 27 / 10%);
+}
+.pet-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  transform: translateY(4px);
+  transition: opacity 180ms ease, transform 280ms var(--motion-settle);
+}
+.pet-dock:is([data-stage="hover"], [data-stage="done-hover"], [data-stage="notice"], [data-stage="reply"], [data-stage="working"][data-working-hover="true"]) .pet-toolbar {
+  transform: translateY(0);
+  transition-delay: 100ms, 0s;
+}
+.pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options) {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #18181b;
+  transition: background-color 120ms ease;
+}
+.pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options) svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+.pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options):hover,
+.pet-toolbar .pet-options[aria-expanded="true"] { background: #eeeef1; }
+.pet-toolbar .pet-notice-toggle { position: relative; }
+.pet-toolbar .pet-notice-toggle .pet-bell { display: block; }
+.pet-toolbar .pet-notice-toggle .pet-chevron { display: none; }
+.pet-toolbar .pet-toolbar-divider {
+  display: block;
+  flex: 0 0 1px;
+  width: 1px;
+  height: 16px;
+  margin: 0 2px;
+  background: #e4e4e7;
+}
+.pet-toolbar .pet-notice-toggle .pet-unread {
+  position: absolute;
+  top: -1px;
+  right: -2px;
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #188636;
+  color: #fff;
+  font: 500 10px/1 Inter, system-ui, sans-serif;
+}
+
+.pet-options-menu {
+  position: absolute;
+  right: 4px;
+  bottom: calc(40px - var(--menu-anchor-y, var(--panel-y)) + 4px);
+  z-index: 2;
+  width: 224px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 160px);
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  background: #fff;
+  color: #27272a;
+  box-shadow: 0 3px 8px rgb(24 24 27 / 5%), 0 12px 30px rgb(24 24 27 / 12%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(4px) scale(.98);
+  transform-origin: right bottom;
+  transition: opacity 180ms ease, transform 220ms var(--motion-settle), visibility 0s 220ms;
+}
+.pet-options-menu[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  transition-delay: 0s;
+}
+.pet-options-menu :is(.pet-hide, .pet-settings) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 32px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: 400 14px/20px Inter, system-ui, sans-serif;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.pet-options-menu :is(.pet-hide, .pet-settings):hover { background: #f4f4f5; }
+.pet-options-menu :is(.pet-hide, .pet-settings):focus-visible {
+  outline: 2px solid #71717a !important;
+  outline-offset: -2px !important;
+}
+.pet-options-menu svg { flex: 0 0 16px; width: 16px; height: 16px; color: #71717a; }
+:is(.pet-edit, .pet-notice-toggle, .pet-sidebar-actions, .pet-options-menu) svg :is(path, rect, circle) {
+  stroke-width: 1.25px;
+  vector-effect: non-scaling-stroke;
+}
+/* Figma exports this box as a filled 1.5-unit outline. At 14/24 scale it
+   is 0.875px; expanding its edges by a 0.375px stroke gives 1.25px. */
+.pet-edit svg .pet-edit-box-outline { stroke-width: 0.375px; }
+
+.pet-done-indicator {
+  left: 17px;
+  width: 14px;
+  border: 0;
+  background: #188636;
+  transition: left 320ms var(--motion-settle), width 320ms var(--motion-settle),
+    opacity 220ms ease, transform 320ms var(--motion-settle), visibility 0s 220ms;
+}
+.pet-dock[data-stage="done-hover"][data-unread="true"]:not(.is-dragging) .pet-done-indicator {
+  left: 0;
+  width: 24px;
+  opacity: 1;
+  visibility: visible;
+  transform: scaleX(1);
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.pet-dock[data-stage="compose"] .pet-surface,
+.pet-dock[data-stage="compose"]:not([data-conversation="true"]) .pet-surface {
+  border: 1px solid #e4e4e7;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgb(24 24 27 / 5%), 0 12px 32px rgb(24 24 27 / 12%), 0 28px 64px rgb(24 24 27 / 10%);
+  filter: none;
+}
+.pet-dock[data-stage="compose"][data-compose-mode="compact"] .pet-surface {
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgb(24 24 27 / 5%), 0 8px 22px rgb(24 24 27 / 10%);
+}
+.pet-composer {
+  overflow: hidden;
+  transform: translateY(8px);
+  transition: opacity 180ms ease, transform 280ms var(--motion-settle);
+}
+.pet-dock[data-stage="compose"] .pet-composer { transform: translateY(0); transition-delay: 100ms, 0s; }
+.pet-chat-header { flex: 0 0 36px; height: 36px; gap: 4px; padding: 4px 10px 0; }
+.pet-chat-header :is(a, button) { flex: 0 0 28px; width: 28px; height: 28px; border-radius: 50%; color: #71717a; }
+.pet-chat-header svg, .pet-chat-close svg { width: 16px; height: 16px; }
+.pet-chat-thread { padding: 20px; scrollbar-color: #d4d4d8 transparent; }
+.pet-chat-thread .pet-chat-message { margin: 0 0 16px; }
+.pet-chat-thread .pet-chat-message:last-child { margin-bottom: 0; }
+.pet-chat-thread .pet-chat-message-body {
+  max-width: 100%;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #27272a;
+  font: 400 14px/22px Inter, system-ui, sans-serif;
+}
+.pet-chat-thread .pet-chat-message--user .pet-chat-message-body {
+  max-width: 84%;
+  padding: 8px 14px;
+  border-radius: 18px;
+  background: #f4f4f5;
+  color: #27272a;
+  font-weight: 400;
+}
+.pet-chat-message-body:has(.pet-chat-loading) { width: 100%; }
+.pet-chat-loading { display: flex; flex-direction: column; gap: 10px; width: 100%; padding: 2px 0; }
+.pet-loading-label { color: #a1a1aa; font: 400 13px/18px Inter, system-ui, sans-serif; }
+.pet-loading-skeleton { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.pet-loading-skeleton > span {
+  display: block;
+  width: 70%;
+  height: 10px;
+  border-radius: 4px;
+  background-color: #f0f0f2;
+  background-image: linear-gradient(100deg, #f0f0f2 25%, #f8f8f9 48%, #f0f0f2 72%);
+  background-size: 220% 100%;
+  animation: pet-loading-shimmer 1800ms linear infinite;
+}
+.pet-loading-skeleton > span:nth-child(2) { width: 45%; animation-delay: 120ms; }
+@keyframes pet-loading-shimmer {
+  from { background-position: 120% 0; }
+  to { background-position: -120% 0; }
+}
+.pet-chat-date { margin: 4px 0 20px; color: #a1a1aa; font: 400 12px/18px Inter, system-ui, sans-serif; text-align: center; }
+.pet-chat-message + .pet-chat-date { margin-top: 24px; }
+.pet-chat-new-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 12px;
+  color: #18181b;
+  font: 700 12px/18px Inter, system-ui, sans-serif;
+}
+.pet-chat-new-divider::before,
+.pet-chat-new-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #a3a3a3;
+}
+.pet-dock[data-conversation="true"] .pet-compose-entry {
+  flex: 0 0 64px;
+  padding: 12px 16px;
+  border-top: 1px solid #e4e4e7;
+  background: #fff;
+}
+.pet-compose-footer,
+.pet-compose-footer:focus-within {
+  height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.pet-dock[data-stage="compose"][data-compose-mode="compact"] .pet-compose-entry {
+  flex: 0 0 56px;
+  padding: 12px 20px;
+  border: 0;
+  background: #fff;
+}
+.pet-dock[data-stage="compose"][data-compose-mode="compact"] .pet-compose-footer { height: 32px; }
+.pet-compose-actions { gap: 4px; }
+.pet-compose-footer button { flex: 0 0 32px; width: 32px; height: 32px; border-radius: 50%; }
+.pet-compose-footer .pet-send, .pet-compose-footer .pet-chat-stop { background: #18181b; color: #fff; }
+.pet-compose-footer .pet-send:not(:disabled):hover, .pet-compose-footer .pet-chat-stop:hover { background: #3f3f46; }
+.pet-compose-footer .pet-send:disabled { background: #f4f4f5; color: #a1a1aa; }
+#pet-message { height: 24px; min-height: 24px; font: 400 16px/24px Inter, system-ui, sans-serif; }
+#pet-message::placeholder { color: #a1a1aa; }
+@media (prefers-reduced-motion: reduce) {
+  .pet-dock { --motion-reveal: 0ms; --motion-morph: 0ms; --motion-content: 0ms; }
+  .pet-dock .pet-visual, .pet-surface, .pet-toolbar, .pet-composer,
+  .pet-options-menu, .pet-done-indicator, .pet-sidebar-actions, .pet-sidebar-actions button,
+  .pet-toolbar :is(.pet-edit, .pet-notice-toggle, .pet-options) { transition: none !important; }
+  .pet-loading-skeleton > span { animation: none; background-image: none; }
+}
