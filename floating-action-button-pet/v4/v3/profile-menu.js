@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const originalTrigger = document.querySelector('[data-pencil-id="PR2aB"]');
+  const originalTrigger = document.querySelector('#sidebar [data-nav="Profile"], [data-pencil-id="PR2aB"]');
   if (!originalTrigger || document.querySelector('#owl-profile-menu')) return;
 
   // Preserve the exported profile circle while giving it native button behavior.
@@ -87,7 +87,7 @@
     const viewportWidth = document.documentElement.clientWidth;
     const viewportHeight = document.documentElement.clientHeight;
     const triggerRect = trigger.getBoundingClientRect();
-    const rail = trigger.closest('[data-pencil-name="Navigation rail"]');
+    const rail = trigger.closest('#sidebar, [data-pencil-name="Navigation rail"]');
     const railRight = rail ? rail.getBoundingClientRect().right : triggerRect.right;
     const width = Math.min(MENU_WIDTH, Math.max(1, viewportWidth - VIEWPORT_MARGIN * 2));
     menu.style.width = `${width}px`;
@@ -147,4 +147,5 @@
     if (!menu.hidden && !menu.contains(event.target) && !trigger.contains(event.target)) closeMenu();
   }, true);
   window.addEventListener('resize', positionMenu);
+  window.addEventListener('pet-sidebar-change', () => closeMenu());
 })();
