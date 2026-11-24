@@ -10,7 +10,7 @@
   --theme-control-hover:#3030300d;
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:8px;
 }
 .reply-theme-control[hidden] { display:none; }
 .reply-theme-button {
@@ -18,8 +18,8 @@
   align-items:center;
   justify-content:center;
   flex:none;
-  width:36px;
-  height:36px;
+  width:28px;
+  height:28px;
   padding:0;
   border:0;
   border-radius:6px;
@@ -29,7 +29,7 @@
   touch-action:manipulation;
   transition:background-color 160ms ease, color 160ms ease;
 }
-.reply-theme-button svg { display:block; width:24px; height:24px; }
+.reply-theme-button svg { display:block; width:18px; height:18px; }
 .reply-theme-button:hover { background:var(--theme-control-hover); }
 .reply-theme-button[aria-pressed="true"] {
   color:var(--theme-control-selected-ink);
