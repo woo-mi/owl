@@ -2,17 +2,17 @@
  * V3 SCROLL STORYBOARD — the existing bubble animation stays unchanged
  *
  *    0ms   a typing indicator or reply extends the bottom of the conversation
- *  0–460ms follow that bottom with a critically damped, non-bouncing glide
- *  460ms   finish at the exact bottom; an interrupted glide stops immediately
+ *  0–620ms follow that bottom with a critically damped, non-bouncing glide
+ *  620ms   finish at the exact bottom; an interrupted glide stops immediately
  *
  * New arrivals retarget the same clock from the current position and velocity.
  */
 (() => {
   'use strict';
 
-  const TIMING = Object.freeze({ settle: 460 });
+  const TIMING = Object.freeze({ settle: 620 });
   const SCROLL = Object.freeze({
-    frequency: 20,       // Critical spring frequency, radians per second.
+    frequency: 15,       // A softer spring keeps reply scrolling gentle.
     bottomThreshold: 32, // Returning this close to the bottom resumes following.
     positionEpsilon: .5,
     velocityEpsilon: 3
