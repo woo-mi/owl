@@ -1,0 +1,28 @@
+/* AFTER 2: Codex-style send transition (see send-transition.js). */
+
+/* The browser must not re-anchor the thread while it is parked on a sent bubble. */
+.chat-scroll { overflow-anchor: none; }
+
+/* Blank space under the thread that lets a short thread still park the sent bubble at the top. */
+.send-runway { height: 0; pointer-events: none; }
+
+/* "Thinking": muted text with one highlight pass sweeping left to right. */
+.thinking-label {
+  align-self: flex-start;
+  margin-top: 8px;
+  font: 400 14px/20px Inter, system-ui, sans-serif;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(100deg, #9b9ba1 0 42%, #ececef 50%, #9b9ba1 58% 100%) 90% 0 / 300% 100% no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.thinking-label.is-ghost { z-index: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .thinking-label {
+    background: none;
+    color: #9b9ba1;
+    -webkit-text-fill-color: currentColor;
+  }
+}

@@ -15,6 +15,8 @@
     const mobile = window.matchMedia('(max-width: 900px)');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const bubblePlayback = window.MVPBubblePlayback?.create({ messages: ui.messages, scroll: ui['chat-scroll'], reducedMotion });
+    const sendMotion = window.OwlSendMotion?.create({ messages: ui.messages, scroll: ui['chat-scroll'], reducedMotion });
+    const tuning = new URLSearchParams(location.search).has('tune'); // ?tune opens the motion tuner and holds the intro playback
     let attachmentNames = [];
     let sourceSequence = 0;
     let toastTimer;
@@ -235,30 +237,32 @@
       if ((!value && !attachmentNames.length) || !ui.messages) return;
       bubblePlayback?.finish();
       const userMessage = makeMessage('user', value, attachmentNames);
-      ui.messages.append(userMessage);
-      const animateMessages = replyBase() === 'latest-oct-28';
-      if (animateMessages) bubblePlayback?.enter(userMessage);
+      const animateMessages = replyBase() === 'latest-oct-28' && Boolean(sendMotion);
+      if (animateMessages) sendMotion.send(userMessage, () => ui.messages.append(userMessage));
+      else ui.messages.append(userMessage);
       attachmentNames = [];
       renderAttachments();
       ui['message-input'].value = '';
       autosize(ui['message-input']);
       updateSendButtons();
-      scrollToBottom(ui['chat-scroll']);
+      if (!animateMessages) scrollToBottom(ui['chat-scroll']);
       ui['message-input'].focus();
       const response = value ? responseFor(value) : 'The filenames are attached to this conversation. This local preview does not read or upload file contents.';
       const sentFromState = currentStateKey;
-      if (animateMessages && !reducedMotion.matches) bubblePlayback?.showTyping();
+      if (animateMessages && !reducedMotion.matches) sendMotion.showThinking();
       const timer = window.setTimeout(() => {
         timers.delete(timer);
         const message = makeMessage('assistant', response);
         message.classList.add('message-source');
         if (currentStateKey === sentFromState) {
-          bubblePlayback?.hideTyping();
-          ui.messages.append(message);
-          if (animateMessages) bubblePlayback?.enter(message);
+          if (animateMessages) sendMotion.reply(message, () => ui.messages.append(message));
+          else {
+            bubblePlayback?.hideTyping();
+            ui.messages.append(message);
+          }
           registerSource(message);
-          if (animateMessages && !reducedMotion.matches && [...timers.values()].includes(currentStateKey)) bubblePlayback?.showTyping();
-          scrollToBottom(ui['chat-scroll']);
+          if (animateMessages && !reducedMotion.matches && [...timers.values()].includes(currentStateKey)) sendMotion.showThinking();
+          if (!animateMessages) scrollToBottom(ui['chat-scroll']);
         } else {
           viewStates.get(sentFromState)?.nodes.push(message);
         }
@@ -331,6 +335,7 @@
       const definition = window.MVPViews?.[nextView];
       if (view !== 'text-only' && !definition) return;
       bubblePlayback?.finish();
+      sendMotion?.reset();
       closeMenu();
       viewStates.set(currentStateKey, {
         nodes: [...ui.messages.childNodes],
@@ -359,7 +364,7 @@
       ui['chat-scroll'].scrollTop = previous?.scrollTop || 0;
       syncAgentHeader();
       document.title = `Animation optimization · after 2 · ${repliesOpen ? 'Clicked replies' : label || definition?.label || 'Text only'}`;
-      if (!previous && nextView === 'latest-oct-28' && !location.hash) bubblePlayback?.play();
+      if (!previous && nextView === 'latest-oct-28' && !location.hash && !tuning) bubblePlayback?.play();
       if (repliesOpen) closeRepliesButton.focus({ preventScroll: true });
       else if (leavingReplies && replyViews[view]) {
         const replyOpener = replyOpeners.get(currentStateKey);
@@ -369,6 +374,7 @@
 
     function resetConversation() {
       bubblePlayback?.finish();
+      sendMotion?.reset();
       timers.forEach((origin, timer) => {
         if (origin !== currentStateKey) return;
         clearTimeout(timer);
