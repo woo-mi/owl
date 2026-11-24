@@ -13,7 +13,7 @@ body.sidebar-expanded { --sidebar-width:260px; }
 #sidebar button { border:0; background:transparent; cursor:pointer; color:inherit; font:inherit; }
 #sidebar button:focus-visible, #sidebar input:focus-visible { outline:2px solid #167bd6; outline-offset:2px; }
 #sidebar [hidden], .sidebar-backdrop[hidden] { display:none!important; }
-#sidebar svg { display:block; width:20px; height:20px; flex-shrink:0; }
+#sidebar svg:not([data-owl-renderer] svg) { display:block; width:20px; height:20px; flex-shrink:0; }
 #sidebar .brand { display:flex; align-items:center; position:relative; height:40px; padding:0; gap:5px; font-size:16px; font-weight:500; flex-shrink:0; }
 #sidebar .brand-logo { display:block; flex-shrink:0; width:126px; height:40px; overflow:hidden; }
 #sidebar .icon-button { display:inline-flex; align-items:center; justify-content:center; border-radius:6px; flex-shrink:0; }

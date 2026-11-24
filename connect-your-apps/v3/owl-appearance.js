@@ -72,6 +72,7 @@
     const colorName = colors.find(([,color]) => color === draft.color)?.[0] || 'Blue';
     preview.setAttribute('aria-label',`${colorName} Owl: ${tabs.map(item => art.options[item.id].find(option => option.id === draft.studio[item.key]).label + ' ' + item.label.toLowerCase()).join(', ')}`);
     renderName();
+    window.dispatchEvent(new CustomEvent('owl-appearance:change',{detail:copy(draft)}));
   }
   function open({name,studio,color} = {}) {
     draft = {name:name?.trim() || "Ayush's Owl",color:colors.some(([,value]) => value === color) ? color : defaultColor,studio:art.normalize(studio)};
