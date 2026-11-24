@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const screen = document.querySelector('#appearance-view');
-  const art = window.OwlStudioArtwork;
+  const art = window.Owl3DArtwork;
   const tabs = [
     {id:'heads',key:'head',label:'Heads',guidance:'Choose a head style.'},
     {id:'eyes',key:'eyes',label:'Eyes',guidance:'Choose an eye style.'},
@@ -63,7 +63,7 @@
     screen.querySelector('#appearance-guidance').textContent = tab.guidance;
     const choices = screen.querySelector('.owl-appearance-options');
     choices.setAttribute('aria-labelledby',`appearance-tab-${currentTab}`);
-    choices.innerHTML = art.options[currentTab].map(({id,label}) => `<button type="button" class="owl-appearance-option" data-appearance-option="${id}" aria-pressed="${draft.studio[tab.key]===id}" aria-label="${label}"><span class="owl-appearance-option-art" aria-hidden="true">${art.renderOption(currentTab,id,draft.color)}</span><span class="owl-appearance-option-label">${label}</span></button>`).join('');
+    choices.innerHTML = art.options[currentTab].map(({id,label}) => `<button type="button" class="owl-appearance-option" data-appearance-option="${id}" aria-pressed="${draft.studio[tab.key]===id}" aria-label="${label}"><span class="owl-appearance-option-art" aria-hidden="true">${art.renderOption(currentTab,id,draft.color,draft.studio)}</span><span class="owl-appearance-option-label">${label}</span></button>`).join('');
     screen.querySelector('.owl-appearance-palette').hidden = currentTab !== 'heads';
     screen.querySelectorAll('[data-appearance-color]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.appearanceColor === draft.color)));
     const preview = screen.querySelector('.owl-appearance-preview');

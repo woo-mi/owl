@@ -90,7 +90,7 @@
     if (typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color)) identity.color = color;
     host.querySelector('#personality-name-pill').textContent = identity.name;
     const preview = host.querySelector('#personality-owl-preview');
-    preview.innerHTML = window.OwlStudioArtwork.render(identity.studio || window.OwlStudioArtwork.defaults, identity.color);
+    preview.innerHTML = window.Owl3DArtwork.render(identity.studio || window.OwlStudioArtwork.defaults, identity.color);
     preview.setAttribute('aria-label', `${identity.name} preview`);
     host.querySelectorAll('[data-personality-delivery]').forEach(button => button.setAttribute('aria-checked', String(settings[button.dataset.personalityDelivery])));
     host.querySelectorAll('[data-personality-setting]').forEach(input => { input.checked = settings[input.dataset.personalitySetting] === input.value; });

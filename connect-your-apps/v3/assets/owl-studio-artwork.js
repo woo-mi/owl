@@ -77,5 +77,17 @@
     const body = lineHorn ? '<g transform="translate(6.8 17) scale(.8)">'+artwork.lineHorns.round+'</g>' : artwork.optionBodies[key][item.id];
     return wrap(paint(body,color,4.5));
   }
-  window.OwlStudioArtwork=Object.freeze({options,defaults,defaultColor,normalize,render,renderOption});
+  // Share the editable silhouettes with the dimensional appearance renderer.
+  // The original flat render stays available for the existing hatch animation.
+  function getLayers(config) {
+    const state = normalize(config);
+    return {
+      head:artwork.heads[state.head],
+      face:artwork.faces[state.head][state.goggles],
+      eyes:state.eyes === 'solid' ? artwork.solidEyes[state.head] : artwork.fittedEyes[state.head][state.eyes],
+      beak:state.head === 'round' && state.goggles === 'classic' ? artwork.beak : artwork.beaks[state.head],
+      horns:state.horns === 'feathered' ? artwork.horns : ''
+    };
+  }
+  window.OwlStudioArtwork=Object.freeze({options,defaults,defaultColor,normalize,render,renderOption,getLayers});
 })();
