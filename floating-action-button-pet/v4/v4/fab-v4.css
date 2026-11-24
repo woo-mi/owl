@@ -15,7 +15,7 @@
   transition: scale 320ms var(--motion-settle);
 }
 .pet-dock.is-docking .pet-visual { opacity: 0; }
-.pet-dock.is-undocking { opacity: 0; pointer-events: none; }
+.pet-dock.is-undocking { transition: none; }
 .pet-sidebar-return { animation: none; }
 .pet-sidebar-return.is-landing { opacity: 0; pointer-events: none; }
 .pet-sidebar-actions {

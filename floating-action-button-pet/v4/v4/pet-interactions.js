@@ -527,23 +527,15 @@
   }
   function floatInCorner() {
     if (petVisible || dockingFlight) return;
-    const source = sidebarReturn.querySelector('img').getBoundingClientRect();
     const restoreFocus = sidebarReturn === document.activeElement || sidebarActions?.contains(document.activeElement);
     setSidebarActions(false);
-    if (reducedMotion.matches) {
-      setPetVisibility(true);
-      returnFocus();
-      return;
-    }
+    // V4 undocks immediately, matching its instant move into the sidebar.
     dock.classList.add('is-undocking');
     setPetVisibility(true);
-    dock.inert = true;
-    const owl = fab.getBoundingClientRect();
-    // Return to the compact resting size, keeping its bottom-right anchor fixed.
-    const destination = { left: owl.right - 32, top: owl.bottom - 32, width: 32, height: 32 };
-    const flight = { restoreFocus, direction: 'float' };
-    dockingFlight = flight;
-    animateOwlFlight(source, destination, flight);
+    // Commit the visible state before restoring normal opacity transitions.
+    void dock.offsetWidth;
+    dock.classList.remove('is-undocking');
+    if (restoreFocus) returnFocus();
   }
   function animateOwlFlight(source, destination, flight) {
     if (!source.width || !destination.width) {
