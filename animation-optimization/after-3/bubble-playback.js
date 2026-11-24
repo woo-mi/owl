@@ -100,7 +100,10 @@
 
     function continueSequence(delay) {
       if (!sequence) return;
-      schedule(sequence.stage < sequence.units.length ? prepareNext : finish, delay);
+      const hasNext = sequence.stage < sequence.units.length;
+      // Let the last reply's slower glide finish before playback cleanup.
+      const finalPause = Math.max(delay, window.OwlScrollFollow.TIMING.settle + 50);
+      schedule(hasNext ? prepareNext : finish, hasNext ? delay : finalPause);
     }
 
     function revealConnectors(connectors) {
