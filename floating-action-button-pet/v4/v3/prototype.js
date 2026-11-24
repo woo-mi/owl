@@ -13,15 +13,14 @@
     element.append(...node.childNodes);
     element.setAttribute('aria-label', label);
     if (tag === 'button') element.type = 'button';
-    else element.href = '../v2/owl/';
+    else element.href = 'https://woo-mi.github.io/owl/for-dev/';
     node.replaceWith(element);
     return element;
   }
 
   // The design includes a second Owl icon as a highlight above the rail.
   targets.slice(0, -1).forEach(target => target.remove());
-  const owlLink = action(targets.at(-1), 'a', 'Open Owls');
-  owlLink.title = 'Owls';
+  const owlLink = action(targets.at(-1), 'a', 'Open Owl chat');
   const dismissButton = action(gotIt, 'button', 'Got it');
   const title = find('Organization move title');
   const description = find('Organization move explanation');

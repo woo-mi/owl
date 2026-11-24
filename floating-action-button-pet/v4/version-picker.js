@@ -5,7 +5,7 @@
   const versions = [
     { id: 'v1', label: 'v1 - before feedback', href: new URL('./', base).href },
     { id: 'v2', label: 'v2 - no side nav', href: new URL('v2/', base).href },
-    { id: 'v3', label: 'v3 - FAB + side nav', href: new URL('v3/', base).href },
+    { id: 'v3', label: 'v3 - side nav only', href: new URL('v3/', base).href },
     { id: 'v4', label: 'v4 - v2+no animation', href: new URL('v4/', base).href },
   ];
   const selectedVersion = versions.find(version => version.id === document.body.dataset.petVersion) || versions[0];

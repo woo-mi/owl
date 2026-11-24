@@ -2,8 +2,7 @@
   'use strict';
 
   const originalTrigger = document.querySelector('[data-pencil-id="PR2aB"]');
-  const dock = document.querySelector('.pet-dock');
-  if (!originalTrigger || !dock || document.querySelector('#owl-profile-menu')) return;
+  if (!originalTrigger || document.querySelector('#owl-profile-menu')) return;
 
   // Preserve the exported profile circle while giving it native button behavior.
   const trigger = document.createElement('button');
@@ -43,6 +42,7 @@
   menu.setAttribute('role', 'dialog');
   menu.setAttribute('aria-label', 'Profile menu');
   menu.setAttribute('aria-modal', 'false');
+  menu.tabIndex = -1;
   menu.hidden = true;
   menu.innerHTML = `
     <div class="owl-profile-identity">
@@ -58,7 +58,6 @@
       ${inactiveRow('Subscriptions', 'subscriptions')}
       ${inactiveRow('Jobs', 'jobs')}
       ${inactiveRow('Customer Portal', 'portal')}
-      <button class="owl-profile-row owl-profile-pet-toggle" type="button">${icon('owl')}<span class="owl-profile-pet-label">Hide Owl</span></button>
       <div class="owl-profile-theme-row">
         <span class="owl-profile-theme-label">${icon('theme')}<span>Theme</span></span>
         <div class="owl-profile-theme-options" role="group" aria-label="Theme">
@@ -80,18 +79,9 @@
   `;
   document.body.append(menu);
 
-  const toggle = menu.querySelector('.owl-profile-pet-toggle');
-  const toggleLabel = menu.querySelector('.owl-profile-pet-label');
   const VIEWPORT_MARGIN = 12;
   const MENU_WIDTH = 280;
   const TRIGGER_GAP = 8;
-  let petVisible = dock.dataset.visible !== 'false';
-
-  function updateVisibility(visible) {
-    petVisible = Boolean(visible);
-    toggleLabel.textContent = petVisible ? 'Hide Owl' : 'Show Owl';
-    toggle.setAttribute('aria-label', toggleLabel.textContent);
-  }
   function positionMenu() {
     if (menu.hidden) return;
     const viewportWidth = document.documentElement.clientWidth;
@@ -114,12 +104,10 @@
     if (restoreFocus) trigger.focus({ preventScroll: true });
   }
   function openMenu() {
-    updateVisibility(dock.dataset.visible !== 'false');
     menu.hidden = false;
     trigger.setAttribute('aria-expanded', 'true');
     positionMenu();
-    toggle.focus({ preventScroll: true });
-    toggle.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    menu.focus({ preventScroll: true });
   }
 
   trigger.addEventListener('click', () => {
@@ -155,18 +143,8 @@
   menu.addEventListener('focusout', event => {
     if (event.relatedTarget && event.relatedTarget !== trigger && !menu.contains(event.relatedTarget)) closeMenu();
   });
-  toggle.addEventListener('click', () => {
-    const visible = !petVisible;
-    updateVisibility(visible);
-    document.dispatchEvent(new CustomEvent('pet:visibility-request', { detail: { visible } }));
-    closeMenu(true);
-  });
-  document.addEventListener('pet:visibilitychange', event => {
-    if (event.detail && typeof event.detail.visible === 'boolean') updateVisibility(event.detail.visible);
-  });
   document.addEventListener('pointerdown', event => {
     if (!menu.hidden && !menu.contains(event.target) && !trigger.contains(event.target)) closeMenu();
   }, true);
   window.addEventListener('resize', positionMenu);
-  updateVisibility(petVisible);
 })();

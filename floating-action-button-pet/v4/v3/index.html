@@ -4,12 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FAB (pet) · v3</title>
-    <meta name="description" content="Floating Action Button (pet): an Owl interaction prototype.">
+    <meta name="description" content="Sidebar-only 3D Owl navigation prototype.">
     <link rel="canonical" href="https://woo-mi.github.io/owl/floating-action-button-pet/v4/v3/">
     <link rel="stylesheet" href="prototype.css?v=pet-interactions-25">
     <link rel="stylesheet" href="profile-menu.css?v=2">
-    <link rel="stylesheet" href="pet-idle-motion.css?v=4">
-    <link rel="stylesheet" href="fab-v4.css?v=v3-11">
     <link rel="stylesheet" href="../../version-picker.css?v=1">
     <style>
       *, ::before, ::after {
@@ -1039,20 +1037,6 @@
           data-pencil-name="div"
           style="align-items: flex-start; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; height: 92px; justify-content: flex-start; left: 3.5px; padding: 0px 0px 16px 0px; position: absolute; top: 866px; width: 40px; z-index: 2"
         >
-          <button class="pet-sidebar-return" type="button" aria-label="Open Owl chat" aria-controls="floating-owl" title="Open Owl chat" hidden>
-            <img src="assets/default-pet.png" alt="" width="20" height="20" draggable="false">
-            <span class="pet-sidebar-unread" aria-hidden="true" hidden>1</span>
-          </button>
-          <div class="pet-sidebar-actions" role="toolbar" aria-label="Docked Owl actions" data-open="false" aria-hidden="true" inert>
-            <!-- Central Icon System: bell, notification, activity, alert · Figma 11682:28392 -->
-            <button class="pet-sidebar-chat" type="button" aria-label="Open Owl chat" title="Open Owl chat">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.76317 17.25H18.2369C19.439 17.25 20.3695 16.1971 20.2217 15.004L19.5275 9.40224C19.0567 5.60291 15.8284 2.75 12 2.75C8.17163 2.75 4.94336 5.60292 4.47254 9.40225L3.77835 15.004C3.63051 16.1971 4.56102 17.25 5.76317 17.25Z"/><path d="M16 17.25C16 19.4591 14.2091 21.25 12 21.25C9.79086 21.25 8 19.4591 8 17.25"/></svg>
-            </button>
-            <span class="pet-sidebar-divider" role="separator" aria-orientation="vertical"></span>
-            <button class="pet-sidebar-float" type="button" aria-label="Float in corner" title="Float in corner">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.25 17.25H5.75C4.09315 17.25 2.75 15.9069 2.75 14.25V7.75C2.75 6.09315 4.09315 4.75 5.75 4.75H16.25C17.9069 4.75 19.25 6.09315 19.25 7.75V11.25M14.75 14.75H19.25C20.3546 14.75 21.25 15.6454 21.25 16.75V18.25C21.25 19.3546 20.3546 20.25 19.25 20.25H14.75C13.6454 20.25 12.75 19.3546 12.75 18.25V16.75C12.75 15.6454 13.6454 14.75 14.75 14.75Z"/></svg>
-            </button>
-          </div>
           <div
             data-pencil-id="UJucm"
             data-pencil-name="button"
@@ -1131,7 +1115,7 @@
         style="background-color: transparent; border-radius: 8px; box-sizing: border-box; height: 36px; left: 5.5px; position: absolute; top: 131px; width: 36px; z-index: 2"
       >
         <img
-          src="assets/owl-nav-flat.svg?v=2"
+          src="assets/default-pet.png"
           alt=""
           width="20"
           height="20"
@@ -1201,99 +1185,8 @@
         </div>
       </div>
     </div>
-    <div class="pet-dock" id="floating-owl" data-stage="default">
-      <button class="pet-fab" type="button" aria-label="Owl actions" aria-expanded="false" aria-controls="pet-controls" aria-description="Open actions to write a message." title="Owl actions" draggable="false">
-        <span class="pet-visual" aria-hidden="true">
-          <span class="pet-head">
-            <img src="assets/default-pet.png" alt="" width="40" height="40" draggable="false">
-            <svg class="pet-blink-overlay" viewBox="0 0 264 264" aria-hidden="true" focusable="false">
-              <defs>
-                <clipPath id="pet-left-eye-clip"><ellipse cx="77" cy="123" rx="25" ry="25"/></clipPath>
-                <clipPath id="pet-right-eye-clip"><ellipse cx="187" cy="123" rx="25" ry="25"/></clipPath>
-              </defs>
-              <!-- Matching cheek texture sits behind each independently closing eye. -->
-              <g clip-path="url(#pet-left-eye-clip)"><image href="assets/default-pet.png" x="0" y="-42" width="264" height="264"/></g>
-              <g clip-path="url(#pet-right-eye-clip)"><image href="assets/default-pet.png" x="0" y="-42" width="264" height="264"/></g>
-              <g class="pet-blink-eye pet-blink-eye-left"><g clip-path="url(#pet-left-eye-clip)"><image href="assets/default-pet.png" width="264" height="264"/></g></g>
-              <g class="pet-blink-eye pet-blink-eye-right"><g clip-path="url(#pet-right-eye-clip)"><image href="assets/default-pet.png" width="264" height="264"/></g></g>
-            </svg>
-          </span>
-        </span>
-      </button>
-      <div class="pet-surface" id="pet-controls">
-        <div class="pet-toolbar" role="toolbar" aria-label="Owl actions" aria-hidden="true" inert>
-          <!-- Central Icon System: edit-big, box, pencil, pen, write, draw · Figma 5127:823 -->
-          <button class="pet-edit" type="button" aria-label="Write a message" title="Write a message">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="pet-edit-box-outline" d="M4.84202 20.032L5.18251 19.3638L5.18251 19.3638L4.84202 20.032ZM3.96799 19.158L4.63624 18.8175L4.63624 18.8175L3.96799 19.158ZM3.96799 4.84202L3.29973 4.50153L3.29973 4.50153L3.96799 4.84202ZM4.84202 3.96799L4.50153 3.29973L4.50153 3.29973L4.84202 3.96799ZM11.25 4.5C11.6642 4.5 12 4.16421 12 3.75C12 3.33579 11.6642 3 11.25 3V3.75V4.5ZM19.158 20.032L18.8175 19.3638L18.8175 19.3638L19.158 20.032ZM20.032 19.158L19.3638 18.8175L19.3638 18.8175L20.032 19.158ZM21 12.75V12H19.5V12.75H20.25H21ZM17.05 20.25V19.5H6.95V20.25V21H17.05V20.25ZM3.75 17.05H4.5V6.95H3.75H3V17.05H3.75ZM6.95 3.75V4.5H11.25V3.75V3H6.95V3.75ZM20.25 12.75H19.5V17.05H20.25H21V12.75H20.25ZM6.95 20.25V19.5C6.37757 19.5 5.99336 19.4994 5.69748 19.4752C5.41035 19.4518 5.27307 19.4099 5.18251 19.3638L4.84202 20.032L4.50153 20.7003C4.83879 20.8721 5.19545 20.9392 5.57533 20.9703C5.94646 21.0006 6.40232 21 6.95 21V20.25ZM3.75 17.05H3C3 17.5977 2.99942 18.0535 3.02974 18.4247C3.06078 18.8046 3.12789 19.1612 3.29973 19.4985L3.96799 19.158L4.63624 18.8175C4.5901 18.7269 4.54822 18.5896 4.52476 18.3025C4.50058 18.0066 4.5 17.6224 4.5 17.05H3.75ZM4.84202 20.032L5.18251 19.3638C4.94731 19.2439 4.75608 19.0527 4.63624 18.8175L3.96799 19.158L3.29973 19.4985C3.56338 20.0159 3.98408 20.4366 4.50153 20.7003L4.84202 20.032ZM17.05 20.25V21C17.5977 21 18.0535 21.0006 18.4247 20.9703C18.8046 20.9392 19.1612 20.8721 19.4985 20.7003L19.158 20.032L18.8175 19.3638C18.7269 19.4099 18.5896 19.4518 18.3025 19.4752C18.0066 19.4994 17.6224 19.5 17.05 19.5V20.25ZM20.25 17.05H19.5C19.5 17.6224 19.4994 18.0066 19.4752 18.3025C19.4518 18.5896 19.4099 18.7269 19.3638 18.8175L20.032 19.158L20.7003 19.4985C20.8721 19.1612 20.9392 18.8046 20.9703 18.4247C21.0006 18.0535 21 17.5977 21 17.05H20.25ZM19.158 20.032L19.4985 20.7003C20.0159 20.4366 20.4366 20.0159 20.7003 19.4985L20.032 19.158L19.3638 18.8175C19.2439 19.0527 19.0527 19.2439 18.8175 19.3638L19.158 20.032ZM3.75 6.95H4.5C4.5 6.37757 4.50058 5.99336 4.52476 5.69748C4.54822 5.41035 4.5901 5.27307 4.63624 5.18251L3.96799 4.84202L3.29973 4.50153C3.12789 4.83879 3.06078 5.19545 3.02974 5.57533C2.99942 5.94646 3 6.40232 3 6.95H3.75ZM6.95 3.75V3C6.40232 3 5.94646 2.99942 5.57533 3.02974C5.19545 3.06078 4.83879 3.12789 4.50153 3.29973L4.84202 3.96799L5.18251 4.63624C5.27307 4.5901 5.41035 4.54822 5.69748 4.52476C5.99336 4.50058 6.37757 4.5 6.95 4.5V3.75ZM3.96799 4.84202L4.63624 5.18251C4.75608 4.94731 4.94731 4.75608 5.18251 4.63624L4.84202 3.96799L4.50153 3.29973C3.98408 3.56338 3.56338 3.98408 3.29973 4.50153L3.96799 4.84202Z" fill="currentColor" stroke-linejoin="miter"/><path d="M8.75 12.6642V15.2499H11.3358C11.601 15.2499 11.8554 15.1446 12.0429 14.9571L20.5858 6.41416C21.3668 5.63311 21.3668 4.36678 20.5858 3.58573L20.4142 3.41416C19.6332 2.63311 18.3668 2.63311 17.5858 3.41416L9.04289 11.957C8.85536 12.1446 8.75 12.3989 8.75 12.6642Z" stroke-linecap="square"/></svg>
-          </button>
-          <button class="pet-notice-toggle" type="button" aria-label="Open conversation" aria-expanded="false" aria-controls="pet-controls" title="Notifications" aria-hidden="true" inert>
-            <svg class="pet-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.76317 17.25H18.2369C19.439 17.25 20.3695 16.1971 20.2217 15.004L19.5275 9.40224C19.0567 5.60291 15.8284 2.75 12 2.75C8.17163 2.75 4.94336 5.60292 4.47254 9.40225L3.77835 15.004C3.63051 16.1971 4.56102 17.25 5.76317 17.25Z"/><path d="M16 17.25C16 19.4591 14.2091 21.25 12 21.25C9.79086 21.25 8 19.4591 8 17.25"/></svg>
-            <svg class="pet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
-            <span class="pet-unread" aria-hidden="true">1</span>
-          </button>
-          <span class="pet-toolbar-divider" aria-hidden="true"></span>
-          <button class="pet-options" type="button" aria-label="Hide Owl" title="Hide Owl">
-            <svg class="pet-eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12C4 7.5 7.5 5 12 5s8 2.5 10 7c-2 4.5-5.5 7-10 7S4 16.5 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
-            <svg class="pet-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><defs><mask id="pet-eye-slash-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="white" stroke="none"/><path d="M3 3l18 18" stroke="black" stroke-width="5"/></mask></defs><g mask="url(#pet-eye-slash-cutout)"><path d="M2 12C4 7.5 7.5 5 12 5s8 2.5 10 7c-2 4.5-5.5 7-10 7S4 16.5 2 12Z"/><circle cx="12" cy="12" r="3"/></g><path d="M3 3l18 18"/></svg>
-          </button>
-        </div>
-        <form class="pet-composer" aria-label="Message your Owl" aria-hidden="true" inert>
-          <div class="pet-chat-header" hidden>
-            <a class="pet-chat-open" href="../v2/owl/" aria-label="Open in main window" title="Open in main window">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3h7v7m0-7-10 10M10 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5" vector-effect="non-scaling-stroke"/></svg>
-            </a>
-            <button class="pet-chat-close" type="button" aria-label="Close conversation" title="Close conversation">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" aria-hidden="true"><path d="m5 5 14 14M19 5 5 19" vector-effect="non-scaling-stroke"/></svg>
-            </button>
-          </div>
-          <div class="pet-chat-thread" role="log" aria-label="Conversation with Owl" hidden></div>
-          <div class="pet-compose-entry">
-            <div class="pet-compose-footer">
-              <textarea id="pet-message" rows="1" name="message" aria-label="Message your Owl" placeholder="Ask a question or follow-up" autocomplete="off" maxlength="500"></textarea>
-              <div class="pet-compose-actions">
-                <button class="pet-mic" type="button" aria-label="Use microphone" title="Use microphone" disabled>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11v1a6 6 0 0 0 12 0v-1m-6 7v3m-3 0h6"/></svg>
-                </button>
-                <button class="pet-send" type="submit" aria-label="Send message" title="Send message" disabled>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
-                </button>
-                <button class="pet-chat-stop" type="button" aria-label="Stop response" title="Stop response" hidden>
-                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="pet-options-menu" id="pet-options-menu" role="menu" aria-label="Owl options" hidden>
-        <button class="pet-hide" type="button" role="menuitem" aria-label="Dock in sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18m7-13-4 4 4 4"/></svg><span>Dock in sidebar</span></button>
-        <a class="pet-settings" role="menuitem" href="../../../connect-your-apps/?version=connected&amp;step=customize"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" aria-hidden="true"><path d="M7.55659 5.13998L7.17474 5.05186C6.58003 4.91462 5.95657 5.09343 5.525 5.525C5.09343 5.95657 4.91462 6.58003 5.05186 7.17474L5.13998 7.55659C5.37168 8.56061 4.95767 9.60322 4.10031 10.1748L3.51965 10.5619C3.03881 10.8825 2.75 11.4221 2.75 12C2.75 12.5779 3.03881 13.1175 3.51965 13.4381L4.10031 13.8252C4.95767 14.3968 5.37168 15.4394 5.13998 16.4434L5.05186 16.8253C4.91462 17.42 5.09343 18.0434 5.525 18.475C5.95657 18.9066 6.58003 19.0854 7.17474 18.9481L7.55659 18.86C8.56061 18.6283 9.60322 19.0423 10.1748 19.8997L10.5619 20.4804C10.8825 20.9612 11.4221 21.25 12 21.25C12.5779 21.25 13.1175 20.9612 13.4381 20.4804L13.8252 19.8997C14.3968 19.0423 15.4394 18.6283 16.4434 18.86L16.8253 18.9481C17.42 19.0854 18.0434 18.9066 18.475 18.475C18.9066 18.0434 19.0854 17.42 18.9481 16.8253L18.86 16.4434C18.6283 15.4394 19.0423 14.3968 19.8997 13.8252L20.4804 13.4381C20.9612 13.1175 21.25 12.5779 21.25 12C21.25 11.4221 20.9612 10.8825 20.4804 10.5619L19.8997 10.1748C19.0423 9.60322 18.6283 8.56061 18.86 7.55659L18.9481 7.17473C19.0854 6.58003 18.9066 5.95657 18.475 5.525C18.0434 5.09343 17.42 4.91462 16.8253 5.05186L16.4434 5.13998C15.4394 5.37168 14.3968 4.95767 13.8252 4.10031L13.4381 3.51965C13.1175 3.03881 12.5779 2.75 12 2.75C11.4221 2.75 10.8825 3.03881 10.5619 3.51965L10.1748 4.10031C9.60322 4.95767 8.56061 5.37168 7.55659 5.13998Z"/><circle cx="12" cy="12" r="2.75"/></svg><span>Owl settings</span></a>
-      </div>
-      <button class="pet-done-indicator" type="button" aria-label="Open conversation" aria-controls="pet-controls" aria-hidden="true" inert></button>
-      <div class="pet-working" id="pet-activity" role="region" aria-label="Owl activity" aria-hidden="true" inert>
-        <a class="pet-status-copy">
-          <span class="pet-completion-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
-          <div class="pet-working-title"></div>
-          <div class="pet-working-label"><span class="pet-status-text">Thinking</span><span class="pet-thinking-dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span></div>
-        </a>
-        <button class="pet-status-dismiss" type="button" aria-label="Dismiss activity" title="Dismiss" aria-hidden="true" inert>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
-        </button>
-        <div class="pet-status-actions" aria-hidden="true" inert>
-          <button class="pet-status-return" type="button" aria-label="Return to message" title="Return to message"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 4v7a4 4 0 0 1-4 4H4m5-5-5 5 5 5"/></svg></button>
-          <button class="pet-stop" type="button" aria-label="Stop response" title="Stop response"><span aria-hidden="true"></span></button>
-        </div>
-        <form class="pet-followup" aria-label="Reply to your Owl" data-has-value="false" aria-hidden="true" inert>
-          <input id="pet-followup" type="text" name="followup" aria-label="Follow up" placeholder="Follow up" autocomplete="off" maxlength="500">
-          <button class="pet-followup-send" type="submit" aria-label="Send follow-up" title="Send follow-up" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg></button>
-        </form>
-      </div>
-      <div class="pet-announcement" role="status" aria-live="polite" aria-atomic="true"></div>
-    </div>
-    <script src="prototype.js?v=v3-sidebar-owl-1"></script>
-    <script src="pet-interactions.js?v=proximity-120-1"></script>
-    <script src="profile-menu.js?v=2"></script>
-    <script src="pet-idle-motion.js?v=1"></script>
-    <script src="../version-picker.js?v=5"></script>
+    <script src="prototype.js?v=v3-sidebar-only-1"></script>
+    <script src="profile-menu.js?v=v3-sidebar-only-1"></script>
+    <script src="../version-picker.js?v=6"></script>
   </body>
 </html>
