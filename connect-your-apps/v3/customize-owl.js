@@ -252,6 +252,11 @@
       const result = await window.OwlEgg.hatch({artwork});
       if (request !== hatchRequest || currentStep !== 'customize') return;
       if (!result.completed) { clearTransition();return; }
+      savedOwl = {
+        name:nameInput.value,
+        color:window.Owl3DArtwork.defaultColor,
+        studio:{...window.Owl3DArtwork.defaults}
+      };
       status.textContent = 'Your Owl has hatched.';
       navigate('appearance',{hatchBounds:result.bounds});
     } catch {
