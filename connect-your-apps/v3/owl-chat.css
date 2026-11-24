@@ -3,7 +3,7 @@ body[data-flow-step="chat"] #main.connections-main { margin-left:var(--sidebar-w
 .owl-chat { --chat-composer-offset:24px;--chat-composer-gap:40px;position:relative;width:812px;max-width:100%;min-width:0;min-height:100dvh;padding:140px 24px max(120px,calc(var(--chat-composer-height,53px) + var(--chat-composer-offset) + var(--chat-composer-gap)));color:#0d0d0d; }
 .owl-chat-header { position:absolute;top:14px;left:50%;display:flex;flex-direction:column;align-items:center;max-width:calc(100% - 48px);transform:translateX(-50%); }
 .owl-chat-avatar { display:grid;place-items:center;flex:none;width:56px;height:56px;border:3px solid #fff;border-radius:50%;background:#fff;box-shadow:0 2px 8px #14181f1f,0 -.5px 4px #14181f0a; }
-.owl-chat-avatar svg { width:24px;height:24px; }
+.owl-chat-avatar > svg { width:24px;height:24px; }
 .owl-chat-profile { max-width:100%;padding:6px 8px 6px 12px;border-radius:12px;background:#fff;box-shadow:0 2px 8px #14181f1f;text-align:center; }
 #chat-title { margin:0;font-size:14px;font-weight:600;line-height:17px; }
 #chat-profile-button { display:inline-flex;align-items:center;justify-content:center;max-width:100%;padding:0;font:inherit;color:#15171b; }

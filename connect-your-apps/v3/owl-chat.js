@@ -6,7 +6,8 @@
     {id:'missed-follow-ups',name:'Catch missed follow-ups',description:'Work worth revisiting',schedule:'Weekdays · 4 PM IST'},
     {id:'weekly-recap',name:'Weekly action-item recap',description:'Decisions and open to-dos',schedule:'Friday · 4 PM IST'}
   ];
-  const context = {name:"Ayush's Owl",studio:null,color:window.OwlStudioArtwork.defaultColor,preferences:{},identity:{},selection:[]};
+  const art = window.Owl3DArtwork;
+  const context = {name:"Ayush's Owl",studio:null,color:art.defaultColor,preferences:{},identity:{},selection:[]};
   const freshConversation = () => ({draft:'',attachments:[],messages:[],routineDrafts:{}});
   const conversations = {live:freshConversation(),'no-work':freshConversation()};
   let version = 'live';
@@ -276,12 +277,12 @@
   function open({name,studio,color,preferences,identity,selection} = {}) {
     if (!host?.isConnected && !build()) return;
     if (typeof name === 'string' && name.trim()) context.name = name.trim();
-    if (studio) context.studio = window.OwlStudioArtwork.normalize(studio);
+    if (studio) context.studio = art.normalize(studio);
     if (typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color)) context.color = color;
     if (preferences && typeof preferences === 'object') context.preferences = {...preferences};
     if (identity && typeof identity === 'object') context.identity = {...identity};
     if (Array.isArray(selection)) context.selection = [...selection];
-    host.querySelector('.owl-chat-avatar').innerHTML = window.OwlStudioArtwork.render(context.studio || window.OwlStudioArtwork.defaults,context.color);
+    host.querySelector('.owl-chat-avatar').innerHTML = art.render(context.studio || art.defaults,context.color);
     host.querySelector('#chat-profile-button span').textContent = context.name;
     renderConversation();
   }
