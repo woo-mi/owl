@@ -165,7 +165,15 @@
     if (changed) {
       if (isCustomize && !hasCustomizedThisVisit) window.OwlEgg?.start();
       else window.OwlEgg?.stop();
-      if (step === 'appearance') window.OwlAppearance.open({...savedOwl,name:nameInput.value});
+      if (step === 'appearance') {
+        // A new customization starts blue, including bookmarked appearance links.
+        // Keep remembered artwork for home until this draft is saved.
+        const appearance = hasCustomizedThisVisit ? savedOwl : {
+          color:window.Owl3DArtwork.defaultColor,
+          studio:{...window.Owl3DArtwork.defaults}
+        };
+        window.OwlAppearance.open({...appearance,name:nameInput.value});
+      }
       if (step === 'personality') {
         savedOwl ||= {name:nameInput.value,color:window.OwlStudioArtwork.defaultColor,studio:{...window.OwlStudioArtwork.defaults}};
         window.OwlPersonality.open({...savedOwl,name:nameInput.value});
@@ -252,11 +260,6 @@
       const result = await window.OwlEgg.hatch({artwork});
       if (request !== hatchRequest || currentStep !== 'customize') return;
       if (!result.completed) { clearTransition();return; }
-      savedOwl = {
-        name:nameInput.value,
-        color:window.Owl3DArtwork.defaultColor,
-        studio:{...window.Owl3DArtwork.defaults}
-      };
       status.textContent = 'Your Owl has hatched.';
       navigate('appearance',{hatchBounds:result.bounds});
     } catch {
